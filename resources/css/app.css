@@ -180,6 +180,21 @@ body {
     color: var(--sidebar-text-hover);
 }
 
+.submenu-link.active {
+    background-color: var(--sidebar-active-bg);
+    color: var(--sidebar-text-hover) !important;
+    font-weight: 600;
+    padding: 6px 12px;
+    border-radius: 8px;
+    margin-left: -12px;
+    margin-right: 4px;
+    display: block;
+}
+
+.sidebar-link.active-parent {
+    color: #00e676 !important;
+}
+
 /* Área do Perfil no Rodapé da Barra Lateral */
 .sidebar-footer {
     border-top: 1px solid var(--sidebar-border);

@@ -109,113 +109,24 @@
                     <!-- Gráfico de Matrículas (Linhas) -->
                     <div id="chart-matriculas" class="relative w-full mt-4">
                         <div class="relative w-full h-[240px]">
-                            <svg viewBox="0 0 1000 240" class="w-full h-full overflow-visible">
-                                <!-- Eixo Y com Valores -->
-                                <text x="35" y="15" text-anchor="end" fill="#9ca3af" class="text-xs font-semibold select-none">2.100</text>
-                                <text x="35" y="70" text-anchor="end" fill="#9ca3af" class="text-xs font-semibold select-none">2.050</text>
-                                <text x="35" y="125" text-anchor="end" fill="#9ca3af" class="text-xs font-semibold select-none">2.000</text>
-                                <text x="35" y="180" text-anchor="end" fill="#9ca3af" class="text-xs font-semibold select-none">1.950</text>
-
-                                <!-- Linhas de Grade do Gráfico (De x=50 a x=980) -->
-                                <line x1="50" y1="10" x2="980" y2="10" stroke="#f0f4f2" stroke-width="1.5" />
-                                <line x1="50" y1="65" x2="980" y2="65" stroke="#f0f4f2" stroke-width="1.5" />
-                                <line x1="50" y1="120" x2="980" y2="120" stroke="#f0f4f2" stroke-width="1.5" />
-                                <line x1="50" y1="175" x2="980" y2="175" stroke="#f0f4f2" stroke-width="1.5" />
-                                
-                                <!-- Curva Bezier Verde Suave (Perfeitamente esticada horizontalmente) -->
-                                <path d="M 50 190 L 134.5 175 L 219.1 150 L 303.6 130 L 388.2 110 L 472.7 62 L 557.3 65 L 641.8 62 L 726.4 55 L 810.9 45 L 895.5 35 L 980 20" fill="none" stroke="#008a4b" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
-                                
-                                <!-- Degradê abaixo da curva -->
-                                <path d="M 50 190 L 134.5 175 L 219.1 150 L 303.6 130 L 388.2 110 L 472.7 62 L 557.3 65 L 641.8 62 L 726.4 55 L 810.9 45 L 895.5 35 L 980 20 L 980 175 L 50 175 Z" fill="url(#chart-grad)" opacity="0.05" />
-
-                                <!-- Pontos com contorno branco e brilho -->
-                                <circle cx="50" cy="190" r="5" fill="#008a4b" stroke="#ffffff" stroke-width="1.5" />
-                                <circle cx="134.5" cy="175" r="5" fill="#008a4b" stroke="#ffffff" stroke-width="1.5" />
-                                <circle cx="219.1" cy="150" r="5" fill="#008a4b" stroke="#ffffff" stroke-width="1.5" />
-                                <circle cx="303.6" cy="130" r="5" fill="#008a4b" stroke="#ffffff" stroke-width="1.5" />
-                                <circle cx="388.2" cy="110" r="5" fill="#008a4b" stroke="#ffffff" stroke-width="1.5" />
-                                <circle cx="472.7" cy="62" r="5" fill="#008a4b" stroke="#ffffff" stroke-width="1.5" />
-                                <circle cx="557.3" cy="65" r="5" fill="#008a4b" stroke="#ffffff" stroke-width="1.5" />
-                                <circle cx="641.8" cy="62" r="5" fill="#008a4b" stroke="#ffffff" stroke-width="1.5" />
-                                <circle cx="726.4" cy="55" r="5" fill="#008a4b" stroke="#ffffff" stroke-width="1.5" />
-                                <circle cx="810.9" cy="45" r="5" fill="#008a4b" stroke="#ffffff" stroke-width="1.5" />
-                                <circle cx="895.5" cy="35" r="5" fill="#008a4b" stroke="#ffffff" stroke-width="1.5" />
-                                <circle cx="980" cy="20" r="5" fill="#008a4b" stroke="#ffffff" stroke-width="1.5" />
-
-                                <!-- Eixo X com Valores (Rótulos dos Meses alinhados perfeitamente) -->
-                                <text x="50" y="215" text-anchor="middle" fill="#9ca3af" class="text-xs font-semibold select-none">Jan</text>
-                                <text x="134.5" y="215" text-anchor="middle" fill="#9ca3af" class="text-xs font-semibold select-none">Fev</text>
-                                <text x="219.1" y="215" text-anchor="middle" fill="#9ca3af" class="text-xs font-semibold select-none">Mar</text>
-                                <text x="303.6" y="215" text-anchor="middle" fill="#9ca3af" class="text-xs font-semibold select-none">Abr</text>
-                                <text x="388.2" y="215" text-anchor="middle" fill="#9ca3af" class="text-xs font-semibold select-none">Mai</text>
-                                <text x="472.7" y="215" text-anchor="middle" fill="#9ca3af" class="text-xs font-semibold select-none">Jun</text>
-                                <text x="557.3" y="215" text-anchor="middle" fill="#9ca3af" class="text-xs font-semibold select-none">Jul</text>
-                                <text x="641.8" y="215" text-anchor="middle" fill="#9ca3af" class="text-xs font-semibold select-none">Ago</text>
-                                <text x="726.4" y="215" text-anchor="middle" fill="#9ca3af" class="text-xs font-semibold select-none">Set</text>
-                                <text x="810.9" y="215" text-anchor="middle" fill="#9ca3af" class="text-xs font-semibold select-none">Out</text>
-                                <text x="895.5" y="215" text-anchor="middle" fill="#9ca3af" class="text-xs font-semibold select-none">Nov</text>
-                                <text x="980" y="215" text-anchor="middle" fill="#9ca3af" class="text-xs font-semibold select-none">Dez</text>
-
-                                <!-- Definições de Gradiente SVG -->
-                                <defs>
-                                    <linearGradient id="chart-grad" x1="0" y1="0" x2="0" y2="1">
-                                        <stop offset="0%" stop-color="#008a4b" />
-                                        <stop offset="100%" stop-color="#ffffff" />
-                                    </linearGradient>
-                                </defs>
-                            </svg>
+                            <canvas id="canvas-matriculas"></canvas>
                         </div>
                     </div>
 
                     <!-- Gráfico de Notas (Barras) -->
                     <div id="chart-notas" class="relative w-full mt-4 hidden">
                         <div class="relative w-full h-[240px]">
-                            <svg viewBox="0 0 1000 240" class="w-full h-full overflow-visible">
-                                <!-- Barras (Alinhadas de x=50 a x=950 com espaçamento de 82px) -->
-                                <rect x="32" y="90" width="36" height="110" rx="6" fill="#cce3db" />
-                                <rect x="114" y="60" width="36" height="140" rx="6" fill="#cce3db" />
-                                <rect x="196" y="110" width="36" height="90" rx="6" fill="#cce3db" />
-                                <rect x="278" y="45" width="36" height="155" rx="6" fill="#cce3db" />
-                                <rect x="360" y="15" width="36" height="185" rx="6" fill="#09492f" />
-                                <rect x="442" y="130" width="36" height="70" rx="6" fill="#cce3db" />
-                                <rect x="524" y="145" width="36" height="55" rx="6" fill="#cce3db" />
-                                <rect x="606" y="30" width="36" height="170" rx="6" fill="#cce3db" />
-                                <rect x="688" y="65" width="36" height="135" rx="6" fill="#cce3db" />
-                                <rect x="770" y="45" width="36" height="155" rx="6" fill="#cce3db" />
-                                <rect x="852" y="130" width="36" height="70" rx="6" fill="#cce3db" />
-                                <rect x="934" y="90" width="36" height="110" rx="6" fill="#cce3db" />
-
-                                <!-- Eixo X com Valores (Rótulos das Turmas alinhados perfeitamente abaixo de cada barra) -->
-                                <text x="50" y="225" text-anchor="middle" fill="#9ca3af" class="text-xs font-semibold select-none">6a</text>
-                                <text x="132" y="225" text-anchor="middle" fill="#9ca3af" class="text-xs font-semibold select-none">6b</text>
-                                <text x="214" y="225" text-anchor="middle" fill="#9ca3af" class="text-xs font-semibold select-none">7a</text>
-                                <text x="296" y="225" text-anchor="middle" fill="#9ca3af" class="text-xs font-semibold select-none">7b</text>
-                                <text x="378" y="225" text-anchor="middle" fill="#9ca3af" class="text-xs font-semibold select-none">8</text>
-                                <text x="460" y="225" text-anchor="middle" fill="#9ca3af" class="text-xs font-semibold select-none">9</text>
-                                <text x="542" y="225" text-anchor="middle" fill="#9ca3af" class="text-xs font-semibold select-none">1</text>
-                                <text x="624" y="225" text-anchor="middle" fill="#9ca3af" class="text-xs font-semibold select-none">2</text>
-                                <text x="706" y="225" text-anchor="middle" fill="#9ca3af" class="text-xs font-semibold select-none">3</text>
-                                <text x="788" y="225" text-anchor="middle" fill="#9ca3af" class="text-xs font-semibold select-none">4</text>
-                                <text x="870" y="225" text-anchor="middle" fill="#9ca3af" class="text-xs font-semibold select-none">5a</text>
-                                <text x="952" y="225" text-anchor="middle" fill="#9ca3af" class="text-xs font-semibold select-none">5b</text>
-                            </svg>
+                            <canvas id="canvas-notas"></canvas>
                         </div>
                     </div>
 
                     <!-- Gráfico de Mensalidades (Rosca) -->
                     <div id="chart-mensalidades" class="relative w-full mt-4 hidden">
                         <div class="flex flex-col md:flex-row items-center justify-center gap-16 h-[220px]">
-                            <!-- Donut Chart SVG -->
-                            <svg width="180" height="180" viewBox="0 0 220 220" class="overflow-visible select-none">
-                                <g transform="rotate(-90 110 110)">
-                                    <!-- Pagas em Dia (Verde Escuro) - 35% (dasharray 154 de 440) -->
-                                    <circle cx="110" cy="110" r="70" fill="transparent" stroke="#09492f" stroke-width="35" stroke-dasharray="154 440" stroke-dashoffset="0" />
-                                    <!-- Atrasadas (Amarelo) - 40% (dasharray 176 de 440) -->
-                                    <circle cx="110" cy="110" r="70" fill="transparent" stroke="#ffb300" stroke-width="35" stroke-dasharray="176 440" stroke-dashoffset="-154" />
-                                    <!-- Inadimplentes (Vermelho) - 25% (dasharray 110 de 440) -->
-                                    <circle cx="110" cy="110" r="70" fill="transparent" stroke="#f43f5e" stroke-width="35" stroke-dasharray="110 440" stroke-dashoffset="-330" />
-                                </g>
-                            </svg>
+                            <!-- Donut Chart Canvas -->
+                            <div class="w-[180px] h-[180px] relative">
+                                <canvas id="canvas-mensalidades"></canvas>
+                            </div>
                             
                             <!-- Legenda Lateral -->
                             <div class="flex flex-col gap-5 text-sm font-semibold text-gray-700 select-none pr-12">
@@ -258,31 +169,202 @@
 
     </div>
 
-    <!-- Script de Alternância dos Gráficos -->
+    <!-- Script de Inicialização e Alternância dos Gráficos com Chart.js -->
     <script>
-        function switchChart(type) {
-            // Oculta todos os wrappers de gráficos
-            document.getElementById('chart-matriculas').classList.add('hidden');
-            document.getElementById('chart-notas').classList.add('hidden');
-            document.getElementById('chart-mensalidades').classList.add('hidden');
-            
-            // Exibe o gráfico selecionado
-            document.getElementById('chart-' + type).classList.remove('hidden');
-            
-            // Reseta o estilo das abas (texto e ícone cinzas por padrão)
-            const tabs = ['matriculas', 'notas', 'mensalidades'];
-            tabs.forEach(tab => {
-                const btn = document.getElementById('tab-' + tab);
-                if (btn) {
-                    btn.className = "px-4 py-1.5 rounded-full text-gray-500 hover:text-[#0a241e] transition-colors flex items-center gap-1.5 cursor-pointer";
+        (function() {
+            let chartMatriculas = null;
+            let chartNotas = null;
+            let chartMensalidades = null;
+
+            function initCharts() {
+                if (chartMatriculas) chartMatriculas.destroy();
+                if (chartNotas) chartNotas.destroy();
+                if (chartMensalidades) chartMensalidades.destroy();
+
+                const ctxMatriculas = document.getElementById('canvas-matriculas');
+                const ctxNotas = document.getElementById('canvas-notas');
+                const ctxMensalidades = document.getElementById('canvas-mensalidades');
+
+                if (ctxMatriculas) {
+                    const ctx = ctxMatriculas.getContext('2d');
+                    const gradient = ctx.createLinearGradient(0, 0, 0, 240);
+                    gradient.addColorStop(0, 'rgba(0, 138, 75, 0.15)');
+                    gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+
+                    chartMatriculas = new Chart(ctxMatriculas, {
+                        type: 'line',
+                        data: {
+                            labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],
+                            datasets: [{
+                                label: 'Matrículas',
+                                data: [1936, 1950, 1973, 1991, 2009, 2053, 2050, 2053, 2059, 2068, 2077, 2091],
+                                borderColor: '#008a4b',
+                                borderWidth: 3,
+                                pointBackgroundColor: '#008a4b',
+                                pointBorderColor: '#ffffff',
+                                pointBorderWidth: 1.5,
+                                pointRadius: 5,
+                                pointHoverRadius: 7,
+                                fill: true,
+                                backgroundColor: gradient,
+                                tension: 0.4
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: { display: false },
+                                tooltip: {
+                                    backgroundColor: '#0a241e',
+                                    titleFont: { family: 'Instrument Sans', size: 13, weight: 'bold' },
+                                    bodyFont: { family: 'Instrument Sans', size: 12 },
+                                    padding: 10,
+                                    cornerRadius: 8,
+                                    displayColors: false
+                                }
+                            },
+                            scales: {
+                                x: {
+                                    grid: { display: false },
+                                    ticks: {
+                                        color: '#9ca3af',
+                                        font: { family: 'Instrument Sans', size: 11, weight: '600' }
+                                    }
+                                },
+                                y: {
+                                    min: 1900,
+                                    max: 2100,
+                                    ticks: {
+                                        stepSize: 50,
+                                        color: '#9ca3af',
+                                        font: { family: 'Instrument Sans', size: 11, weight: '600' }
+                                    },
+                                    grid: {
+                                        color: '#f0f4f2',
+                                        lineWidth: 1.5,
+                                        drawBorder: false
+                                    }
+                                }
+                            }
+                        }
+                    });
                 }
-            });
-            
-            // Aplica o estilo ativo na aba selecionada (texto e ícone ficam verdes)
-            const activeBtn = document.getElementById('tab-' + type);
-            if (activeBtn) {
-                activeBtn.className = "bg-white text-[#008a4b] px-4 py-1.5 rounded-full shadow-xs flex items-center gap-1.5 cursor-pointer";
+
+                if (ctxNotas) {
+                    chartNotas = new Chart(ctxNotas, {
+                        type: 'bar',
+                        data: {
+                            labels: ['6a', '6b', '7a', '7b', '8', '9', '1', '2', '3', '4', '5a', '5b'],
+                            datasets: [{
+                                label: 'Média de Notas',
+                                data: [6.0, 7.5, 5.2, 8.2, 9.5, 4.5, 3.5, 9.0, 7.2, 8.2, 4.5, 6.0],
+                                backgroundColor: [
+                                    '#cce3db', '#cce3db', '#cce3db', '#cce3db', 
+                                    '#09492f',
+                                    '#cce3db', '#cce3db', '#cce3db', '#cce3db', '#cce3db', '#cce3db', '#cce3db'
+                                ],
+                                borderRadius: 6,
+                                borderSkipped: false
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: { display: false },
+                                tooltip: {
+                                    backgroundColor: '#0a241e',
+                                    padding: 10,
+                                    cornerRadius: 8
+                                }
+                            },
+                            scales: {
+                                x: {
+                                    grid: { display: false },
+                                    ticks: {
+                                        color: '#9ca3af',
+                                        font: { family: 'Instrument Sans', size: 11, weight: '600' }
+                                    }
+                                },
+                                y: {
+                                    min: 0,
+                                    max: 10,
+                                    ticks: {
+                                        stepSize: 2,
+                                        color: '#9ca3af',
+                                        font: { family: 'Instrument Sans', size: 11, weight: '600' }
+                                    },
+                                    grid: {
+                                        color: '#f0f4f2',
+                                        lineWidth: 1.5,
+                                        drawBorder: false
+                                    }
+                                }
+                            }
+                        }
+                    });
+                }
+
+                if (ctxMensalidades) {
+                    chartMensalidades = new Chart(ctxMensalidades, {
+                        type: 'doughnut',
+                        data: {
+                            labels: ['Pagas em Dia', 'Atrasadas (< 30 dias)', 'Inadimplentes'],
+                            datasets: [{
+                                data: [35, 40, 25],
+                                backgroundColor: ['#09492f', '#ffb300', '#f43f5e'],
+                                borderWidth: 0,
+                                hoverOffset: 4
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            cutout: '70%',
+                            plugins: {
+                                legend: { display: false },
+                                tooltip: {
+                                    backgroundColor: '#0a241e',
+                                    padding: 10,
+                                    cornerRadius: 8
+                                }
+                            }
+                        }
+                    });
+                }
             }
-        }
+
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', initCharts);
+            } else {
+                initCharts();
+            }
+
+            window.switchChart = function(type) {
+                document.getElementById('chart-matriculas').classList.add('hidden');
+                document.getElementById('chart-notas').classList.add('hidden');
+                document.getElementById('chart-mensalidades').classList.add('hidden');
+                
+                document.getElementById('chart-' + type).classList.remove('hidden');
+                
+                const tabs = ['matriculas', 'notas', 'mensalidades'];
+                tabs.forEach(tab => {
+                    const btn = document.getElementById('tab-' + tab);
+                    if (btn) {
+                        btn.className = "px-4 py-1.5 rounded-full text-gray-500 hover:text-[#0a241e] transition-colors flex items-center gap-1.5 cursor-pointer";
+                    }
+                });
+                
+                const activeBtn = document.getElementById('tab-' + type);
+                if (activeBtn) {
+                    activeBtn.className = "bg-white text-[#008a4b] px-4 py-1.5 rounded-full shadow-xs flex items-center gap-1.5 cursor-pointer";
+                }
+
+                if (type === 'matriculas' && chartMatriculas) chartMatriculas.resize();
+                if (type === 'notas' && chartNotas) chartNotas.resize();
+                if (type === 'mensalidades' && chartMensalidades) chartMensalidades.resize();
+            };
+        })();
     </script>
 @endsection
