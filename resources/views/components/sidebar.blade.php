@@ -9,7 +9,7 @@
     <!-- Lista de Navegação -->
     <nav class="sidebar-menu">
         <!-- Dashboard -->
-        <div class="sidebar-item">
+        <div class="sidebar-item" data-menu="dashboard">
             <a href="/" class="sidebar-link active">
                 <span class="sidebar-link-content">
                     <i data-lucide="layout-grid"></i>
@@ -19,7 +19,7 @@
         </div>
 
         <!-- Secretaria -->
-        <div class="sidebar-item">
+        <div class="sidebar-item" data-menu="secretaria">
             <button class="sidebar-link" onclick="toggleDropdown(this)">
                 <span class="sidebar-link-content">
                     <i data-lucide="book-open"></i>
@@ -29,18 +29,18 @@
             </button>
             <div class="submenu">
                 <div class="submenu-list">
-                    <a href="{{ route('coordenacao.pagina', 'turmas') }}" class="submenu-link">Turmas</a>
-                    <a href="{{ route('coordenacao.pagina', 'funcionarios') }}" class="submenu-link">Funcionários</a>
-                    <a href="{{ route('coordenacao.pagina', 'usuarios') }}" class="submenu-link">Usuários</a>
-                    <a href="{{ route('coordenacao.pagina', 'alunos') }}" class="submenu-link">Alunos</a>
-                    <a href="{{ route('coordenacao.pagina', 'disciplinas') }}" class="submenu-link">Disciplinas</a>
-                    <a href="{{ route('coordenacao.pagina', 'lanche') }}" class="submenu-link">Lanche</a>
+                    <a href="{{ route('coordenacao.pagina', ['pasta' => 'turma', 'pagina' => 'turma_inf']) }}" class="submenu-link">Turmas</a>
+                    <a href="{{ route('coordenacao.pagina', ['pasta' => 'funcionarios', 'pagina' => 'funcionario_inf']) }}" class="submenu-link">Funcionários</a>
+                    <a href="{{ route('coordenacao.pagina', ['pasta' => 'usuarios', 'pagina' => 'usuario_inf']) }}" class="submenu-link">Usuários</a>
+                    <a href="{{ route('coordenacao.pagina', ['pasta' => 'alunos', 'pagina' => 'aluno_inf']) }}" class="submenu-link">Alunos</a>
+                    <a href="{{ route('coordenacao.pagina', ['pasta' => 'disciplinas', 'pagina' => 'disciplina_inf']) }}" class="submenu-link">Disciplinas</a>
+                    <a href="{{ route('coordenacao.pagina', ['pasta' => 'lanche', 'pagina' => 'lanche_inf']) }}" class="submenu-link">Lanche</a>
                 </div>
             </div>
         </div>
 
         <!-- Relatórios -->
-        <div class="sidebar-item">
+        <div class="sidebar-item" data-menu="relatorios">
             <button class="sidebar-link" onclick="toggleDropdown(this)">
                 <span class="sidebar-link-content">
                     <i data-lucide="file-text"></i>
@@ -50,20 +50,20 @@
             </button>
             <div class="submenu">
                 <div class="submenu-list">
-                    <a href="{{ route('coordenacao.pagina', 'relatorios-bimestrais') }}" class="submenu-link">Relatórios Bim.</a>
-                    <a href="{{ route('coordenacao.pagina', 'mapa-de-notas') }}" class="submenu-link">Mapas de Notas</a>
-                    <a href="{{ route('coordenacao.pagina', 'resultados') }}" class="submenu-link">Resultados</a>
-                    <a href="{{ route('coordenacao.pagina', 'gabaritos') }}" class="submenu-link">Gabaritos</a>
-                    <a href="{{ route('coordenacao.pagina', 'alunos-matriculados') }}" class="submenu-link">Alunos Matriculados</a>
-                    <a href="{{ route('coordenacao.pagina', 'alunos-inativos-ou-transferidos') }}" class="submenu-link">Alunos Inativos / Transf.</a>
-                    <a href="{{ route('coordenacao.pagina', 'alunos-por-turma') }}" class="submenu-link">Alunos Por Turma</a>
-                    <a href="{{ route('coordenacao.pagina', 'alunos-pre-matriculados') }}" class="submenu-link">Alunos Pré-Matriculados</a>
+                    <a href="{{ route('coordenacao.pagina', ['pasta' => 'relatorios', 'pagina' => 'relatorios_bimestrais']) }}" class="submenu-link">Relatórios Bim.</a>
+                    <a href="{{ route('coordenacao.pagina', ['pasta' => 'mapa', 'pagina' => 'mapas_notas']) }}" class="submenu-link">Mapas de Notas</a>
+                    <a href="{{ route('coordenacao.pagina', ['pasta' => 'resultado', 'pagina' => 'resultados']) }}" class="submenu-link">Resultados</a>
+                    <a href="{{ route('coordenacao.pagina', ['pasta' => 'gabaritos', 'pagina' => 'gabaritos']) }}" class="submenu-link">Gabaritos</a>
+                    <a href="{{ route('coordenacao.pagina', ['pasta' => 'relatorios', 'pagina' => 'relatorio_alunos_matriculados']) }}" class="submenu-link">Alunos Matriculados</a>
+                    <a href="{{ route('coordenacao.pagina', ['pasta' => 'relatorios', 'pagina' => 'relatorio_alunos_transferidos']) }}" class="submenu-link">Alunos Inativos / Transf.</a>
+                    <a href="{{ route('coordenacao.pagina', ['pasta' => 'relatorios', 'pagina' => 'relatorio_alunos_por_turma']) }}" class="submenu-link">Alunos Por Turma</a>
+                    <a href="{{ route('coordenacao.pagina', ['pasta' => 'relatorios', 'pagina' => 'relatorio_pre_matriculado']) }}" class="submenu-link">Alunos Pré-Matriculados</a>
                 </div>
             </div>
         </div>
 
         <!-- Financeiro -->
-        <div class="sidebar-item">
+        <div class="sidebar-item" data-menu="financeiro">
             <button class="sidebar-link" onclick="toggleDropdown(this)">
                 <span class="sidebar-link-content">
                     <i data-lucide="dollar-sign"></i>
@@ -73,16 +73,16 @@
             </button>
             <div class="submenu">
                 <div class="submenu-list">
-                    <a href="{{ route('coordenacao.pagina', 'contas-a-receber') }}" class="submenu-link">Receber</a>
-                    <a href="{{ route('coordenacao.pagina', 'receitas-e-despesas') }}" class="submenu-link">Receitas e Despesas</a>
-                    <a href="{{ route('coordenacao.pagina', 'estatistica-financeira') }}" class="submenu-link">Estatística</a>
-                    <a href="{{ route('coordenacao.pagina', 'relatorios-financeiros') }}" class="submenu-link">Relatórios</a>
+                    <a href="{{ route('coordenacao.pagina', ['pasta' => 'financeiro', 'pagina' => 'financeiro_receber']) }}" class="submenu-link">Receber</a>
+                    <a href="{{ route('coordenacao.pagina', ['pasta' => 'financeiro', 'pagina' => 'financeiro_receitas_e_despesas']) }}" class="submenu-link">Receitas e Despesas</a>
+                    <a href="{{ route('coordenacao.pagina', ['pasta' => 'financeiro', 'pagina' => 'financeiro_estatistica']) }}" class="submenu-link">Estatística</a>
+                    <a href="{{ route('coordenacao.pagina', ['pasta' => 'financeiro', 'pagina' => 'financeiro_relatorios']) }}" class="submenu-link">Relatórios</a>
                 </div>
             </div>
         </div>
 
         <!-- Ajuda -->
-        <div class="sidebar-item">
+        <div class="sidebar-item" data-menu="ajuda">
             <button class="sidebar-link" onclick="toggleDropdown(this)">
                 <span class="sidebar-link-content">
                     <i data-lucide="circle-help"></i>
@@ -92,12 +92,12 @@
             </button>
             <div class="submenu">
                 <div class="submenu-list">
-                    <a href="{{ route('coordenacao.pagina', 'manual-de-ajuda') }}" class="submenu-link">Manual</a>
-                    <a href="{{ route('coordenacao.pagina', 'canal-do-youtube') }}" class="submenu-link">YouTube</a>
-                    <a href="{{ route('coordenacao.pagina', 'pagina-do-facebook') }}" class="submenu-link">FaceBook</a>
-                    <a href="{{ route('coordenacao.pagina', 'sugestoes') }}" class="submenu-link">Sugestões</a>
-                    <a href="{{ route('coordenacao.pagina', 'bate-papo') }}" class="submenu-link">Bate-Papo</a>
-                    <a href="{{ route('coordenacao.pagina', 'contatos') }}" class="submenu-link">Contatos</a>
+                    <a href="{{ route('coordenacao.pagina', ['pasta' => 'ajuda', 'pagina' => 'manual_de_ajuda']) }}" class="submenu-link">Manual</a>
+                    <a href="{{ route('coordenacao.pagina', ['pasta' => 'ajuda', 'pagina' => 'canal_do_youtube']) }}" class="submenu-link">YouTube</a>
+                    <a href="{{ route('coordenacao.pagina', ['pasta' => 'ajuda', 'pagina' => 'pagina_do_facebook']) }}" class="submenu-link">FaceBook</a>
+                    <a href="{{ route('coordenacao.pagina', ['pasta' => 'ajuda', 'pagina' => 'sugestoes']) }}" class="submenu-link">Sugestões</a>
+                    <a href="{{ route('coordenacao.pagina', ['pasta' => 'ajuda', 'pagina' => 'bate_papo']) }}" class="submenu-link">Bate-Papo</a>
+                    <a href="{{ route('coordenacao.pagina', ['pasta' => 'ajuda', 'pagina' => 'contatos']) }}" class="submenu-link">Contatos</a>
                 </div>
             </div>
         </div>
@@ -120,19 +120,4 @@
     </div>
 </aside>
 
-<!-- JavaScript para Dropdowns e Alternador Mobile -->
-<script>
-    function toggleDropdown(button) {
-        const item = button.closest('.sidebar-item');
-        item.classList.toggle('expanded');
-    }
 
-    function toggleMobileMenu() {
-        const sidebar = document.getElementById('sidebar');
-        const backdrop = document.getElementById('sidebarBackdrop');
-        if (sidebar && backdrop) {
-            sidebar.classList.toggle('mobile-open');
-            backdrop.classList.toggle('active');
-        }
-    }
-</script>

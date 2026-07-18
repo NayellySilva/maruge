@@ -153,8 +153,8 @@ Route::delete('/api/eventos', function (\Illuminate\Http\Request $request) {
     return response()->json(['success' => true]);
 });
 
-Route::get('/coordenacao/{pagina}', function ($pagina) {
-    $viewName = "telasCoordenacao.{$pagina}";
+Route::get('/coordenacao/{pasta}/{pagina}', function ($pasta, $pagina) {
+    $viewName = "telasCoordenacao.{$pasta}.{$pagina}";
     if (view()->exists($viewName)) {
         return view($viewName);
     }

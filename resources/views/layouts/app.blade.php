@@ -11,6 +11,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
     <!-- Estilos e Scripts (Vite) -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+
 </head>
 <body>
     <div class="dashboard-layout">
@@ -53,51 +54,6 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-            // Atualiza os estados ativos do menu lateral
-            function updateSidebarActiveStates() {
-                const currentUrl = window.location.href.split('?')[0].replace(/\/$/, '');
-                
-                // Remove as classes ativas antigas
-                document.querySelectorAll('.sidebar-link, .submenu-link').forEach(el => {
-                    el.classList.remove('active');
-                    el.classList.remove('active-parent');
-                });
-                document.querySelectorAll('.sidebar-item').forEach(el => {
-                    el.classList.remove('expanded');
-                });
-
-                // Percorre todos os links para achar o correspondente
-                let activeLink = null;
-                document.querySelectorAll('.sidebar-menu a').forEach(link => {
-                    const href = link.getAttribute('href');
-                    if (href && href !== '#' && !href.startsWith('javascript:')) {
-                        const linkUrl = link.href.split('?')[0].replace(/\/$/, '');
-                        if (currentUrl === linkUrl) {
-                            activeLink = link;
-                        }
-                    }
-                });
-
-                if (activeLink) {
-                    activeLink.classList.add('active');
-                    
-                    // Se for um link de submenu, expande e destaca o pai com a classe active-parent (sem fundo verde)
-                    const submenu = activeLink.closest('.submenu');
-                    if (submenu) {
-                        const parentItem = activeLink.closest('.sidebar-item');
-                        if (parentItem) {
-                            parentItem.classList.add('expanded');
-                            const parentLink = parentItem.querySelector('.sidebar-link');
-                            if (parentLink) {
-                                parentLink.classList.add('active-parent');
-                            }
-                        }
-                    }
-                }
-            }
-
-            // Roda ao carregar a página inicialmente
-            updateSidebarActiveStates();
 
             // Histórico de navegação (botão Voltar/Avançar do navegador)
             window.addEventListener('popstate', () => {
@@ -152,7 +108,12 @@
                         }
 
                         // Atualiza os estados do sidebar
-                        updateSidebarActiveStates();
+                        if (typeof updateSidebarActiveStates === 'function') {
+                            updateSidebarActiveStates();
+                        }
+                        if (typeof loadSidebarState === 'function') {
+                            loadSidebarState();
+                        }
 
                         // Executa scripts presentes na página carregada
                         if (newContent) {

@@ -11,3 +11,5 @@ window.lucide = {
     },
     icons: icons
 };
+
+import './sidebar';

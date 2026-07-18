@@ -1,0 +1,73 @@
+@extends('telasCoordenacao.painel')  
+@section('conteudo')
+<div class="titulo-endereco">
+    <a href="#">
+    Carnês / Filtro por Alunos
+    </a>
+</div>
+<div class="col-md-5">
+    <div class="form-group">
+        <label for="SituacaoAluno ">Localizar aluno:</label>
+        <form class="form-search pesquisar" method="POST" action="/maruge/public/coordenacao/acordo_pesq">
+            {!! csrf_field() !!}
+            <input type="texto" name="pesquisar" placeholder="Pesquisar Aluno"  class="form-control">
+            <button class="btn-pesquisar"><i class="fa fa-search" aria-hidden="true"></i></button>
+        </form>
+    </div>
+</div>
+<div class="col-md-3">
+    <div class="form-group">
+        <label for="NomeTurma">Filtrar por turma:</label>
+        <form class="form-search pesquisar"method="POST" action="/maruge/public/coordenacao/acordo_filtro">
+           {!! csrf_field() !!}
+            <select class="form-control" name="idTurmas" >
+                <option></option>
+                @forelse($turmas as $turma)  
+                <option value="{{$turma->idTurmas}}">{{$turma->NomeTurma}}</option>
+                @empty
+                @endforelse 
+            </select>
+            <button class="btn-filtro" type="submit" > <i class="fa fa-search" aria-hidden="true"></i></button>
+        </form>
+    </div>
+</div>
+<div class="col-md-4">
+    <div class="quant-alunos">
+        <h2 class="quant-alunos">Alunos Cadastrados: ({{$Alunos->count()}})</h2>
+    </div> 
+</div>
+<div class="caminho-din">
+    <table class="table table-hover">
+        <thead>
+            <tr>
+         <th>NOME DO ALUNO</th>
+        <th>RA</th>
+        <th><center>TURMA</center></th>
+        <th><center>GERAR ACORDO</center></th>
+        </tr>
+        </thead>   
+        <!-- Recebendo valores na vareavel escolas e passando para escola-->
+        @forelse($Alunos as $Aluno)  
+        <center>
+            <tr>
+                <td>{{$Aluno->NomeAluno}}</td>
+                <td>{{$Aluno->RA}}</td>
+                <td><center>{{$Aluno->NomeTurma}}</td>
+                <td> <a href="{{url("/coordenacao/criaracordo/$Aluno->idAluno")}}" ><center> <img src="{{url('imgs/icones/editar.png')}}" alt="editar"</center></td>
+                </tr>         
+                @empty
+                <div class="alert alert-warning alert-dismissible" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <strong>Desculpe ! </strong> Mas nenhuma turma foi informada, por favor digite o nome do aluno ou selecione uma turma.
+                </div>
+                <tr>
+                    <td colspan="500"> Nenhum alunos encontrado !</td>
+                </tr>
+                @endforelse
+                </table> 
+                
+               </div>
+
+
+                </div> <!--Fim do caminho-din-->
+                @endsection
