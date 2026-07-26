@@ -1,192 +1,124 @@
-@extends('telasCoordenacao.painel')  
-@section('conteudo')
-<div class="titulo-pagina">
-    <h1 class="titulo-pagina">{{$titulo or 'Nova Disciplina'}}</h1>
+@extends('layouts.app')
 
-</div> 
-<div class="caminho-din">
-    <div class="preloader" style="display: none"> Enviando os dados...</div>  
-    <div class="alert alert-success msg-exito" role="alert" style="display: none"></div>
-    <div class="alert alert-warning msg-erro" role="alert" style="display: none"></div> 
+@section('content')
+@php
+    // Garante que a variável esteja definida para evitar erros em PHP 8.x
+    $disciplina = $disciplina ?? null;
 
-    <div class="formularios">    
-        @if(count($errors)>0)
-        @foreach($errors->all()as $error)
-        {{$error}}
-        @endforeach
-        @endif
+    // Tenta carregar as turmas do banco de dados de forma resiliente
+    try {
+        $turmasList = \DB::table('tb_turmas')->orderBy('NomeTurma')->get();
+    } catch (\Exception $e) {
+        $turmasList = collect();
+    }
+@endphp
 
-        @if(isset($disciplina))
-        <form class="form form-search form-Nu formularios" action="/maruge/public/coordenacao/disciplina_editar/{{$disciplina->idDisciplinas}}" method="POST">
+<div class="flex flex-col gap-6 w-full">
+    <!-- Localização (Breadcrumb de fundo) -->
+    <div class="text-sm text-[#5c706b]">
+        <a href="{{ url('/coordenacao/disciplinas/disciplina_inf') }}" class="hover:text-[#008a4b] transition-colors">Secretaria</a>
+        <span class="mx-2">/</span>
+        <a href="{{ url('/coordenacao/disciplinas/disciplina_inf') }}" class="hover:text-[#008a4b] transition-colors">Disciplinas</a>
+        <span class="mx-2">/</span>
+        <span class="text-[#0a241e] font-medium">{{ isset($disciplina) ? 'Editar Disciplina' : 'Nova Disciplina' }}</span>
+    </div>
 
-            <!--LINHA QUE INFORMA A DISCIPLINA DIGITANTO, ESSA LINHA PERTENCE A CONDIÇÃO DE EDITAR-->
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label for="NomeDisciplina">Nome de disciplina:</label>
-                        <input type="texto" name="NomeDisciplina" placeholder="Digite o nome da disciplina"  class="form-control" value="{{$disciplina->NomeDisciplina or old('NomeDisciplina')}}">
-                    </div>
-                </div>
+    <!-- Título de Fundo -->
+    <div class="flex justify-between items-center">
+        <div class="flex flex-col gap-1">
+            <h1 class="text-3xl font-semibold text-[#0a241e]">Disciplinas</h1>
+            <p class="text-sm text-[#5c706b]">Gerenciamento de disciplinas do sistema</p>
+        </div>
+    </div>
 
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <br>
-                        <button type="submit" class="btn btn-success">ATUALIZAR</button>
-                        <button type="reset" class="btn btn-default"> <a href="/maruge/public/coordenacao/disciplina_inf"> CANCELAR</button>
-                    </div>
-                </div>
+    <!-- Modal Overlay -->
+    <div class="fixed inset-0 z-50 flex items-center justify-center p-4">
+        <!-- Backdrop com desfoque (blur) sutil para destacar o modal -->
+        <a href="{{ url('/coordenacao/disciplinas/disciplina_inf') }}" class="fixed inset-0 bg-black/20 backdrop-blur-sm transition-opacity cursor-default"></a>
+        
+        <!-- Conteúdo do Modal (Card nítido e destacado) -->
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden transform transition-all z-10 border border-[#e3e8e6]">
+            <!-- Cabeçalho do Modal -->
+            <div class="px-6 py-4 border-b border-[#e3e8e6] flex justify-between items-center bg-[#f8faf9]">
+                <h3 class="text-lg font-semibold text-[#0a241e]">
+                    {{ isset($disciplina) ? 'Editar Disciplina' : 'Nova Disciplina' }}
+                </h3>
+                <a href="{{ url('/coordenacao/disciplinas/disciplina_inf') }}" class="text-[#5c706b] hover:text-[#0a241e] transition-colors">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </a>
             </div>
 
+            <!-- Corpo do Modal / Formulário -->
+            @if(isset($disciplina))
+                <form class="form form-search form-Nu formularios" action="/maruge/public/coordenacao/disciplina_editar/{{$disciplina->idDisciplinas}}" method="POST">
             @else
-            <form class="form form-search form-Nu formularios" action="/maruge/public/coordenacao/disciplina_cad" method="POST" send="/maruge/public/coordenacao/disciplina_cad">
-                <!--PRIMEIRA LINHA REFERENTE AOS CAMPOS (NOME DA DISCIPLINA INFORMADA DIGITANDO)-->
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label for="NomeDisciplina">Nome de disciplina:</label>
-                            <input type="texto" name="NomeDisciplina" placeholder="Digite o nome da disciplina"  class="form-control" value="{{$disciplina->NomeDisciplina or old('NomeDisciplina')}}">
+                <form class="form form-search form-Nu formularios" action="/maruge/public/coordenacao/disciplina_cad" method="POST" send="/maruge/public/coordenacao/disciplina_cad">
+            @endif
+                {!! csrf_field() !!}
+                
+                <div class="px-6 py-6 flex flex-col gap-4">
+                    <!-- Alertas e Preloader (Manipulados via Ajax no painel.blade.php) -->
+                    <div class="preloader bg-emerald-50 text-emerald-700 text-sm p-3 rounded-xl border border-emerald-100 text-center font-medium animate-pulse" style="display: none">
+                        Enviando os dados...
+                    </div>  
+                    <div class="alert alert-success msg-exito bg-emerald-50 text-emerald-700 text-sm p-3 rounded-xl border border-emerald-100 text-center font-medium" role="alert" style="display: none"></div>
+                    <div class="alert alert-warning msg-erro bg-red-50 text-red-700 text-sm p-3 rounded-xl border border-red-100 text-center font-medium" role="alert" style="display: none"></div> 
+
+                    @if(count($errors) > 0)
+                        <div class="bg-red-50 text-red-600 text-sm p-3 rounded-xl border border-red-100">
+                            @foreach($errors->all() as $error)
+                                <p>{{ $error }}</p>
+                            @endforeach
                         </div>
+                    @endif
+
+                    <!-- Campo Nome da Disciplina -->
+                    <div class="flex flex-col gap-1.5">
+                        <label for="NomeDisciplina" class="text-sm font-medium text-[#0a241e]">Nome de disciplina:</label>
+                        <input type="text" id="NomeDisciplina" name="NomeDisciplina" placeholder="Digite o nome da disciplina" 
+                               class="w-full bg-[#f8faf9] border border-[#e3e8e6] rounded-xl px-4 py-2.5 text-sm text-[#0a241e] placeholder-[#95aba5] focus:outline-none focus:border-[#008a4b] transition-all" 
+                               value="{{ $disciplina ? ($disciplina->NomeDisciplina ?? old('NomeDisciplina')) : old('NomeDisciplina') }}" required>
                     </div>
 
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <br>
-                            <button type="submit" class="btn btn-success">SALVAR</button>
-                            <button type="reset" class="btn btn-default">LIMPAR</button>
+                    <!-- Acordeão para Vincular Turmas -->
+                    <details class="group bg-[#f8faf9] border border-[#e3e8e6] rounded-xl overflow-hidden">
+                        <summary class="flex justify-between items-center px-4 py-3.5 font-medium text-sm text-[#0a241e] cursor-pointer select-none list-none [&::-webkit-details-marker]:hidden">
+                            <span>Vincular a Turmas (Opcional)</span>
+                            <div class="text-[#5c706b] transition-transform duration-200 group-open:rotate-180">
+                                <i data-lucide="chevron-down" class="w-4 h-4"></i>
+                            </div>
+                        </summary>
+                        <div class="px-4 pb-4 pt-2 border-t border-[#e3e8e6] bg-white">
+                            <!-- Checkboxes de Turmas -->
+                            <div class="grid grid-cols-2 gap-2 max-h-40 overflow-y-auto pr-1">
+                                @foreach($turmasList as $turmaItem)
+                                    <label class="flex items-center gap-2.5 px-3 py-2 rounded-xl hover:bg-[#f8faf9] transition-all cursor-pointer border border-[#e3e8e6]/50 hover:border-[#e3e8e6]">
+                                        <input type="checkbox" name="turmas[]" value="{{ $turmaItem->idTurmas }}" 
+                                               class="w-4 h-4 text-[#008a4b] border-[#e3e8e6] rounded-sm focus:ring-[#008a4b] focus:ring-2">
+                                        <div class="flex flex-col">
+                                            <span class="text-xs font-semibold text-[#0a241e]">{{ $turmaItem->NomeTurma }}</span>
+                                            <span class="text-[10px] text-[#5c706b]">Ano: {{ $turmaItem->AnoLetivo }}</span>
+                                        </div>
+                                    </label>
+                                @endforeach
+                            </div>
                         </div>
-                    </div>
-                </div>
-                <!--SEGUNDA LINHA ESSE E REFERENTE AS OPÇÕES DO CHECKBOX)-->
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="form-group">
-                            <label for="disciplinas">Selecione todas as disciplinas:</label> 
-                            <input type="checkbox" id="cbgroup1_master" onchange="selecionando(this, 'tudo')">
-                        </div>
-                    </div>
-                </div>
-
-                <div class="linha"></div>
-
-                <!--Terceira linhas, iniciando a linha das disciplinas linha de portugues)-->
-                <div class="row">
-                    <div class="col-md-3">
-                        <div class="form-group">
-                            <input type="checkbox" class="tudo" name="Disciplinas[]" id="checkbox1" value="PORTUGUÊS"> PORTUGUÊS
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="form-group">
-                            <input type="checkbox" class="tudo" name="Disciplinas[]" id="checkbox2" value="MATEMÁTICA"> MATEMÁTICA
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="form-group">
-                            <input type="checkbox" class="tudo" name="Disciplinas[]" id="checkbox3" value="GEOGRAFIA"> GEOGRAFIA
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="form-group">
-                            <input type="checkbox" class="tudo" name="Disciplinas[]" id="checkbox4" value="CIÊNCIAS"> CIÊNCIAS
-                        </div>
-                    </div>
-                </div>
-
-                <!--Quarta linhas, segunda linhas de disciplinas)-->
-                <div class="row">
-                    <div class="col-md-3">
-                        <div class="form-group">
-                            <input type="checkbox" class="tudo" name="Disciplinas[]" id="checkbox5" value="INGLÊS"> INGLÊS
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="form-group">
-                            <input type="checkbox" class="tudo" name="Disciplinas[]" id="checkbox6" value="REDAÇÃO"> REDAÇÃO
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="form-group">
-                            <input type="checkbox" class="tudo" name="Disciplinas[]" id="checkbox7" value="ARTES"> ARTES
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="form-group">
-                            <input type="checkbox" class="tudo" name="Disciplinas[]" id="checkbox8" value="FÍSICA"> FÍSICA
-                        </div>
-                    </div>
-                </div>
-                <!--Quinta linha linhas, terceira linha de disciplinas)-->
-                <div class="row">
-                    <div class="col-md-3">
-                        <div class="form-group">
-                            <input type="checkbox" class="tudo" name="Disciplinas[]" id="checkbox9" value="HISTÓRIA"> HISTÓRIA
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="form-group">
-                            <input type="checkbox" class="tudo" name="Disciplinas[]" id="checkbox10" value="RELIGIÃO"> RELIGIÃO
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="form-group">
-                            <input type="checkbox" class="tudo" name="Disciplinas[]" id="checkbox11" value="LEITURA"> LEITURA
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="form-group">
-                            <input type="checkbox" class="tudo" name="Disciplinas[]" id="checkbox12" value="QUIMICA"> QUIMICA
-                        </div>
-                    </div>
+                    </details>
                 </div>
 
-                <!--sexta linha , quarta linha de disciplinas)-->
-                <div class="row">
-                    <div class="col-md-3">
-                        <div class="form-group">
-                            <input type="checkbox" class="tudo" name="Disciplinas[]" id="checkbox13" value="CALIGRAFIA"> CALIGRAFIA
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="form-group">
-                            <input type="checkbox" class="tudo" name="Disciplinas[]" id="checkbox14" value="LITERATURA"> LITERATURA
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="form-group">
-                            <input type="checkbox" class="tudo" name="Disciplinas[]" id="checkbox15" value="ED.FÍSICA"> ED.FÍSICA
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="form-group">
-                            <input type="checkbox" class="tudo" name="Disciplinas[]" id="checkbox16" value="FILOSOFIA"> FILOSOFIA
-                        </div>
-                    </div>
+                <!-- Rodapé do Modal / Botões -->
+                <div class="px-6 py-4 bg-[#f8faf9] border-t border-[#e3e8e6] flex justify-end gap-3">
+                    <a href="{{ url('/coordenacao/disciplinas/disciplina_inf') }}" 
+                       class="inline-flex items-center justify-center border border-[#e3e8e6] text-[#5c706b] hover:bg-[#f8faf9] font-medium px-5 py-2.5 rounded-full text-sm transition-all cursor-pointer">
+                        Cancelar
+                    </a>
+                    <button type="submit" 
+                            class="bg-[#008a4b] hover:bg-[#00703c] text-white font-medium px-6 py-2.5 rounded-full text-sm transition-all shadow-sm cursor-pointer">
+                        {{ isset($disciplina) ? 'Atualizar' : 'Salvar' }}
+                    </button>
                 </div>
-
-                <!--setima linha , quinta linha de disciplinas)-->
-                <div class="row">
-                    <div class="col-md-3">
-                        <div class="form-group">
-                            <input type="checkbox" class="tudo" name="Disciplinas[]" id="checkbox17" value="MATEMÁTICA II"> MATEMÁTICA II
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="form-group">
-                            <input type="checkbox" class="tudo" name="Disciplinas[]" id="checkbox18" value="LITERATURA"> COMPORTAMENTO
-                        </div>
-                    </div>
-
-                </div>
-
-                @endif 
-                {!! csrf_field() !!} 
-
-
-
-            </form> <!--Fim do formulario-->
+            </form>
+        </div>
     </div>
-</div> <!--Fim do caminho-din-->
-
-
-
+</div>
 @endsection
