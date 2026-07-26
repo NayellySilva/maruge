@@ -77,12 +77,12 @@
             });
 
             function isModalPage(urlStr) {
-                return urlStr.includes('disciplina_cad') || 
-                       urlStr.includes('disciplina_editar');
+                return (urlStr.includes('disciplina_cad') && !urlStr.includes('turma_disciplina_cad')) || 
+                       (urlStr.includes('disciplina_editar') && !urlStr.includes('turma_disciplina_editar'));
             }
 
             function getBackgroundPageUrl(urlStr) {
-                if (urlStr.includes('disciplina_cad') || urlStr.includes('disciplina_editar')) {
+                if (isModalPage(urlStr)) {
                     return window.location.origin + '/coordenacao/disciplinas/disciplina_inf';
                 }
                 return null;
