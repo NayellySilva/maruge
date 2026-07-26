@@ -33,9 +33,18 @@
                     <a href="{{ route('coordenacao.pagina', ['pasta' => 'disciplinas', 'pagina' => 'disciplina_inf']) }}" class="submenu-link">Disciplinas</a>
                     <a href="{{ route('coordenacao.pagina', ['pasta' => 'turma_disc', 'pagina' => 'turma_disciplina_inf']) }}" class="submenu-link">Turma x Disciplina</a>
                     <a href="{{ route('coordenacao.pagina', ['pasta' => 'funcionarios', 'pagina' => 'funcionario_inf']) }}" class="submenu-link">Funcionários</a>
-                    <a href="{{ route('coordenacao.pagina', ['pasta' => 'usuarios', 'pagina' => 'usuario_inf']) }}" class="submenu-link">Usuários</a>
                     <a href="{{ route('coordenacao.pagina', ['pasta' => 'alunos', 'pagina' => 'aluno_inf']) }}" class="submenu-link">Alunos</a>
+                    <a href="{{ route('coordenacao.pagina', ['pasta' => 'alunos', 'pagina' => 'aluno_rematricula']) }}" class="submenu-link">Rematrícula</a>
+                    <a href="{{ route('coordenacao.pagina', ['pasta' => 'alunos', 'pagina' => 'aluno_pre_matricula_lista']) }}" class="submenu-link">Pré-Matrícula</a>
+                    <a href="{{ route('coordenacao.pagina', ['pasta' => 'alunos', 'pagina' => 'aluno_pre_matriculado']) }}" class="submenu-link">Pré-Matriculados</a>
+                    <a href="{{ route('coordenacao.pagina', ['pasta' => 'historico', 'pagina' => 'historico_inf']) }}" class="submenu-link">Histórico</a>
+                    <a href="{{ route('coordenacao.pagina', ['pasta' => 'declaracoes', 'pagina' => 'declaracoes']) }}" class="submenu-link">Declarações</a>
+                    <a href="{{ route('coordenacao.pagina', ['pasta' => 'frequencia', 'pagina' => 'frequencias']) }}" class="submenu-link">Frequência</a>
+                    <a href="{{ route('coordenacao.pagina', ['pasta' => 'boletins', 'pagina' => 'boletins']) }}" class="submenu-link">Boletins</a>
+                    <a href="{{ route('coordenacao.pagina', ['pasta' => 'notas', 'pagina' => 'notas']) }}" class="submenu-link">Lançar Notas</a>
                     <a href="{{ route('coordenacao.pagina', ['pasta' => 'lanche', 'pagina' => 'lanche_inf']) }}" class="submenu-link">Lanche</a>
+                    <a href="{{ route('coordenacao.pagina', ['pasta' => 'carne', 'pagina' => 'carne_inf']) }}" class="submenu-link">Recibos / Carnês</a>
+                    <a href="{{ route('coordenacao.pagina', ['pasta' => 'aulas', 'pagina' => 'aulas_inf']) }}" class="submenu-link">Aulas</a>
                 </div>
             </div>
         </div>
