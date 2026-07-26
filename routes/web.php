@@ -319,6 +319,30 @@ Route::post('/coordenacao/editar_turma/{id}', function (\Illuminate\Http\Request
     return redirect('/coordenacao/turma/turma_inf');
 });
 
+// Gravar/Cadastrar Lotação (Turma x Disciplina)
+Route::post('/coordenacao/turma_disciplina_cad', function (\Illuminate\Http\Request $request) {
+    try {
+        \DB::table('tb_turmas_disciplinas')->insert([
+            'tb_turmas_idTurmas' => $request->input('idTurmas'),
+            'tb_disciplinas_idDisciplinas' => $request->input('idDisciplinas'),
+            'tb_funcionarios_idFuncionarios' => $request->input('idFuncionarios')
+        ]);
+        return "1";
+    } catch (\Exception $e) {
+        return "Erro ao salvar lotação: " . $e->getMessage();
+    }
+});
+
+// Excluir Lotação (Turma x Disciplina)
+Route::get('/coordenacao/turma_disciplina/deletar/{id}', function ($id) {
+    try {
+        \DB::table('tb_turmas_disciplinas')->where('idTurmas_Disciplinas', $id)->delete();
+    } catch (\Exception $e) {
+        // Ignora
+    }
+    return redirect('/coordenacao/turma_disc/turma_disciplina_inf');
+});
+
 Route::get('/coordenacao/{pasta}/{pagina}', function ($pasta, $pagina) {
     $viewName = "telasCoordenacao.{$pasta}.{$pagina}";
     if (view()->exists($viewName)) {
