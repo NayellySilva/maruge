@@ -30,10 +30,11 @@
             <div class="submenu">
                 <div class="submenu-list">
                     <a href="{{ route('coordenacao.pagina', ['pasta' => 'turma', 'pagina' => 'turma_inf']) }}" class="submenu-link">Turmas</a>
+                    <a href="{{ route('coordenacao.pagina', ['pasta' => 'disciplinas', 'pagina' => 'disciplina_inf']) }}" class="submenu-link">Disciplinas</a>
+                    <a href="{{ route('coordenacao.pagina', ['pasta' => 'turma_disc', 'pagina' => 'turma_disciplina_inf']) }}" class="submenu-link">Turma x Disciplina</a>
                     <a href="{{ route('coordenacao.pagina', ['pasta' => 'funcionarios', 'pagina' => 'funcionario_inf']) }}" class="submenu-link">Funcionários</a>
                     <a href="{{ route('coordenacao.pagina', ['pasta' => 'usuarios', 'pagina' => 'usuario_inf']) }}" class="submenu-link">Usuários</a>
                     <a href="{{ route('coordenacao.pagina', ['pasta' => 'alunos', 'pagina' => 'aluno_inf']) }}" class="submenu-link">Alunos</a>
-                    <a href="{{ route('coordenacao.pagina', ['pasta' => 'disciplinas', 'pagina' => 'disciplina_inf']) }}" class="submenu-link">Disciplinas</a>
                     <a href="{{ route('coordenacao.pagina', ['pasta' => 'lanche', 'pagina' => 'lanche_inf']) }}" class="submenu-link">Lanche</a>
                 </div>
             </div>

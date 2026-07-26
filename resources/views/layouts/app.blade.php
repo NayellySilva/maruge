@@ -76,7 +76,153 @@
                 }
             });
 
+            function isModalPage(urlStr) {
+                return urlStr.includes('disciplina_cad') || 
+                       urlStr.includes('disciplina_editar');
+            }
+
+            function getBackgroundPageUrl(urlStr) {
+                if (urlStr.includes('disciplina_cad') || urlStr.includes('disciplina_editar')) {
+                    return window.location.origin + '/coordenacao/disciplinas/disciplina_inf';
+                }
+                return null;
+            }
+
+            function initPageScripts(newContent) {
+                // Atualiza os estados do sidebar
+                if (typeof updateSidebarActiveStates === 'function') {
+                    updateSidebarActiveStates();
+                }
+                if (typeof loadSidebarState === 'function') {
+                    loadSidebarState();
+                }
+
+                // Executa scripts presentes na página carregada
+                if (newContent) {
+                    const scripts = newContent.querySelectorAll('script');
+                    scripts.forEach(script => {
+                        const newScript = document.createElement('script');
+                        if (script.src) {
+                            newScript.src = script.src;
+                        } else {
+                            newScript.textContent = script.textContent;
+                        }
+                        document.body.appendChild(newScript);
+                        newScript.remove();
+                    });
+                }
+
+                // Recria ícones Lucide
+                if (window.lucide) {
+                    window.lucide.createIcons();
+                }
+            }
+
+            function openModalFromUrl(url, pushState = true) {
+                fetch(url)
+                    .then(response => {
+                        if (!response.ok) throw new Error('Page load failed');
+                        return response.text();
+                    })
+                    .then(html => {
+                        const parser = new DOMParser();
+                        const doc = parser.parseFromString(html, 'text/html');
+
+                        // Encontra o container do modal no HTML retornado
+                        const modalOverlay = doc.querySelector('.fixed.inset-0.z-50');
+                        if (modalOverlay) {
+                            // Remove o modal atual se houver
+                            const existingModal = document.getElementById('app-modal-container');
+                            if (existingModal) {
+                                existingModal.remove();
+                            }
+
+                            // Cria e anexa o novo container do modal
+                            const modalContainer = document.createElement('div');
+                            modalContainer.id = 'app-modal-container';
+                            modalContainer.appendChild(modalOverlay);
+                            document.body.appendChild(modalContainer);
+
+                            // Atualiza os ícones dentro do modal
+                            if (window.lucide) {
+                                window.lucide.createIcons();
+                            }
+
+                            // Atualiza o histórico do navegador
+                            if (pushState) {
+                                history.pushState(null, '', url);
+                            }
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Modal load error, loading normally:', error);
+                        window.location.href = url;
+                    });
+            }
+
+            function loadBackgroundThenModal(bgUrl, modalUrl, pushState = true) {
+                const mainContent = document.querySelector('.main-content');
+                if (mainContent) {
+                    mainContent.style.opacity = '0.5';
+                    mainContent.style.transition = 'opacity 0.15s ease';
+                }
+
+                fetch(bgUrl)
+                    .then(response => {
+                        if (!response.ok) throw new Error('Page load failed');
+                        return response.text();
+                    })
+                    .then(html => {
+                        const parser = new DOMParser();
+                        const doc = parser.parseFromString(html, 'text/html');
+
+                        // Atualiza o título
+                        document.title = doc.title;
+
+                        // Atualiza o conteúdo principal
+                        const newContent = doc.querySelector('.main-content');
+                        if (mainContent && newContent) {
+                            mainContent.innerHTML = newContent.innerHTML;
+                            mainContent.style.opacity = '1';
+                        }
+
+                        // Inicializa scripts e ícones do background
+                        initPageScripts(newContent);
+
+                        // Abre o modal por cima
+                        openModalFromUrl(modalUrl, pushState);
+                    })
+                    .catch(error => {
+                        console.error('Background load error, loading normally:', error);
+                        window.location.href = modalUrl;
+                    });
+            }
+
             function loadPage(url, pushState = true) {
+                // Fechar qualquer modal ativo ao navegar para uma página comum
+                if (!isModalPage(url)) {
+                    const modalContainer = document.getElementById('app-modal-container');
+                    if (modalContainer) {
+                        modalContainer.remove();
+                    }
+                }
+
+                // Se a URL solicitada for de um modal
+                if (isModalPage(url)) {
+                    const bgUrl = getBackgroundPageUrl(url);
+                    const currentBgUrl = getBackgroundPageUrl(window.location.href);
+
+                    // Se já estivermos na página de fundo correta carregada no DOM
+                    if (currentBgUrl === bgUrl && document.querySelector('.main-content').innerHTML.trim() !== '') {
+                        openModalFromUrl(url, pushState);
+                    } else {
+                        // Caso contrário, carrega a página de listagem primeiro, depois o modal por cima
+                        loadBackgroundThenModal(bgUrl, url, pushState);
+                    }
+                    return;
+                }
+
+                // Navegação SPA normal
                 const mainContent = document.querySelector('.main-content');
                 if (mainContent) {
                     mainContent.style.opacity = '0.5';
@@ -107,38 +253,54 @@
                             history.pushState(null, '', url);
                         }
 
-                        // Atualiza os estados do sidebar
-                        if (typeof updateSidebarActiveStates === 'function') {
-                            updateSidebarActiveStates();
-                        }
-                        if (typeof loadSidebarState === 'function') {
-                            loadSidebarState();
-                        }
-
-                        // Executa scripts presentes na página carregada
-                        if (newContent) {
-                            const scripts = newContent.querySelectorAll('script');
-                            scripts.forEach(script => {
-                                const newScript = document.createElement('script');
-                                if (script.src) {
-                                    newScript.src = script.src;
-                                } else {
-                                    newScript.textContent = script.textContent;
-                                }
-                                document.body.appendChild(newScript);
-                                newScript.remove();
-                            });
-                        }
-
-                        // Recria ícones Lucide
-                        if (window.lucide) {
-                            window.lucide.createIcons();
-                        }
+                        initPageScripts(newContent);
                     })
                     .catch(error => {
                         console.error('SPA load error, navigating normally:', error);
                         window.location.href = url;
                     });
+            }
+
+            // Ao carregar a página inicialmente, verifica se ela é uma tela de modal.
+            const initialUrl = window.location.href;
+            if (isModalPage(initialUrl)) {
+                const mainContent = document.querySelector('.main-content');
+                if (mainContent) {
+                    const modalHtml = mainContent.innerHTML;
+                    const bgUrl = getBackgroundPageUrl(initialUrl);
+
+                    mainContent.innerHTML = '';
+                    mainContent.style.opacity = '0.5';
+
+                    fetch(bgUrl)
+                        .then(response => response.text())
+                        .then(html => {
+                            const parser = new DOMParser();
+                            const doc = parser.parseFromString(html, 'text/html');
+                            const bgContent = doc.querySelector('.main-content');
+                            if (bgContent) {
+                                mainContent.innerHTML = bgContent.innerHTML;
+                                mainContent.style.opacity = '1';
+                                initPageScripts(bgContent);
+                            }
+
+                            // Injeta o modal
+                            const parser2 = new DOMParser();
+                            const doc2 = parser2.parseFromString(modalHtml, 'text/html');
+                            const modalOverlay = doc2.querySelector('.fixed.inset-0.z-50');
+
+                            if (modalOverlay) {
+                                const modalContainer = document.createElement('div');
+                                modalContainer.id = 'app-modal-container';
+                                modalContainer.appendChild(modalOverlay);
+                                document.body.appendChild(modalContainer);
+
+                                if (window.lucide) {
+                                    window.lucide.createIcons();
+                                }
+                            }
+                        });
+                }
             }
         });
     </script>
