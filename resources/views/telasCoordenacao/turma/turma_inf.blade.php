@@ -1,6 +1,13 @@
 @extends('layouts.app')
 
 @section('content')
+@php
+    try {
+        $turmas = \DB::table('tb_turmas')->orderBy('NomeTurma')->get();
+    } catch (\Exception $e) {
+        $turmas = collect();
+    }
+@endphp
 <div class="flex flex-col gap-6">
     <!-- Localização (Breadcrumb) -->
     <div class="text-sm text-[#5c706b]">
@@ -15,7 +22,7 @@
             <h1 class="text-3xl font-semibold text-[#0a241e]">Turmas</h1>
             <p class="text-sm text-[#5c706b]">Turmas cadastradas: ({{ isset($turmas) ? (method_exists($turmas, 'total') ? $turmas->total() : count($turmas)) : 0 }})</p>
         </div>
-        <a href="{{ url('/coordenacao/turma/turma_form') }}" class="bg-[#008a4b] hover:bg-[#00703c] text-white font-medium px-6 py-2.5 rounded-full flex items-center gap-2 transition-all shadow-sm cursor-pointer">
+        <a href="{{ url('/coordenacao/turma/turma_cad') }}" class="bg-[#008a4b] hover:bg-[#00703c] text-white font-medium px-6 py-2.5 rounded-full flex items-center gap-2 transition-all shadow-sm cursor-pointer">
             <i data-lucide="plus" class="w-5 h-5"></i>
             <span>Cadastrar Turma</span>
         </a>

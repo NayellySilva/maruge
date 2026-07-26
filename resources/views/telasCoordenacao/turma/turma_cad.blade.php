@@ -1,86 +1,117 @@
-@extends('telasCoordenacao.painel')  
-@section('conteudo')
-<div class="titulo-pagina">
-    <h1 class="titulo-pagina">{{ $titulo ?? 'Nova Turma' }}</h1>
+@extends('layouts.app')
 
-</div> 
-<div class="caminho-din">
-    <div class="preloader" style="display: none"> Enviando os dados...</div>  
-    <div class="alert alert-success msg-exito" role="alert" style="display: none"></div>
-    <div class="alert alert-warning msg-erro" role="alert" style="display: none"></div> 
+@section('content')
+@php
+    // Garante que a variável esteja definida para evitar erros em PHP 8.x
+    $turma = $turma ?? null;
+@endphp
 
-    <div class="formularios">    
-        @if(count($errors)>0)
-        @foreach($errors->all() as $error)
-        {{$error}}
-        @endforeach
+<div class="flex flex-col gap-6 w-full">
+    <!-- Localização-->
+    <div class="text-sm text-[#5c706b]">
+        <a href="{{ url('/coordenacao/turma/turma_inf') }}" class="hover:text-[#008a4b] transition-colors">Secretaria</a>
+        <span class="mx-2">/</span>
+        <a href="{{ url('/coordenacao/turma/turma_inf') }}" class="hover:text-[#008a4b] transition-colors">Turmas</a>
+        <span class="mx-2">/</span>
+        <span class="text-[#0a241e] font-medium">{{ isset($turma) ? 'Editar Turma' : 'Nova Turma' }}</span>
+    </div>
+
+    <!-- Card Principal-->
+    <div class="bg-white border border-[#e3e8e6] rounded-2xl p-6 shadow-2xs w-full">
+        
+        <!-- Cabeçalho do Card -->
+        <div class="mb-6 border-b border-[#f1f3f2] pb-6">
+            <h1 class="text-2xl font-semibold text-[#0a241e]">{{ isset($turma) ? 'Editar Cadastro da Turma' : 'Cadastrar Nova Turma' }}</h1>
+            <p class="text-sm text-[#5c706b] mt-1">Preencha os campos abaixo com as informações básicas da turma.</p>
+        </div>
+
+        <!-- Alert de Erros de Validação -->
+        @if(count($errors) > 0)
+            <div class="bg-red-50 border border-red-200 text-red-700 p-4 rounded-xl mb-6 text-sm flex gap-3 items-start">
+                <i data-lucide="alert-circle" class="w-5 h-5 shrink-0 mt-0.5"></i>
+                <div>
+                    <strong class="font-semibold block mb-1">Por favor, corrija os erros abaixo:</strong>
+                    <ul class="list-disc pl-5 space-y-1">
+                        @foreach($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            </div>
         @endif
-        @if(isset($turma))
-        <form class="form form-search form-Nu formularios" action="/maruge/public/coordenacao/turma_editar/{{$turma->idTurmas}}" method="POST">
 
+        <!-- Formulário -->
+        <form method="POST" action="{{ isset($turma) ? url("/coordenacao/editar_turma/{$turma->idTurmas}") : url("/coordenacao/cadturma") }}" class="flex flex-col gap-6">
+            {!! csrf_field() !!}
 
-            @else
-            <form class="form form-search form-Nu formularios" action="/maruge/public/coordenacao/turma_cad" method="POST" send="/maruge/public/coordenacao/turma_cad">
-                @endif 
+            <!-- Primeira Linha: Campos da Turma  -->
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-4">
+                
+                <!-- Nome da Turma -->
+                <div class="md:col-span-5 flex flex-col gap-1.5">
+                    <label for="NomeTurma" class="text-sm font-medium text-[#0a241e]">Nome da Turma:</label>
+                    <input type="text" id="NomeTurma" name="NomeTurma" placeholder="Nome da Turma" class="w-full bg-[#f8faf9] border border-[#e3e8e6] rounded-xl px-4 py-2.5 text-sm text-[#0a241e] placeholder-[#95aba5] focus:outline-none focus:border-gray-400 transition-all" value="{{ $turma?->NomeTurma ?? old('NomeTurma') }}" required>
+                </div>
 
-
-                {!! csrf_field() !!}
-                <!--PRIMEIRA LINHA REFERENTE A TODOS OS CAMPOS REFERENTE A TURMA-->
-                <div class="row">
-                    <div class="col-md-5">
-                        <div class="form-group">
-                            <label for="NomeEscola">Nome da Turma:</label>
-                            <input type="texto" name="NomeTurma" placeholder="Nome da Turma"  class="form-control" value="{{$turma->NomeTurma or old('NomeTurma')}}">
-                        </div>
+                <!-- Valor da Mensalidade  -->
+                <div class="md:col-span-3 flex flex-col gap-1.5">
+                    <label for="Mensalidade" class="text-sm font-medium text-[#0a241e]">Valor da Mensalidade:</label>
+                    <div class="flex items-center bg-[#f8faf9] border border-[#e3e8e6] rounded-xl px-4 py-2.5 focus-within:border-gray-400 transition-all">
+                        <span class="text-sm text-[#5c706b] font-medium mr-1.5 select-none">R$</span>
+                        <input type="text" id="Mensalidade" name="Mensalidade" placeholder="0,00" class="w-full bg-transparent text-sm text-[#0a241e] placeholder-[#95aba5] focus:outline-none" value="{{ $turma?->Mensalidade ?? old('Mensalidade') }}" required>
                     </div>
+                </div>
 
-                    <div class="col-md-3">
-                        <div class="form-group">
-                            <label for="Mensalidade">Valor da Mensalidade:</label>
-                            <input type="texto" name="Mensalidade" placeholder="R$ 0,00" id="Mensalidade" class="form-control" value="{{$turma->Mensalidade or old('Mensalidade')}}">
-                        </div>
-                    </div>
-                    <div class="col-md-2">
-                        <div class="form-group">
-                            <label for="Situacao">Situação:</label>
-                            <select class="form-control" name="SituacaoTurma" id="estado">
-                                <option >{{$turma->SituacaoTurma or old('SituacaoTurma')}}</option>
-                                <option> ATIVO </option>
-                                <option> INATIVO</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="col-md-2">
-                        <div class="form-group">
-                            <label for="AnoLetivo">Ano Letivo:</label>
-                            <select class="form-control" name="AnoLetivo" id="estado">
-                                <option >{{$turma->AnoLetivo or old('AnoLetivo')}}</option>
-                                <option> 2017 </option>
-                                <option> 2018 </option>
-                                <option> 2019</option>
-                                <option> 2020</option>
-                                <option> 2021</option>
-                                <option> 2022</option>
-                                <option> 2023</option>
-                                <option> 2024</option>
-                                <option> 2025</option>
-                                <option> 2026</option>
-                            </select>
+                <!-- Situação -->
+                <div class="md:col-span-2 flex flex-col gap-1.5">
+                    <label for="SituacaoTurma" class="text-sm font-medium text-[#0a241e]">Situação:</label>
+                    <div class="flex items-center bg-[#f8faf9] border border-[#e3e8e6] rounded-xl px-4 py-2.5 focus-within:border-gray-400 transition-all">
+                        <select id="SituacaoTurma" name="SituacaoTurma" class="w-full bg-transparent text-sm text-[#0a241e] focus:outline-none appearance-none cursor-pointer pr-6" required>
+                            @if(isset($turma))
+                                <option value="{{ $turma->SituacaoTurma }}" selected>{{ $turma->SituacaoTurma }}</option>
+                            @else
+                                <option value="" disabled selected>Selecione</option>
+                            @endif
+                            <option value="ATIVO" {{ old('SituacaoTurma') == 'ATIVO' ? 'selected' : '' }}>ATIVO</option>
+                            <option value="INATIVO" {{ old('SituacaoTurma') == 'INATIVO' ? 'selected' : '' }}>INATIVO</option>
+                        </select>
+                        <div class="text-[#95aba5] pointer-events-none -ml-4">
+                            <i data-lucide="chevron-down" class="w-4 h-4"></i>
                         </div>
                     </div>
                 </div>
-                <!--SEGUNDA LINHA REFERENTE AOS CAMPOS ( SALVA E LIMPA )-->
-                <div class="row">
-                    <div class="col-md-3">
-                        <div class="form-group">
-                            <button type="submit" class="btn btn-success">SALVAR</button>
-                            <button type="reset" class="btn btn-default">LIMPAR</button>
+
+                <!-- Ano Letivo -->
+                <div class="md:col-span-2 flex flex-col gap-1.5">
+                    <label for="AnoLetivo" class="text-sm font-medium text-[#0a241e]">Ano Letivo:</label>
+                    <div class="flex items-center bg-[#f8faf9] border border-[#e3e8e6] rounded-xl px-4 py-2.5 focus-within:border-gray-400 transition-all">
+                        <select id="AnoLetivo" name="AnoLetivo" class="w-full bg-transparent text-sm text-[#0a241e] focus:outline-none appearance-none cursor-pointer pr-6" required>
+                            @if(isset($turma))
+                                <option value="{{ $turma->AnoLetivo }}" selected>{{ $turma->AnoLetivo }}</option>
+                            @else
+                                <option value="" disabled selected>Selecione</option>
+                            @endif
+                            @for($ano = 2017; $ano <= 2028; $ano++)
+                                <option value="{{ $ano }}" {{ old('AnoLetivo') == $ano ? 'selected' : '' }}>{{ $ano }}</option>
+                            @endfor
+                        </select>
+                        <div class="text-[#95aba5] pointer-events-none -ml-4">
+                            <i data-lucide="chevron-down" class="w-4 h-4"></i>
                         </div>
+                    </div>
+                </div>
+            </div>
 
-                    </div>   
-
-                </div>       
-            </form> <!--Fim do formulario-->
+            <!-- Segunda Linha: Botões de Ação  -->
+            <div class="flex gap-3 mt-4">
+                <button type="submit" class="bg-[#008a4b] hover:bg-[#00703c] text-white font-medium px-6 py-2.5 rounded-full text-sm transition-all shadow-sm cursor-pointer">
+                    SALVAR
+                </button>
+                <button type="reset" class="border border-[#e3e8e6] text-[#5c706b] hover:bg-[#f8faf9] font-medium px-6 py-2.5 rounded-full text-sm transition-all cursor-pointer">
+                    LIMPAR
+                </button>
+            </div>
+        </form>
     </div>
-</div> <!--Fim do caminho-din-->
+</div>
 @endsection
