@@ -1,81 +1,139 @@
-@extends('telasCoordenacao.painel')  
-@section('conteudo')
-<div class="titulo-endereco">
-    <a href="#">
-    Secretaria / Turmas Disciplinas 
-    </a>
-</div>
-<div class="col-md-5">
-    <div class="form-group">
-        <label for="pesquisaProfessor">Filtrar por professor: </label>
-        <form class="form-search pesquisar" method="post" action="/maruge/public/coordenacao/turma_disciplina_pesq">
-            {!! csrf_field() !!}
-           <select class="form-control" name="idFuncionarios" >
-                <option></option>
-                @forelse($professores as $professore)  
-                <option value="{{$professore->idFuncionarios}}">{{$professore->NomeFuncionario}}</option>
-                @empty
-                @endforelse 
-            </select>
-                 
-            <button class="btn-pesquisar"><i class="fa fa-search" aria-hidden="true"></i></button>
-       
-        
-        </form>
-    </div>
-</div>
-<div class="col-md-3">
-    <div class="form-group">
-        <label for="NomeTurma">Filtrar por turma:</label>
-        <form class="form-search pesquisar"method="post" action="/maruge/public/coordenacao/turma_disciplina_filtro">
-           {!! csrf_field() !!}
-            <select class="form-control" name="idTurmas" >
-                <option></option>
-                @forelse($turmas as $turma)  
-                <option value="{{$turma->idTurmas}}">{{$turma->NomeTurma}}</option>
-                @empty
-                @endforelse 
-            </select>
-            <button class="btn-filtro" type="submit" > <i class="fa fa-search" aria-hidden="true"></i></button>
-        </form>
-    </div>
-</div>
-<div class="col-md-4">
-    <div class="quant-alunos">
-        <h2 class="quant-alunos">Vínculos Cadastrados: ({{$disciplinasDoProfessor->total()}})</h2>
-    </div> 
-</div>
-<div class="caminho-din">
-    <table class="table table-hover">
-        <thead>
-            <tr>
-                <th>NOME DA TURMA</th>
-                <th>DISCIPLINA</th>
-                <th><center>PROFESSOR</center></th>
-        <th><center>EXCLUIR</center></th>
-        </tr>
-        </thead>   
-        <!-- Recebendo valores na vareavel escolas e passando para escola-->
-        @forelse($disciplinasDoProfessor as $disciplinaDoProfessor)  
-        <center>
-            <tr>
-                <td>{{$disciplinaDoProfessor->NomeTurma}}</td>
-                <td>{{$disciplinaDoProfessor->NomeDisciplina}}</td>
-                <td><center>{{$disciplinaDoProfessor->NomeFuncionario}}</td>
-                <td> <a href="{{url("/coordenacao/turma_disciplina/deletar/$disciplinaDoProfessor->idTurmas_Disciplinas")}}" ><center> <img src="{{url('imgs/icones/deletar.png')}}" alt="editar"</center></td>
-                </tr>
-                @empty
-                <div class="alert alert-warning alert-dismissible" role="alert">
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <strong>Desculpe ! </strong> Mas nenhum vinculo foi encontrado. Para realizar uma nova vinculação <a href="/maruge/public/coordenacao/turma_disciplina_cad" class="alert-link"> Clique aqui.</a>
-                </div>
-                <tr>
-                    <td colspan="500"> Nenhum vinculo encontrado !</td>
-                </tr>
-                @endforelse
-                </table> 
-                <div>{!! $disciplinasDoProfessor->render()!!} </div>
+@extends('layouts.app')
 
+@section('content')
+@php
+    $professores = collect();
+    $turmas = collect();
+
+    try {
+        $disciplinasDoProfessor = \DB::table('tb_turmas_disciplinas')->orderBy('NomeTurma')->get();
+    } catch (\Exception $e) {
+        $disciplinasDoProfessor = collect();
+    }
+@endphp
+<div class="flex flex-col gap-6">
+    <!-- Localização (Breadcrumb) -->
+    <div class="text-sm text-[#5c706b]">
+        <a href="{{ url('/coordenacao') }}" class="hover:text-[#008a4b] transition-colors">Secretaria</a>
+        <span class="mx-2">/</span>
+        <span class="font-semibold text-[#0a241e]">Lotação de Professor</span>
+    </div>
+
+    <!-- Cabeçalho -->
+    <div class="flex justify-between items-center">
+        <div class="flex flex-col gap-1">
+            <h1 class="text-3xl font-semibold text-[#0a241e]">Lotação de Professor</h1>
+            <p class="text-sm text-[#5c706b]">Vínculos cadastrados: ({{ isset($disciplinasDoProfessor) ? count($disciplinasDoProfessor) : 0 }})</p>
+        </div>
+        <a href="{{ url('/coordenacao/turma_disc/turma_disciplina_cad') }}" class="bg-[#008a4b] hover:bg-[#00703c] text-white font-medium px-6 py-2.5 rounded-full flex items-center gap-2 transition-all shadow-sm cursor-pointer">
+            <i data-lucide="plus" class="w-5 h-5"></i>
+            <span>Cadastrar Lotação</span>
+        </a>
+    </div>
+
+    <!-- Filtros -->
+    <div class="flex flex-col sm:flex-row gap-4 items-center">
+        <!-- Filtrar por Professor -->
+        <div class="w-full sm:w-64">
+            <form method="GET" action="{{ url()->current() }}" class="w-full">
+                <div class="flex items-center bg-white border border-[#e3e8e6] rounded-xl px-4 py-2.5 transition-all relative">
+                    @if(request()->input('idTurmas'))
+                        <input type="hidden" name="idTurmas" value="{{ request()->input('idTurmas') }}">
+                    @endif
+                    <select name="idFuncionarios" onchange="this.form.submit()" class="w-full bg-transparent text-sm text-[#0a241e] focus:outline-none appearance-none cursor-pointer pr-6">
+                        <option value="">Filtrar por Professor</option>
+                        @foreach($professores as $prof)
+                            <option value="{{ $prof->idFuncionarios }}" {{ request()->input('idFuncionarios') == $prof->idFuncionarios ? 'selected' : '' }}>
+                                {{ $prof->NomeFuncionario }}
+                            </option>
+                        @endforeach
+                    </select>
+                    <div class="absolute right-4 text-[#95aba5] pointer-events-none">
+                        <i data-lucide="chevron-down" class="w-4 h-4"></i>
+                    </div>
                 </div>
-                </div> <!--Fim do caminho-din-->
-                @endsection
+            </form>
+        </div>
+
+        <!-- Filtrar por Turma -->
+        <div class="w-full sm:w-64">
+            <form method="GET" action="{{ url()->current() }}" class="w-full">
+                <div class="flex items-center bg-white border border-[#e3e8e6] rounded-xl px-4 py-2.5 transition-all relative">
+                    @if(request()->input('idFuncionarios'))
+                        <input type="hidden" name="idFuncionarios" value="{{ request()->input('idFuncionarios') }}">
+                    @endif
+                    <select name="idTurmas" onchange="this.form.submit()" class="w-full bg-transparent text-sm text-[#0a241e] focus:outline-none appearance-none cursor-pointer pr-6">
+                        <option value="">Filtrar por Turma</option>
+                        @foreach($turmas as $t)
+                            <option value="{{ $t->idTurmas }}" {{ request()->input('idTurmas') == $t->idTurmas ? 'selected' : '' }}>
+                                {{ $t->NomeTurma }}
+                            </option>
+                        @endforeach
+                    </select>
+                    <div class="absolute right-4 text-[#95aba5] pointer-events-none">
+                        <i data-lucide="chevron-down" class="w-4 h-4"></i>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!-- Limpar Filtros -->
+        @if(request()->input('idFuncionarios') || request()->input('idTurmas'))
+            <a href="{{ url()->current() }}" class="text-sm font-medium text-[#008a4b] hover:text-[#00703c] transition-colors">
+                Limpar filtros
+            </a>
+        @endif
+    </div>
+
+    <!-- Seção da Tabela -->
+    <div class="bg-white border border-[#e3e8e6] rounded-2xl overflow-hidden shadow-2xs">
+        <div class="overflow-x-auto">
+            <table class="w-full border-collapse">
+                <thead>
+                    <tr class="bg-[#f8faf9] border-b border-[#e3e8e6] w-10 h-10">
+                        <th class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-[#5c706b]">Turma</th>
+                        <th class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-[#5c706b]">Disciplina</th>
+                        <th class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-[#5c706b]">Professor</th>
+                        <th class="px-6 py-4 text-center text-xs font-semibold uppercase tracking-wider text-[#5c706b]">Ações</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-[#e3e8e6]">
+                    @forelse($disciplinasDoProfessor ?? [] as $vinculo)
+                        <tr class="hover:bg-[#f8faf9]/50 transition-colors">
+                            <td class="px-6 py-4 text-sm font-semibold text-[#0a241e]">{{ $vinculo->NomeTurma }}</td>
+                            <td class="px-6 py-4 text-sm text-[#0a241e]">{{ $vinculo->NomeDisciplina }}</td>
+                            <td class="px-6 py-4 text-sm text-[#0a241e]">{{ $vinculo->NomeFuncionario }}</td>
+                            <td class="px-6 py-4 text-sm text-center">
+                                <div class="flex justify-center">
+                                    <a href="{{ url('/coordenacao/turma_disciplina/deletar/' . $vinculo->idTurmas_Disciplinas) }}" class="text-[#e3503e] hover:text-[#c73927] p-2 rounded-lg hover:bg-red-50 transition-all group" title="Remover Vínculo">
+                                        <i data-lucide="trash-2" class="w-4 h-4 group-hover:scale-110 transition-transform"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="4" class="px-6 py-12 text-center">
+                                <div class="flex flex-col items-center gap-3">
+                                    <div class="w-16 h-16 rounded-full bg-[#f8faf9] flex items-center justify-center text-[#95aba5]">
+                                        <i data-lucide="alert-circle" class="w-8 h-8"></i>
+                                    </div>
+                                    <p class="text-sm text-[#0a241e] font-medium">Nenhum vínculo encontrado</p>
+                                    <p class="text-xs text-[#5c706b]">Adicione uma nova Lotação para começar</p>
+                                </div>
+                            </td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Paginação -->
+    @if(isset($disciplinasDoProfessor) && method_exists($disciplinasDoProfessor, 'links'))
+        <div class="flex justify-center mt-6">
+            {{ $disciplinasDoProfessor->links() }}
+        </div>
+    @endif
+</div>
+@endsection
