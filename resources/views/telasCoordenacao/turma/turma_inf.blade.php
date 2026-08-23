@@ -45,40 +45,48 @@
             </form>
         </div>
 
-       <!-- Menu Dropdown de Filtro -->
+        <!-- Menu Dropdown de Filtro Customizado -->
         <div class="w-full sm:w-64">
-            <form method="post"
-                action="{{ url('/coordenacao/turma_filtro') }}"
-                class="w-full">
-
+            <form method="post" action="{{ url('/coordenacao/turma_filtro') }}" class="w-full">
                 {!! csrf_field() !!}
 
-                <div class="relative">
-                    <select
-                        name="SituacaoTurma"
-                        onchange="this.form.submit()"
-                        class="w-full h-11 appearance-none bg-white border border-[#e3e8e6] rounded-xl px-4 pr-10 text-sm text-[#0a241e] focus:outline-none focus:border-[#008a4b] focus:ring-2 focus:ring-[#008a4b]/10 cursor-pointer transition-all"
-                    >
-                        <option value="" disabled selected>
-                            Filtrar por Situação
-                        </option>
-                        <option value="">
-                            Todos
-                        </option>
-                        <option value="ATIVO">
-                            Ativo
-                        </option>
-                        <option value="INATIVO">
-                            Inativo
-                        </option>
-                    </select>
+                <div class="relative" id="dropdown-container-situacao">
+                    <!-- Input Oculto para submissão do formulário -->
+                    <input type="hidden" id="SituacaoTurma" name="SituacaoTurma" value="{{ request()->input('SituacaoTurma', '') }}">
 
-                    <i
-                        data-lucide="chevron-down"
-                        class="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#95aba5] pointer-events-none"
-                    ></i>
+                    <!-- Trigger Box no Estilo Visual Premium -->
+                    <div onclick="toggleMultiDropdown('dropdown-menu-situacao', 'chevron-situacao')" 
+                         class="w-full flex items-center justify-between bg-white border border-[#e3e8e6] hover:border-[#008a4b]/50 rounded-xl px-4 py-2.5 transition-all cursor-pointer shadow-2xs h-11">
+                        <span id="label-situacao" class="text-sm font-medium truncate {{ request()->input('SituacaoTurma') ? 'text-[#0a241e]' : 'text-[#95aba5]' }}">
+                            @if(request()->input('SituacaoTurma') == 'ATIVO')
+                                Ativo
+                            @elseif(request()->input('SituacaoTurma') == 'INATIVO')
+                                Inativo
+                            @else
+                                Filtrar por Situação
+                            @endif
+                        </span>
+                        <div id="chevron-situacao" class="text-[#95aba5] transition-transform duration-200 shrink-0 ml-2">
+                            <i data-lucide="chevron-down" class="w-4 h-4"></i>
+                        </div>
+                    </div>
+
+                    <!-- Dropdown Flutuante no Estilo Visual Premium -->
+                    <div id="dropdown-menu-situacao" class="hidden absolute top-full left-0 right-0 mt-1 bg-white border border-[#e3e8e6] rounded-xl shadow-xl z-50 p-1.5 flex flex-col gap-0.5">
+                        <div onclick="selectSingleOption('', 'Todos', 'SituacaoTurma', 'label-situacao', 'dropdown-menu-situacao', 'chevron-situacao', true)"
+                             class="option-situacao flex items-center p-2.5 hover:bg-[#ecfdf5] rounded-lg transition-colors cursor-pointer text-xs text-[#0a241e]">
+                            <span class="option-title font-medium">Todos</span>
+                        </div>
+                        <div onclick="selectSingleOption('ATIVO', 'Ativo', 'SituacaoTurma', 'label-situacao', 'dropdown-menu-situacao', 'chevron-situacao', true)"
+                             class="option-situacao flex items-center p-2.5 hover:bg-[#ecfdf5] rounded-lg transition-colors cursor-pointer text-xs text-[#0a241e]">
+                            <span class="option-title font-medium">Ativo</span>
+                        </div>
+                        <div onclick="selectSingleOption('INATIVO', 'Inativo', 'SituacaoTurma', 'label-situacao', 'dropdown-menu-situacao', 'chevron-situacao', true)"
+                             class="option-situacao flex items-center p-2.5 hover:bg-[#ecfdf5] rounded-lg transition-colors cursor-pointer text-xs text-[#0a241e]">
+                            <span class="option-title font-medium">Inativo</span>
+                        </div>
+                    </div>
                 </div>
-
             </form>
         </div>
     </div>

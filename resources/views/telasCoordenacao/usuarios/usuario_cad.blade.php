@@ -34,14 +34,13 @@
                               <div class="row"> 
                              <div class="col-md-5">
                         <div class="form-group">
-                            <label for="NomeFuncionario">Selecione o novo Usuário:</label>
+                            <label for="Usuario">Selecione o novo Usuário:</label>
                             <div class="relative">
-                                <select name="Usuario" class="w-full h-11 appearance-none bg-white border border-[#e3e8e6] rounded-xl px-4 pr-10 text-sm text-[#0a241e] focus:outline-none focus:border-[#008a4b] focus:ring-2 focus:ring-[#008a4b]/10 cursor-pointer transition-all">
+                                <select name="Usuario" id="Usuario" class="w-full h-11 appearance-none bg-white border border-[#e3e8e6] rounded-xl px-4 pr-10 text-sm text-[#0a241e] focus:outline-none focus:border-[#008a4b] focus:ring-2 focus:ring-[#008a4b]/10 cursor-pointer transition-all" required>
                                     <option value="" disabled selected>Selecione o Usuário</option>
-                                    @forelse($funcionarios as $funcionario)  
-                                        <option value="{{$funcionario->idFuncionarios}}">{{$funcionario->NomeFuncionario}}</option>
-                                    @empty
-                                    @endforelse 
+                                    @foreach($funcionarios as $f)
+                                        <option value="{{ $f->idFuncionarios }}">{{ $f->NomeFuncionario }}</option>
+                                    @endforeach
                                 </select>
                                 <i data-lucide="chevron-down" class="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#95aba5] pointer-events-none"></i>
                             </div>
@@ -53,17 +52,17 @@
                     <div class="col-md-3">
                         <div class="form-group">
                             <label for="password">Senha de Usuário:</label>
-                            <input type="password"  placeholder="Senha só números" name="password" class="form-control" maxlength="8"   >
+                            <input type="password" placeholder="Senha só números" name="password" class="form-control" maxlength="8">
                         </div>
                     </div>
                     <div class="col-md-2">
                         <div class="form-group">
                             <label for="Situacao">Situação:</label>
                             <div class="relative">
-                                <select name="Situacao" class="w-full h-11 appearance-none bg-white border border-[#e3e8e6] rounded-xl px-4 pr-10 text-sm text-[#0a241e] focus:outline-none focus:border-[#008a4b] focus:ring-2 focus:ring-[#008a4b]/10 cursor-pointer transition-all">
+                                <select name="Situacao" id="Situacao" class="w-full h-11 appearance-none bg-white border border-[#e3e8e6] rounded-xl px-4 pr-10 text-sm text-[#0a241e] focus:outline-none focus:border-[#008a4b] focus:ring-2 focus:ring-[#008a4b]/10 cursor-pointer transition-all" required>
                                     <option value="" disabled selected>Selecione</option>
-                                    <option value="ATIVO"> ATIVO </option>
-                                    <option value="INATIVO"> INATIVO</option>
+                                    <option value="ATIVO">ATIVO</option>
+                                    <option value="INATIVO">INATIVO</option>
                                 </select>
                                 <i data-lucide="chevron-down" class="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#95aba5] pointer-events-none"></i>
                             </div>
@@ -73,7 +72,7 @@
                         <div class="form-group">
                             <label for="Nivel">Nível:</label>
                             <div class="relative">
-                                <select name="Nivel" class="w-full h-11 appearance-none bg-white border border-[#e3e8e6] rounded-xl px-4 pr-10 text-sm text-[#0a241e] focus:outline-none focus:border-[#008a4b] focus:ring-2 focus:ring-[#008a4b]/10 cursor-pointer transition-all">
+                                <select name="Nivel" id="Nivel" class="w-full h-11 appearance-none bg-white border border-[#e3e8e6] rounded-xl px-4 pr-10 text-sm text-[#0a241e] focus:outline-none focus:border-[#008a4b] focus:ring-2 focus:ring-[#008a4b]/10 cursor-pointer transition-all" required>
                                     <option value="" disabled selected>Selecione o Nível</option>
                                     <option value="COORDENACÃO">COORDENACÃO</option>
                                     <option value="DOCENTE">DOCENTE</option>

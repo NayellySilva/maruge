@@ -20,16 +20,31 @@
         <label for="SituacaoTurma">Filtrar por Situação:</label>
         <form class="form-search pesquisar"method="post" action="/coordenacao/turma_filtro">
             {!! csrf_field() !!}
-            <div class="select-wrapper">
-    <select class="form-control maruge-select" name="SituacaoTurma" >
-                <option></option>
+            <div class="relative">
+                    <select
+                        name="SituacaoTurma"
+                        onchange="this.form.submit()"
+                        class="w-full h-11 appearance-none bg-white border border-[#e3e8e6] rounded-xl px-4 pr-10 text-sm text-[#0a241e] focus:outline-none focus:border-[#008a4b] focus:ring-2 focus:ring-[#008a4b]/10 cursor-pointer transition-all"
+                    >
+                        <option value="" disabled selected>
+                            Filtrar por Situação
+                        </option>
+                        <option value="">
+                            Todos
+                        </option>
+                        <option value="ATIVO">
+                            Ativo
+                        </option>
+                        <option value="INATIVO">
+                            Inativo
+                        </option>
+                    </select>
 
-                <option>ATIVO</option>
-                <option>INATIVO</option>
-
-            </select>
-    <i data-lucide="chevron-down" class="select-icon"></i>
-</div>
+                    <i
+                        data-lucide="chevron-down"
+                        class="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#95aba5] pointer-events-none"
+                    ></i>
+                </div>
 
 
             <button class="btn-filtro" type="submit" > <i class="fa fa-search" aria-hidden="true"></i></button>

@@ -20,16 +20,41 @@
         <label for="Filtrar Turma">Filtrar por Situação:</label>
         <form class="form-search pesquisar"method="post" action="/coordenacao/mapas_filtro">
             {!! csrf_field() !!}
-            <div class="select-wrapper">
-    <select class="form-control maruge-select" name="SituacaoTurma" >
-                <option></option>
+            <div class="relative" id="dropdown-container-sit-mapas-filtro">
+                <input type="hidden" id="SituacaoTurma" name="SituacaoTurma" value="{{ request()->input('SituacaoTurma', '') }}">
 
-                <option>ATIVO</option>
-                <option>INATIVO</option>
+                @php
+                    $valSitMapasFiltro = request()->input('SituacaoTurma', '');
+                    $sitMapasFiltroLabel = $valSitMapasFiltro ? ucfirst(strtolower($valSitMapasFiltro)) : 'Filtrar por Situação';
+                @endphp
 
-            </select>
-    <i data-lucide="chevron-down" class="select-icon"></i>
-</div>
+                <!-- Trigger Box -->
+                <div onclick="toggleMultiDropdown('dropdown-menu-sit-mapas-filtro', 'chevron-sit-mapas-filtro')" 
+                     class="w-full flex items-center justify-between bg-white border border-[#e3e8e6] hover:border-[#008a4b]/50 rounded-xl px-4 py-2.5 transition-all cursor-pointer shadow-2xs h-11">
+                    <span id="label-sit-mapas-filtro" class="text-sm font-medium truncate {{ $valSitMapasFiltro ? 'text-[#0a241e]' : 'text-[#95aba5]' }}">
+                        {{ $sitMapasFiltroLabel }}
+                    </span>
+                    <div id="chevron-sit-mapas-filtro" class="text-[#95aba5] transition-transform duration-200 shrink-0 ml-2">
+                        <i data-lucide="chevron-down" class="w-4 h-4"></i>
+                    </div>
+                </div>
+
+                <!-- Dropdown Flutuante -->
+                <div id="dropdown-menu-sit-mapas-filtro" class="hidden absolute top-full left-0 right-0 mt-1 bg-white border border-[#e3e8e6] rounded-xl shadow-xl z-50 p-1.5 flex flex-col gap-0.5">
+                    <div onclick="selectSingleOption('', 'Todos', 'SituacaoTurma', 'label-sit-mapas-filtro', 'dropdown-menu-sit-mapas-filtro', 'chevron-sit-mapas-filtro', true)"
+                         class="option-sit-mapas-filtro flex items-center p-2.5 hover:bg-[#ecfdf5] rounded-lg transition-colors cursor-pointer text-xs text-[#0a241e]">
+                        <span class="option-title font-medium">Todos</span>
+                    </div>
+                    <div onclick="selectSingleOption('ATIVO', 'Ativo', 'SituacaoTurma', 'label-sit-mapas-filtro', 'dropdown-menu-sit-mapas-filtro', 'chevron-sit-mapas-filtro', true)"
+                         class="option-sit-mapas-filtro flex items-center p-2.5 hover:bg-[#ecfdf5] rounded-lg transition-colors cursor-pointer text-xs text-[#0a241e]">
+                        <span class="option-title font-medium">Ativo</span>
+                    </div>
+                    <div onclick="selectSingleOption('INATIVO', 'Inativo', 'SituacaoTurma', 'label-sit-mapas-filtro', 'dropdown-menu-sit-mapas-filtro', 'chevron-sit-mapas-filtro', true)"
+                         class="option-sit-mapas-filtro flex items-center p-2.5 hover:bg-[#ecfdf5] rounded-lg transition-colors cursor-pointer text-xs text-[#0a241e]">
+                        <span class="option-title font-medium">Inativo</span>
+                    </div>
+                </div>
+            </div>
 
 
             <button class="btn-filtro" type="submit" > <i class="fa fa-search" aria-hidden="true"></i></button>

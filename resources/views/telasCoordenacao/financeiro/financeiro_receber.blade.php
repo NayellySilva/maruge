@@ -49,19 +49,36 @@
 
         <!-- Filtrar por Ano Letivo -->
         <div class="w-full sm:w-48">
-            <div class="relative">
-                <select
-                    name="AnoLetivo"
-                    class="w-full h-11 appearance-none bg-white border border-[#e3e8e6] rounded-xl px-4 pr-10 text-sm text-[#0a241e] focus:outline-none focus:border-[#008a4b] focus:ring-2 focus:ring-[#008a4b]/10 cursor-pointer transition-all"
-                >
-                    <option value="">Ano Letivo</option>
-                    <option value="2023">2023</option>
-                    <option value="2022">2022</option>
-                </select>
-                <i
-                    data-lucide="chevron-down"
-                    class="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#95aba5] pointer-events-none"
-                ></i>
+            <div class="relative" id="dropdown-container-ano-receber">
+                <input type="hidden" id="AnoLetivo" name="AnoLetivo" value="{{ request()->input('AnoLetivo', '') }}">
+                @php
+                    $valAnoRec = request()->input('AnoLetivo', '');
+                @endphp
+
+                <!-- Trigger Box -->
+                <div onclick="toggleMultiDropdown('dropdown-menu-ano-receber', 'chevron-ano-receber')" 
+                     class="w-full flex items-center justify-between bg-white border border-[#e3e8e6] hover:border-[#008a4b]/50 rounded-xl px-4 py-2.5 transition-all cursor-pointer shadow-2xs h-11">
+                    <span id="label-ano-receber" class="text-sm font-medium truncate {{ $valAnoRec ? 'text-[#0a241e]' : 'text-[#95aba5]' }}">
+                        {{ $valAnoRec ? 'Ano: ' . $valAnoRec : 'Ano Letivo' }}
+                    </span>
+                    <div id="chevron-ano-receber" class="text-[#95aba5] transition-transform duration-200 shrink-0 ml-2">
+                        <i data-lucide="chevron-down" class="w-4 h-4"></i>
+                    </div>
+                </div>
+
+                <!-- Dropdown Flutuante -->
+                <div id="dropdown-menu-ano-receber" class="hidden absolute top-full left-0 right-0 mt-1 bg-white border border-[#e3e8e6] rounded-xl shadow-xl z-50 p-1.5 flex flex-col gap-0.5">
+                    <div onclick="selectSingleOption('', 'Ano Letivo', 'AnoLetivo', 'label-ano-receber', 'dropdown-menu-ano-receber', 'chevron-ano-receber', false)"
+                         class="option-ano-receber flex items-center p-2.5 hover:bg-[#ecfdf5] rounded-lg transition-colors cursor-pointer text-xs text-[#0a241e]">
+                        <span class="option-title font-medium text-[#95aba5]">Ano Letivo</span>
+                    </div>
+                    @foreach(['2023', '2022'] as $anoItem)
+                        <div onclick="selectSingleOption('{{ $anoItem }}', 'Ano: {{ $anoItem }}', 'AnoLetivo', 'label-ano-receber', 'dropdown-menu-ano-receber', 'chevron-ano-receber', false)"
+                             class="option-ano-receber flex items-center p-2.5 hover:bg-[#ecfdf5] rounded-lg transition-colors cursor-pointer text-xs text-[#0a241e]">
+                            <span class="option-title font-medium">{{ $anoItem }}</span>
+                        </div>
+                    @endforeach
+                </div>
             </div>
         </div>
 

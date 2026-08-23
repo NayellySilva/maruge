@@ -68,37 +68,56 @@
                 <!-- Função -->
                 <div style="flex: 1 1 20%; min-width: 0; display: flex; flex-direction: column; gap: 6px;">
                     <label for="Funcao" class="text-sm font-medium text-[#0a241e]">Função:</label>
-                    <div class="relative">
-                        <select
-                            name="Funcao"
-                            class="w-full h-11 appearance-none bg-white border border-[#e3e8e6] rounded-xl px-4 pr-10 text-sm text-[#0a241e] focus:outline-none focus:border-[#008a4b] focus:ring-2 focus:ring-[#008a4b]/10 cursor-pointer transition-all"
-                            required
-                        >
-                            @if(isset($funcionario->Funcao))
-                                <option value="{{ $funcionario->Funcao }}" selected>{{ $funcionario->Funcao }}</option>
-                            @else
-                                <option value="" disabled selected>Selecione</option>
-                            @endif
-                            <option>ANALISTA DE SISTEMAS</option>
-                            <option>AUX.DOCENTE</option>
-                            <option>COORDENADOR (A)</option>
-                            <option>DIGITADOR (A)</option>
-                            <option>DIRETOR (A)</option>
-                            <option>DOCENTE</option>
-                            <option>MOTORISTA</option>
-                            <option>PEDAGOGO (A)</option>
-                            <option>PORTEIRO (A)</option>
-                            <option>SECRETÁRIO (A)</option>
-                            <option>SEGURANÇA</option>
-                            <option>SERVIÇOS GERAIS</option>
-                            <option>TELEFONISTA</option>
-                            <option>OUTROS</option>
-                        </select>
-                        <i
-                            data-lucide="chevron-down"
-                            class="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#95aba5] pointer-events-none"
-                        ></i>
+                    <div class="relative" id="dropdown-container-funcao">
+                        @php
+                            $funcoes = ['ANALISTA DE SISTEMAS', 'AUX.DOCENTE', 'COORDENADOR (A)', 'DIGITADOR (A)', 'DIRETOR (A)', 'DOCENTE', 'MOTORISTA', 'PEDAGOGO (A)', 'PORTEIRO (A)', 'SECRETÁRIO (A)', 'SEGURANÇA', 'SERVIÇOS GERAIS', 'TELEFONISTA', 'OUTROS'];
+                            $selFuncao = old('Funcao', $funcionario->Funcao ?? '');
+                        @endphp
+                        <input type="hidden" id="Funcao" name="Funcao" value="{{ $selFuncao }}" required>
+
+                        <!-- Trigger Box -->
+                        <div onclick="toggleMultiDropdown('dropdown-menu-funcao', 'chevron-funcao')" 
+                             class="w-full flex items-center justify-between bg-[#f8faf9] border border-[#e3e8e6] hover:border-[#008a4b]/50 rounded-xl px-4 py-2.5 transition-all cursor-pointer shadow-2xs h-11">
+                            <span id="label-funcao" class="text-sm font-medium truncate {{ $selFuncao ? 'text-[#0a241e]' : 'text-[#95aba5]' }}">
+                                {{ $selFuncao ?: 'Selecione' }}
+                            </span>
+                            <div id="chevron-funcao" class="text-[#95aba5] transition-transform duration-200 shrink-0 ml-2">
+                                <i data-lucide="chevron-down" class="w-4 h-4"></i>
+                            </div>
+                        </div>
+
+                        <!-- Dropdown Flutuante -->
+                        <div id="dropdown-menu-funcao" class="hidden absolute top-full left-0 right-0 mt-1 bg-white border border-[#e3e8e6] rounded-xl shadow-xl z-50 p-2 flex flex-col gap-2 overflow-hidden" style="max-height: 240px;">
+                            <!-- Campo de Busca -->
+                            <div class="relative shrink-0">
+                                <input type="text" onkeyup="filterDropdownOptions('search-funcao', 'option-funcao')" id="search-funcao" placeholder="Pesquisar..." class="w-full pl-3 pr-9 py-1.5 bg-[#f8faf9] border border-[#e3e8e6] rounded-lg text-xs focus:outline-none focus:border-[#008a4b]">
+                                <i data-lucide="search" class="w-3.5 h-3.5 text-[#95aba5] absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none"></i>
+                            </div>
+
+                            <!-- Lista de Opções -->
+                            <div class="custom-scroll flex flex-col gap-0.5 pr-1" style="max-height: 180px; overflow-y: auto;">
+                                <div onclick="selectSingleOption('', 'Selecione', 'Funcao', 'label-funcao', 'dropdown-menu-funcao', 'chevron-funcao', false); checkFuncaoSenhaVisibility('');"
+                                     class="option-funcao flex items-center p-2 hover:bg-[#ecfdf5] rounded-lg transition-colors cursor-pointer text-xs text-[#0a241e]">
+                                    <span class="option-title font-medium text-[#95aba5]">Selecione</span>
+                                </div>
+                                @foreach($funcoes as $f)
+                                    <div onclick="selectSingleOption('{{ $f }}', '{{ $f }}', 'Funcao', 'label-funcao', 'dropdown-menu-funcao', 'chevron-funcao', false); checkFuncaoSenhaVisibility('{{ $f }}');"
+                                         class="option-funcao flex items-center p-2 hover:bg-[#ecfdf5] rounded-lg transition-colors cursor-pointer text-xs text-[#0a241e]">
+                                        <span class="option-title font-medium">{{ $f }}</span>
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
                     </div>
+                </div>
+
+                <!-- Senha de Acesso (Exibida dinamicamente APENAS para Docente ou Coordenador) -->
+                @php
+                    $isDocOuCoord = in_array($selFuncao, ['DOCENTE', 'COORDENADOR (A)', 'COORDENACÃO']);
+                @endphp
+                <div id="container-senha-acesso" style="flex: 1 1 20%; min-width: 0; display: {{ $isDocOuCoord ? 'flex' : 'none' }}; flex-direction: column; gap: 6px;">
+                    <label for="password" class="text-sm font-medium text-[#0a241e]">Senha de Acesso (8 dígitos):</label>
+                    <input type="password" name="password" id="password" placeholder="Senha só números" maxlength="8" minlength="8" pattern="\d{8}" class="w-full bg-[#f8faf9] border border-[#e3e8e6] rounded-xl px-4 py-2.5 text-sm text-[#0a241e] focus:outline-none focus:border-gray-400 transition-all">
                 </div>
             </div>
 
@@ -131,37 +150,75 @@
                 <!-- Estado -->
                 <div style="flex: 1 1 18%; min-width: 0; display: flex; flex-direction: column; gap: 6px;">
                     <label for="Estado" class="text-sm font-medium text-[#0a241e]">Estado:</label>
-                    <div class="relative">
-                        <select
-                            name="Estado"
-                            id="Estado"
-                            class="w-full h-11 appearance-none bg-white border border-[#e3e8e6] rounded-xl px-4 pr-10 text-sm text-[#0a241e] focus:outline-none focus:border-[#008a4b] focus:ring-2 focus:ring-[#008a4b]/10 cursor-pointer transition-all"
-                            data-value="{{ $endereco->Estado ?? old('Estado') }}"
-                        >
-                            <option value="{{ $endereco->Estado ?? '' }}">{{ $endereco->Estado ?? 'Estado' }}</option>
-                        </select>
-                        <i
-                            data-lucide="chevron-down"
-                            class="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#95aba5] pointer-events-none"
-                        ></i>
+                    <div class="relative" id="dropdown-container-estado-func">
+                        @php
+                            $valUF = old('Estado', $endereco->Estado ?? '');
+                            $ufs = ['AC','AL','AP','AM','BA','CE','DF','ES','GO','MA','MT','MS','MG','PA','PB','PR','PE','PI','RJ','RN','RS','RO','RR','SC','SP','SE','TO'];
+                        @endphp
+                        <input type="hidden" id="Estado" name="Estado" value="{{ $valUF }}">
+
+                        <!-- Trigger Box -->
+                        <div onclick="toggleMultiDropdown('dropdown-menu-estado-func', 'chevron-estado-func')" 
+                             class="w-full flex items-center justify-between bg-[#f8faf9] border border-[#e3e8e6] hover:border-[#008a4b]/50 rounded-xl px-4 py-2.5 transition-all cursor-pointer shadow-2xs h-11">
+                            <span id="label-estado-func" class="text-sm font-medium truncate {{ $valUF ? 'text-[#0a241e]' : 'text-[#95aba5]' }}">
+                                {{ $valUF ?: 'Estado' }}
+                            </span>
+                            <div id="chevron-estado-func" class="text-[#95aba5] transition-transform duration-200 shrink-0 ml-2">
+                                <i data-lucide="chevron-down" class="w-4 h-4"></i>
+                            </div>
+                        </div>
+
+                        <!-- Dropdown Flutuante -->
+                        <div id="dropdown-menu-estado-func" class="hidden absolute top-full left-0 right-0 mt-1 bg-white border border-[#e3e8e6] rounded-xl shadow-xl z-50 p-2 flex flex-col gap-2 overflow-hidden" style="max-height: 240px;">
+                            <div class="relative shrink-0">
+                                <input type="text" onkeyup="filterDropdownOptions('search-estado-func', 'option-estado-func')" id="search-estado-func" placeholder="Pesquisar..." class="w-full pl-3 pr-9 py-1.5 bg-[#f8faf9] border border-[#e3e8e6] rounded-lg text-xs focus:outline-none focus:border-[#008a4b]">
+                                <i data-lucide="search" class="w-3.5 h-3.5 text-[#95aba5] absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none"></i>
+                            </div>
+                            <div class="custom-scroll flex flex-col gap-0.5 pr-1" style="max-height: 180px; overflow-y: auto;">
+                                <div onclick="selectSingleOption('', 'Estado', 'Estado', 'label-estado-func', 'dropdown-menu-estado-func', 'chevron-estado-func', false); window.loadCitiesForEstadoFunc('');"
+                                     class="option-estado-func flex items-center p-2 hover:bg-[#ecfdf5] rounded-lg transition-colors cursor-pointer text-xs text-[#0a241e]">
+                                    <span class="option-title font-medium text-[#95aba5]">Estado</span>
+                                </div>
+                                @foreach($ufs as $ufItem)
+                                    <div onclick="selectSingleOption('{{ $ufItem }}', '{{ $ufItem }}', 'Estado', 'label-estado-func', 'dropdown-menu-estado-func', 'chevron-estado-func', false); window.loadCitiesForEstadoFunc('{{ $ufItem }}');"
+                                         class="option-estado-func flex items-center p-2 hover:bg-[#ecfdf5] rounded-lg transition-colors cursor-pointer text-xs text-[#0a241e]">
+                                        <span class="option-title font-medium">{{ $ufItem }}</span>
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <!-- Cidade -->
                 <div style="flex: 1 1 25%; min-width: 0; display: flex; flex-direction: column; gap: 6px;">
                     <label for="Cidade" class="text-sm font-medium text-[#0a241e]">Cidade:</label>
-                    <div class="relative">
-                        <select
-                            name="Cidade"
-                            id="Cidade"
-                            class="w-full h-11 appearance-none bg-white border border-[#e3e8e6] rounded-xl px-4 pr-10 text-sm text-[#0a241e] focus:outline-none focus:border-[#008a4b] focus:ring-2 focus:ring-[#008a4b]/10 cursor-pointer transition-all"
-                            data-value="{{ $endereco->Cidade ?? old('Cidade') }}"
-                        >
-                            <option value="{{ $endereco->Cidade ?? '' }}">{{ $endereco->Cidade ?? 'Cidade' }}</option>
-                        </select>
-                        <i
-                            data-lucide="chevron-down"
-                            class="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#95aba5] pointer-events-none"
-                        ></i>
+                    <div class="relative" id="dropdown-container-cidade-func">
+                        @php
+                            $valCidade = old('Cidade', $endereco->Cidade ?? '');
+                        @endphp
+                        <input type="hidden" id="Cidade" name="Cidade" value="{{ $valCidade }}">
+
+                        <!-- Trigger Box -->
+                        <div onclick="toggleMultiDropdown('dropdown-menu-cidade-func', 'chevron-cidade-func')" 
+                             class="w-full flex items-center justify-between bg-[#f8faf9] border border-[#e3e8e6] hover:border-[#008a4b]/50 rounded-xl px-4 py-2.5 transition-all cursor-pointer shadow-2xs h-11">
+                            <span id="label-cidade-func" class="text-sm font-medium truncate {{ $valCidade ? 'text-[#0a241e]' : 'text-[#95aba5]' }}">
+                                {{ $valCidade ?: 'Cidade' }}
+                            </span>
+                            <div id="chevron-cidade-func" class="text-[#95aba5] transition-transform duration-200 shrink-0 ml-2">
+                                <i data-lucide="chevron-down" class="w-4 h-4"></i>
+                            </div>
+                        </div>
+
+                        <!-- Dropdown Flutuante -->
+                        <div id="dropdown-menu-cidade-func" class="hidden absolute top-full left-0 right-0 mt-1 bg-white border border-[#e3e8e6] rounded-xl shadow-xl z-50 p-2 flex flex-col gap-2 overflow-hidden" style="max-height: 240px;">
+                            <div class="relative shrink-0">
+                                <input type="text" onkeyup="filterDropdownOptions('search-cidade-func', 'option-cidade-func')" id="search-cidade-func" placeholder="Pesquisar cidade..." class="w-full pl-3 pr-9 py-1.5 bg-[#f8faf9] border border-[#e3e8e6] rounded-lg text-xs focus:outline-none focus:border-[#008a4b]">
+                                <i data-lucide="search" class="w-3.5 h-3.5 text-[#95aba5] absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none"></i>
+                            </div>
+                            <div id="custom-cidades-list-func" class="custom-scroll flex flex-col gap-0.5 pr-1" style="max-height: 180px; overflow-y: auto;">
+                                <div class="p-2 text-xs text-[#95aba5]">Selecione um estado primeiro</div>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <!-- Fone 1 -->
@@ -207,4 +264,79 @@
         </form>
     </div>
 </div>
+
+<script>
+window.loadCitiesForEstadoFunc = function(uf, selectedCity = '') {
+    const listContainer = document.getElementById('custom-cidades-list-func');
+    const labelCidade = document.getElementById('label-cidade-func');
+    const hiddenCidade = document.getElementById('Cidade');
+    if (!listContainer) return;
+
+    if (!uf) {
+        listContainer.innerHTML = '<div class="p-2 text-xs text-[#95aba5]">Selecione um estado primeiro</div>';
+        if (hiddenCidade) hiddenCidade.value = '';
+        if (labelCidade) {
+            labelCidade.textContent = 'Cidade';
+            labelCidade.classList.remove('text-[#0a241e]');
+            labelCidade.classList.add('text-[#95aba5]');
+        }
+        return;
+    }
+
+    listContainer.innerHTML = '<div class="p-2 text-xs text-[#95aba5] animate-pulse">Carregando cidades...</div>';
+
+    fetch(`https://servicodados.ibge.gov.br/api/v1/localidades/estados/${uf}/municipios`)
+        .then(res => res.json())
+        .then(cities => {
+            let html = `<div onclick="selectSingleOption('', 'Cidade', 'Cidade', 'label-cidade-func', 'dropdown-menu-cidade-func', 'chevron-cidade-func', false)" class="option-cidade-func flex items-center p-2 hover:bg-[#ecfdf5] rounded-lg transition-colors cursor-pointer text-xs text-[#0a241e]"><span class="option-title font-medium text-[#95aba5]">Cidade</span></div>`;
+            
+            cities.forEach(city => {
+                const name = city.nome.toUpperCase();
+                html += `<div onclick="selectSingleOption('${name}', '${name}', 'Cidade', 'label-cidade-func', 'dropdown-menu-cidade-func', 'chevron-cidade-func', false)" class="option-cidade-func flex items-center p-2 hover:bg-[#ecfdf5] rounded-lg transition-colors cursor-pointer text-xs text-[#0a241e]"><span class="option-title font-medium">${name}</span></div>`;
+            });
+            listContainer.innerHTML = html;
+
+            if (selectedCity) {
+                if (hiddenCidade) hiddenCidade.value = selectedCity;
+                if (labelCidade) {
+                    labelCidade.textContent = selectedCity;
+                    labelCidade.classList.remove('text-[#95aba5]');
+                    labelCidade.classList.add('text-[#0a241e]');
+                }
+            }
+        })
+        .catch(() => {
+            listContainer.innerHTML = '<div class="p-2 text-xs text-red-500">Erro ao carregar cidades</div>';
+        });
+};
+
+window.checkFuncaoSenhaVisibility = function(funcao) {
+    const containerSenha = document.getElementById('container-senha-acesso');
+    const inputPassword = document.getElementById('password');
+    if (!containerSenha) return;
+
+    const isDocCoord = (funcao === 'DOCENTE' || funcao === 'COORDENADOR (A)' || funcao === 'COORDENACÃO');
+    if (isDocCoord) {
+        containerSenha.style.display = 'flex';
+    } else {
+        containerSenha.style.display = 'none';
+        if (inputPassword) {
+            inputPassword.value = '';
+        }
+    }
+};
+
+document.addEventListener('DOMContentLoaded', function() {
+    const estadoInit = document.getElementById('Estado')?.value;
+    const cidadeInit = document.getElementById('Cidade')?.value;
+    const funcaoInit = document.getElementById('Funcao')?.value;
+
+    if (funcaoInit) {
+        window.checkFuncaoSenhaVisibility(funcaoInit);
+    }
+    if (estadoInit) {
+        window.loadCitiesForEstadoFunc(estadoInit, cidadeInit);
+    }
+});
+</script>
 @endsection

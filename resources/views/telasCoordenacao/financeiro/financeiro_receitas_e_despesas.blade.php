@@ -62,41 +62,83 @@
 
         <!-- Exibir -->
         <div class="w-full sm:w-48">
-            <div class="relative">
-                <select
-                    name="exibir"
-                    class="w-full h-11 appearance-none bg-white border border-[#e3e8e6] rounded-xl px-4 pr-10 text-sm text-[#0a241e] focus:outline-none focus:border-[#008a4b] focus:ring-2 focus:ring-[#008a4b]/10 cursor-pointer transition-all"
-                >
-                    <option value="">Exibir: Todas</option>
-                    <option value="Receitas">Receitas</option>
-                    <option value="Despesas">Despesas</option>
-                    <option value="Previsto">Previsto</option>
-                    <option value="Realizado">Realizado</option>
-                </select>
-                <i
-                    data-lucide="chevron-down"
-                    class="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#95aba5] pointer-events-none"
-                ></i>
+            <div class="relative" id="dropdown-container-exibir-rec">
+                <input type="hidden" id="exibir" name="exibir" value="{{ request()->input('exibir', '') }}">
+                @php
+                    $valExibirRec = request()->input('exibir', '');
+                    $exibirArr = [
+                        'Receitas' => 'Receitas',
+                        'Despesas' => 'Despesas',
+                        'Previsto' => 'Previsto',
+                        'Realizado' => 'Realizado'
+                    ];
+                @endphp
+
+                <!-- Trigger Box -->
+                <div onclick="toggleMultiDropdown('dropdown-menu-exibir-rec', 'chevron-exibir-rec')" 
+                     class="w-full flex items-center justify-between bg-white border border-[#e3e8e6] hover:border-[#008a4b]/50 rounded-xl px-4 py-2.5 transition-all cursor-pointer shadow-2xs h-11">
+                    <span id="label-exibir-rec" class="text-sm font-medium truncate {{ $valExibirRec ? 'text-[#0a241e]' : 'text-[#95aba5]' }}">
+                        {{ $valExibirRec && isset($exibirArr[$valExibirRec]) ? $exibirArr[$valExibirRec] : 'Exibir: Todas' }}
+                    </span>
+                    <div id="chevron-exibir-rec" class="text-[#95aba5] transition-transform duration-200 shrink-0 ml-2">
+                        <i data-lucide="chevron-down" class="w-4 h-4"></i>
+                    </div>
+                </div>
+
+                <!-- Dropdown Flutuante -->
+                <div id="dropdown-menu-exibir-rec" class="hidden absolute top-full left-0 right-0 mt-1 bg-white border border-[#e3e8e6] rounded-xl shadow-xl z-50 p-1.5 flex flex-col gap-0.5">
+                    <div onclick="selectSingleOption('', 'Exibir: Todas', 'exibir', 'label-exibir-rec', 'dropdown-menu-exibir-rec', 'chevron-exibir-rec', false)"
+                         class="option-exibir-rec flex items-center p-2.5 hover:bg-[#ecfdf5] rounded-lg transition-colors cursor-pointer text-xs text-[#0a241e]">
+                        <span class="option-title font-medium text-[#95aba5]">Exibir: Todas</span>
+                    </div>
+                    @foreach($exibirArr as $exKey => $exLbl)
+                        <div onclick="selectSingleOption('{{ $exKey }}', '{{ $exLbl }}', 'exibir', 'label-exibir-rec', 'dropdown-menu-exibir-rec', 'chevron-exibir-rec', false)"
+                             class="option-exibir-rec flex items-center p-2.5 hover:bg-[#ecfdf5] rounded-lg transition-colors cursor-pointer text-xs text-[#0a241e]">
+                            <span class="option-title font-medium">{{ $exLbl }}</span>
+                        </div>
+                    @endforeach
+                </div>
             </div>
         </div>
 
         <!-- Categoria -->
         <div class="w-full sm:w-48">
-            <div class="relative">
-                <select
-                    name="categoria"
-                    class="w-full h-11 appearance-none bg-white border border-[#e3e8e6] rounded-xl px-4 pr-10 text-sm text-[#0a241e] focus:outline-none focus:border-[#008a4b] focus:ring-2 focus:ring-[#008a4b]/10 cursor-pointer transition-all"
-                >
-                    <option value="">Categoria: Todas</option>
-                    <option value="Mensalidades">Mensalidades</option>
-                    <option value="Material">Material Didático</option>
-                    <option value="Servicos">Serviços Tercerizados</option>
-                    <option value="Manutencao">Manutenção</option>
-                </select>
-                <i
-                    data-lucide="chevron-down"
-                    class="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#95aba5] pointer-events-none"
-                ></i>
+            <div class="relative" id="dropdown-container-cat-rec">
+                <input type="hidden" id="categoria" name="categoria" value="{{ request()->input('categoria', '') }}">
+                @php
+                    $valCatRec = request()->input('categoria', '');
+                    $catArr = [
+                        'Mensalidades' => 'Mensalidades',
+                        'Material' => 'Material Didático',
+                        'Servicos' => 'Serviços Tercerizados',
+                        'Manutencao' => 'Manutenção'
+                    ];
+                @endphp
+
+                <!-- Trigger Box -->
+                <div onclick="toggleMultiDropdown('dropdown-menu-cat-rec', 'chevron-cat-rec')" 
+                     class="w-full flex items-center justify-between bg-white border border-[#e3e8e6] hover:border-[#008a4b]/50 rounded-xl px-4 py-2.5 transition-all cursor-pointer shadow-2xs h-11">
+                    <span id="label-cat-rec" class="text-sm font-medium truncate {{ $valCatRec ? 'text-[#0a241e]' : 'text-[#95aba5]' }}">
+                        {{ $valCatRec && isset($catArr[$valCatRec]) ? $catArr[$valCatRec] : 'Categoria: Todas' }}
+                    </span>
+                    <div id="chevron-cat-rec" class="text-[#95aba5] transition-transform duration-200 shrink-0 ml-2">
+                        <i data-lucide="chevron-down" class="w-4 h-4"></i>
+                    </div>
+                </div>
+
+                <!-- Dropdown Flutuante -->
+                <div id="dropdown-menu-cat-rec" class="hidden absolute top-full left-0 right-0 mt-1 bg-white border border-[#e3e8e6] rounded-xl shadow-xl z-50 p-1.5 flex flex-col gap-0.5">
+                    <div onclick="selectSingleOption('', 'Categoria: Todas', 'categoria', 'label-cat-rec', 'dropdown-menu-cat-rec', 'chevron-cat-rec', false)"
+                         class="option-cat-rec flex items-center p-2.5 hover:bg-[#ecfdf5] rounded-lg transition-colors cursor-pointer text-xs text-[#0a241e]">
+                        <span class="option-title font-medium text-[#95aba5]">Categoria: Todas</span>
+                    </div>
+                    @foreach($catArr as $cKey => $cLbl)
+                        <div onclick="selectSingleOption('{{ $cKey }}', '{{ $cLbl }}', 'categoria', 'label-cat-rec', 'dropdown-menu-cat-rec', 'chevron-cat-rec', false)"
+                             class="option-cat-rec flex items-center p-2.5 hover:bg-[#ecfdf5] rounded-lg transition-colors cursor-pointer text-xs text-[#0a241e]">
+                            <span class="option-title font-medium">{{ $cLbl }}</span>
+                        </div>
+                    @endforeach
+                </div>
             </div>
         </div>
     </form>

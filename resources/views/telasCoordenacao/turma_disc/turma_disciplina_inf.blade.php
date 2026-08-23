@@ -34,29 +34,46 @@
                 @if(request()->input('idTurmas'))
                     <input type="hidden" name="idTurmas" value="{{ request()->input('idTurmas') }}">
                 @endif
-                <div class="relative">
-                    <select
-                        name="idFuncionarios"
-                        onchange="this.form.submit()"
-                        class="w-full h-11 appearance-none bg-white border border-[#e3e8e6] rounded-xl px-4 pr-10 text-sm text-[#0a241e] focus:outline-none focus:border-[#008a4b] focus:ring-2 focus:ring-[#008a4b]/10 cursor-pointer transition-all"
-                    >
-                        <option value="" disabled {{ !request()->has('idFuncionarios') ? 'selected' : '' }}>
-                            Filtrar por Professor
-                        </option>
-                        <option value="" {{ request()->input('idFuncionarios') === '' ? 'selected' : '' }}>
-                            Todos os Professores
-                        </option>
-                        @foreach($professores as $prof)
-                            <option value="{{ $prof->idFuncionarios }}" {{ request()->input('idFuncionarios') == $prof->idFuncionarios ? 'selected' : '' }}>
-                                {{ $prof->NomeFuncionario }}
-                            </option>
-                        @endforeach
-                    </select>
+                <div class="relative" id="dropdown-container-professor">
+                    <input type="hidden" id="idFuncionarios" name="idFuncionarios" value="{{ request()->input('idFuncionarios', '') }}">
 
-                    <i
-                        data-lucide="chevron-down"
-                        class="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#95aba5] pointer-events-none"
-                    ></i>
+                    @php
+                        $selectedProf = $professores->firstWhere('idFuncionarios', request()->input('idFuncionarios'));
+                    @endphp
+
+                    <!-- Trigger Box -->
+                    <div onclick="toggleMultiDropdown('dropdown-menu-professor', 'chevron-professor')" 
+                         class="w-full flex items-center justify-between bg-white border border-[#e3e8e6] hover:border-[#008a4b]/50 rounded-xl px-4 py-2.5 transition-all cursor-pointer shadow-2xs h-11">
+                        <span id="label-professor" class="text-sm font-medium truncate {{ $selectedProf ? 'text-[#0a241e]' : 'text-[#95aba5]' }}">
+                            {{ $selectedProf ? $selectedProf->NomeFuncionario : 'Filtrar por Professor' }}
+                        </span>
+                        <div id="chevron-professor" class="text-[#95aba5] transition-transform duration-200 shrink-0 ml-2">
+                            <i data-lucide="chevron-down" class="w-4 h-4"></i>
+                        </div>
+                    </div>
+
+                    <!-- Dropdown Flutuante -->
+                    <div id="dropdown-menu-professor" class="hidden absolute top-full left-0 right-0 mt-1 bg-white border border-[#e3e8e6] rounded-xl shadow-xl z-50 p-2 flex flex-col gap-2 overflow-hidden" style="max-height: 240px;">
+                        <!-- Campo de Busca -->
+                        <div class="relative shrink-0">
+                            <input type="text" onkeyup="filterDropdownOptions('search-professor', 'option-professor')" id="search-professor" placeholder="Pesquisar..." class="w-full pl-3 pr-9 py-1.5 bg-[#f8faf9] border border-[#e3e8e6] rounded-lg text-xs focus:outline-none focus:border-[#008a4b]">
+                            <i data-lucide="search" class="w-3.5 h-3.5 text-[#95aba5] absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none"></i>
+                        </div>
+
+                        <!-- Lista de Opções com Rolagem -->
+                        <div class="custom-scroll flex flex-col gap-0.5 pr-1" style="max-height: 180px; overflow-y: auto;">
+                            <div onclick="selectSingleOption('', 'Todos os Professores', 'idFuncionarios', 'label-professor', 'dropdown-menu-professor', 'chevron-professor', true)"
+                                 class="option-professor flex items-center p-2 hover:bg-[#ecfdf5] rounded-lg transition-colors cursor-pointer text-xs text-[#0a241e]">
+                                <span class="option-title font-medium">Todos os Professores</span>
+                            </div>
+                            @foreach($professores as $prof)
+                                <div onclick="selectSingleOption('{{ $prof->idFuncionarios }}', '{{ $prof->NomeFuncionario }}', 'idFuncionarios', 'label-professor', 'dropdown-menu-professor', 'chevron-professor', true)"
+                                     class="option-professor flex items-center p-2 hover:bg-[#ecfdf5] rounded-lg transition-colors cursor-pointer text-xs text-[#0a241e]">
+                                    <span class="option-title font-medium">{{ $prof->NomeFuncionario }}</span>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
                 </div>
             </form>
         </div>
@@ -67,29 +84,46 @@
                 @if(request()->input('idFuncionarios'))
                     <input type="hidden" name="idFuncionarios" value="{{ request()->input('idFuncionarios') }}">
                 @endif
-                <div class="relative">
-                    <select
-                        name="idTurmas"
-                        onchange="this.form.submit()"
-                        class="w-full h-11 appearance-none bg-white border border-[#e3e8e6] rounded-xl px-4 pr-10 text-sm text-[#0a241e] focus:outline-none focus:border-[#008a4b] focus:ring-2 focus:ring-[#008a4b]/10 cursor-pointer transition-all"
-                    >
-                        <option value="" disabled {{ !request()->has('idTurmas') ? 'selected' : '' }}>
-                            Filtrar por Turma
-                        </option>
-                        <option value="" {{ request()->input('idTurmas') === '' ? 'selected' : '' }}>
-                            Todas as Turmas
-                        </option>
-                        @foreach($turmas as $t)
-                            <option value="{{ $t->idTurmas }}" {{ request()->input('idTurmas') == $t->idTurmas ? 'selected' : '' }}>
-                                {{ $t->NomeTurma }}
-                            </option>
-                        @endforeach
-                    </select>
+                <div class="relative" id="dropdown-container-turma">
+                    <input type="hidden" id="idTurmas" name="idTurmas" value="{{ request()->input('idTurmas', '') }}">
 
-                    <i
-                        data-lucide="chevron-down"
-                        class="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#95aba5] pointer-events-none"
-                    ></i>
+                    @php
+                        $selectedTurma = $turmas->firstWhere('idTurmas', request()->input('idTurmas'));
+                    @endphp
+
+                    <!-- Trigger Box -->
+                    <div onclick="toggleMultiDropdown('dropdown-menu-turma', 'chevron-turma')" 
+                         class="w-full flex items-center justify-between bg-white border border-[#e3e8e6] hover:border-[#008a4b]/50 rounded-xl px-4 py-2.5 transition-all cursor-pointer shadow-2xs h-11">
+                        <span id="label-turma" class="text-sm font-medium truncate {{ $selectedTurma ? 'text-[#0a241e]' : 'text-[#95aba5]' }}">
+                            {{ $selectedTurma ? $selectedTurma->NomeTurma : 'Filtrar por Turma' }}
+                        </span>
+                        <div id="chevron-turma" class="text-[#95aba5] transition-transform duration-200 shrink-0 ml-2">
+                            <i data-lucide="chevron-down" class="w-4 h-4"></i>
+                        </div>
+                    </div>
+
+                    <!-- Dropdown Flutuante -->
+                    <div id="dropdown-menu-turma" class="hidden absolute top-full left-0 right-0 mt-1 bg-white border border-[#e3e8e6] rounded-xl shadow-xl z-50 p-2 flex flex-col gap-2 overflow-hidden" style="max-height: 240px;">
+                        <!-- Campo de Busca -->
+                        <div class="relative shrink-0">
+                            <input type="text" onkeyup="filterDropdownOptions('search-turma', 'option-turma')" id="search-turma" placeholder="Pesquisar..." class="w-full pl-3 pr-9 py-1.5 bg-[#f8faf9] border border-[#e3e8e6] rounded-lg text-xs focus:outline-none focus:border-[#008a4b]">
+                            <i data-lucide="search" class="w-3.5 h-3.5 text-[#95aba5] absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none"></i>
+                        </div>
+
+                        <!-- Lista de Opções com Rolagem -->
+                        <div class="custom-scroll flex flex-col gap-0.5 pr-1" style="max-height: 180px; overflow-y: auto;">
+                            <div onclick="selectSingleOption('', 'Todas as Turmas', 'idTurmas', 'label-turma', 'dropdown-menu-turma', 'chevron-turma', true)"
+                                 class="option-turma flex items-center p-2 hover:bg-[#ecfdf5] rounded-lg transition-colors cursor-pointer text-xs text-[#0a241e]">
+                                <span class="option-title font-medium">Todas as Turmas</span>
+                            </div>
+                            @foreach($turmas as $t)
+                                <div onclick="selectSingleOption('{{ $t->idTurmas }}', '{{ $t->NomeTurma }}', 'idTurmas', 'label-turma', 'dropdown-menu-turma', 'chevron-turma', true)"
+                                     class="option-turma flex items-center p-2 hover:bg-[#ecfdf5] rounded-lg transition-colors cursor-pointer text-xs text-[#0a241e]">
+                                    <span class="option-title font-medium">{{ $t->NomeTurma }}</span>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
                 </div>
             </form>
         </div>

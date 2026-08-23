@@ -14,23 +14,53 @@
             <button class="btn-pesquisar"><i class="fa fa-search" aria-hidden="true"></i></button>
         </form>
     </div>
-</div>
 <div class="col-md-3">
     <div class="form-group">
         <label for="NomeTurma">Filtrar por turma:</label>
-        <form class="form-search pesquisar"method="POST" action="/coordenacao/acordo_filtro">
-           {!! csrf_field() !!}
-            <div class="select-wrapper">
-    <select class="form-control maruge-select" name="idTurmas" >
-                <option></option>
-                @forelse($turmas as $turma)  
-                <option value="{{$turma->idTurmas}}">{{$turma->NomeTurma}}</option>
-                @empty
-                @endforelse 
-            </select>
-    <i data-lucide="chevron-down" class="select-icon"></i>
-</div>
-            <button class="btn-filtro" type="submit" > <i class="fa fa-search" aria-hidden="true"></i></button>
+        <form class="form-search pesquisar" method="POST" action="/coordenacao/acordo_filtro">
+            {!! csrf_field() !!}
+            <div class="relative" id="dropdown-container-turma-acordo-filtro">
+                <input type="hidden" id="idTurmas" name="idTurmas" value="{{ request()->input('idTurmas', '') }}">
+
+                @php
+                    $selectedTurmaAcordoFiltro = $turmas->firstWhere('idTurmas', request()->input('idTurmas'));
+                @endphp
+
+                <!-- Trigger Box -->
+                <div onclick="toggleMultiDropdown('dropdown-menu-turma-acordo-filtro', 'chevron-turma-acordo-filtro')" 
+                     class="w-full flex items-center justify-between bg-white border border-[#e3e8e6] hover:border-[#008a4b]/50 rounded-xl px-4 py-2.5 transition-all cursor-pointer shadow-2xs h-11">
+                    <span id="label-turma-acordo-filtro" class="text-sm font-medium truncate {{ $selectedTurmaAcordoFiltro ? 'text-[#0a241e]' : 'text-[#95aba5]' }}">
+                        {{ $selectedTurmaAcordoFiltro ? $selectedTurmaAcordoFiltro->NomeTurma : 'Filtrar por turma' }}
+                    </span>
+                    <div id="chevron-turma-acordo-filtro" class="text-[#95aba5] transition-transform duration-200 shrink-0 ml-2">
+                        <i data-lucide="chevron-down" class="w-4 h-4"></i>
+                    </div>
+                </div>
+
+                <!-- Dropdown Flutuante -->
+                <div id="dropdown-menu-turma-acordo-filtro" class="hidden absolute top-full left-0 right-0 mt-1 bg-white border border-[#e3e8e6] rounded-xl shadow-xl z-50 p-2 flex flex-col gap-2 overflow-hidden" style="max-height: 240px;">
+                    <!-- Campo de Busca -->
+                    <div class="relative shrink-0">
+                        <input type="text" onkeyup="filterDropdownOptions('search-turma-acordo-filtro', 'option-turma-acordo-filtro')" id="search-turma-acordo-filtro" placeholder="Pesquisar..." class="w-full pl-3 pr-9 py-1.5 bg-[#f8faf9] border border-[#e3e8e6] rounded-lg text-xs focus:outline-none focus:border-[#008a4b]">
+                        <i data-lucide="search" class="w-3.5 h-3.5 text-[#95aba5] absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none"></i>
+                    </div>
+
+                    <!-- Lista de Opções com Rolagem -->
+                    <div class="custom-scroll flex flex-col gap-0.5 pr-1" style="max-height: 180px; overflow-y: auto;">
+                        <div onclick="selectSingleOption('', 'Todas as Turmas', 'idTurmas', 'label-turma-acordo-filtro', 'dropdown-menu-turma-acordo-filtro', 'chevron-turma-acordo-filtro', true)"
+                             class="option-turma-acordo-filtro flex items-center p-2 hover:bg-[#ecfdf5] rounded-lg transition-colors cursor-pointer text-xs text-[#0a241e]">
+                            <span class="option-title font-medium">Todas as Turmas</span>
+                        </div>
+                        @foreach($turmas as $turma)
+                            <div onclick="selectSingleOption('{{ $turma->idTurmas }}', '{{ $turma->NomeTurma }}', 'idTurmas', 'label-turma-acordo-filtro', 'dropdown-menu-turma-acordo-filtro', 'chevron-turma-acordo-filtro', true)"
+                                 class="option-turma-acordo-filtro flex items-center p-2 hover:bg-[#ecfdf5] rounded-lg transition-colors cursor-pointer text-xs text-[#0a241e]">
+                                <span class="option-title font-medium">{{ $turma->NomeTurma }}</span>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+            </div>
+            <button class="btn-filtro" type="submit"><i class="fa fa-search" aria-hidden="true"></i></button>
         </form>
     </div>
 </div>

@@ -4,15 +4,29 @@
         <!-- Forma PGTO -->
         <div style="flex: 1 1 25%; min-width: 150px; display: flex; flex-direction: column; gap: 6px;">
             <label for="FormaPGTO" class="text-sm font-medium text-[#0a241e]">Forma PGTO:</label>
-            <div class="select-wrapper">
-    <select class="w-full bg-transparent text-sm text-[#0a241e] focus:outline-none appearance-none cursor-pointer pr-6 maruge-select" name="FormaPGTO">
-                    <option value="{{ $matricula->FormaPGTO ?? old('FormaPGTO') }}">{{ $matricula->FormaPGTO ?? old('FormaPGTO') }}</option>
-                    <option value="CHEQUE">CHEQUE</option>
-                    <option value="CARTÃO">CARTÃO</option>
-                    <option value="DINHEIRO">DINHEIRO</option>
-                </select>
-    <i data-lucide="chevron-down" class="select-icon"></i>
-</div>
+            <div class="relative" id="dropdown-container-formapgto">
+                <input type="hidden" id="FormaPGTO" name="FormaPGTO" value="{{ old('FormaPGTO', $matricula->FormaPGTO ?? '') }}">
+                @php
+                    $valPgto = old('FormaPGTO', $matricula->FormaPGTO ?? '');
+                @endphp
+                <div onclick="toggleMultiDropdown('dropdown-menu-formapgto', 'chevron-formapgto')" 
+                     class="w-full flex items-center justify-between bg-[#f8faf9] border border-[#e3e8e6] hover:border-[#008a4b]/50 rounded-xl px-4 py-2.5 transition-all cursor-pointer shadow-2xs h-11">
+                    <span id="label-formapgto" class="text-sm font-medium truncate {{ $valPgto ? 'text-[#0a241e]' : 'text-[#95aba5]' }}">
+                        {{ $valPgto ?: 'Selecione...' }}
+                    </span>
+                    <div id="chevron-formapgto" class="text-[#95aba5] transition-transform duration-200 shrink-0 ml-2">
+                        <i data-lucide="chevron-down" class="w-4 h-4"></i>
+                    </div>
+                </div>
+                <div id="dropdown-menu-formapgto" class="hidden absolute top-full left-0 right-0 mt-1 bg-white border border-[#e3e8e6] rounded-xl shadow-xl z-50 p-1.5 flex flex-col gap-0.5">
+                    @foreach(['CHEQUE', 'CARTÃO', 'DINHEIRO'] as $fpg)
+                        <div onclick="selectSingleOption('{{ $fpg }}', '{{ $fpg }}', 'FormaPGTO', 'label-formapgto', 'dropdown-menu-formapgto', 'chevron-formapgto', false)"
+                             class="option-formapgto flex items-center p-2.5 hover:bg-[#ecfdf5] rounded-lg transition-colors cursor-pointer text-xs text-[#0a241e]">
+                            <span class="option-title font-medium">{{ $fpg }}</span>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
         </div>
         <!-- Valor -->
         <div style="flex: 1 1 20%; min-width: 120px; display: flex; flex-direction: column; gap: 6px;">
@@ -75,20 +89,37 @@
             <!-- Validade do Desconto -->
             <div style="flex: 1 1 20%; min-width: 160px; display: flex; flex-direction: column; gap: 6px;">
                 <label for="ValidadeDesconto" class="text-sm font-medium text-[#0a241e]">Validade:</label>
-                <div class="select-wrapper">
-    <select
-                        id="ValidadeDesconto"
-                        name="ValidadeDesconto"
-                        class="w-full bg-transparent text-sm text-[#0a241e] focus:outline-none appearance-none cursor-pointer pr-6 maruge-select">
-                        <option value="esta_matricula"  {{ (($matricula->ValidadeDesconto ?? old('ValidadeDesconto')) == 'esta_matricula')  ? 'selected' : '' }}>Apenas esta matrícula</option>
-                        <option value="ate_vencimento"  {{ (($matricula->ValidadeDesconto ?? old('ValidadeDesconto')) == 'ate_vencimento')  ? 'selected' : '' }}>Até o vencimento</option>
-                        <option value="ate_cancelar"    {{ (($matricula->ValidadeDesconto ?? old('ValidadeDesconto')) == 'ate_cancelar')    ? 'selected' : '' }}>Até cancelar</option>
-                        <option value="data_especifica" {{ (($matricula->ValidadeDesconto ?? old('ValidadeDesconto')) == 'data_especifica') ? 'selected' : '' }}>Data específica</option>
-                    </select>
-    <i data-lucide="chevron-down" class="select-icon"></i>
-</div>
+                <div class="relative" id="dropdown-container-validadedesconto">
+                    <input type="hidden" id="ValidadeDesconto" name="ValidadeDesconto" value="{{ old('ValidadeDesconto', $matricula->ValidadeDesconto ?? 'esta_matricula') }}">
+                    @php
+                        $valValidade = old('ValidadeDesconto', $matricula->ValidadeDesconto ?? 'esta_matricula');
+                        $validadeLabels = [
+                            'esta_matricula' => 'Apenas esta matrícula',
+                            'ate_vencimento' => 'Até o vencimento',
+                            'ate_cancelar' => 'Até cancelar',
+                            'data_especifica' => 'Data específica'
+                        ];
+                    @endphp
+                    <div onclick="toggleMultiDropdown('dropdown-menu-validadedesconto', 'chevron-validadedesconto')" 
+                         class="w-full flex items-center justify-between bg-[#f8faf9] border border-[#e3e8e6] hover:border-[#008a4b]/50 rounded-xl px-4 py-2.5 transition-all cursor-pointer shadow-2xs h-11">
+                        <span id="label-validadedesconto" class="text-sm font-medium truncate {{ $valValidade ? 'text-[#0a241e]' : 'text-[#95aba5]' }}">
+                            {{ $validadeLabels[$valValidade] ?? 'Selecione a validade...' }}
+                        </span>
+                        <div id="chevron-validadedesconto" class="text-[#95aba5] transition-transform duration-200 shrink-0 ml-2">
+                            <i data-lucide="chevron-down" class="w-4 h-4"></i>
+                        </div>
+                    </div>
+                    <div id="dropdown-menu-validadedesconto" class="hidden absolute top-full left-0 right-0 mt-1 bg-white border border-[#e3e8e6] rounded-xl shadow-xl z-50 p-1.5 flex flex-col gap-0.5">
+                        @foreach($validadeLabels as $vKey => $vText)
+                            <div onclick="selectSingleOption('{{ $vKey }}', '{{ $vText }}', 'ValidadeDesconto', 'label-validadedesconto', 'dropdown-menu-validadedesconto', 'chevron-validadedesconto', false); toggleDataValidade('{{ $vKey }}');"
+                                 class="option-validadedesconto flex items-center p-2.5 hover:bg-[#ecfdf5] rounded-lg transition-colors cursor-pointer text-xs text-[#0a241e]">
+                                <span class="option-title font-medium">{{ $vText }}</span>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
                 <!-- Calendário — exibido somente quando "Data específica" for selecionada -->
-                <div id="DataValidadeWrapper" class="hidden">
+                <div id="DataValidadeWrapper" class="{{ $valValidade == 'data_especifica' ? '' : 'hidden' }} mt-2">
                     <input
                         type="date"
                         id="DataValidadeDesconto"
@@ -97,6 +128,19 @@
                         value="{{ $matricula->DataValidadeDesconto ?? old('DataValidadeDesconto') }}">
                 </div>
             </div>
+
+            <script>
+            function toggleDataValidade(val) {
+                const wrapper = document.getElementById('DataValidadeWrapper');
+                if (wrapper) {
+                    if (val === 'data_especifica') {
+                        wrapper.classList.remove('hidden');
+                    } else {
+                        wrapper.classList.add('hidden');
+                    }
+                }
+            }
+            </script>
         </div>
 
         <!-- Resumo Financeiro em tempo real -->

@@ -31,6 +31,7 @@ class cont_funcionario extends Controller {
     }
 
 //Metodo para salva uma nova escola
+    //Metodo para salva uma nova escola
     public function postnovofuncionario() {
         $dadosForm = request()->all();
         //dd($dadosForm);
@@ -48,6 +49,32 @@ class cont_funcionario extends Controller {
 
         if ($verificar == true) {
             $salvarFuncionario = tb_funcionario::salvaFuncionario($dadosForm);
+
+            // Se for Docente ou Coordenador e informou senha, cria o usuario correspondente
+            $funcaoUpper = mb_strtoupper($dadosForm['Funcao'] ?? '', 'UTF-8');
+            if ((str_contains($funcaoUpper, 'DOCENTE') || str_contains($funcaoUpper, 'COORDENAD') || str_contains($funcaoUpper, 'COORDENAC')) && !empty($dadosForm['password'])) {
+                $cpf = $dadosForm['CPFFuncionario'] ?? '';
+                $funcCreated = tb_funcionario::where('CPFFuncionario', $cpf)->first();
+                if ($funcCreated) {
+                    $nivel = str_contains($funcaoUpper, 'DOCENTE') ? 'DOCENTE' : 'COORDENACÃO';
+                    $userExist = \App\Models\modelCoordenacao\tb_usuario::where('CPFUsuario', $cpf)->first();
+                    if (!$userExist) {
+                        $newUser = new \App\Models\modelCoordenacao\tb_usuario();
+                        $newUser->CPFUsuario = $cpf;
+                        $newUser->password = bcrypt($dadosForm['password']);
+                        $newUser->Nivel = $nivel;
+                        $newUser->Situacao = 'ATIVO';
+                        $newUser->tb_funcionarios_idFuncionarios = $funcCreated->idFuncionarios;
+                        $newUser->save();
+                    } else {
+                        $userExist->password = bcrypt($dadosForm['password']);
+                        $userExist->Nivel = $nivel;
+                        $userExist->Situacao = 'ATIVO';
+                        $userExist->save();
+                    }
+                }
+            }
+
             if (!request()->ajax() && !request()->wantsJson()) {
                 return redirect('/coordenacao/novofuncionario')->with('success', 'Funcionário cadastrado com sucesso!');
             }
@@ -70,8 +97,9 @@ class cont_funcionario extends Controller {
     public function editar($idFuncionarios) {
         $funcionario = $this->tb_funcionario->find($idFuncionarios);
         $endereco = $funcionario->endFuncionario;
+        $usuario = \App\Models\modelCoordenacao\tb_usuario::where('tb_funcionarios_idFuncionarios', $idFuncionarios)->first();
         $titulo = 'Editar Funcionário';
-        return view('telasCoordenacao.funcionarios.funcionario_cad', compact('funcionario', 'endereco', 'titulo'));
+        return view('telasCoordenacao.funcionarios.funcionario_cad', compact('funcionario', 'endereco', 'usuario', 'titulo'));
     }
 
     // Metodo que realizar o update com os novos dados
@@ -88,8 +116,36 @@ class cont_funcionario extends Controller {
                 $displayErros .= $errors;
             } return $displayErros;
         }
-// Chamando o metodo para realizar a atualização passando os parametros necessarios
+        // Chamando o metodo para realizar a atualização passando os parametros necessarios
         $updateFuncionario = tb_funcionario::editandofuncionario($dadosForm, $idFuncionarios);
+
+        // Se a funcao for Docente ou Coordenador e informou senha, cria ou atualiza usuario
+        $funcaoUpper = mb_strtoupper($dadosForm['Funcao'] ?? '', 'UTF-8');
+        if ((str_contains($funcaoUpper, 'DOCENTE') || str_contains($funcaoUpper, 'COORDENAD') || str_contains($funcaoUpper, 'COORDENAC')) && !empty($dadosForm['password'])) {
+            $func = tb_funcionario::find($idFuncionarios);
+            if ($func) {
+                $cpf = $func->CPFFuncionario;
+                $nivel = str_contains($funcaoUpper, 'DOCENTE') ? 'DOCENTE' : 'COORDENACÃO';
+                $userExist = \App\Models\modelCoordenacao\tb_usuario::where('CPFUsuario', $cpf)
+                    ->orWhere('tb_funcionarios_idFuncionarios', $idFuncionarios)
+                    ->first();
+                if (!$userExist) {
+                    $newUser = new \App\Models\modelCoordenacao\tb_usuario();
+                    $newUser->CPFUsuario = $cpf;
+                    $newUser->password = bcrypt($dadosForm['password']);
+                    $newUser->Nivel = $nivel;
+                    $newUser->Situacao = 'ATIVO';
+                    $newUser->tb_funcionarios_idFuncionarios = $idFuncionarios;
+                    $newUser->save();
+                } else {
+                    $userExist->password = bcrypt($dadosForm['password']);
+                    $userExist->Nivel = $nivel;
+                    $userExist->Situacao = 'ATIVO';
+                    $userExist->save();
+                }
+            }
+        }
+
         if ($updateFuncionario) {
             if (!request()->ajax() && !request()->wantsJson()) {
                 return redirect('/coordenacao/funcionario_inf')->with('success', 'Funcionário atualizado com sucesso!');

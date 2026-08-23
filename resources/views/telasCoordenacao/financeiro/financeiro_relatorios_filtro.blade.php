@@ -35,68 +35,117 @@
                                         <form  method="POST" action="/coordenacao/financeiro_pesq_relatorio">
                                             {!! csrf_field() !!}                      
                                           
-                                            
-                                            <div class="col-md-2">
+                                                                                <div class="col-md-2">
                                                 <div class="form-group">
-                                                    <label for="turma">Turma:</label>
-                                                    <div class="select-wrapper">
-    <select class="form-control maruge-select" name="idTurmas">
-                                                        <option ></option>                                        
-                                                       
-                                                        
-                                        @forelse($turmas as $turma)  
-                                        <option value="{{$turma->idTurmas}}">{{$turma->NomeTurma}}</option>
-                                        @empty
-                                        @endforelse 
-                                                        
-  
-                                                        
-                                               </select>
-    <i data-lucide="chevron-down" class="select-icon"></i>
-</div>
+                                                    <label for="turma" class="text-sm font-medium text-[#0a241e]">Turma:</label>
+                                                    <div class="relative" id="dropdown-container-fin-turma">
+                                                        <input type="hidden" id="idTurmas" name="idTurmas" value="{{ request()->input('idTurmas', '') }}">
+                                                        @php
+                                                            $selectedFinTurma = $turmas->firstWhere('idTurmas', request()->input('idTurmas'));
+                                                        @endphp
+                                                        <div onclick="toggleMultiDropdown('dropdown-menu-fin-turma', 'chevron-fin-turma')" 
+                                                             class="w-full flex items-center justify-between bg-[#f8faf9] border border-[#e3e8e6] hover:border-[#008a4b]/50 rounded-xl px-4 py-2.5 transition-all cursor-pointer shadow-2xs h-11">
+                                                            <span id="label-fin-turma" class="text-sm font-medium truncate {{ $selectedFinTurma ? 'text-[#0a241e]' : 'text-[#95aba5]' }}">
+                                                                {{ $selectedFinTurma ? $selectedFinTurma->NomeTurma : 'Selecione...' }}
+                                                            </span>
+                                                            <div id="chevron-fin-turma" class="text-[#95aba5] transition-transform duration-200 shrink-0 ml-2">
+                                                                <i data-lucide="chevron-down" class="w-4 h-4"></i>
+                                                            </div>
+                                                        </div>
+                                                        <div id="dropdown-menu-fin-turma" class="hidden absolute top-full left-0 right-0 mt-1 bg-white border border-[#e3e8e6] rounded-xl shadow-xl z-50 p-2 flex flex-col gap-2 overflow-hidden" style="max-height: 240px;">
+                                                            <div class="relative shrink-0">
+                                                                <input type="text" onkeyup="filterDropdownOptions('search-fin-turma', 'option-fin-turma')" id="search-fin-turma" placeholder="Pesquisar..." class="w-full pl-3 pr-9 py-1.5 bg-[#f8faf9] border border-[#e3e8e6] rounded-lg text-xs focus:outline-none focus:border-[#008a4b]">
+                                                                <i data-lucide="search" class="w-3.5 h-3.5 text-[#95aba5] absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none"></i>
+                                                            </div>
+                                                            <div class="custom-scroll flex flex-col gap-0.5 pr-1" style="max-height: 180px; overflow-y: auto;">
+                                                                <div onclick="selectSingleOption('', 'Selecione...', 'idTurmas', 'label-fin-turma', 'dropdown-menu-fin-turma', 'chevron-fin-turma', false)"
+                                                                     class="option-fin-turma flex items-center p-2 hover:bg-[#ecfdf5] rounded-lg transition-colors cursor-pointer text-xs text-[#0a241e]">
+                                                                    <span class="option-title font-medium text-[#95aba5]">Todas as Turmas</span>
+                                                                </div>
+                                                                @foreach($turmas as $turma)
+                                                                    <div onclick="selectSingleOption('{{ $turma->idTurmas }}', '{{ $turma->NomeTurma }}', 'idTurmas', 'label-fin-turma', 'dropdown-menu-fin-turma', 'chevron-fin-turma', false)"
+                                                                         class="option-fin-turma flex items-center p-2 hover:bg-[#ecfdf5] rounded-lg transition-colors cursor-pointer text-xs text-[#0a241e]">
+                                                                        <span class="option-title font-medium">{{ $turma->NomeTurma }}</span>
+                                                                    </div>
+                                                                @endforeach
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
                                             
                                                    
                                             <div class="col-md-3">
                                                 <div class="form-group">
-                                                    <label for="Mês">Mês:</label>
-                                                    <div class="select-wrapper">
-    <select class="form-control maruge-select" name="Meses" required="required" >
-                                                        <option ></option>                                        
-                                                        <option>JANEIRO </option>
-                                                        <option>FEVEREIRO </option>
-                                                        <option>MARÇO</option>
-                                                        <option>ABRIL</option>
-                                                        <option>MAIO</option>
-                                                        <option>JUNHO</option>
-                                                        <option>JULHO</option>
-                                                        <option>AGOSTO</option>
-                                                        <option>SETEMBRO</option>
-                                                        <option>OUTUBRO</option>
-                                                        <option>NOVEMBRO</option>
-                                                        <option>DEZEMBRO</option>                                        
-                                                    </select>
-    <i data-lucide="chevron-down" class="select-icon"></i>
-</div>
+                                                    <label for="Mês" class="text-sm font-medium text-[#0a241e]">Mês:</label>
+                                                    <div class="relative" id="dropdown-container-fin-mes">
+                                                        <input type="hidden" id="Meses" name="Meses" value="{{ request()->input('Meses', '') }}">
+                                                        @php
+                                                            $valMes = request()->input('Meses', '');
+                                                            $mesesArr = ['JANEIRO','FEVEREIRO','MARÇO','ABRIL','MAIO','JUNHO','JULHO','AGOSTO','SETEMBRO','OUTUBRO','NOVEMBRO','DEZEMBRO'];
+                                                        @endphp
+                                                        <div onclick="toggleMultiDropdown('dropdown-menu-fin-mes', 'chevron-fin-mes')" 
+                                                             class="w-full flex items-center justify-between bg-[#f8faf9] border border-[#e3e8e6] hover:border-[#008a4b]/50 rounded-xl px-4 py-2.5 transition-all cursor-pointer shadow-2xs h-11">
+                                                            <span id="label-fin-mes" class="text-sm font-medium truncate {{ $valMes ? 'text-[#0a241e]' : 'text-[#95aba5]' }}">
+                                                                {{ $valMes ?: 'Selecione o mês...' }}
+                                                            </span>
+                                                            <div id="chevron-fin-mes" class="text-[#95aba5] transition-transform duration-200 shrink-0 ml-2">
+                                                                <i data-lucide="chevron-down" class="w-4 h-4"></i>
+                                                            </div>
+                                                        </div>
+                                                        <div id="dropdown-menu-fin-mes" class="hidden absolute top-full left-0 right-0 mt-1 bg-white border border-[#e3e8e6] rounded-xl shadow-xl z-50 p-2 flex flex-col gap-2 overflow-hidden" style="max-height: 240px;">
+                                                            <div class="custom-scroll flex flex-col gap-0.5 pr-1" style="max-height: 180px; overflow-y: auto;">
+                                                                <div onclick="selectSingleOption('', 'Selecione o mês...', 'Meses', 'label-fin-mes', 'dropdown-menu-fin-mes', 'chevron-fin-mes', false)"
+                                                                     class="option-fin-mes flex items-center p-2 hover:bg-[#ecfdf5] rounded-lg transition-colors cursor-pointer text-xs text-[#0a241e]">
+                                                                    <span class="option-title font-medium text-[#95aba5]">Selecione o mês...</span>
+                                                                </div>
+                                                                @foreach($mesesArr as $mItem)
+                                                                    <div onclick="selectSingleOption('{{ $mItem }}', '{{ $mItem }}', 'Meses', 'label-fin-mes', 'dropdown-menu-fin-mes', 'chevron-fin-mes', false)"
+                                                                         class="option-fin-mes flex items-center p-2 hover:bg-[#ecfdf5] rounded-lg transition-colors cursor-pointer text-xs text-[#0a241e]">
+                                                                        <span class="option-title font-medium">{{ $mItem }}</span>
+                                                                    </div>
+                                                                @endforeach
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
                                             
                                                                               
                                             <div class="col-md-4">
                                                 <div class="form-group">
-                                                    <label for="Situação">Situação:</label>
-                                                    <div class="select-wrapper">
-    <select class="form-control maruge-select" name="status_pagamento" required="required" >
-                                                        <option ></option>
-                                                        <option> PAGO</option>
-                                                        <option> PARCIAL</option>
-                                                        <option> ABERTO</option>
-                                                    </select>
-    <i data-lucide="chevron-down" class="select-icon"></i>
-</div>
+                                                    <label for="Situação" class="text-sm font-medium text-[#0a241e]">Situação:</label>
+                                                    <div class="relative" id="dropdown-container-fin-sit">
+                                                        <input type="hidden" id="status_pagamento" name="status_pagamento" value="{{ request()->input('status_pagamento', '') }}">
+                                                        @php
+                                                            $valSit = request()->input('status_pagamento', '');
+                                                        @endphp
+                                                        <div onclick="toggleMultiDropdown('dropdown-menu-fin-sit', 'chevron-fin-sit')" 
+                                                             class="w-full flex items-center justify-between bg-[#f8faf9] border border-[#e3e8e6] hover:border-[#008a4b]/50 rounded-xl px-4 py-2.5 transition-all cursor-pointer shadow-2xs h-11">
+                                                            <span id="label-fin-sit" class="text-sm font-medium truncate {{ $valSit ? 'text-[#0a241e]' : 'text-[#95aba5]' }}">
+                                                                {{ $valSit ?: 'Selecione a situação...' }}
+                                                            </span>
+                                                            <div id="chevron-fin-sit" class="text-[#95aba5] transition-transform duration-200 shrink-0 ml-2">
+                                                                <i data-lucide="chevron-down" class="w-4 h-4"></i>
+                                                            </div>
+                                                        </div>
+                                                        <div id="dropdown-menu-fin-sit" class="hidden absolute top-full left-0 right-0 mt-1 bg-white border border-[#e3e8e6] rounded-xl shadow-xl z-50 p-2 flex flex-col gap-2 overflow-hidden" style="max-height: 240px;">
+                                                            <div class="custom-scroll flex flex-col gap-0.5 pr-1" style="max-height: 180px; overflow-y: auto;">
+                                                                <div onclick="selectSingleOption('', 'Selecione a situação...', 'status_pagamento', 'label-fin-sit', 'dropdown-menu-fin-sit', 'chevron-fin-sit', false)"
+                                                                     class="option-fin-sit flex items-center p-2 hover:bg-[#ecfdf5] rounded-lg transition-colors cursor-pointer text-xs text-[#0a241e]">
+                                                                    <span class="option-title font-medium text-[#95aba5]">Selecione...</span>
+                                                                </div>
+                                                                @foreach(['PAGO', 'PARCIAL', 'ABERTO'] as $sItem)
+                                                                    <div onclick="selectSingleOption('{{ $sItem }}', '{{ $sItem }}', 'status_pagamento', 'label-fin-sit', 'dropdown-menu-fin-sit', 'chevron-fin-sit', false)"
+                                                                         class="option-fin-sit flex items-center p-2 hover:bg-[#ecfdf5] rounded-lg transition-colors cursor-pointer text-xs text-[#0a241e]">
+                                                                        <span class="option-title font-medium">{{ $sItem }}</span>
+                                                                    </div>
+                                                                @endforeach
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                            </div>
+                                            </div>          </div>
                                             <div class="panel-body">
                                                 <div class="table-responsive">
                                                     <center> 

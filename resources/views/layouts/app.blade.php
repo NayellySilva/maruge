@@ -338,5 +338,126 @@
 
     <!-- Máscaras Universais (CPF, CNPJ, Telefone, CEP, ViaCEP e IBGE) -->
     <script src="{{ asset('js/alunos/aluno_masks.js') }}"></script>
+
+    <!-- Funções Globais para os Dropdowns Customizados Maruge -->
+    <script>
+        window.toggleMarugeDropdown = function(menuId, chevronId) {
+            const menu = document.getElementById(menuId);
+            const chevron = document.getElementById(chevronId);
+            if (!menu) return;
+
+            const isHidden = menu.classList.contains('hidden');
+
+            // Fecha outros dropdowns abertos
+            document.querySelectorAll('[id^="dropdown-menu-"]').forEach(m => {
+                if (m.id !== menuId) m.classList.add('hidden');
+            });
+            document.querySelectorAll('[id^="chevron-"]').forEach(c => {
+                if (c.id !== chevronId) c.classList.remove('rotate-180');
+            });
+
+            if (isHidden) {
+                menu.classList.remove('hidden');
+                if (chevron) chevron.classList.add('rotate-180');
+                const searchInput = menu.querySelector('input[type="text"]');
+                if (searchInput) setTimeout(() => searchInput.focus(), 50);
+            } else {
+                menu.classList.add('hidden');
+                if (chevron) chevron.classList.remove('rotate-180');
+            }
+        };
+
+        window.filterMarugeDropdownOptions = function(inputId, optionClass) {
+            const searchInput = document.getElementById(inputId);
+            if (!searchInput) return;
+            const query = searchInput.value.toLowerCase().trim();
+            const options = document.querySelectorAll('.' + optionClass);
+
+            options.forEach(opt => {
+                const title = opt.querySelector('.option-title');
+                if (!title) return;
+                const text = title.textContent.toLowerCase();
+                opt.style.display = text.includes(query) ? 'flex' : 'none';
+            });
+        };
+
+        window.selectMarugeOption = function(value, labelText, hiddenInputId, labelId, menuId, chevronId, autoSubmit) {
+            const input = document.getElementById(hiddenInputId);
+            if (input) {
+                input.value = value;
+            }
+            const labelEl = document.getElementById(labelId);
+            if (labelEl) {
+                labelEl.textContent = labelText;
+                if (value !== '') {
+                    labelEl.classList.remove('text-[#95aba5]');
+                    labelEl.classList.add('text-[#0a241e]', 'font-semibold');
+                } else {
+                    labelEl.classList.add('text-[#95aba5]');
+                    labelEl.classList.remove('text-[#0a241e]', 'font-semibold');
+                }
+            }
+
+            const menu = document.getElementById(menuId);
+            if (menu) menu.classList.add('hidden');
+            const chevron = document.getElementById(chevronId);
+            if (chevron) chevron.classList.remove('rotate-180');
+
+            if (autoSubmit && input && input.form) {
+                input.form.submit();
+            }
+        };
+
+        // Aliases para compatibilidade de chamadas existentes nas views
+        window.toggleMultiDropdown = window.toggleMarugeDropdown;
+        window.filterDropdownOptions = window.filterMarugeDropdownOptions;
+        window.selectSingleOption = function(val, text, inputId, labelId, menuId, chevronId, autoSubmit) {
+            window.selectMarugeOption(val, text, inputId, labelId, menuId, chevronId, autoSubmit);
+        };
+
+        window.checkAllInDropdown = function(checkboxClass, check, labelId, defaultText) {
+            const checkboxes = document.querySelectorAll('.' + checkboxClass);
+            checkboxes.forEach(cb => {
+                cb.checked = check;
+            });
+            window.updateDropdownLabel(checkboxClass, labelId, defaultText);
+        };
+
+        window.updateDropdownLabel = function(checkboxClass, labelId, defaultText) {
+            const checkboxes = document.querySelectorAll('.' + checkboxClass + ':checked');
+            const labelEl = document.getElementById(labelId);
+            if (!labelEl) return;
+
+            if (checkboxes.length === 0) {
+                labelEl.textContent = defaultText;
+                labelEl.classList.add('text-[#95aba5]');
+                labelEl.classList.remove('text-[#0a241e]', 'font-semibold');
+            } else if (checkboxes.length === 1) {
+                const name = checkboxes[0].getAttribute('data-name') || checkboxes[0].parentElement.textContent.trim();
+                labelEl.textContent = name;
+                labelEl.classList.remove('text-[#95aba5]');
+                labelEl.classList.add('text-[#0a241e]', 'font-semibold');
+            } else {
+                labelEl.textContent = `${checkboxes.length} selecionados`;
+                labelEl.classList.remove('text-[#95aba5]');
+                labelEl.classList.add('text-[#0a241e]', 'font-semibold');
+            }
+        };
+
+        // Fechar dropdowns com clique fora ou tecla Escape
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('[id^="container-"]') && !e.target.closest('[id^="dropdown-container-"]')) {
+                document.querySelectorAll('[id^="dropdown-menu-"]').forEach(m => m.classList.add('hidden'));
+                document.querySelectorAll('[id^="chevron-"]').forEach(c => c.classList.remove('rotate-180'));
+            }
+        });
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                document.querySelectorAll('[id^="dropdown-menu-"]').forEach(m => m.classList.add('hidden'));
+                document.querySelectorAll('[id^="chevron-"]').forEach(c => c.classList.remove('rotate-180'));
+            }
+        });
+    </script>
 </body>
 </html>

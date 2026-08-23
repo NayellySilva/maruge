@@ -54,32 +54,49 @@
             </form>
         </div>
 
-        <!-- Menu Dropdown de Filtro -->
+        <!-- Menu Dropdown de Filtro Customizado -->
         <div class="w-full sm:w-64">
             <form method="GET" action="{{ url()->current() }}" class="w-full">
-                <div class="relative">
-                    <select
-                        name="idTurmas"
-                        onchange="this.form.submit()"
-                        class="w-full h-11 appearance-none bg-white border border-[#e3e8e6] rounded-xl px-4 pr-10 text-sm text-[#0a241e] focus:outline-none focus:border-[#008a4b] focus:ring-2 focus:ring-[#008a4b]/10 cursor-pointer transition-all"
-                    >
-                        <option value="" disabled {{ !request()->has('idTurmas') ? 'selected' : '' }}>
-                            Filtrar por Turma
-                        </option>
-                        <option value="" {{ request()->input('idTurmas') === '' ? 'selected' : '' }}>
-                            Todas as Turmas
-                        </option>
-                        @foreach($turmas as $t)
-                            <option value="{{ $t->idTurmas }}" {{ request()->input('idTurmas') == $t->idTurmas ? 'selected' : '' }}>
-                                {{ $t->NomeTurma }}
-                            </option>
-                        @endforeach
-                    </select>
+                <div class="relative" id="dropdown-container-turma-notas">
+                    <input type="hidden" id="idTurmas" name="idTurmas" value="{{ request()->input('idTurmas', '') }}">
 
-                    <i
-                        data-lucide="chevron-down"
-                        class="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#95aba5] pointer-events-none"
-                    ></i>
+                    @php
+                        $selectedTurmaNotas = $turmas->firstWhere('idTurmas', request()->input('idTurmas'));
+                    @endphp
+
+                    <!-- Trigger Box -->
+                    <div onclick="toggleMultiDropdown('dropdown-menu-turma-notas', 'chevron-turma-notas')" 
+                         class="w-full flex items-center justify-between bg-white border border-[#e3e8e6] hover:border-[#008a4b]/50 rounded-xl px-4 py-2.5 transition-all cursor-pointer shadow-2xs h-11">
+                        <span id="label-turma-notas" class="text-sm font-medium truncate {{ $selectedTurmaNotas ? 'text-[#0a241e]' : 'text-[#95aba5]' }}">
+                            {{ $selectedTurmaNotas ? $selectedTurmaNotas->NomeTurma : 'Filtrar por Turma' }}
+                        </span>
+                        <div id="chevron-turma-notas" class="text-[#95aba5] transition-transform duration-200 shrink-0 ml-2">
+                            <i data-lucide="chevron-down" class="w-4 h-4"></i>
+                        </div>
+                    </div>
+
+                    <!-- Dropdown Flutuante -->
+                    <div id="dropdown-menu-turma-notas" class="hidden absolute top-full left-0 right-0 mt-1 bg-white border border-[#e3e8e6] rounded-xl shadow-xl z-50 p-2 flex flex-col gap-2 overflow-hidden" style="max-height: 240px;">
+                        <!-- Campo de Busca -->
+                        <div class="relative shrink-[#0]">
+                            <input type="text" onkeyup="filterDropdownOptions('search-turma-notas', 'option-turma-notas')" id="search-turma-notas" placeholder="Pesquisar..." class="w-full pl-3 pr-9 py-1.5 bg-[#f8faf9] border border-[#e3e8e6] rounded-lg text-xs focus:outline-none focus:border-[#008a4b]">
+                            <i data-lucide="search" class="w-3.5 h-3.5 text-[#95aba5] absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none"></i>
+                        </div>
+
+                        <!-- Lista de Opções com Rolagem -->
+                        <div class="custom-scroll flex flex-col gap-0.5 pr-1" style="max-height: 180px; overflow-y: auto;">
+                            <div onclick="selectSingleOption('', 'Todas as Turmas', 'idTurmas', 'label-turma-notas', 'dropdown-menu-turma-notas', 'chevron-turma-notas', true)"
+                                 class="option-turma-notas flex items-center p-2 hover:bg-[#ecfdf5] rounded-lg transition-colors cursor-pointer text-xs text-[#0a241e]">
+                                <span class="option-title font-medium">Todas as Turmas</span>
+                            </div>
+                            @foreach($turmas as $t)
+                                <div onclick="selectSingleOption('{{ $t->idTurmas }}', '{{ $t->NomeTurma }}', 'idTurmas', 'label-turma-notas', 'dropdown-menu-turma-notas', 'chevron-turma-notas', true)"
+                                     class="option-turma-notas flex items-center p-2 hover:bg-[#ecfdf5] rounded-lg transition-colors cursor-pointer text-xs text-[#0a241e]">
+                                    <span class="option-title font-medium">{{ $t->NomeTurma }}</span>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
                 </div>
             </form>
         </div>

@@ -85,19 +85,19 @@
                     <div class="col-md-3">
                         <div class="form-group">
                             <label for="Estado">Estado:</label>
-                            <div class="select-wrapper">
-    <select class="form-control maruge-select" name="Estado" id="estado"  value="" >
-                                <option >{{ $endereco->Estado ?? old('Estado') }}</option>
-                                <option> ACRE </option>
-                                <option> ALAGOAS</option>
-                                <option> AMAPÁ</option>
-                                <option> AMAZONAS</option>
-                                <option> BAHIA</option>
-                                <option> CEARA</option>
-                                <option> DISTRITO FEDERAL</option>
-                                <option> ESPÍRITO SANTO</option>
-                                <option> GOIÁS</option>
-                                <option> MARANHÃO</option>
+                            <div class="relative">
+                                <select name="Estado" id="estado" class="w-full h-11 appearance-none bg-white border border-[#e3e8e6] rounded-xl px-4 pr-10 text-sm text-[#0a241e] focus:outline-none focus:border-[#008a4b] focus:ring-2 focus:ring-[#008a4b]/10 cursor-pointer transition-all">
+                                    <option value="{{ $endereco->Estado ?? old('Estado') }}">{{ $endereco->Estado ?? old('Estado') }}</option>
+                                    <option>ACRE</option>
+                                    <option>ALAGOAS</option>
+                                    <option>AMAPÁ</option>
+                                    <option>AMAZONAS</option>
+                                    <option>BAHIA</option>
+                                    <option>CEARA</option>
+                                    <option>DISTRITO FEDERAL</option>
+                                    <option>ESPÍRITO SANTO</option>
+                                    <option>GOIÁS</option>
+                                    <option>MARANHÃO</option>
                                 <option> MATO GROSSO</option>
                                 <option> MATO GROSSO DO SUL</option>
                                 <option> MINAS GERAIS</option>
@@ -116,8 +116,8 @@
                                 <option> SERGIPE</option>
                                 <option> TOCANTINS</option>
                             </select>
-    <i data-lucide="chevron-down" class="select-icon"></i>
-</div>
+                            <i data-lucide="chevron-down" class="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#95aba5] pointer-events-none"></i>
+                        </div>
                         </div>
                     </div>
                     <div class="col-md-4">

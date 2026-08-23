@@ -34,49 +34,41 @@
                                 <input type="hidden" name="NomeTurma" class="form-control" value="{{$turma->NomeTurma}}">
                                 <input disabled="disabled" name="NomeTurma" class="form-control" value="{{$turma->NomeTurma}}">
                                    </div>
-                            </div> 
-                                         <div class="col-md-2">
+                            </div>                                          <div class="col-md-2">
                                 <div class="form-group">
-                                    <label for="Data_venc">Melhor dia de Pagamento:</label>
-                                    <div class="select-wrapper">
-    <select class="form-control maruge-select" name="Data_venc" id="Data_venc">
-                                        <option >{{ $aluno->Data_venc ?? old('') }}</option>
-                                        <option> 01 </option>
-                                        <option> 02 </option>
-                                        <option> 03 </option>
-                                        <option> 04 </option>
-                                        <option> 05 </option>
-                                        <option> 06 </option>
-                                        <option> 07 </option>
-                                        <option> 08 </option>
-                                        <option> 09 </option>
-                                        <option> 10 </option>
-                                        <option> 11 </option>
-                                        <option> 12 </option>
-                                        <option> 13 </option>
-                                        <option> 14 </option>
-                                        <option> 15 </option>
-                                        <option> 16 </option>
-                                        <option> 17 </option>
-                                        <option> 18 </option>
-                                        <option> 19 </option>
-                                        <option> 20 </option>
-                                        <option> 21 </option>
-                                        <option> 22 </option>
-                                        <option> 23 </option>
-                                        <option> 24 </option>
-                                        <option> 25 </option>
-                                        <option> 26 </option>
-                                        <option> 27 </option>
-                                        <option> 28 </option>
-                                        <option> 29 </option>
-                                        <option> 30 </option>
-                                        <option> 31 </option>
-                                    </select>
-    <i data-lucide="chevron-down" class="select-icon"></i>
-</div>
+                                    <label for="Data_venc" class="text-sm font-medium text-[#0a241e]">Melhor dia de Pagamento:</label>
+                                    <div class="relative" id="dropdown-container-datavenc">
+                                        <input type="hidden" id="Data_venc" name="Data_venc" value="{{ old('Data_venc', $aluno->Data_venc ?? '') }}">
+                                        @php
+                                            $valVenc = old('Data_venc', $aluno->Data_venc ?? '');
+                                        @endphp
+                                        <div onclick="toggleMultiDropdown('dropdown-menu-datavenc', 'chevron-datavenc')" 
+                                             class="w-full flex items-center justify-between bg-[#f8faf9] border border-[#e3e8e6] hover:border-[#008a4b]/50 rounded-xl px-4 py-2.5 transition-all cursor-pointer shadow-2xs h-11">
+                                            <span id="label-datavenc" class="text-sm font-medium truncate {{ $valVenc ? 'text-[#0a241e]' : 'text-[#95aba5]' }}">
+                                                {{ $valVenc ? str_pad($valVenc, 2, '0', STR_PAD_LEFT) : 'Dia...' }}
+                                            </span>
+                                            <div id="chevron-datavenc" class="text-[#95aba5] transition-transform duration-200 shrink-0 ml-2">
+                                                <i data-lucide="chevron-down" class="w-4 h-4"></i>
+                                            </div>
+                                        </div>
+                                        <div id="dropdown-menu-datavenc" class="hidden absolute top-full left-0 right-0 mt-1 bg-white border border-[#e3e8e6] rounded-xl shadow-xl z-50 p-2 flex flex-col gap-2 overflow-hidden" style="max-height: 240px;">
+                                            <div class="custom-scroll flex flex-col gap-0.5 pr-1" style="max-height: 180px; overflow-y: auto;">
+                                                <div onclick="selectSingleOption('', 'Dia...', 'Data_venc', 'label-datavenc', 'dropdown-menu-datavenc', 'chevron-datavenc', false)"
+                                                     class="option-datavenc flex items-center p-2 hover:bg-[#ecfdf5] rounded-lg transition-colors cursor-pointer text-xs text-[#0a241e]">
+                                                    <span class="option-title font-medium text-[#95aba5]">Selecione...</span>
+                                                </div>
+                                                @for($d = 1; $d <= 31; $d++)
+                                                    @php $dayFormatted = str_pad($d, 2, '0', STR_PAD_LEFT); @endphp
+                                                    <div onclick="selectSingleOption('{{ $dayFormatted }}', '{{ $dayFormatted }}', 'Data_venc', 'label-datavenc', 'dropdown-menu-datavenc', 'chevron-datavenc', false)"
+                                                         class="option-datavenc flex items-center p-2 hover:bg-[#ecfdf5] rounded-lg transition-colors cursor-pointer text-xs text-[#0a241e]">
+                                                        <span class="option-title font-medium">{{ $dayFormatted }}</span>
+                                                    </div>
+                                                @endfor
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
+                            </div>v>
                             <div class="col-md-2">
                                 <div class="form-group">
                                     <label for="valor_prestacao">Valor do Acordo:</label>
@@ -121,31 +113,40 @@
                                  <!--   <input name="Mensalidade"  class="form-control" value="{{ substr ($turma->Mensalidade ,0,3)}}"> -->
                                 </div>
                             </div>
-                            
-                            <div class="col-md-2">
+                                                     <div class="col-md-2">
                                 <div class="form-group">
-                                    <label for="quantidade_parcelas">Quant. Parcelas:</label>
-                                    <div class="select-wrapper">
-    <select class="form-control maruge-select" name="quantidade_parcelas" id="quantidade_parcelas">
-                                        <option >{{ $aluno->quantidade_parcelas ?? old('') }}</option>
-                                        <option value="1"> 1 </option>
-                                        <option value="2"> 2 </option>
-                                        <option value="3"> 3 </option>
-                                        <option value="4"> 4 </option>
-                                        <option value="5"> 5 </option>
-                                        <option value="6"> 6 </option>
-                                        <option value="7"> 7 </option>
-                                        <option value="8"> 8 </option>
-                                        <option value="9"> 9 </option>
-                                        <option value="10"> 10 </option>
-                                        <option value="11"> 11 </option>
-                                        <option value="12"> 12 </option>
-                                        <option value="92"> 92 </option>
-                                    </select>
-    <i data-lucide="chevron-down" class="select-icon"></i>
-</div>
+                                    <label for="quantidade_parcelas" class="text-sm font-medium text-[#0a241e]">Quant. Parcelas:</label>
+                                    <div class="relative" id="dropdown-container-parcelas">
+                                        <input type="hidden" id="quantidade_parcelas" name="quantidade_parcelas" value="{{ old('quantidade_parcelas', $aluno->quantidade_parcelas ?? '') }}">
+                                        @php
+                                            $valParc = old('quantidade_parcelas', $aluno->quantidade_parcelas ?? '');
+                                        @endphp
+                                        <div onclick="toggleMultiDropdown('dropdown-menu-parcelas', 'chevron-parcelas')" 
+                                             class="w-full flex items-center justify-between bg-[#f8faf9] border border-[#e3e8e6] hover:border-[#008a4b]/50 rounded-xl px-4 py-2.5 transition-all cursor-pointer shadow-2xs h-11">
+                                            <span id="label-parcelas" class="text-sm font-medium truncate {{ $valParc ? 'text-[#0a241e]' : 'text-[#95aba5]' }}">
+                                                {{ $valParc ?: 'Parcelas...' }}
+                                            </span>
+                                            <div id="chevron-parcelas" class="text-[#95aba5] transition-transform duration-200 shrink-0 ml-2">
+                                                <i data-lucide="chevron-down" class="w-4 h-4"></i>
+                                            </div>
+                                        </div>
+                                        <div id="dropdown-menu-parcelas" class="hidden absolute top-full left-0 right-0 mt-1 bg-white border border-[#e3e8e6] rounded-xl shadow-xl z-50 p-2 flex flex-col gap-2 overflow-hidden" style="max-height: 240px;">
+                                            <div class="custom-scroll flex flex-col gap-0.5 pr-1" style="max-height: 180px; overflow-y: auto;">
+                                                <div onclick="selectSingleOption('', 'Parcelas...', 'quantidade_parcelas', 'label-parcelas', 'dropdown-menu-parcelas', 'chevron-parcelas', false)"
+                                                     class="option-parcelas flex items-center p-2 hover:bg-[#ecfdf5] rounded-lg transition-colors cursor-pointer text-xs text-[#0a241e]">
+                                                    <span class="option-title font-medium text-[#95aba5]">Selecione...</span>
+                                                </div>
+                                                @foreach([1,2,3,4,5,6,7,8,9,10,11,12,92] as $pNum)
+                                                    <div onclick="selectSingleOption('{{ $pNum }}', '{{ $pNum }}', 'quantidade_parcelas', 'label-parcelas', 'dropdown-menu-parcelas', 'chevron-parcelas', false)"
+                                                         class="option-parcelas flex items-center p-2 hover:bg-[#ecfdf5] rounded-lg transition-colors cursor-pointer text-xs text-[#0a241e]">
+                                                        <span class="option-title font-medium">{{ $pNum }}</span>
+                                                    </div>
+                                                @endforeach
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
+                            </div>div>
                             
                             
   

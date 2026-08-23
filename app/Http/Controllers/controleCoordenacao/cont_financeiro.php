@@ -339,7 +339,7 @@ class cont_financeiro extends Controller {
               echo "Couldn't print to this printer: " . $e->getMessage() . "\n";
               }
              * 
-             * /* Close printer */
+             * Close printer
             // Chaves do Twilio
             $account_sid = env('TWILIO_ACCOUNT_SID', '');
             $auth_token = env('TWILIO_AUTH_TOKEN', '');
@@ -357,7 +357,7 @@ class cont_financeiro extends Controller {
             );
             
             
-             * * FIM DO COMENTARIO PARA BLOQUEAR O ENVIO DO SMS
+            // FIM DO COMENTARIO PARA BLOQUEAR O ENVIO DO SMS
         */ 
             
             

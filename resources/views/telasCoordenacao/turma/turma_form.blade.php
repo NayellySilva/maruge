@@ -72,18 +72,11 @@
                             class="w-full h-11 appearance-none bg-white border border-[#e3e8e6] rounded-xl px-4 pr-10 text-sm text-[#0a241e] focus:outline-none focus:border-[#008a4b] focus:ring-2 focus:ring-[#008a4b]/10 cursor-pointer transition-all"
                             required
                         >
-                            @if(isset($turma))
-                                <option value="{{ $turma->SituacaoTurma }}" selected>{{ $turma->SituacaoTurma }}</option>
-                            @else
-                                <option value="" disabled selected>Selecione</option>
-                            @endif
-                            <option value="ATIVO" {{ old('SituacaoTurma') == 'ATIVO' ? 'selected' : '' }}>ATIVO</option>
-                            <option value="INATIVO" {{ old('SituacaoTurma') == 'INATIVO' ? 'selected' : '' }}>INATIVO</option>
+                            <option value="" disabled {{ !isset($turma) && !old('SituacaoTurma') ? 'selected' : '' }}>Selecione</option>
+                            <option value="ATIVO" {{ (isset($turma) && $turma->SituacaoTurma == 'ATIVO') || old('SituacaoTurma') == 'ATIVO' ? 'selected' : '' }}>ATIVO</option>
+                            <option value="INATIVO" {{ (isset($turma) && $turma->SituacaoTurma == 'INATIVO') || old('SituacaoTurma') == 'INATIVO' ? 'selected' : '' }}>INATIVO</option>
                         </select>
-                        <i
-                            data-lucide="chevron-down"
-                            class="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#95aba5] pointer-events-none"
-                        ></i>
+                        <i data-lucide="chevron-down" class="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#95aba5] pointer-events-none"></i>
                     </div>
                 </div>
 
