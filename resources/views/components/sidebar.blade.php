@@ -34,17 +34,14 @@
                     <a href="{{ route('coordenacao.pagina', ['pasta' => 'turma_disc', 'pagina' => 'turma_disciplina_inf']) }}" class="submenu-link">Turma x Disciplina</a>
                     <a href="{{ route('coordenacao.pagina', ['pasta' => 'funcionarios', 'pagina' => 'funcionario_inf']) }}" class="submenu-link">Funcionários</a>
                     <a href="{{ route('coordenacao.pagina', ['pasta' => 'alunos', 'pagina' => 'aluno_inf']) }}" class="submenu-link">Alunos</a>
-                    <a href="{{ route('coordenacao.pagina', ['pasta' => 'alunos', 'pagina' => 'aluno_rematricula']) }}" class="submenu-link">Rematrícula</a>
-                    <a href="{{ route('coordenacao.pagina', ['pasta' => 'alunos', 'pagina' => 'aluno_pre_matricula_lista']) }}" class="submenu-link">Pré-Matrícula</a>
-                    <a href="{{ route('coordenacao.pagina', ['pasta' => 'alunos', 'pagina' => 'aluno_pre_matriculado']) }}" class="submenu-link">Pré-Matriculados</a>
-                    <a href="{{ route('coordenacao.pagina', ['pasta' => 'historico', 'pagina' => 'historico_inf']) }}" class="submenu-link">Histórico</a>
+                    <a href="{{ route('coordenacao.pagina', ['pasta' => 'escola', 'pagina' => 'escola_inf']) }}" class="submenu-link">Escola</a>
+                    <a href="{{ route('coordenacao.pagina', ['pasta' => 'acordo', 'pagina' => 'acordo_cad']) }}" class="submenu-link">Novo Acordo</a>
+                    <a href="{{ route('coordenacao.pagina', ['pasta' => 'historico', 'pagina' => 'historico']) }}" class="submenu-link">Histórico</a>
                     <a href="{{ route('coordenacao.pagina', ['pasta' => 'declaracoes', 'pagina' => 'declaracoes']) }}" class="submenu-link">Declarações</a>
                     <a href="{{ route('coordenacao.pagina', ['pasta' => 'frequencia', 'pagina' => 'frequencias']) }}" class="submenu-link">Frequência</a>
                     <a href="{{ route('coordenacao.pagina', ['pasta' => 'boletins', 'pagina' => 'boletins']) }}" class="submenu-link">Boletins</a>
                     <a href="{{ route('coordenacao.pagina', ['pasta' => 'notas', 'pagina' => 'notas']) }}" class="submenu-link">Lançar Notas</a>
-                    <a href="{{ route('coordenacao.pagina', ['pasta' => 'lanche', 'pagina' => 'lanche_inf']) }}" class="submenu-link">Lanche</a>
                     <a href="{{ route('coordenacao.pagina', ['pasta' => 'carne', 'pagina' => 'carne_inf']) }}" class="submenu-link">Recibos / Carnês</a>
-                    <a href="{{ route('coordenacao.pagina', ['pasta' => 'aulas', 'pagina' => 'aulas_inf']) }}" class="submenu-link">Aulas</a>
                 </div>
             </div>
         </div>
@@ -66,7 +63,7 @@
                     <a href="{{ route('coordenacao.pagina', ['pasta' => 'gabaritos', 'pagina' => 'gabaritos']) }}" class="submenu-link">Gabaritos</a>
                     <a href="{{ route('coordenacao.pagina', ['pasta' => 'relatorios', 'pagina' => 'relatorio_alunos_matriculados']) }}" class="submenu-link">Alunos Matriculados</a>
                     <a href="{{ route('coordenacao.pagina', ['pasta' => 'relatorios', 'pagina' => 'relatorio_alunos_transferidos']) }}" class="submenu-link">Alunos Inativos / Transf.</a>
-                    <a href="{{ route('coordenacao.pagina', ['pasta' => 'relatorios', 'pagina' => 'relatorio_alunos_por_turma']) }}" class="submenu-link">Alunos Por Turma</a>
+                    <a href="{{ route('coordenacao.pagina', ['pasta' => 'relatorios', 'pagina' => 'relatorio_alunos_turmas']) }}" class="submenu-link">Alunos Por Turma</a>
                     <a href="{{ route('coordenacao.pagina', ['pasta' => 'relatorios', 'pagina' => 'relatorio_pre_matriculado']) }}" class="submenu-link">Alunos Pré-Matriculados</a>
                 </div>
             </div>
@@ -93,23 +90,12 @@
 
         <!-- Ajuda -->
         <div class="sidebar-item" data-menu="ajuda">
-            <button class="sidebar-link" onclick="toggleDropdown(this)">
+            <a href="{{ url('/coordenacao/ajuda') }}" class="sidebar-link">
                 <span class="sidebar-link-content">
                     <i data-lucide="circle-help"></i>
                     <span>Ajuda</span>
                 </span>
-                <i data-lucide="chevron-right" class="sidebar-chevron"></i>
-            </button>
-            <div class="submenu">
-                <div class="submenu-list">
-                    <a href="{{ route('coordenacao.pagina', ['pasta' => 'ajuda', 'pagina' => 'manual_de_ajuda']) }}" class="submenu-link">Manual</a>
-                    <a href="{{ route('coordenacao.pagina', ['pasta' => 'ajuda', 'pagina' => 'canal_do_youtube']) }}" class="submenu-link">YouTube</a>
-                    <a href="{{ route('coordenacao.pagina', ['pasta' => 'ajuda', 'pagina' => 'pagina_do_facebook']) }}" class="submenu-link">FaceBook</a>
-                    <a href="{{ route('coordenacao.pagina', ['pasta' => 'ajuda', 'pagina' => 'sugestoes']) }}" class="submenu-link">Sugestões</a>
-                    <a href="{{ route('coordenacao.pagina', ['pasta' => 'ajuda', 'pagina' => 'bate_papo']) }}" class="submenu-link">Bate-Papo</a>
-                    <a href="{{ route('coordenacao.pagina', ['pasta' => 'ajuda', 'pagina' => 'contatos']) }}" class="submenu-link">Contatos</a>
-                </div>
-            </div>
+            </a>
         </div>
     </nav>
 

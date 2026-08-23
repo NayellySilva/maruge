@@ -1,5 +1,5 @@
-@extends('telasCoordenacao.painel')  
-@section('conteudo')
+@extends('layouts.app')
+@section('content')
 <div class="titulo-pagina">
     <h1 class="titulo-pagina">{{$titulo}}</h1>
 </div> 
@@ -9,12 +9,12 @@
     <div class="alert alert-warning msg-advertencia" role="alert" style="display: none"></div> 
     <div class="alert alert-danger msg-erro" role="alert" style="display: none"></div> 
     <div class="formularios">    
-        @if(count($errors)>0)
-        @foreach($errors->all()as $error)
+        @if((isset($errors) ? count($errors) : 0)>0)
+        @foreach($errors->all() as $error)
         {{$error}}
         @endforeach
         @endif
-            <form class="form form-search form-Nu formularios" action="/maruge/public/coordenacao/criaracordo" method="POST" send="/maruge/public/coordenacao/criaracordo">
+            <form class="form form-search form-Nu formularios" action="/coordenacao/criaracordo" method="POST" send="/coordenacao/criaracordo">
          <div class="cadForm" > </div>
                         <!--PRIMEIRA LINHA REFERENTE AOS CAMPOS (NOME DO ALUNO, SEXO, DATANASCIMENTO, MAC, SITUAÇÃO )-->
                         <div class="row">
@@ -23,9 +23,9 @@
                                     <label for="NomeAluno">Nome do Aluno:</label>
                                     <input type="hidden" name="Acordo"  class="form-control" value="S">
                                     <input type="hidden" name="Carteira"  class="form-control" value="2">
-                                    <input type="hidden" name="idAluno"  class="form-control" value="{{$aluno->idAluno or old('NomeAluno')}}">
-                                    <input type="hidden" name="NomeAluno" placeholder="Nome do Aluno"  class="form-control" value="{{$aluno->NomeAluno or old('NomeAluno')}}">
-                                    <input disabled="disabled" name="NomeAluno" placeholder="Nome do Aluno"  class="form-control" value="{{$aluno->NomeAluno or old('NomeAluno')}}">
+                                    <input type="hidden" name="idAluno"  class="form-control" value="{{ $aluno->idAluno ?? old('NomeAluno') }}">
+                                    <input type="hidden" name="NomeAluno" placeholder="Nome do Aluno"  class="form-control" value="{{ $aluno->NomeAluno ?? old('NomeAluno') }}">
+                                    <input disabled="disabled" name="NomeAluno" placeholder="Nome do Aluno"  class="form-control" value="{{ $aluno->NomeAluno ?? old('NomeAluno') }}">
                                 </div>
                             </div>
                             <div class="col-md-2">       
@@ -38,8 +38,9 @@
                                          <div class="col-md-2">
                                 <div class="form-group">
                                     <label for="Data_venc">Melhor dia de Pagamento:</label>
-                                    <select class="form-control" name="Data_venc" id="Data_venc">
-                                        <option >{{$aluno->Data_venc or old('')}}</option>
+                                    <div class="select-wrapper">
+    <select class="form-control maruge-select" name="Data_venc" id="Data_venc">
+                                        <option >{{ $aluno->Data_venc ?? old('') }}</option>
                                         <option> 01 </option>
                                         <option> 02 </option>
                                         <option> 03 </option>
@@ -72,6 +73,8 @@
                                         <option> 30 </option>
                                         <option> 31 </option>
                                     </select>
+    <i data-lucide="chevron-down" class="select-icon"></i>
+</div>
                                 </div>
                             </div>
                             <div class="col-md-2">
@@ -89,8 +92,8 @@
                             <div class="col-md-2">       
                                 <div class="form-group">
                                     <label for="RA">RA:</label>
-                                    <input type="hidden" name="RA"   class="form-control" value="{{$matricula->RA or old('RA')}}">
-                                    <input disabled="disabled" name="RA"  class="form-control" value="{{$matricula->RA or old('RA')}}">
+                                    <input type="hidden" name="RA"   class="form-control" value="{{ $matricula->RA ?? old('RA') }}">
+                                    <input disabled="disabled" name="RA"  class="form-control" value="{{ $matricula->RA ?? old('RA') }}">
                                 </div>
                             </div> 
                             <div class="col-md-2">       
@@ -122,8 +125,9 @@
                             <div class="col-md-2">
                                 <div class="form-group">
                                     <label for="quantidade_parcelas">Quant. Parcelas:</label>
-                                    <select class="form-control" name="quantidade_parcelas" id="quantidade_parcelas">
-                                        <option >{{$aluno->quantidade_parcelas or old('')}}</option>
+                                    <div class="select-wrapper">
+    <select class="form-control maruge-select" name="quantidade_parcelas" id="quantidade_parcelas">
+                                        <option >{{ $aluno->quantidade_parcelas ?? old('') }}</option>
                                         <option value="1"> 1 </option>
                                         <option value="2"> 2 </option>
                                         <option value="3"> 3 </option>
@@ -138,6 +142,8 @@
                                         <option value="12"> 12 </option>
                                         <option value="92"> 92 </option>
                                     </select>
+    <i data-lucide="chevron-down" class="select-icon"></i>
+</div>
                                 </div>
                             </div>
                             

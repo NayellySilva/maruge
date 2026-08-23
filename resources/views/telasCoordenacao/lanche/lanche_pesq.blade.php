@@ -1,5 +1,5 @@
-@extends('telasCoordenacao.painel')  
-@section('conteudo')
+@extends('layouts.app')  
+@section('content')
 <div class="titulo-endereco">
     <a href="#">
     Secretaria / Lanche
@@ -8,7 +8,7 @@
 <div class="col-md-5">
     <div class="form-group">
         <label for="SituacaoAluno ">Localizar Lanche:</label>
-        <form class="form-search pesquisar" method="post" action="/maruge/public/coordenacao/lanche_pesq">
+        <form class="form-search pesquisar" method="post" action="/coordenacao/lanche_pesq">
             {!! csrf_field() !!}
             <input type="texto" name="pesquisar" placeholder="Pesquisar lanche"  class="form-control">
             <button class="btn-pesquisar"><i class="fa fa-search" aria-hidden="true"></i></button>
@@ -49,7 +49,7 @@
         @empty
                <div class="alert alert-warning alert-dismissible" role="alert">
                 <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <strong>Desculpe ! </strong> Nenhum Lanche cadastraoa, para cadastrar<a href="/maruge/public/coordenacao/lanche_cad" class="alert-link"> Clique aqui.</a>
+                <strong>Desculpe ! </strong> Nenhum Lanche cadastraoa, para cadastrar<a href="/coordenacao/lanche_cad" class="alert-link"> Clique aqui.</a>
                </div>
                 <tr>
                 <td colspan="500"> Nenhuma lanche cadastrado !</td>

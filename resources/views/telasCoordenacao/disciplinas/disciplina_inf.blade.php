@@ -37,7 +37,7 @@
                     <tr class="bg-[#f8faf9] border-b border-[#e3e8e6] w-5 h-5">
                         <th class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-[#5c706b]">Cód</th>
                         <th class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-[#5c706b]">Nome Disciplina</th>
-                        <th class="px-6 py-4 text-center text-xs font-semibold uppercase tracking-wider text-[#5c706b]">Editar</th>
+                        <th class="px-6 py-4 text-center text-xs font-semibold uppercase tracking-wider text-[#5c706b]">Ações</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-[#e3e8e6]">
@@ -46,9 +46,12 @@
                             <td class="px-6 py-4 text-sm text-[#5c706b]">{{ $disciplina->idDisciplinas }}</td>
                             <td class="px-6 py-4 text-sm font-semibold text-[#0a241e]">{{ $disciplina->NomeDisciplina }}</td>
                             <td class="px-6 py-4 text-sm text-center">
-                                <div class="flex justify-center gap-2">
-                                    <a href="{{ url("/coordenacao/disciplina_editar/$disciplina->idDisciplinas") }}" class="inline-flex items-center justify-center p-2 rounded-lg text-[#5c706b] hover:text-[#008a4b] hover:bg-[#ecfdf5] transition-all" title="Editar disciplina">
+                                <div class="flex justify-center gap-1.5">
+                                    <a href="{{ url("/coordenacao/disciplina_editar/$disciplina->idDisciplinas") }}" class="inline-flex items-center justify-center p-2 rounded-lg text-[#5c706b] hover:text-[#008a4b] hover:bg-[#ecfdf5] transition-all" title="Editar Disciplina">
                                         <i data-lucide="pencil" class="w-4 h-4"></i>
+                                    </a>
+                                    <a href="{{ url("/coordenacao/disciplina_deletar/$disciplina->idDisciplinas") }}" onclick="return confirm('Deseja realmente excluir esta disciplina?');" class="inline-flex items-center justify-center p-2 rounded-lg text-[#5c706b] hover:text-red-600 hover:bg-red-50 transition-all" title="Excluir Disciplina">
+                                        <i data-lucide="trash-2" class="w-4 h-4"></i>
                                     </a>
                                 </div>
                             </td>

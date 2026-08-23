@@ -1,5 +1,5 @@
-@extends('telasCoordenacao.painel')  
-@section('conteudo')
+@extends('layouts.app')  
+@section('content')
 <div class="titulo-endereco">
     <a href="#">
         Secretaria / Reservas
@@ -8,7 +8,7 @@
 <div class="col-md-5">
     <div class="form-group">
         <label for="SituacaoAluno ">Localizar aluno:</label>
-        <form class="form-search pesquisar" method="post" action="/maruge/public/coordenacao/aluno_pesq_reserva">
+        <form class="form-search pesquisar" method="post" action="/coordenacao/aluno_pesq_reserva">
             {!! csrf_field() !!}
             <input type="texto" name="pesquisar" placeholder="Pesquisar Aluno"  class="form-control">
             <button class="btn-pesquisar"><i class="fa fa-search" aria-hidden="true"></i></button>

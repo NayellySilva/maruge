@@ -1,5 +1,5 @@
-@extends('telasCoordenacao.painel')
-@section('conteudo')
+@extends('layouts.app')
+@section('content')
 
 <!-- Bootstrap (apenas CDN, remova se preferir o local) -->
 <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">

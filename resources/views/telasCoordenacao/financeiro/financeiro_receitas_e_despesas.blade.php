@@ -1,390 +1,230 @@
-@extends('telasCoordenacao.painel')  
-@section('conteudo')
-<div class="titulo-endereco">
-    <a href="#">
-        Financeiro / Receitas e Despesas  
-    </a>
-</div>
+@extends('layouts.app')
 
+@section('content')
 
-<div class="caminho-din">
+<!-- Titulo e Endereco da Pagina -->
+<div class="flex flex-col gap-6">
 
-    <div class="col-lg-3">
-        <div class="panel panel-default">
-            <div class="panel-heading ">
-                <strong>Cadastrar</strong>  
-            </div>
-            <!-- /.panel-heading -->
-            <div class="panel-body">
-                <div class="table-responsive">
-                    <center> 
-                        <a href="#modalDespesa" data-toggle="modal" data-target="#modal_receita" role="button" type="button" class="btn btn-success hidden-sm hidden-xs"><i class="fa fa-plus"></i>  RECEITA</a>
-                        <a href="#modalDespesa" data-toggle="modal" data-target="#modal_categoria" role="button" type="button" class="btn btn-warning hidden-sm hidden-xs"><i class="fa fa-plus"></i>  CATEGORIA</a>
-                        <a href="#modalDespesa" data-toggle="modal" role="button" class="btn btn-danger hidden-sm hidden-xs"><i class="fa fa-plus"></i>  DESPESA</a>
-                    </center>
-                    <!-- / Armazenando os nomes do professores correspondentes a sua disciplina -->
-                </div>
-                <!-- /.table-responsive -->
-            </div>
-            <!-- /.panel-body -->
-        </div>    
-        <!-- /.panel -->
-    </div>
-    <div class="col-lg-9">
-        <div class="panel panel-default">
-            <div class="panel-heading ">
-                <strong>Relatórios</strong>  
-            </div>
-            <!-- /.panel-heading -->
-            <div class="panel-body">
-                <div class="table-responsive">
-                    <center> 
-                        <div class="btn-toolbar">
-                            <a href="#btn-report" class="btn btn-default hidden-sm hidden-xs" id="btn-report"><i class="fa fa-print"></i> Relatório contas a receber</a>
-                            <a href="#btn-report" class="btn btn-default hidden-sm hidden-xs" id="btn-report"><i class="fa fa-print"></i> Relatório contas a pagar</a>
-                            <a href="#btn-report" class="btn btn-default hidden-sm hidden-xs" id="btn-report"><i class="fa fa-print"></i> Relatório contas pendentes</a>
-                        </div>
-                    </center>
-                    <!-- / Armazenando os nomes do professores correspondentes a sua disciplina -->
-                </div>
-                <!-- /.table-responsive -->
-            </div>
-            <!-- /.panel-body -->
-        </div>    
-        <!-- /.panel -->
+    <!-- Localização (Breadcrumb) -->
+    <div class="text-sm text-[#5c706b]">
+        <a href="{{ url('/coordenacao') }}" class="hover:text-[#008a4b] transition-colors">Financeiro</a>
+        <span class="mx-2">/</span>
+        <span class="font-semibold text-[#0a241e]">Receitas e Despesas</span>
     </div>
 
+    <!-- Cabeçalho Principal e Botões de Cadastrar -->
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div class="flex flex-col gap-1">
+            <h1 class="text-3xl font-semibold text-[#0a241e]">Receitas e Despesas</h1>
+            <p class="text-sm text-[#5c706b]">Controle de fluxo de caixa da instituição</p>
+        </div>
 
-    <div class="col-lg-12">
-        <div class="panel panel-default">
-            <div class="panel-heading ">
-                <strong>Parâmetros da Consulta</strong>  
+        <!-- Botões de Cadastrar (Cadastrar Receita, Categoria e Despesa) -->
+        <div class="flex items-center gap-2.5">
+            <button type="button"
+                    data-toggle="modal"
+                    data-target="#modal_receita"
+                    style="background-color: #008a4b; color: #ffffff;"
+                    class="hover:opacity-90 text-xs font-semibold px-4 py-2.5 rounded-full flex items-center gap-2 transition-all shadow-2xs">
+                <i data-lucide="plus" class="w-4 h-4"></i> RECEITA
+            </button>
+            <button type="button"
+                    data-toggle="modal"
+                    data-target="#modal_categoria"
+                    style="background-color: #d97706; color: #ffffff;"
+                    class="hover:opacity-90 text-xs font-semibold px-4 py-2.5 rounded-full flex items-center gap-2 transition-all shadow-2xs">
+                <i data-lucide="plus" class="w-4 h-4"></i> CATEGORIA
+            </button>
+            <button type="button"
+                    data-toggle="modal"
+                    data-target="#modal_despesa"
+                    style="background-color: #dc2626; color: #ffffff;"
+                    class="hover:opacity-90 text-xs font-semibold px-4 py-2.5 rounded-full flex items-center gap-2 transition-all shadow-2xs">
+                <i data-lucide="plus" class="w-4 h-4"></i> DESPESA
+            </button>
+        </div>
+        <!-- / Armazenando os nomes do professores correspondentes a sua disciplina -->
+    </div>
+
+    <!-- Filtros de Busca (Padrão do Sistema) -->
+    <form method="POST" action="{{ url('/coordenacao/financeiro_contas_pagar_pesq') }}" class="flex flex-col sm:flex-row gap-4 items-center">
+        @csrf
+
+        <!-- Descrição / Título -->
+        <div class="w-full sm:w-80">
+            <div class="flex items-center bg-white border border-[#e3e8e6] rounded-xl px-4 py-2.5 transition-all">
+                <input type="text" name="codbarras" placeholder="Pesquisar Descrição" class="w-full bg-transparent text-sm focus:outline-none">
+                <button type="submit" class="text-[#5c706b] hover:text-[#008a4b] ml-2">
+                    <i data-lucide="search" class="w-4 h-4"></i>
+                </button>
             </div>
-            <!-- /.panel-heading -->
-            <div class="panel-body">
-                <div class="table-responsive">
+        </div>
 
-                    <div class="btn-toolbar">
-                        <form class="form-search pesquisar" method="POST" action="/maruge/public/coordenacao/financeiro_contas_pagar_pesq">
-                            <div class="col-md-3">
-                                <div class="form-group">
-                                    <label for="SituacaoAluno ">Descrição:</label>
-                                    {!! csrf_field() !!}
-                                    <input type="texto" name="codbarras" placeholder="Localizar Título"  class="form-control"> </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="form-group">
-                                    <label for="EstadoCartorio">Exibir:</label>
-                                    <select class="form-control" name="EstadoCartorio" >
-                                        <option ></option>
-                                        <option> Todas </option>
-                                        <option> Receitas</option>
-                                        <option> Despesas</option>
-                                        <option> Previsto</option>
-                                        <option> Realizado</option>
-                                    </select>
+        <!-- Exibir -->
+        <div class="w-full sm:w-48">
+            <div class="relative">
+                <select
+                    name="exibir"
+                    class="w-full h-11 appearance-none bg-white border border-[#e3e8e6] rounded-xl px-4 pr-10 text-sm text-[#0a241e] focus:outline-none focus:border-[#008a4b] focus:ring-2 focus:ring-[#008a4b]/10 cursor-pointer transition-all"
+                >
+                    <option value="">Exibir: Todas</option>
+                    <option value="Receitas">Receitas</option>
+                    <option value="Despesas">Despesas</option>
+                    <option value="Previsto">Previsto</option>
+                    <option value="Realizado">Realizado</option>
+                </select>
+                <i
+                    data-lucide="chevron-down"
+                    class="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#95aba5] pointer-events-none"
+                ></i>
+            </div>
+        </div>
+
+        <!-- Categoria -->
+        <div class="w-full sm:w-48">
+            <div class="relative">
+                <select
+                    name="categoria"
+                    class="w-full h-11 appearance-none bg-white border border-[#e3e8e6] rounded-xl px-4 pr-10 text-sm text-[#0a241e] focus:outline-none focus:border-[#008a4b] focus:ring-2 focus:ring-[#008a4b]/10 cursor-pointer transition-all"
+                >
+                    <option value="">Categoria: Todas</option>
+                    <option value="Mensalidades">Mensalidades</option>
+                    <option value="Material">Material Didático</option>
+                    <option value="Servicos">Serviços Tercerizados</option>
+                    <option value="Manutencao">Manutenção</option>
+                </select>
+                <i
+                    data-lucide="chevron-down"
+                    class="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#95aba5] pointer-events-none"
+                ></i>
+            </div>
+        </div>
+    </form>
+
+    <!-- Tabela de Registros de Receitas e Despesas (Padrão do Sistema) -->
+    <div class="bg-white border border-[#e3e8e6] rounded-2xl overflow-hidden shadow-2xs">
+        <div class="overflow-x-auto">
+            <table class="w-full border-collapse">
+                <thead>
+                    <tr class="bg-[#f8faf9] border-b border-[#e3e8e6]">
+                        <th class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-[#5c706b]">CÓD</th>
+                        <th class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-[#5c706b]">Descrição</th>
+                        <th class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-[#5c706b]">Categoria</th>
+                        <th class="px-4 py-4 text-center text-xs font-semibold uppercase tracking-wider text-[#5c706b]">Tipo</th>
+                        <th class="px-4 py-4 text-center text-xs font-semibold uppercase tracking-wider text-[#5c706b]">Vencimento</th>
+                        <th class="px-4 py-4 text-right text-xs font-semibold uppercase tracking-wider text-[#5c706b]">Valor</th>
+                        <th class="px-4 py-4 text-center text-xs font-semibold uppercase tracking-wider text-[#5c706b]">Status</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-[#e3e8e6]">
+                    <!-- Estado limpo inicial -->
+                    <tr>
+                        <td colspan="7" class="px-6 py-12 text-center">
+                            <div class="flex flex-col items-center gap-3">
+                                <div class="w-16 h-16 rounded-full bg-[#f8faf9] flex items-center justify-center text-[#95aba5]">
+                                    <i data-lucide="dollar-sign" class="w-8 h-8"></i>
                                 </div>
+                                <p class="text-sm text-[#0a241e] font-medium">Nenhum lançamento localizado</p>
+                                <p class="text-xs text-[#5c706b]">Utilize a barra de pesquisa acima para filtrar ou cadastre um novo lançamento</p>
                             </div>
-                            <div class="col-md-3">
-                                <div class="form-group">
-                                    <label for="EstadoCartorio">Categoria:</label>
-                                    <select class="form-control" name="EstadoCartorio" >
-                                        <option ></option>
-                                        <option> Todas </option>
-                                        <option> Receitas</option>
-                                        <option> Despesas</option>
-                                        <option> Previsto</option>
-                                        <option> Realizado</option>
-                                    </select>
-                                </div>
-                            </div>
-
-
-
-                            <div class="panel-body">
-                                <div class="table-responsive">
-                                    <center> 
-                                        <div class="btn-toolbar">
-                                            <button type="submit" class="btn btn-success"> <i class="fa fa-search" aria-hidden="true"></i>  FILTRAR</button>
-                                            <button type="reset" class="btn btn-default">   LIMPAR</button> 
-                                        </div>
-                                    </center>
-                                    <!-- / Armazenando os nomes do professores correspondentes a sua disciplina -->
-                                </div>
-                                <!-- /.table-responsive -->
-                            </div>
-
-
-
-
-
-
-                        </form>
-
-                    </div>
-
-                </div>
-                <!-- /.table-responsive -->
-            </div>
-            <!-- /.panel-body -->
-        </div>    
-        <!-- /.panel -->
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <!-- /.table-responsive -->
     </div>
+    <!-- /.panel -->
 
-
-
-    <div class="col-lg-12">
-        <div class="panel panel-default">
-            <div class="panel-heading ">
-                <strong>Resultado da Consulta</strong>  
-            </div>
-            <!-- /.panel-heading -->
-            <div class="panel-body">
-                <div class="table-responsive">
-                    <center> 
-
-                        <table class="table table-sm">
-                            <thead>
-                                <tr>
-                                    <th scope="col">#</th>
-                                    <th scope="col">First</th>
-                                    <th scope="col">Last</th>
-                                    <th scope="col">Handle</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <th scope="row">1</th>
-                                    <td>Mark</td>
-                                    <td>Otto</td>
-                                    <td>@mdo</td>
-                                </tr>
-                                <tr>
-                                    <th scope="row">1</th>
-                                    <td>Mark</td>
-                                    <td>Otto</td>
-                                    <td>@mdo</td>
-                                </tr>
-                                <tr>
-                                    <th scope="row">1</th>
-                                    <td>Mark</td>
-                                    <td>Otto</td>
-                                    <td>@mdo</td>
-                                </tr>
-                                <tr>
-                                    <th scope="row">1</th>
-                                    <td>Mark</td>
-                                    <td>Otto</td>
-                                    <td>@mdo</td>
-                                </tr>
-                                <tr>
-                                    <th scope="row">2</th>
-                                    <td>Jacob</td>
-                                    <td>Thornton</td>
-                                    <td>@fat</td>
-                                </tr>
-                                <tr>
-                                    <th scope="row">3</th>
-                                    <td colspan="2">Larry the Bird</td>
-                                    <td>@twitter</td>
-                                </tr>
-                            </tbody>
-                        </table>
-
-
-
-                    </center>
-
-                </div>
-                <!-- /.table-responsive -->
-            </div>
-            <!-- /.panel-body -->
-        </div>    
-        <!-- /.panel -->
-    </div>
 </div> <!--Fim do caminho-din-->
 
-
-<!-- Modal de Receita -->
-<div class="modal fade" id="modal_receita" tabindex="-2" role="dialog" aria-labelledby="exampleModalScrollableTitle">
-    <div class="modal-dialog modal-dialog-scrollable" role="document">
-        <div class="modal-content ">
-            <div class="modal-header modal_Receita">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal_Receita"><i class="fa fa-plus">  NOVA RECEITA </i></h4>
+<!-- Modais de Cadastro (Receita, Categoria, Despesa) -->
+<div id="modal_receita" class="modal fade" role="dialog" tabindex="-1" aria-hidden="true" style="display:none">
+    <div class="modal-dialog">
+        <div class="modal-content rounded-2xl p-6 bg-white shadow-xl">
+            <div class="modal-header border-b border-[#e3e8e6] pb-3 flex justify-between items-center">
+                <h4 class="modal-title font-bold text-[#0a241e] flex items-center gap-2">
+                    <i data-lucide="plus-circle" class="w-5 h-5 text-[#008a4b]"></i> Nova Receita
+                </h4>
+                <button type="button" class="close text-gray-400 hover:text-gray-600" data-dismiss="modal">&times;</button>
             </div>
-            <div class="modal-body"> 
-                <form action="/maruge/public/coordenacao/financeiro_criando_receita" method="POST" send="/maruge/public/coordenacao/financeiro_criando_receita">
-                    <div class="preloader" style="display: none"> Enviando os dados...</div>  
-                    <div class="alert alert-success msg-exito" role="alert" style="display: none"></div>
-                    <div class="alert alert-warning msg-erro" role="alert" style="display: none"></div> 
-                    {!! csrf_field() !!}
-
-                    <!--  
-                    <input type="hidden" name="NomeAluno"id="nomealuno">
-                    <input type="hidden" name="NomeTurma" id="nometurma">
-                    <input type="hidden" name="Meses" id="meses">
-                    <input type="hidden" name="codbarras" id="codbarras" >
-                    <input type="hidden" name="parcelas" id="parcelas">
-                    <input type="hidden" name="Ano_Letivo" id="ano_letivo">
-                    <input type="hidden" name="Mensalidade" id="mensalidade">
-                    <input type="hidden" name="Carteira" id="carteira">
-                    <input type="hidden" name="Acordo" id="acordo">
-                    <input type="hidden" name="Data_venc" id="data_venc">
-                    <input type="hidden" name="data_pagamento" id="data_pagamento">
-                    <input type="hidden" name="idcarne" id="idcarne">
-                    -->
-                    <!-- Linha do campo Descrição-->
-                    <div class="row ">
-                        <dt class="frequencia-gabarito"></dt><br>
-                        <div class="col-md-2">
-                            <label>DESCRIÇÃO*:</label>
-                        </div>
-                        <div class="col-md-10">
-                            <input type="text" name="NomeReceita"  id="NomeReceita" class="form-control" >
-                        </div>
-                    </div>
-
-                    <!-- Linha do campo CATEGORIA-->
-                    <div class="row ">
-                        <dt class="frequencia-gabarito"></dt><br>
-                        <div class="col-md-2">
-                            <label>CATEGORIA*:</label>
-                        </div>
-                        <div class="col-md-10">
-                            <select class="form-control" name="tb_categoria_idCategoria">
-                                        @if(isset($categorias))
-                                        <option ></option>   
-                                        @forelse($categorias as $categoria) 
-                                        <option value="{{$categoria->idCategoria}}">{{$categoria->NomeCategoria or old('')}}</option>
-                                        @empty
-                                        @endforelse 
-                                        <!--Fim do laço da turma para editar-->
-                                        @else 
-                                        <option></option>
-                                        <!-- condição para cadastrar-->
-                                        @forelse($categorias as $categoria)  
-                                        <option value="{{$categoria->idCategoria}}">{{$categoria->NomeCategoria}}</option>
-                                        @empty
-                                        @endforelse 
-                                        @endif
-                                    </select>
-                        </div>
-                    </div>
-
-                    
-                    <!-- Linha do campo Data da Recebimento-->
-                    <div class="row ">
-                        <dt class="frequencia-gabarito"></dt><br>
-                        <div class="col-md-5">
-                            <label>DATA DE RECEBIMENTO*:</label>
-                        </div>
-                        <div class="col-md-7">
-                            <input type="date" name="DataReceita"  id="DataReceita" class="form-control" >
-                        </div>
-                    </div>
-
-                    <!-- Linha do campo valor da receita-->
-                    <div class="row ">
-                        <dt class="frequencia-gabarito"></dt><br>
-                        <div class="col-md-2">
-                            <label>VALOR*:</label>
-                        </div>
-                        <div class="col-md-10 ">
-                            <input type="text" name="ReceitaValor" placeholder="R$ 0,00" id="ReceitaValor" class="form-control" >
-                        </div>
-                    </div>
-                    <br>
-                    <p>
-                        <a class="btn btn-primary" data-toggle="collapse" href="#maisopcoes" role="button" aria-expanded="false" aria-controls="collapseExample">
-                            (+) Exibir mais opções
-                        </a>
-                    </p>
-                    <!-- Linha do dados de pagamento-->
-                    <div class="collapse" id="maisopcoes">
-                        <div class="card card-body">
-                            <div class="row ">
-                                <dt class="frequencia-gabarito"></dt><br>
-                                <div class="col-md-3">
-                                    <label> PAGAMENTO:</label>
-                                </div>
-                                <div class="col-md-9">
-                                    <label >
-                                        <input type="radio" name="StatusReceita" value="realizado"> Pagamento realizado</label> &nbsp; &nbsp;&nbsp;
-                                    <label>
-                                        <input type="radio" name="StatusReceita" checked="" value="previsto"> Ainda não foi realizado</label>
-                                </div>
-                            </div>
-                            <div class="row ">
-                                <dt class="frequencia-gabarito"></dt>
-                                <div class="col-md-12">
-                                    <label for="message-text" class="col-form-label">OBSERVAÇÕES:</label>
-                                </div>
-                                <div class="col-md-12">
-                                    <textarea class="form-control" rows="4" type="text" name="ObsReceita" maxlength="2000" ></textarea>
-                                </div>
-                            </div>
-                            <br>
-                            <div class="row ">
-                                <dt class="frequencia-gabarito"></dt>
-                                <div class="col-md-12">
-                                    <label for="message-text" class="col-form-label">ANEXO:</label>
-                                </div>
-                                <div class="col-md-12">
-                                    <input type="file" name="imgReceita" class="form-control"
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">CANCELAR</button>
-                <button type="submit" class="btn btn-success"   >SALVAR</button>
-            </div>
+            <form method="POST" action="{{ url('/coordenacao/financeiro_criar_receita') }}" class="flex flex-col gap-4 mt-4">
+                @csrf
+                <div class="flex flex-col gap-1">
+                    <label class="text-xs font-semibold text-[#0a241e]">Descrição:</label>
+                    <input type="text" name="descricao" required placeholder="Ex: Mensalidade Aluno X" class="w-full border border-[#e3e8e6] rounded-xl px-3.5 py-2 text-sm">
+                </div>
+                <div class="flex flex-col gap-1">
+                    <label class="text-xs font-semibold text-[#0a241e]">Valor (R$):</label>
+                    <input type="text" name="valor" required placeholder="0,00" class="w-full border border-[#e3e8e6] rounded-xl px-3.5 py-2 text-sm">
+                </div>
+                <div class="flex flex-col gap-1">
+                    <label class="text-xs font-semibold text-[#0a241e]">Data de Vencimento:</label>
+                    <input type="date" name="data_vencimento" required class="w-full border border-[#e3e8e6] rounded-xl px-3.5 py-2 text-sm">
+                </div>
+                <div class="flex justify-end gap-2 pt-2">
+                    <button type="button" data-dismiss="modal" class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-xl text-sm font-medium">Cancelar</button>
+                    <button type="submit" class="bg-[#008a4b] hover:bg-[#00703c] text-white px-5 py-2 rounded-xl text-sm font-medium">Salvar Receita</button>
+                </div>
             </form>
         </div>
     </div>
-</div>          
 </div>
 
-
-
-<!-- Modal de Categoria -->
-<div class="modal fade" id="modal_categoria" tabindex="-2" role="dialog" aria-labelledby="exampleModalScrollableTitle">
-    <div class="modal-dialog modal-dialog-scrollable" role="document">
-        <div class="modal-content ">
-            <div class="modal-header modal_Categoria">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal_Categoria"><i class="fa fa-plus"> NOVA CATEGORIA </i></h4>
+<div id="modal_categoria" class="modal fade" role="dialog" tabindex="-1" aria-hidden="true" style="display:none">
+    <div class="modal-dialog">
+        <div class="modal-content rounded-2xl p-6 bg-white shadow-xl">
+            <div class="modal-header border-b border-[#e3e8e6] pb-3 flex justify-between items-center">
+                <h4 class="modal-title font-bold text-[#0a241e] flex items-center gap-2">
+                    <i data-lucide="tag" class="w-5 h-5 text-amber-500"></i> Nova Categoria
+                </h4>
+                <button type="button" class="close text-gray-400 hover:text-gray-600" data-dismiss="modal">&times;</button>
             </div>
-            <div class="modal-body"> 
-                <form class="alteraNota form formularios" action="/maruge/public/coordenacao/financeiro_criando_categoria" method="POST" send="/maruge/public/coordenacao/financeiro_criando_categoria">
-                    <div class="preloader" style="display: none"> Enviando os dados...</div>  
-                    <div class="alert alert-success msg-exito" role="alert" style="display: none"></div>
-                    <div class="alert alert-warning msg-erro" role="alert" style="display: none"></div> 
-                    {!! csrf_field() !!}
-                    <!--  
-                    <input type="hidden" name="NomeAluno"id="NomeCategoria">
-                    -->
-                    <!-- Linha do campo Descrição-->
-                    <div class="row ">
-                        <dt class="frequencia-gabarito"></dt><br>
-                        <div class="col-md-2">
-                            <label>CATEGORIA*:</label>
-                        </div>
-                        <div class="col-md-10">
-                            <input type="text" name="NomeCategoria"  id="NomeCategoria" class="form-control" >
-                        </div>
-                    </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">CANCELAR</button>
-                <button type="submit" class="btn btn-success"   >SALVAR</button>
-            </div>
+            <form method="POST" action="{{ url('/coordenacao/financeiro_criar_categoria') }}" class="flex flex-col gap-4 mt-4">
+                @csrf
+                <div class="flex flex-col gap-1">
+                    <label class="text-xs font-semibold text-[#0a241e]">Nome da Categoria:</label>
+                    <input type="text" name="nome_categoria" required placeholder="Ex: Manutenção de Equipamentos" class="w-full border border-[#e3e8e6] rounded-xl px-3.5 py-2 text-sm">
+                </div>
+                <div class="flex justify-end gap-2 pt-2">
+                    <button type="button" data-dismiss="modal" class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-xl text-sm font-medium">Cancelar</button>
+                    <button type="submit" class="bg-amber-500 hover:bg-amber-600 text-white px-5 py-2 rounded-xl text-sm font-medium">Salvar Categoria</button>
+                </div>
             </form>
         </div>
     </div>
-</div>          
 </div>
 
+<div id="modal_despesa" class="modal fade" role="dialog" tabindex="-1" aria-hidden="true" style="display:none">
+    <div class="modal-dialog">
+        <div class="modal-content rounded-2xl p-6 bg-white shadow-xl">
+            <div class="modal-header border-b border-[#e3e8e6] pb-3 flex justify-between items-center">
+                <h4 class="modal-title font-bold text-[#0a241e] flex items-center gap-2">
+                    <i data-lucide="minus-circle" class="w-5 h-5 text-red-600"></i> Nova Despesa
+                </h4>
+                <button type="button" class="close text-gray-400 hover:text-gray-600" data-dismiss="modal">&times;</button>
+            </div>
+            <form method="POST" action="{{ url('/coordenacao/financeiro_criar_despesa') }}" class="flex flex-col gap-4 mt-4">
+                @csrf
+                <div class="flex flex-col gap-1">
+                    <label class="text-xs font-semibold text-[#0a241e]">Descrição da Despesa:</label>
+                    <input type="text" name="descricao" required placeholder="Ex: Conta de Luz / Água" class="w-full border border-[#e3e8e6] rounded-xl px-3.5 py-2 text-sm">
+                </div>
+                <div class="flex flex-col gap-1">
+                    <label class="text-xs font-semibold text-[#0a241e]">Valor (R$):</label>
+                    <input type="text" name="valor" required placeholder="0,00" class="w-full border border-[#e3e8e6] rounded-xl px-3.5 py-2 text-sm">
+                </div>
+                <div class="flex flex-col gap-1">
+                    <label class="text-xs font-semibold text-[#0a241e]">Data de Vencimento:</label>
+                    <input type="date" name="data_vencimento" required class="w-full border border-[#e3e8e6] rounded-xl px-3.5 py-2 text-sm">
+                </div>
+                <div class="flex justify-end gap-2 pt-2">
+                    <button type="button" data-dismiss="modal" class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-xl text-sm font-medium">Cancelar</button>
+                    <button type="submit" class="bg-red-600 hover:bg-red-700 text-white px-5 py-2 rounded-xl text-sm font-medium">Salvar Despesa</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 
 @endsection

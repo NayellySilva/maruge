@@ -1,5 +1,5 @@
-@extends('telasCoordenacao.painel')  
-@section('conteudo')
+@extends('layouts.app')  
+@section('content')
 <button type="button"  value="Imprimir" id="imprimir_conteudo"  class="botao btn-imprimir"> Imprimir</button>
         <div class="imprimir_conteudo">
 <!--Essa página é apenas pra exibir as informações da escola em questão-->

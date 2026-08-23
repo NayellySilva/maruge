@@ -25,7 +25,7 @@
     <div class="flex flex-col sm:flex-row gap-4 items-center">
         <!-- Barra de Pesquisa -->
         <div class="w-full sm:w-80">
-            <form method="POST" action="/maruge/public/coordenacao/funcionario_pesq" class="w-full flex items-center bg-white border border-[#e3e8e6] rounded-xl px-4 py-2.5 transition-all">
+            <form method="POST" action="/coordenacao/funcionario_pesq" class="w-full flex items-center bg-white border border-[#e3e8e6] rounded-xl px-4 py-2.5 transition-all">
                 {!! csrf_field() !!}
                 <input type="text" name="pesquisar" placeholder="Pesquisar Funcionário" class="w-full bg-transparent text-sm focus:outline-none">
                 <button type="submit" class="text-[#5c706b] hover:text-[#008a4b] ml-2">
@@ -66,6 +66,9 @@
                                     </a>
                                     <a href="{{ url('/coordenacao/funcionario_editar/' . $Funcionario->idFuncionarios) }}" class="inline-flex items-center justify-center p-2 rounded-lg text-[#5c706b] hover:text-[#008a4b] hover:bg-[#ecfdf5] transition-all" title="Editar Funcionário">
                                         <i data-lucide="pencil" class="w-4.5 h-4.5"></i>
+                                    </a>
+                                    <a href="{{ url('/coordenacao/funcionario_deletar/' . $Funcionario->idFuncionarios) }}" onclick="return confirm('Deseja realmente excluir este funcionário?');" class="inline-flex items-center justify-center p-2 rounded-lg text-[#5c706b] hover:text-red-600 hover:bg-red-50 transition-all" title="Excluir Funcionário">
+                                        <i data-lucide="trash-2" class="w-4.5 h-4.5"></i>
                                     </a>
                                 </div>
                             </td>

@@ -12,6 +12,22 @@
     <!-- Estilos e Scripts (Vite) -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
+    <style>
+        .custom-scroll::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scroll::-webkit-scrollbar-track {
+            background: #f8faf9;
+            border-radius: 8px;
+        }
+        .custom-scroll::-webkit-scrollbar-thumb {
+            background: #008a4b;
+            border-radius: 8px;
+        }
+        .custom-scroll::-webkit-scrollbar-thumb:hover {
+            background: #00703c;
+        }
+    </style>
 </head>
 <body>
     <div class="dashboard-layout">
@@ -116,6 +132,11 @@
                 if (window.lucide) {
                     window.lucide.createIcons();
                 }
+
+                // Inicializa Máscaras Universais e busca por CEP (ViaCEP API)
+                if (window.initAlunoMasks) {
+                    window.initAlunoMasks();
+                }
             }
 
             function openModalFromUrl(url, pushState = true) {
@@ -146,6 +167,11 @@
                             // Atualiza os ícones dentro do modal
                             if (window.lucide) {
                                 window.lucide.createIcons();
+                            }
+
+                            // Inicializa Máscaras Universais e busca por CEP (ViaCEP API)
+                            if (window.initAlunoMasks) {
+                                window.initAlunoMasks();
                             }
 
                             // Atualiza o histórico do navegador
@@ -246,14 +272,19 @@
                         if (mainContent && newContent) {
                             mainContent.innerHTML = newContent.innerHTML;
                             mainContent.style.opacity = '1';
-                        }
 
-                        // Atualiza o histórico
-                        if (pushState) {
-                            history.pushState(null, '', url);
-                        }
+                            // Atualiza o histórico apenas quando o conteúdo for alterado com sucesso
+                            if (pushState) {
+                                history.pushState(null, '', url);
+                            }
 
-                        initPageScripts(newContent);
+                            initPageScripts(newContent);
+                        } else {
+                            // Se a página de destino não utiliza a estrutura .main-content (ex: relatórios e fichas de impressão),
+                            // realiza a navegação completa tradicional do navegador sem prender a tela anterior
+                            if (mainContent) mainContent.style.opacity = '1';
+                            window.location.href = url;
+                        }
                     })
                     .catch(error => {
                         console.error('SPA load error, navigating normally:', error);
@@ -304,5 +335,8 @@
             }
         });
     </script>
+
+    <!-- Máscaras Universais (CPF, CNPJ, Telefone, CEP, ViaCEP e IBGE) -->
+    <script src="{{ asset('js/alunos/aluno_masks.js') }}"></script>
 </body>
 </html>

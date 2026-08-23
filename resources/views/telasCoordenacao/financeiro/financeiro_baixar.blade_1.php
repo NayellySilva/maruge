@@ -1,5 +1,5 @@
-@extends('telasCoordenacao.painel')  
-@section('conteudo')
+@extends('layouts.app')  
+@section('content')
 <div class="titulo-endereco">
     <a href="#">
     Financeiro / Reebimentos 
@@ -8,7 +8,7 @@
 <div class="col-md-5">
     <div class="form-group">
         <label for="SituacaoAluno ">Localizar Título:</label>
-        <form class="form-search pesquisar" method="POST" action="/maruge/public/coordenacao/financeiro_pesq">
+        <form class="form-search pesquisar" method="POST" action="/coordenacao/financeiro_pesq">
             {!! csrf_field() !!}
             <input type="texto" name="codbarras" placeholder="Localizr Título"  class="form-control">
             <button class="btn-pesquisar"><i class="fa fa-search" aria-hidden="true"></i></button>
@@ -16,18 +16,18 @@
     </div>
 </div>
 
-@extends('telasCoordenacao.painel')  
-@section('conteudo')
+@extends('layouts.app')  
+@section('content')
 <div class="titulo-pagina">
-    <h1 class="titulo-pagina">{{$titulo or 'Nova Disciplina'}}</h1>
+    <h1 class="titulo-pagina">{{ $titulo ?? 'Nova Disciplina' }}</h1>
 </div> 
 <div class="caminho-din">
     <div class="preloader" style="display: none"> Enviando os dados...</div>  
     <div class="alert alert-success msg-exito" role="alert" style="display: none"></div>
     <div class="alert alert-warning msg-erro" role="alert" style="display: none"></div> 
     <div class="formularios">    
-        @if(count($errors)>0)
-        @foreach($errors->all()as $error)
+        @if((isset($errors) ? count($errors) : 0)>0)
+        @foreach($errors->all() as $error)
         {{$error}}
         @endforeach
         @endif
@@ -314,7 +314,7 @@
                  <h4 class="modal_Observacoes-titulo">ATENÇÃO CONFIRMAR DADOS DE PAGAMENTO:</h4>
              </div>
             <div class="modal-body"> 
-            <form class="alteraNota form formularios" action="/maruge/public/coordenacao/financeiro_baixar" method="POST" send="/maruge/public/coordenacao/financeiro_baixar">
+            <form class="alteraNota form formularios" action="/coordenacao/financeiro_baixar" method="POST" send="/coordenacao/financeiro_baixar">
                     <div class="preloader" style="display: none"> Enviando os dados...</div>  
                     <div class="alert alert-success msg-exito" role="alert" style="display: none"></div>
                     <div class="alert alert-warning msg-erro" role="alert" style="display: none"></div> 
@@ -349,11 +349,14 @@
                                  <small class="ConfirmacaoSimples"id="status"></small>
                              </div>
                              <div class="col-md-3">
-                                 <select class="custom-select my-1 mr-sm-2 form-control" name="status_pagamento">
+                                 <div class="select-wrapper">
+    <select class="custom-select my-1 mr-sm-2 form-control maruge-select" name="status_pagamento">
                                      <option></option>
                                      <option value="PAGO">PAGO</option>
                                      <option value="PARCIAL">PARCIAL</option>
                                  </select>
+    <i data-lucide="chevron-down" class="select-icon"></i>
+</div>
                              </div>
                          </div>
                     <div class="row">
@@ -390,7 +393,7 @@
             <h4 class="modal_Observacoes-titulo">2º VIA COMPROVANTE DE PAGAMENTO:</h4>
             </div>
             <div class="modal-body"> 
-            <form class="alteraNota form formularios" action="/maruge/public/coordenacao/financeiro_comprovante" method="POST" send="/maruge/public/coordenacao/financeiro_comprovante">
+            <form class="alteraNota form formularios" action="/coordenacao/financeiro_comprovante" method="POST" send="/coordenacao/financeiro_comprovante">
                     <div class="preloader" style="display: none"> Enviando os dados...</div>  
                     <div class="alert alert-success msg-exito" role="alert" style="display: none"></div>
                     <div class="alert alert-warning msg-erro" role="alert" style="display: none"></div> 

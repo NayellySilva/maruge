@@ -1,436 +1,180 @@
-@extends('telasCoordenacao.painel')  
-@section('conteudo')
-<div class="titulo-endereco">
-    <a href="#"> Financeiro / Relatórios     </a>
-</div>
+@extends('layouts.app')
 
-<div class="caminho-din">
-    
-    
-    
-    <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="false">
-        <div class="panel panel-default">
-            <div class="panel-heading" role="tab" id="headingThree">
-                <h4 class="panel-title">
-                        <a 
-                            <i class="fa fa-search" aria-hidden="true"></i> 
-                            <button type="button" data-toggle="collapse" href="#filtro" class="btn btn-success"data-parent="#accordion" role="button"   aria-controls="collapseOne">
-                            FILTRO POR TURMA / MÊS / SITUAÇÃO
-                            </button> 
-                        </a>
-                    </a>
-                </h4>
-            </div>
-            
-             <!-- Filtros por turma / mes / situação -->
-            
-            <div id="filtro" class="panel-collapse collapse" role="tabpanel" aria-labelledby="filtro">
-                <div class="panel-body">
-                    <div class="col-lg-7">
-                        <div class="panel panel-default">
-                            <div class="panel-heading ">
-                                <strong>FILTRO POR TURMA / MÊS / SITUAÇÃO </strong>  
-                            </div>
-                            <!-- /.panel-heading -->
-                            <div class="panel-body">
-                                <div class="table-responsive">
-                                    <center> 
-                                        <form  method="POST" action="/maruge/public/coordenacao/financeiro_pesq_relatorio">
-                                            {!! csrf_field() !!}                      
-                                          
-                                            
-                                            <div class="col-md-2">
-                                                <div class="form-group">
-                                                    <label for="turma">Turma:</label>
-                                                    <select class="form-control" name="idTurmas">
-                                                        <option ></option>                                        
-                                                       
-                                                        
-                                        @forelse($turmas as $turma)  
-                                        <option value="{{$turma->idTurmas}}">{{$turma->NomeTurma}}</option>
-                                        @empty
-                                        @endforelse 
-                                                        
-  
-                                                        
-                                               </select>
-                                                </div>
-                                            </div>
-                                            
-                                                   
-                                            <div class="col-md-3">
-                                                <div class="form-group">
-                                                    <label for="Mês">Mês:</label>
-                                                    <select class="form-control" name="Meses" required="required" >
-                                                        <option ></option>                                        
-                                                        <option>JANEIRO </option>
-                                                        <option>FEVEREIRO </option>
-                                                        <option>MARÇO</option>
-                                                        <option>ABRIL</option>
-                                                        <option>MAIO</option>
-                                                        <option>JUNHO</option>
-                                                        <option>JULHO</option>
-                                                        <option>AGOSTO</option>
-                                                        <option>SETEMBRO</option>
-                                                        <option>OUTUBRO</option>
-                                                        <option>NOVEMBRO</option>
-                                                        <option>DEZEMBRO</option>                                        
-                                                    </select>
-                                                </div>
-                                            </div>
-                                            
-                                                                              
-                                            <div class="col-md-4">
-                                                <div class="form-group">
-                                                    <label for="Situação">Situação:</label>
-                                                    <select class="form-control" name="status_pagamento" required="required" >
-                                                        <option ></option>
-                                                        <option> PAGO</option>
-                                                        <option> PARCIAL</option>
-                                                        <option> ABERTO</option>
-                                                    </select>
-                                                </div>
-                                            </div>
-                                            <div class="panel-body">
-                                                <div class="table-responsive">
-                                                    <center> 
-                                                        <div class="btn-toolbar">
-                                                            <button type="submit" class="btn btn-success"> <i class="fa fa-search" aria-hidden="true"></i>  FILTRAR</button>
-                                                            <button type="reset" class="btn btn-default">   LIMPAR</button> 
-                                                        </div>
-                                                    </center>
-                                                    <!-- / Armazenando os nomes do professores correspondentes a sua disciplina -->
-                                                </div>
-                                                <!-- /.table-responsive -->
-                                            </div>
-                                        </form>
-                                    </center>
-                                </div>
-                                <!-- /.table-responsive -->
-                            </div>
-                            <!-- /.panel-body -->
-                        </div>    
-                        <!-- /.panel -->
-                    </div>
-                    <div class="col-lg-5">
-                        <div class="panel panel-default">
-                            <div class="panel-heading ">
-                                <strong>Relatórios PDF</strong>  
-                            </div>
-                            <!-- /.panel-heading -->
-                            <div class="panel-body">
-                                <div class="table-responsive">
-                                    <center> 
-                                        <div class="btn-toolbar">
-                                            <a href="#btn-report" class="btn btn-default hidden-sm hidden-xs" id="btn-report"><i class="fa fa-print"></i> Relatório contas a receber</a>
-                                            <a href="#btn-report" class="btn btn-default hidden-sm hidden-xs" id="btn-report"><i class="fa fa-print"></i> Relatório contas a pagar</a>
-                                            <a href="#btn-report" class="btn btn-default hidden-sm hidden-xs" id="btn-report"><i class="fa fa-print"></i> Relatório contas pendentes</a>
-                                            <br>  
-                                            <br>  
-                                            <a href="#btn-report" class="btn btn-default hidden-sm hidden-xs" id="btn-report"><i class="fa fa-print"></i> Relatório contas pendentes</a>
-                                            <a href="#btn-report" class="btn btn-default hidden-sm hidden-xs" id="btn-report"><i class="fa fa-print"></i> Relatório contas pendentes</a>
-                                            <a href="#btn-report" class="btn btn-default hidden-sm hidden-xs" id="btn-report"><i class="fa fa-print"></i> Relatório contas pendentes</a>
-                                        </div>
-                                    </center>
-                                    <!-- / Armazenando os nomes do professores correspondentes a sua disciplina -->
-                                </div>
-                                <!-- /.table-responsive -->
-                            </div>
-                            <!-- /.panel-body -->
-                        </div>    
-                        <!-- /.panel -->
-                    </div>
-                </div>
-            </div>
-           
+@section('content')
+
+@php
+    try {
+        $turmas = $turmas ?? \DB::table('tb_turmas')->orderBy('NomeTurma')->get();
+    } catch (\Exception $e) {
+        $turmas = collect();
+    }
+@endphp
+
+<!-- Titulo e Endereco da Pagina -->
+<div class="flex flex-col gap-6">
+
+    <!-- Localização (Breadcrumb) -->
+    <div class="text-sm text-[#5c706b]">
+        <a href="{{ url('/coordenacao') }}" class="hover:text-[#008a4b] transition-colors">Financeiro</a>
+        <span class="mx-2">/</span>
+        <span class="font-semibold text-[#0a241e]">Relatórios</span>
+    </div>
+
+    <!-- Cabeçalho Principal -->
+    <div class="flex justify-between items-center">
+        <div class="flex flex-col gap-1">
+            <h1 class="text-3xl font-semibold text-[#0a241e]">Relatórios Financeiros</h1>
+            <p class="text-sm text-[#5c706b]">Filtre pagamentos por turma, mês e situação de pagamento</p>
         </div>
     </div>
-    
-    
-    
-    
-    <div class="panel-group" id="accordion2" role="tablist" aria-multiselectable="false">
-        <div class="panel panel-default">
-            <div class="panel-heading" role="tab" id="headingThree2">
-                <h4 class="panel-title">
-                        <a 
-                            <i class="fa fa-search" aria-hidden="true"></i> 
-                            <button type="button" data-toggle="collapse" href="#filtro2" class="btn btn-success"data-parent="#accordion2" role="button"   aria-controls="collapseOne">
-                            FILTRO POR TURMA / MÊS
-                            </button> 
-                        </a>
-                    </a>
-                </h4>
+
+    <!-- Filtros por turma / mes / situação (Padrão do Sistema) -->
+    <form method="POST" action="{{ url('/coordenacao/financeiro_pesq_relatorio') }}" class="flex flex-col sm:flex-row gap-4 items-center">
+        @csrf
+
+        <!-- Seleção de Turma -->
+        <div class="w-full sm:w-56">
+            <div class="relative">
+                <select
+                    name="idTurmas"
+                    class="w-full h-11 appearance-none bg-white border border-[#e3e8e6] rounded-xl px-4 pr-10 text-sm text-[#0a241e] focus:outline-none focus:border-[#008a4b] focus:ring-2 focus:ring-[#008a4b]/10 cursor-pointer transition-all"
+                >
+                    <option value="">Todas as Turmas</option>
+                    @forelse($turmas as $turma)
+                        <option value="{{ $turma->idTurmas }}">{{ $turma->NomeTurma }}</option>
+                    @empty
+                    @endforelse
+                </select>
+                <i
+                    data-lucide="chevron-down"
+                    class="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#95aba5] pointer-events-none"
+                ></i>
             </div>
-            
-             <!-- Filtros por turma / mes / situação -->
-            
-            <div id="filtro2" class="panel-collapse collapse" role="tabpanel" aria-labelledby="filtro2">
-                <div class="panel-body">
-                    <div class="col-lg-7">
-                        <div class="panel panel-default">
-                            <div class="panel-heading ">
-                                <strong>FILTRO POR TURMA / MÊS  </strong>  
-                            </div>
-                            <!-- /.panel-heading -->
-                            <div class="panel-body">
-                                <div class="table-responsive">
-                                    <center> 
-                                        <form  method="POST" action="/maruge/public/coordenacao/financeiro_pesq_relatorio_turma">
-                                            {!! csrf_field() !!}                      
-                                          
-                                            
-                                            <div class="col-md-2">
-                                                <div class="form-group">
-                                                    <label for="turma">Turma:</label>
-                                                    <select class="form-control" name="idTurmas">
-                                                        <option ></option>                                        
-                                                       
-                                                        
-                                        @forelse($turmas as $turma)  
-                                        <option value="{{$turma->idTurmas}}">{{$turma->NomeTurma}}</option>
-                                        @empty
-                                        @endforelse 
-                                                        
-  
-                                                        
-                                               </select>
-                                                </div>
-                                            </div>
-                                            
-                                                   
-                                            <div class="col-md-3">
-                                                <div class="form-group">
-                                                    <label for="Mês">Mês:</label>
-                                                    <select class="form-control" name="Meses" required="required" >
-                                                        <option ></option>                                        
-                                                        <option>JANEIRO </option>
-                                                        <option>FEVEREIRO </option>
-                                                        <option>MARÇO</option>
-                                                        <option>ABRIL</option>
-                                                        <option>MAIO</option>
-                                                        <option>JUNHO</option>
-                                                        <option>JULHO</option>
-                                                        <option>AGOSTO</option>
-                                                        <option>SETEMBRO</option>
-                                                        <option>OUTUBRO</option>
-                                                        <option>NOVEMBRO</option>
-                                                        <option>DEZEMBRO</option>                                        
-                                                    </select>
-                                                </div>
-                                            </div>
-                                            
-                                     
-                                            <div class="panel-body">
-                                                <div class="table-responsive">
-                                                    <center> 
-                                                        <div class="btn-toolbar">
-                                                            <button type="submit" class="btn btn-success"> <i class="fa fa-search" aria-hidden="true"></i>  FILTRAR</button>
-                                                            <button type="reset" class="btn btn-default">   LIMPAR</button> 
-                                                        </div>
-                                                    </center>
-                                                    <!-- / Armazenando os nomes do professores correspondentes a sua disciplina -->
-                                                </div>
-                                                <!-- /.table-responsive -->
-                                            </div>
-                                        </form>
-                                    </center>
-                                </div>
-                                <!-- /.table-responsive -->
-                            </div>
-                            <!-- /.panel-body -->
-                        </div>    
-                        <!-- /.panel -->
-                    </div>
-                    <div class="col-lg-5">
-                        <div class="panel panel-default">
-                            <div class="panel-heading ">
-                                <strong>Relatórios PDF</strong>  
-                            </div>
-                            <!-- /.panel-heading -->
-                            <div class="panel-body">
-                                <div class="table-responsive">
-                                    <center> 
-                                        <div class="btn-toolbar">
-                                            <a href="#btn-report" class="btn btn-default hidden-sm hidden-xs" id="btn-report"><i class="fa fa-print"></i> Relatório contas a receber</a>
-                                            <a href="#btn-report" class="btn btn-default hidden-sm hidden-xs" id="btn-report"><i class="fa fa-print"></i> Relatório contas a pagar</a>
-                                            <a href="#btn-report" class="btn btn-default hidden-sm hidden-xs" id="btn-report"><i class="fa fa-print"></i> Relatório contas pendentes</a>
-                                            <br>  
-                                            <br>  
-                                            <a href="#btn-report" class="btn btn-default hidden-sm hidden-xs" id="btn-report"><i class="fa fa-print"></i> Relatório contas pendentes</a>
-                                            <a href="#btn-report" class="btn btn-default hidden-sm hidden-xs" id="btn-report"><i class="fa fa-print"></i> Relatório contas pendentes</a>
-                                            <a href="#btn-report" class="btn btn-default hidden-sm hidden-xs" id="btn-report"><i class="fa fa-print"></i> Relatório contas pendentes</a>
-                                        </div>
-                                    </center>
-                                    <!-- / Armazenando os nomes do professores correspondentes a sua disciplina -->
-                                </div>
-                                <!-- /.table-responsive -->
-                            </div>
-                            <!-- /.panel-body -->
-                        </div>    
-                        <!-- /.panel -->
-                    </div>
-                </div>
-            </div>
-           
         </div>
+
+        <!-- Seleção de Mês -->
+        <div class="w-full sm:w-48">
+            <div class="relative">
+                <select
+                    name="Meses"
+                    required
+                    class="w-full h-11 appearance-none bg-white border border-[#e3e8e6] rounded-xl px-4 pr-10 text-sm text-[#0a241e] focus:outline-none focus:border-[#008a4b] focus:ring-2 focus:ring-[#008a4b]/10 cursor-pointer transition-all"
+                >
+                    <option value="">Selecione o Mês</option>
+                    <option value="JANEIRO">JANEIRO</option>
+                    <option value="FEVEREIRO">FEVEREIRO</option>
+                    <option value="MARÇO">MARÇO</option>
+                    <option value="ABRIL">ABRIL</option>
+                    <option value="MAIO">MAIO</option>
+                    <option value="JUNHO">JUNHO</option>
+                    <option value="JULHO">JULHO</option>
+                    <option value="AGOSTO">AGOSTO</option>
+                    <option value="SETEMBRO">SETEMBRO</option>
+                    <option value="OUTUBRO">OUTUBRO</option>
+                    <option value="NOVEMBRO">NOVEMBRO</option>
+                    <option value="DEZEMBRO">DEZEMBRO</option>
+                </select>
+                <i
+                    data-lucide="chevron-down"
+                    class="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#95aba5] pointer-events-none"
+                ></i>
+            </div>
+        </div>
+
+        <!-- Seleção de Situação -->
+        <div class="w-full sm:w-48">
+            <div class="relative">
+                <select
+                    name="status_pagamento"
+                    required
+                    class="w-full h-11 appearance-none bg-white border border-[#e3e8e6] rounded-xl px-4 pr-10 text-sm text-[#0a241e] focus:outline-none focus:border-[#008a4b] focus:ring-2 focus:ring-[#008a4b]/10 cursor-pointer transition-all"
+                >
+                    <option value="">Todas as Situações</option>
+                    <option value="PAGO">PAGO</option>
+                    <option value="PARCIAL">PARCIAL</option>
+                    <option value="ABERTO">ABERTO</option>
+                </select>
+                <i
+                    data-lucide="chevron-down"
+                    class="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#95aba5] pointer-events-none"
+                ></i>
+            </div>
+        </div>
+
+        <!-- Botão Filtrar -->
+        <div>
+            <button type="submit" class="bg-[#008a4b] hover:bg-[#00703c] text-white text-sm font-medium px-5 py-2.5 rounded-xl flex items-center justify-center gap-2 transition-all shadow-2xs">
+                <i data-lucide="search" class="w-4 h-4"></i> Filtrar
+            </button>
+        </div>
+    </form>
+    <!-- / Armazenando os nomes do professores correspondentes a sua disciplina -->
+
+    <!-- Cards de Relatórios PDF / Impressão Pronta -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <a href="#btn-report" class="bg-white border border-[#e3e8e6] hover:border-[#008a4b] rounded-2xl p-5 shadow-2xs flex items-center gap-4 transition-all group">
+            <div class="w-12 h-12 rounded-xl bg-emerald-50 text-[#008a4b] flex items-center justify-center shrink-0">
+                <i data-lucide="printer" class="w-6 h-6"></i>
+            </div>
+            <div>
+                <h3 class="text-sm font-semibold text-[#0a241e] group-hover:text-[#008a4b] transition-colors">Contas a Receber</h3>
+                <p class="text-xs text-[#5c706b]">Imprimir relatório geral de recebimentos</p>
+            </div>
+        </a>
+
+        <a href="#btn-report" class="bg-white border border-[#e3e8e6] hover:border-red-500 rounded-2xl p-5 shadow-2xs flex items-center gap-4 transition-all group">
+            <div class="w-12 h-12 rounded-xl bg-red-50 text-red-600 flex items-center justify-center shrink-0">
+                <i data-lucide="printer" class="w-6 h-6"></i>
+            </div>
+            <div>
+                <h3 class="text-sm font-semibold text-[#0a241e] group-hover:text-red-600 transition-colors">Contas a Pagar</h3>
+                <p class="text-xs text-[#5c706b]">Imprimir relatório de saídas e fornecedores</p>
+            </div>
+        </a>
+
+        <a href="#btn-report" class="bg-white border border-[#e3e8e6] hover:border-amber-500 rounded-2xl p-5 shadow-2xs flex items-center gap-4 transition-all group">
+            <div class="w-12 h-12 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center shrink-0">
+                <i data-lucide="printer" class="w-6 h-6"></i>
+            </div>
+            <div>
+                <h3 class="text-sm font-semibold text-[#0a241e] group-hover:text-amber-600 transition-colors">Contas Pendentes</h3>
+                <p class="text-xs text-[#5c706b]">Imprimir títulos pendentes e em atraso</p>
+            </div>
+        </a>
     </div>
-    
-    
-    
-    
-    
-    
-    
-    <br>
-    <div class="linha"></div>
-    <br>
-    <!--Terceira linhas, APENAS UM AVISO DE ALERTA -->
-    <div class="row">
-        <div class="alert alert-info alert-dismissible" role="alert">
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-            <h4>   <strong>Por favor! </strong> Para obter o relatório é necessário realizar um filtro.<h4>
-                    </div>
-                    </div>
-                    <br>
-                    <div class="linha"></div>
-                    <br>
-                    
-                    
-                    
 
-
-                                     
-                    
-                    
-                    
-                    
-
-                    <button type="button"  value="Imprimir" id="imprimir_conteudo"  class="botao btn-imprimir"> Imprimir</button> <br>
-
-                  
-                    
-                    
-                    <div class="imprimir_conteudo">
-                        <div class="col-lg-12">
-                            <div class="panel panel-default">
-
-
-                                <div id="box">
-
-
-
-                                    <!-- /.panel-heading -->
-                                    <div class="panel-body">
-                                        <div class="table-responsive">
-                                            <center> 
-                                                <table class="timbre">
-                                                    <tr>
-                                                        <td>
-                                                            <img src="{{asset('imgs/logoempresa_transparente.png')}}" width="160" height="160" ><br>
-                                                            @forelse($escolas as $escola)
-                                                            {{$escola->Rua}} , {{$escola->Numero}}<br>
-                                                            {{$escola->Bairro}} - CEP:{{$escola->CEP}}<br>
-                                                            {{$escola->Cidade}} - {{$escola->Estado}}<br>
-                                                            Tel: {{$escola->Fone1}} / {{$escola->Fone2}}<br>
-                                                            E-mail:{{$escola->EmailColegio}}<br>
-                                                            CNPJ: {{$escola->CNPJ}}<br>
-                                                            INEP:{{$escola->NumeroInep}}
-                                                            @empty
-                                                            @endforelse
-                                                        </td>
-                                                    </tr>         
-                                                </table>
-                                            </center>
-                                                <br>
-                                               
-                                                <table  class="table financeiro_tabela_receber"  >
-                                                    <thead>
-                                                        <tr  class="panel-heading ">
-                                                    <th class="bg-primary" > <center><i class="fa fa-calendar" aria-hidden="true" ></i>  Relatório Referênte </center>  </th>
-                                                    <th class="info"> <center> <i class="fa fa-search"></i>    Total de Boletos (Geral)</center> </th>
-                                                    <th class="danger" ><center> <i class="fa fa-search" aria-hidden="true"></i>  Abertos</center>  </th>
-                                                    <th class="danger" ><center> <i class="fa fa-search" aria-hidden="true"></i> Pagos </center> </th>
-                                                    <th class="danger" > <center><i class="fa fa-search" aria-hidden="true"></i> Parcial </center>  </th>
-                                                    <th class="warning" ><center> <i class="fa fa-money" aria-hidden="true"></i> Total a Receber </center> </th>
-                                                    <th class="success" > <center><i class="fa fa-money" aria-hidden="true" ></i>  Total  Recebido </center>  </th>
-                                                    </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        <tr>
-                                                            <td > <center> Todos os Boletos </center> </td>    
-                                                    <td > <center>{{$QuantidadeDeBoletos}}</center> </td>
-                                                    <td ><center> {{ $Abertos}}</center> </td>
-                                                    <td ><center> {{ $Pagos}}</center> </td>
-                                                    <td ><center> {{ $Parcial}}</center> </td>
-                                                <td > <center> <b> R$: </b> {{ number_format($receber,2,",",".")}} </center> </td>
-                                                <td > <center> <b>R$: </b> {{ number_format($recebido,2,",",".")}} </center> </td>
-                                                    </tr> 
-                                                </table>
-                                        </div>      
-                                        </center>
-                                        <!-- / Armazenando os nomes do professores correspondentes a sua disciplina -->
-                                    </div>
-                                    <!-- /.table-responsive -->
+    <!-- Tabela de Registros Encontrados (Padrão do Sistema) -->
+    <div class="bg-white border border-[#e3e8e6] rounded-2xl overflow-hidden shadow-2xs">
+        <div class="overflow-x-auto">
+            <table class="w-full border-collapse">
+                <thead>
+                    <tr class="bg-[#f8faf9] border-b border-[#e3e8e6]">
+                        <th class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-[#5c706b]">Aluno / Responsável</th>
+                        <th class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-[#5c706b]">Turma</th>
+                        <th class="px-4 py-4 text-center text-xs font-semibold uppercase tracking-wider text-[#5c706b]">Mês</th>
+                        <th class="px-4 py-4 text-center text-xs font-semibold uppercase tracking-wider text-[#5c706b]">Valor</th>
+                        <th class="px-4 py-4 text-center text-xs font-semibold uppercase tracking-wider text-[#5c706b]">Situação</th>
+                        <th class="px-4 py-4 text-center text-xs font-semibold uppercase tracking-wider text-[#5c706b]">Ações</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-[#e3e8e6]">
+                    <tr>
+                        <td colspan="6" class="px-6 py-12 text-center">
+                            <div class="flex flex-col items-center gap-3">
+                                <div class="w-16 h-16 rounded-full bg-[#f8faf9] flex items-center justify-center text-[#95aba5]">
+                                    <i data-lucide="file-spreadsheet" class="w-8 h-8"></i>
                                 </div>
-                                <!-- /.panel-body -->
-                            </div>    
-                            <!-- /.panel -->
-                        </div>
-                        <div id="box">
-                            <table  class="table financeiro_tabela_receber"  >
-                                <thead>
-                                    <tr>
-                                      <!--  <th >Referência</th> -->
-                                        <th >Turma</th>
-                                        <th >RA</th>
-                                        <th >ALUNO</th>
-                                        <th >Mês</th>
-                                        <th >Parcela</th>
-                                        <th >Ano</th>
-                                        <th >Valor</th>
-                                        <th >Valor Pago</th>
-                                        <th >Carteira</th>
-                                        <th >Vencimento</th>
-                                        <th >Pago em</th>
-                                        <th >Situação</th>
-                                        <th >Tel: Mãe</th>
-                                        <th >Tel: Pai</th>
+                                <p class="text-sm text-[#0a241e] font-medium">Selecione os filtros desejados</p>
+                                <p class="text-xs text-[#5c706b]">Escolha uma turma, mês e situação para listar os registros financeiros</p>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <!-- /.table-responsive -->
+    </div>
 
-                                    </tr>
-                                </thead> 
-                                <tbody>
-                                    @forelse($Boletos as $Boleto)
-                                    <tr>
-                                          <!--   <td >{{$Boleto->idcarne}}</td> -->
-                                        <td >{{$Boleto->NomeTurma}}</td>
-                                        <td >{{$Boleto->RA}}</td>
-                                        <td >{{$Boleto->NomeAluno}}</td>
-                                        <td >{{$Boleto->Meses}}</td>
-                                        <td >{{$Boleto->parcelas}}</td>
-                                        <td >{{$Boleto->Ano_Letivo}}</td>
-                                        <td >{{$Boleto->tb_turmas_Mensalidade}}</td>
-                                        <td >{{$Boleto->ValorPGTO}}</td>
-                                        <td >{{$Boleto->Carteira}}</td>
-                                        <td >{{$Boleto->Data_venc}}</td>
-                                        <td >{{$Boleto->data_pagamento}}</td>
-                                        <td >{{$Boleto->status_pagamento}}</td>
-                                        <td >{{$Boleto->FoneMae1}}</td>
-                                        <td >{{$Boleto->FonePai1}}</td>
-                                    </tr> @empty
-                                    @endforelse
-                            </table>
-                            
-                            <div>{!! $Boletos->render()!!} </div>
-                            
-                            
-                            
-                    </div>
-                    </div><!--Fim do caminho-din-->
-                    @endsection
+</div> <!--Fim do caminho-din-->
 
-
-
-
-
-
+@endsection

@@ -1,88 +1,226 @@
-@extends('telasCoordenacao.painel')  
-@section('conteudo')
-<html>
-    <header>   
-        <title>{{$titulo}}</title>
-    </header>
-    <body>
-        <!-- CSS compilada e minificada on-line do bootstrap-->
-        <link href="{{url('https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css')}}" rel="stylesheet">
-        <!-- Bootstrap -->
-        <link href="{{asset('css/bootstrap.min.css')}}" rel="stylesheet">
-        <!-- Font Awesome -->
-        <link rel="stylesheet" href="{{asset('font-awesome/css/font-awesome.min.css')}}">
-        <!--CSS Personalizado para o Painel-->
-        <link rel="stylesheet" href="{{asset('css/painel.css')}}">
-        <!-- CSS - Para fazer Reset nos Paineis-->
-        <link rel="stylesheet" href="{{asset('css/reset.css')}}">       
-        <!-- favicon-->
-        <link rel="stylesheet" href="{{asset('imgs/favicon.png')}}">     
-        <!-- Jquery Local-->
-        <script src="{{asset('css/jquery-3.0.0.js')}}" ></script> 
-        <button type="button"  value="Imprimir" id="imprimir_conteudo"  class="botao btn-imprimir"> Imprimir</button>
-        <div class="imprimir_conteudo">
-        <table class="timbre">
-            <tr>
-                <td>
-                    <img src="{{asset('imgs/logoempresa_transparente.png')}}" width="160" height="160" ><br>
-                    @forelse($escolas as $escola)
-                    {{$escola->Rua}} , {{$escola->Numero}}<br>
-                    {{$escola->Bairro}} - CEP:{{$escola->CEP}}<br>
-                    {{$escola->Cidade}} - {{$escola->Estado}}<br>
-                    Tel: {{$escola->Fone1}} / {{$escola->Fone2}}<br>
-                    E-mail:{{$escola->EmailColegio}}<br>
-                    CNPJ: {{$escola->CNPJ}}<br>
-                    INEP:{{$escola->NumeroInep}}
-                    @empty
-                    @endforelse
-                </td>
-            </tr>         
-        </table>
-        <div class="relatorios-titulo"> RELATÓRIO DE ALUNOS INATIVOS / TRANSFERIDOS <br>
-            <p>Total de alunos: <strong>{{$alunos->count()}}</strong>  
-        </div>
-        <table class="table table-striped fonte" >
-            <thead>
-                <tr>
-                    <th><center>RA</center></th>
-        <th>NOME ALUNO</th>
+@extends('layouts.app')
 
-<th><center>SAÍDA.</center></th>
-<th><center>FONE MÃE</center></th>
-<th><center>FONE PAI</center></th>
-<th><center>TURMA</center></th>
-<th><center>STATUS</center></th>
-</tr>
-</thead>            
-@forelse($alunos as $aluno)
-<tr>
-    <td> <center>  {{$aluno->RA}} </center>   </td>
-    <td>{{$aluno->NomeAluno}}</td>
-    <td> <center>
-        @if($aluno->Saida != '')
-        {{$aluno->Saida}}
-        @else
-        {{$aluno->AnoLetivo}}
-        @endif   
-</center>
-   </td>
-   <td> <center>  {{$aluno->FoneMae1}} </center>  </td>
-        <td><center>{{$aluno->FonePai1}}</center></td>
-    <td><center>{{$aluno->NomeTurma}}<center></td>
-    <td> <center>
-    
-    @if($aluno->Ultima_Turma != '')
-        TRANSFERIDO
-        @else
-        EVADIDO
-        @endif  
-    </center>
-    </td>
-</tr>
-@empty
-@endforelse
-</table>
+@section('content')
+
+@php
+    if (!isset($escolas)) {
+        try { $escolas = \App\Models\modelCoordenacao\tb_escola::informacaoEscolar(); } catch (\Exception $e) { $escolas = collect(); }
+    }
+    if (!isset($alunos) && !isset($Alunos)) {
+        try {
+            $alunos = \App\Models\modelCoordenacao\tb_aluno::alunoTransferidos();
+        } catch (\Exception $e) { $alunos = collect(); }
+        $Alunos = $alunos;
+    } else {
+        $alunos = $alunos ?? $Alunos;
+        $Alunos = $alunos;
+    }
+    if (!isset($turmas)) {
+        try { $turmas = \DB::table('tb_turmas')->orderBy('NomeTurma')->get(); } catch (\Exception $e) { $turmas = collect(); }
+    }
+@endphp
+
+<!-- Estilos para Caixa de Diálogo de Impressão -->
+<style>
+    @media print {
+        @page {
+            size: A4 landscape;
+            margin: 8mm;
+        }
+        body * {
+            visibility: hidden !important;
+        }
+        #printable-report-area, #printable-report-area * {
+            visibility: visible !important;
+        }
+        #printable-report-area {
+            position: absolute !important;
+            left: 0 !important;
+            top: 0 !important;
+            width: 100% !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            background: white !important;
+            color: black !important;
+        }
+        .print-hidden {
+            display: none !important;
+        }
+    }
+</style>
+
+<div class="flex flex-col gap-6 print-hidden">
+
+    <!-- Localização (Breadcrumb) -->
+    <div class="text-sm text-[#5c706b]">
+        <a href="{{ url('/coordenacao') }}" class="hover:text-[#008a4b] transition-colors">Relatórios</a>
+        <span class="mx-2">/</span>
+        <span class="font-semibold text-[#0a241e]">Alunos Inativos / Transferidos</span>
+    </div>
+
+    <!-- Cabeçalho Principal -->
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div class="flex flex-col gap-1">
+            <h1 class="text-3xl font-semibold text-[#0a241e]">RELATÓRIO DE ALUNOS INATIVOS / TRANSFERIDOS</h1>
+            <p class="text-sm text-[#5c706b]">Total de alunos: <strong>{{ count($alunos) }}</strong></p>
         </div>
-</body>
-</html>
+        <button onclick="window.print()" class="bg-[#008a4b] hover:bg-[#00703c] text-white font-medium px-6 py-2.5 rounded-full flex items-center gap-2 transition-all shadow-sm cursor-pointer whitespace-nowrap">
+            <i data-lucide="printer" class="w-5 h-5"></i>
+            <span>Imprimir Relatório</span>
+        </button>
+    </div>
+
+    <!-- Filtros de Busca e Seleção por Turma -->
+    <div class="flex flex-col sm:flex-row gap-4 items-center">
+        <!-- Barra de Pesquisa por Aluno -->
+        <div class="w-full sm:w-80">
+            <form method="GET" action="{{ url()->current() }}" class="w-full">
+                <div class="flex items-center bg-white border border-[#e3e8e6] rounded-xl px-4 py-2.5 transition-all">
+                    <input type="text" name="pesquisar" placeholder="Pesquisar Aluno" value="{{ request()->input('pesquisar') }}" class="w-full bg-transparent text-sm focus:outline-none text-[#0a241e]">
+                    <button type="submit" class="text-[#5c706b] hover:text-[#008a4b] ml-2">
+                        <i data-lucide="search" class="w-4 h-4"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Menu Dropdown de Filtro -->
+        <div class="w-full sm:w-64">
+            <form method="GET" action="{{ url()->current() }}" class="w-full">
+                <div class="relative">
+                    <select
+                        name="idTurmas"
+                        onchange="this.form.submit()"
+                        class="w-full h-11 appearance-none bg-white border border-[#e3e8e6] rounded-xl px-4 pr-10 text-sm text-[#0a241e] focus:outline-none focus:border-[#008a4b] focus:ring-2 focus:ring-[#008a4b]/10 cursor-pointer transition-all"
+                    >
+                        <option value="" disabled {{ !request()->has('idTurmas') ? 'selected' : '' }}>
+                            Filtrar por Turma
+                        </option>
+                        <option value="" {{ request()->input('idTurmas') === '' ? 'selected' : '' }}>
+                            Todas as Turmas
+                        </option>
+                        @foreach($turmas as $t)
+                            <option value="{{ $t->idTurmas }}" {{ request()->input('idTurmas') == $t->idTurmas ? 'selected' : '' }}>
+                                {{ $t->NomeTurma }}
+                            </option>
+                        @endforeach
+                    </select>
+
+                    <i
+                        data-lucide="chevron-down"
+                        class="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#95aba5] pointer-events-none"
+                    ></i>
+                </div>
+            </form>
+        </div>
+
+        @if(request()->input('pesquisar') || request()->input('idTurmas'))
+            <a href="{{ url()->current() }}" class="text-sm font-medium text-[#008a4b] hover:text-[#00703c] transition-colors whitespace-nowrap">
+                Limpar filtros
+            </a>
+        @endif
+    </div>
+
+    <!-- Tabela Web com os 7 campos exatos da imagem -->
+    <div class="bg-white border border-[#e3e8e6] rounded-2xl overflow-hidden shadow-2xs">
+        <div class="overflow-x-auto">
+            <table class="w-full border-collapse text-sm">
+                <thead>
+                    <tr class="bg-[#f8faf9] border-b border-[#e3e8e6]">
+                        <th class="px-4 py-3.5 text-left text-xs font-bold uppercase text-[#5c706b]">RA</th>
+                        <th class="px-4 py-3.5 text-left text-xs font-bold uppercase text-[#5c706b]">NOME ALUNO</th>
+                        <th class="px-4 py-3.5 text-center text-xs font-bold uppercase text-[#5c706b]">SAÍDA.</th>
+                        <th class="px-4 py-3.5 text-center text-xs font-bold uppercase text-[#5c706b]">FONE MÃE</th>
+                        <th class="px-4 py-3.5 text-center text-xs font-bold uppercase text-[#5c706b]">FONE PAI</th>
+                        <th class="px-4 py-3.5 text-center text-xs font-bold uppercase text-[#5c706b]">TURMA</th>
+                        <th class="px-4 py-3.5 text-center text-xs font-bold uppercase text-[#5c706b]">STATUS</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-[#e3e8e6]">
+                    @forelse($alunos as $aluno)
+                        <tr class="hover:bg-[#f8faf9]/50 transition-colors">
+                            <td class="px-4 py-3 text-xs text-[#5c706b] font-mono">{{ $aluno->RA ?? '-' }}</td>
+                            <td class="px-4 py-3 text-xs font-bold text-[#0a241e] uppercase">{{ $aluno->NomeAluno }}</td>
+                            <td class="px-4 py-3 text-center text-xs font-mono text-[#5c706b]">{{ $aluno->Saida ?? '0000-00-00' }}</td>
+                            <td class="px-4 py-3 text-center text-xs text-[#5c706b]">{{ $aluno->FoneMae1 ?? '-' }}</td>
+                            <td class="px-4 py-3 text-center text-xs text-[#5c706b]">{{ $aluno->FonePai1 ?? '-' }}</td>
+                            <td class="px-4 py-3 text-center text-xs font-semibold text-[#0a241e] uppercase">{{ $aluno->Ultima_Turma ?? $aluno->NomeTurma ?? '-' }}</td>
+                            <td class="px-4 py-3 text-center text-xs font-bold uppercase text-red-600">
+                                {{ $aluno->SituacaoAluno ?? ($aluno->Saida ? 'TRANSFERIDO' : 'EVADIDO') }}
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="7" class="px-6 py-8 text-center text-sm text-[#5c706b]">
+                                Nenhum aluno inativo/transferido encontrado.
+                            </td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Área de Impressão Exclusiva com os 7 campos exatos da imagem -->
+<div id="printable-report-area" class="hidden print:block">
+    <!-- Moldura de Cabeçalho da Escola com Borda Dupla -->
+    <div style="border: 3px double #333; padding: 12px 18px; text-align: center; margin-bottom: 18px; width: 94%; margin-left: auto; margin-right: auto; box-sizing: border-box;">
+        <img src="{{ asset('imgs/logoempresa_transparente.png') }}" width="120" style="display: block; margin: 0 auto 8px auto;">
+        @forelse($escolas as $escola)
+            <div style="font-weight: bold; font-size: 12px; text-transform: uppercase; line-height: 1.4; color: #111;">
+                {{ $escola->Rua }} , {{ $escola->Numero }}<br>
+                {{ $escola->Bairro }} - CEP:{{ $escola->CEP }}<br>
+                {{ $escola->Cidade }} - {{ $escola->Estado }}<br>
+                Tel: {{ $escola->Fone1 }} / {{ $escola->Fone2 }}<br>
+                E-mail:{{ $escola->EmailColegio }}<br>
+                CNPJ: {{ $escola->CNPJ }}<br>
+                INEP:{{ $escola->NumeroInep }}
+            </div>
+        @empty
+            <div style="font-weight: bold; font-size: 13px;">COLÉGIO MARUGE</div>
+        @endforelse
+    </div>
+
+    <!-- Título e Contador Exatos da Imagem -->
+    <div style="text-align: center; margin-bottom: 16px;">
+        <h2 style="font-size: 17px; font-weight: 800; margin: 0; text-transform: uppercase; letter-spacing: 0.5px; color: #000;">
+            RELATÓRIO DE ALUNOS INATIVOS / TRANSFERIDOS
+        </h2>
+        <p style="font-size: 13px; font-weight: bold; margin: 3px 0 0 0; color: #111;">
+            Total de alunos: {{ count($alunos) }}
+        </p>
+    </div>
+
+    <!-- Tabela Impressa com as 7 Colunas Exatas da Imagem -->
+    <table style="width: 100%; border-collapse: collapse; font-size: 9.5px; font-family: Arial, sans-serif;">
+        <thead>
+            <tr style="border-bottom: 2px solid #000; background-color: #f8faf9;">
+                <th style="padding: 6px 4px; text-align: left; font-weight: bold; width: 10%;">RA</th>
+                <th style="padding: 6px 4px; text-align: left; font-weight: bold; width: 28%;">NOME ALUNO</th>
+                <th style="padding: 6px 4px; text-align: center; font-weight: bold; width: 12%;">SAÍDA.</th>
+                <th style="padding: 6px 4px; text-align: center; font-weight: bold; width: 14%;">FONE MÃE</th>
+                <th style="padding: 6px 4px; text-align: center; font-weight: bold; width: 14%;">FONE PAI</th>
+                <th style="padding: 6px 4px; text-align: center; font-weight: bold; width: 12%;">TURMA</th>
+                <th style="padding: 6px 4px; text-align: center; font-weight: bold; width: 10%;">STATUS</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach($alunos as $aluno)
+                <tr style="border-bottom: 1px solid #e2e8f0;">
+                    <td style="padding: 5px 4px; font-family: monospace;">{{ $aluno->RA ?? '-' }}</td>
+                    <td style="padding: 5px 4px; font-weight: bold; text-transform: uppercase;">{{ $aluno->NomeAluno }}</td>
+                    <td style="padding: 5px 4px; text-align: center; font-family: monospace;">{{ $aluno->Saida ?? '0000-00-00' }}</td>
+                    <td style="padding: 5px 4px; text-align: center;">{{ $aluno->FoneMae1 ?? '-' }}</td>
+                    <td style="padding: 5px 4px; text-align: center;">{{ $aluno->FonePai1 ?? '-' }}</td>
+                    <td style="padding: 5px 4px; text-align: center; font-weight: bold; text-transform: uppercase;">{{ $aluno->Ultima_Turma ?? $aluno->NomeTurma ?? '-' }}</td>
+                    <td style="padding: 5px 4px; text-align: center; font-weight: bold; text-transform: uppercase;">
+                        {{ $aluno->SituacaoAluno ?? ($aluno->Saida ? 'TRANSFERIDO' : 'EVADIDO') }}
+                    </td>
+                </tr>
+            @endforeach
+        </tbody>
+    </table>
+</div>
+
 @endsection

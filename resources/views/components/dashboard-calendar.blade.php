@@ -104,12 +104,15 @@
             <!-- Campo Tipo -->
             <div>
                 <label class="block text-xs font-semibold text-gray-500 mb-1">Tipo de Evento</label>
-                <select id="event-type" class="w-full bg-white border border-gray-200 text-gray-800 rounded-xl px-4 py-2.5 text-sm font-semibold focus:border-[#008a4b] focus:ring-1 focus:ring-[#008a4b] focus:outline-none">
+                <div class="select-wrapper">
+    <select id="event-type" class="w-full bg-white border border-gray-200 text-gray-800 rounded-xl px-4 py-2.5 text-sm font-semibold focus:border-[#008a4b] focus:ring-1 focus:ring-[#008a4b] focus:outline-none maruge-select">
                     <option value="Feriado Escolar">Feriado Escolar</option>
                     <option value="Recesso Escolar">Recesso Escolar</option>
                     <option value="Evento Escolar">Evento Escolar</option>
                     <option value="Outros">Outros</option>
                 </select>
+    <i data-lucide="chevron-down" class="select-icon"></i>
+</div>
             </div>
 
             <div class="flex justify-between items-center mt-2 gap-3 pt-3 border-t border-gray-100">

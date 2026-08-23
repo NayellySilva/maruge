@@ -1,5 +1,5 @@
-@extends('telasCoordenacao.painel')  
-@section('conteudo')
+@extends('layouts.app')  
+@section('content')
 <div class="titulo-pagina">
 	<h1 class="titulo-pagina">Financeiro</h1>
 </div> 
@@ -11,7 +11,7 @@
    
     
     <div class="rel-geral col-md-4 sombra">
-        <a href="/maruge/public/coordenacao/financeiro_receber">  
+        <a href="/coordenacao/financeiro_receber">  
                         <div class="imagem imagens-geral">
                             
 			<img src="{{url('imgs/icones/Relatorio_bimestral.png')}}" alt="Receber Titulo">
@@ -24,7 +24,7 @@
                         </a>
     </div>
     <div class="rel-geral col-md-4 sombra">
-           <a href="/maruge/public/coordenacao/receitas_e_despesas">
+           <a href="/coordenacao/receitas_e_despesas">
 			<div class="imagem imagens-geral">
 			<img src="{{url('imgs/icones/apagar.png')}}" alt="Contas a pagar">
 			</div>
@@ -36,7 +36,7 @@
                         </a>
     </div>
     <div class="rel-geral col-md-4 sombra">
-         <a href="/maruge/public/coordenacao/estatisticas">  
+         <a href="/coordenacao/estatisticas">  
 			<div class="imagem imagens-geral">
 			<img src="{{url('imgs/icones/aprovado_reprovado.png')}}" alt="Estatística ">
 			</div>
@@ -48,7 +48,7 @@
                         </a>
     </div>
     <div class="rel-geral col-md-4 sombra">
-         <a href="/maruge/public/coordenacao/financeiro_relatorios_2">  
+         <a href="/coordenacao/financeiro_relatorios_2">  
 			<div class="imagem imagens-geral">
 			<img src="{{url('imgs/icones/aprovado_reprovado.png')}}" alt="Estatística ">
 			</div>

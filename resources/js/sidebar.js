@@ -36,7 +36,7 @@ export function loadSidebarState() {
 
 export function updateSidebarActiveStates() {
     const currentUrl = window.location.href.split('?')[0].replace(/\/$/, '');
-    
+
     // Remove apenas os estados ativos antigos
     document.querySelectorAll('.sidebar-link, .submenu-link').forEach(el => {
         el.classList.remove('active');

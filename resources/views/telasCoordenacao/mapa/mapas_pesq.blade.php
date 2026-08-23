@@ -1,5 +1,5 @@
-@extends('telasCoordenacao.painel')  
-@section('conteudo')
+@extends('layouts.app')  
+@section('content')
 <div class="titulo-endereco">
     <a href="#">
     Relatórios / Mapas de Notas
@@ -8,7 +8,7 @@
 <div class="col-md-5">
     <div class="form-group">
         <label for="Localizar Turma">Localizar Turma:</label>
-        <form class="form-search pesquisar" method="post" action="/maruge/public/coordenacao/mapas_pesq">
+        <form class="form-search pesquisar" method="post" action="/coordenacao/mapas_pesq">
             {!! csrf_field() !!}
             <input type="texto" name="pesquisar" placeholder="Pesquisar Turma"  class="form-control">
             <button class="btn-pesquisar"><i class="fa fa-search" aria-hidden="true"></i></button>
@@ -18,15 +18,18 @@
 <div class="col-md-3">
     <div class="form-group">
         <label for="Filtrar Turma">Filtrar por Situação:</label>
-        <form class="form-search pesquisar"method="post" action="/maruge/public/coordenacao/mapas_filtro">
+        <form class="form-search pesquisar"method="post" action="/coordenacao/mapas_filtro">
             {!! csrf_field() !!}
-            <select class="form-control" name="SituacaoTurma" >
+            <div class="select-wrapper">
+    <select class="form-control maruge-select" name="SituacaoTurma" >
                 <option></option>
 
                 <option>ATIVO</option>
                 <option>INATIVO</option>
 
             </select>
+    <i data-lucide="chevron-down" class="select-icon"></i>
+</div>
 
 
             <button class="btn-filtro" type="submit" > <i class="fa fa-search" aria-hidden="true"></i></button>
@@ -82,7 +85,7 @@
                                         @empty
                                         <div class="alert alert-warning alert-dismissible" role="alert">
                                             <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                                            <strong>Desculpe ! </strong> Nenhuma turma cadastrada, para cadastras<a href="/maruge/public/coordenacao/turma_cad" class="alert-link"> Clique aqui.</a>
+                                            <strong>Desculpe ! </strong> Nenhuma turma cadastrada, para cadastras<a href="/coordenacao/turma_cad" class="alert-link"> Clique aqui.</a>
                                         </div>
                                         <tr>
                                             <td colspan="500"> Nenhuma turma cadastrada !</td>

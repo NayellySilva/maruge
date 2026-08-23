@@ -26,7 +26,7 @@
         <div class="alert alert-warning msg-erro bg-amber-50 border border-amber-200 text-amber-700 p-4 rounded-xl mb-6 text-sm" role="alert" style="display: none"></div> 
 
         <!-- Alert de Erros de Validação -->
-        @if(count($errors) > 0)
+        @if((isset($errors) ? count($errors) : 0) > 0)
             <div class="bg-red-50 border border-red-200 text-red-700 p-4 rounded-xl mb-6 text-sm flex gap-3 items-start">
                 <i data-lucide="alert-circle" class="w-5 h-5 shrink-0 mt-0.5"></i>
                 <div>
@@ -58,7 +58,7 @@
                 <!-- CPF -->
                 <div style="flex: 1 1 20%; min-width: 0; display: flex; flex-direction: column; gap: 6px;">
                     <label for="CPFFuncionario" class="text-sm font-medium text-[#0a241e]">CPF:</label>
-                    <input type="text" name="CPFFuncionario" id="CPFFuncionario" placeholder="CPF do Funcionário" class="w-full bg-[#f8faf9] border border-[#e3e8e6] rounded-xl px-4 py-2.5 text-sm text-[#0a241e] focus:outline-none focus:border-gray-400 transition-all" value="{{ $funcionario->CPFFuncionario ?? old('CPFFuncionario') }}">
+                    <input type="text" name="CPFFuncionario" id="CPFFuncionario" placeholder="CPF do Funcionário" class="mask-cpf w-full bg-[#f8faf9] border border-[#e3e8e6] rounded-xl px-4 py-2.5 text-sm text-[#0a241e] focus:outline-none focus:border-gray-400 transition-all" value="{{ $funcionario->CPFFuncionario ?? old('CPFFuncionario') }}">
                 </div>
                 <!-- RG -->
                 <div style="flex: 1 1 20%; min-width: 0; display: flex; flex-direction: column; gap: 6px;">
@@ -68,8 +68,12 @@
                 <!-- Função -->
                 <div style="flex: 1 1 20%; min-width: 0; display: flex; flex-direction: column; gap: 6px;">
                     <label for="Funcao" class="text-sm font-medium text-[#0a241e]">Função:</label>
-                    <div class="w-full flex items-center bg-[#f8faf9] border border-[#e3e8e6] rounded-xl px-4 py-2.5 focus-within:border-gray-400 transition-all relative">
-                        <select name="Funcao" class="w-full bg-transparent text-sm text-[#0a241e] focus:outline-none appearance-none cursor-pointer pr-6" required>
+                    <div class="relative">
+                        <select
+                            name="Funcao"
+                            class="w-full h-11 appearance-none bg-white border border-[#e3e8e6] rounded-xl px-4 pr-10 text-sm text-[#0a241e] focus:outline-none focus:border-[#008a4b] focus:ring-2 focus:ring-[#008a4b]/10 cursor-pointer transition-all"
+                            required
+                        >
                             @if(isset($funcionario->Funcao))
                                 <option value="{{ $funcionario->Funcao }}" selected>{{ $funcionario->Funcao }}</option>
                             @else
@@ -90,56 +94,88 @@
                             <option>TELEFONISTA</option>
                             <option>OUTROS</option>
                         </select>
-                        <div class="absolute right-4 text-[#95aba5] pointer-events-none">
-                            <i data-lucide="chevron-down" class="w-4 h-4"></i>
-                        </div>
+                        <i
+                            data-lucide="chevron-down"
+                            class="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#95aba5] pointer-events-none"
+                        ></i>
                     </div>
                 </div>
             </div>
 
-            <!-- Segunda Linha: Endereço, Nº, Cidade, CEP -->
+            <!-- Segunda Linha: CEP, Endereço, Nº, Bairro -->
             <div style="display: flex; flex-direction: row; gap: 16px; width: 100%; align-items: flex-end;">
+                <!-- CEP -->
+                <div style="flex: 1 1 18%; min-width: 0; display: flex; flex-direction: column; gap: 6px;">
+                    <label for="CEP" class="text-sm font-medium text-[#0a241e]">CEP:</label>
+                    <input type="text" name="CEP" id="CEP" placeholder="00000-000" class="mask-cep w-full bg-[#f8faf9] border border-[#e3e8e6] rounded-xl px-4 py-2.5 text-sm text-[#0a241e] focus:outline-none focus:border-gray-400 transition-all" value="{{ $endereco->CEP ?? old('CEP') }}">
+                </div>
                 <!-- Endereço -->
-                <div style="flex: 2 1 40%; min-width: 0; display: flex; flex-direction: column; gap: 6px;">
+                <div style="flex: 2 1 37%; min-width: 0; display: flex; flex-direction: column; gap: 6px;">
                     <label for="Rua" class="text-sm font-medium text-[#0a241e]">Endereço:</label>
-                    <input type="text" name="Rua" placeholder="Rua / Avenida" class="w-full bg-[#f8faf9] border border-[#e3e8e6] rounded-xl px-4 py-2.5 text-sm text-[#0a241e] focus:outline-none focus:border-gray-400 transition-all" value="{{ $endereco->Rua ?? old('Rua') }}">
+                    <input type="text" name="Rua" id="Rua" placeholder="Rua / Avenida" class="w-full bg-[#f8faf9] border border-[#e3e8e6] rounded-xl px-4 py-2.5 text-sm text-[#0a241e] focus:outline-none focus:border-gray-400 transition-all" value="{{ $endereco->Rua ?? old('Rua') }}">
                 </div>
                 <!-- Número -->
                 <div style="flex: 1 1 15%; min-width: 0; display: flex; flex-direction: column; gap: 6px;">
                     <label for="Numero" class="text-sm font-medium text-[#0a241e]">Nº:</label>
-                    <input type="text" name="Numero" placeholder="Número" class="w-full bg-[#f8faf9] border border-[#e3e8e6] rounded-xl px-4 py-2.5 text-sm text-[#0a241e] focus:outline-none focus:border-gray-400 transition-all" value="{{ $endereco->Numero ?? old('Numero') }}">
+                    <input type="text" name="Numero" id="Numero" placeholder="Número" class="w-full bg-[#f8faf9] border border-[#e3e8e6] rounded-xl px-4 py-2.5 text-sm text-[#0a241e] focus:outline-none focus:border-gray-400 transition-all" value="{{ $endereco->Numero ?? old('Numero') }}">
+                </div>
+                <!-- Bairro -->
+                <div style="flex: 1 1 30%; min-width: 0; display: flex; flex-direction: column; gap: 6px;">
+                    <label for="Bairro" class="text-sm font-medium text-[#0a241e]">Bairro:</label>
+                    <input type="text" name="Bairro" id="Bairro" placeholder="Bairro" class="w-full bg-[#f8faf9] border border-[#e3e8e6] rounded-xl px-4 py-2.5 text-sm text-[#0a241e] focus:outline-none focus:border-gray-400 transition-all" value="{{ $endereco->Bairro ?? old('Bairro') }}">
+                </div>
+            </div>
+
+            <!-- Terceira Linha: Estado, Cidade, Fixo, Celular, E-mail -->
+            <div style="display: flex; flex-direction: row; gap: 16px; width: 100%; align-items: flex-end;">
+                <!-- Estado -->
+                <div style="flex: 1 1 18%; min-width: 0; display: flex; flex-direction: column; gap: 6px;">
+                    <label for="Estado" class="text-sm font-medium text-[#0a241e]">Estado:</label>
+                    <div class="relative">
+                        <select
+                            name="Estado"
+                            id="Estado"
+                            class="w-full h-11 appearance-none bg-white border border-[#e3e8e6] rounded-xl px-4 pr-10 text-sm text-[#0a241e] focus:outline-none focus:border-[#008a4b] focus:ring-2 focus:ring-[#008a4b]/10 cursor-pointer transition-all"
+                            data-value="{{ $endereco->Estado ?? old('Estado') }}"
+                        >
+                            <option value="{{ $endereco->Estado ?? '' }}">{{ $endereco->Estado ?? 'Estado' }}</option>
+                        </select>
+                        <i
+                            data-lucide="chevron-down"
+                            class="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#95aba5] pointer-events-none"
+                        ></i>
+                    </div>
                 </div>
                 <!-- Cidade -->
                 <div style="flex: 1 1 25%; min-width: 0; display: flex; flex-direction: column; gap: 6px;">
                     <label for="Cidade" class="text-sm font-medium text-[#0a241e]">Cidade:</label>
-                    <input type="text" name="Cidade" placeholder="Cidade" class="w-full bg-[#f8faf9] border border-[#e3e8e6] rounded-xl px-4 py-2.5 text-sm text-[#0a241e] focus:outline-none focus:border-gray-400 transition-all" value="{{ $endereco->Cidade ?? old('Cidade') }}">
-                </div>
-                <!-- CEP -->
-                <div style="flex: 1 1 20%; min-width: 0; display: flex; flex-direction: column; gap: 6px;">
-                    <label for="Cep" class="text-sm font-medium text-[#0a241e]">CEP:</label>
-                    <input type="text" name="CEP" id="CEP" placeholder="CEP" class="w-full bg-[#f8faf9] border border-[#e3e8e6] rounded-xl px-4 py-2.5 text-sm text-[#0a241e] focus:outline-none focus:border-gray-400 transition-all" value="{{ $endereco->CEP ?? old('CEP') }}">
-                </div>
-            </div>
-
-            <!-- Terceira Linha: Bairro, Fone 1 (Fixo), Fone 2 (Celular), E-mail -->
-            <div style="display: flex; flex-direction: row; gap: 16px; width: 100%; align-items: flex-end;">
-                <!-- Bairro -->
-                <div style="flex: 1 1 25%; min-width: 0; display: flex; flex-direction: column; gap: 6px;">
-                    <label for="Bairro" class="text-sm font-medium text-[#0a241e]">Bairro:</label>
-                    <input type="text" name="Bairro" placeholder="Bairro" class="w-full bg-[#f8faf9] border border-[#e3e8e6] rounded-xl px-4 py-2.5 text-sm text-[#0a241e] focus:outline-none focus:border-gray-400 transition-all" value="{{ $endereco->Bairro ?? old('Bairro') }}">
+                    <div class="relative">
+                        <select
+                            name="Cidade"
+                            id="Cidade"
+                            class="w-full h-11 appearance-none bg-white border border-[#e3e8e6] rounded-xl px-4 pr-10 text-sm text-[#0a241e] focus:outline-none focus:border-[#008a4b] focus:ring-2 focus:ring-[#008a4b]/10 cursor-pointer transition-all"
+                            data-value="{{ $endereco->Cidade ?? old('Cidade') }}"
+                        >
+                            <option value="{{ $endereco->Cidade ?? '' }}">{{ $endereco->Cidade ?? 'Cidade' }}</option>
+                        </select>
+                        <i
+                            data-lucide="chevron-down"
+                            class="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#95aba5] pointer-events-none"
+                        ></i>
+                    </div>
                 </div>
                 <!-- Fone 1 -->
-                <div style="flex: 1 1 20%; min-width: 0; display: flex; flex-direction: column; gap: 6px;">
+                <div style="flex: 1 1 18%; min-width: 0; display: flex; flex-direction: column; gap: 6px;">
                     <label for="Fone1" class="text-sm font-medium text-[#0a241e]">Telefone Fixo:</label>
-                    <input type="text" name="Fone1" id="Fone1" placeholder="Telefone Fixo" class="w-full bg-[#f8faf9] border border-[#e3e8e6] rounded-xl px-4 py-2.5 text-sm text-[#0a241e] focus:outline-none focus:border-gray-400 transition-all" value="{{ $endereco->Fone1 ?? old('Fone1') }}">
+                    <input type="text" name="Fone1" id="Fone1" placeholder="Fixo" class="mask-phone w-full bg-[#f8faf9] border border-[#e3e8e6] rounded-xl px-4 py-2.5 text-sm text-[#0a241e] focus:outline-none focus:border-gray-400 transition-all" value="{{ $endereco->Fone1 ?? old('Fone1') }}">
                 </div>
                 <!-- Fone 2 -->
-                <div style="flex: 1 1 20%; min-width: 0; display: flex; flex-direction: column; gap: 6px;">
-                    <label for="Fone2" class="text-sm font-medium text-[#0a241e]">Telefone Celular:</label>
-                    <input type="text" name="Fone2" id="Fone2" placeholder="Celular" class="w-full bg-[#f8faf9] border border-[#e3e8e6] rounded-xl px-4 py-2.5 text-sm text-[#0a241e] focus:outline-none focus:border-gray-400 transition-all" value="{{ $endereco->Fone2 ?? old('Fone2') }}">
+                <div style="flex: 1 1 18%; min-width: 0; display: flex; flex-direction: column; gap: 6px;">
+                    <label for="Fone2" class="text-sm font-medium text-[#0a241e]">Celular:</label>
+                    <input type="text" name="Fone2" id="Fone2" placeholder="Celular" class="mask-phone w-full bg-[#f8faf9] border border-[#e3e8e6] rounded-xl px-4 py-2.5 text-sm text-[#0a241e] focus:outline-none focus:border-gray-400 transition-all" value="{{ $endereco->Fone2 ?? old('Fone2') }}">
                 </div>
                 <!-- E-mail -->
-                <div style="flex: 2 1 35%; min-width: 0; display: flex; flex-direction: column; gap: 6px;">
+                <div style="flex: 1 1 21%; min-width: 0; display: flex; flex-direction: column; gap: 6px;">
                     <label for="EmailFuncionario" class="text-sm font-medium text-[#0a241e]">E-mail:</label>
                     <input type="email" name="EmailFuncionario" placeholder="exemplo@email.com" class="w-full bg-[#f8faf9] border border-[#e3e8e6] rounded-xl px-4 py-2.5 text-sm text-[#0a241e] focus:outline-none focus:border-gray-400 transition-all" value="{{ $endereco->EmailFuncionario ?? old('EmailFuncionario') }}">
                 </div>

@@ -8,6 +8,7 @@
         $turmas = collect();
     }
 @endphp
+
 <div class="flex flex-col gap-6">
     <!-- Localização (Breadcrumb) -->
     <div class="text-sm text-[#5c706b]">
@@ -44,21 +45,40 @@
             </form>
         </div>
 
-        <!-- Menu Dropdown de Filtro -->
+       <!-- Menu Dropdown de Filtro -->
         <div class="w-full sm:w-64">
-            <form method="post" action="{{ url('/coordenacao/turma_filtro') }}" class="w-full">
+            <form method="post"
+                action="{{ url('/coordenacao/turma_filtro') }}"
+                class="w-full">
+
                 {!! csrf_field() !!}
-                <div class="flex items-center bg-white border border-[#e3e8e6] rounded-xl px-4 py-2.5 transition-all">
-                    <select name="SituacaoTurma" onchange="this.form.submit()" class="w-full bg-transparent text-sm text-[#0a241e] focus:outline-none appearance-none cursor-pointer pr-6">
-                        <option value="" disabled selected>Filtrar por Situação</option>
-                        <option value="">Todos</option>
-                        <option value="ATIVO">Ativo</option>
-                        <option value="INATIVO">Inativo</option>
+
+                <div class="relative">
+                    <select
+                        name="SituacaoTurma"
+                        onchange="this.form.submit()"
+                        class="w-full h-11 appearance-none bg-white border border-[#e3e8e6] rounded-xl px-4 pr-10 text-sm text-[#0a241e] focus:outline-none focus:border-[#008a4b] focus:ring-2 focus:ring-[#008a4b]/10 cursor-pointer transition-all"
+                    >
+                        <option value="" disabled selected>
+                            Filtrar por Situação
+                        </option>
+                        <option value="">
+                            Todos
+                        </option>
+                        <option value="ATIVO">
+                            Ativo
+                        </option>
+                        <option value="INATIVO">
+                            Inativo
+                        </option>
                     </select>
-                    <div class="text-[#95aba5] pointer-events-none -ml-6">
-                        <i data-lucide="chevron-down" class="w-4 h-4"></i>
-                    </div>
+
+                    <i
+                        data-lucide="chevron-down"
+                        class="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#95aba5] pointer-events-none"
+                    ></i>
                 </div>
+
             </form>
         </div>
     </div>
@@ -74,7 +94,7 @@
                         <th class="px-6 py-4 text-center text-xs font-semibold uppercase tracking-wider text-[#5c706b]">Mensalidade</th>
                         <th class="px-6 py-4 text-center text-xs font-semibold uppercase tracking-wider text-[#5c706b]">Ano</th>
                         <th class="px-6 py-4 text-center text-xs font-semibold uppercase tracking-wider text-[#5c706b]">Situação</th>
-                        <th class="px-6 py-4 text-center text-xs font-semibold uppercase tracking-wider text-[#5c706b]">Editar</th>
+                        <th class="px-6 py-4 text-center text-xs font-semibold uppercase tracking-wider text-[#5c706b]">Ações</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-[#e3e8e6]">
@@ -82,7 +102,7 @@
                         <tr class="hover:bg-[#f8faf9]/50 transition-colors">
                             <td class="px-6 py-4 text-sm text-[#5c706b]">{{ $turma->idTurmas }}</td>
                             <td class="px-6 py-4 text-sm font-semibold text-[#0a241e]">{{ $turma->NomeTurma }}</td>
-                            <td class="px-6 py-4 text-sm text-[#0a241e] text-center">RS: {{ number_format($turma->Mensalidade, 2, ',', '.') }}</td>
+                            <td class="px-6 py-4 text-sm text-[#0a241e] text-center">RS: {{ number_format((float)($turma->Mensalidade ?? 0), 2, ',', '.') }}</td>
                             <td class="px-6 py-4 text-sm text-[#0a241e] text-center">{{ $turma->AnoLetivo }}</td>
                             <td class="px-6 py-4 text-sm text-center">
                                 @if($turma->SituacaoTurma == 'ATIVO')
@@ -98,9 +118,12 @@
                                 @endif
                             </td>
                             <td class="px-6 py-4 text-sm text-center">
-                                <div class="flex justify-center gap-2">
+                                <div class="flex justify-center gap-1.5">
                                     <a href="{{ url("/coordenacao/turma_editar/$turma->idTurmas") }}" class="inline-flex items-center justify-center p-2 rounded-lg text-[#5c706b] hover:text-[#008a4b] hover:bg-[#ecfdf5] transition-all" title="Editar Turma">
                                         <i data-lucide="pencil" class="w-4 h-4"></i>
+                                    </a>
+                                    <a href="{{ url("/coordenacao/turma_deletar/$turma->idTurmas") }}" onclick="return confirm('Deseja realmente excluir esta turma?');" class="inline-flex items-center justify-center p-2 rounded-lg text-[#5c706b] hover:text-red-600 hover:bg-red-50 transition-all" title="Excluir Turma">
+                                        <i data-lucide="trash-2" class="w-4 h-4"></i>
                                     </a>
                                 </div>
                             </td>

@@ -1,416 +1,216 @@
-@extends('telasCoordenacao.painel')  
-@section('conteudo')
-<div class="titulo-endereco">
-    <a href="#">
-        Financeiro / Receitas e Despesas  
-    </a>
-</div>
+@extends('layouts.app')
 
+@section('content')
 
-<div class="caminho-din">
+<!-- Titulo e Endereco da Pagina -->
+<div class="flex flex-col gap-6">
 
-    <div class="col-lg-6">
-    <div class="panel panel-default">
-        <div class="panel-heading ">
-            <strong> Contas a Receber</strong>  
+    <!-- Localização (Breadcrumb) -->
+    <div class="text-sm text-[#5c706b]">
+        <a href="{{ url('/coordenacao') }}" class="hover:text-[#008a4b] transition-colors">Financeiro</a>
+        <span class="mx-2">/</span>
+        <span class="font-semibold text-[#0a241e]">Estatísticas</span>
+    </div>
+
+    <!-- Cabeçalho Principal -->
+    <div class="flex justify-between items-center">
+        <div class="flex flex-col gap-1">
+            <h1 class="text-3xl font-semibold text-[#0a241e]">Estatísticas Financeiras</h1>
+            <p class="text-sm text-[#5c706b]">Visão geral de contas a receber, contas a pagar e balanço geral</p>
         </div>
-        <!-- /.panel-heading -->
-        <div class="panel-body">
-            <div class="table-responsive">
-                <center>
+    </div>
 
-                    <div class="col-md-4 ">
-                        <section class="panel panel-featured-left panel-featured-success">
-                            <div class="panel-body sombra">
-                                <div class="widget-summary widget-summary-md">
-                                    <div class="widget-summary-col widget-summary-col-icon ">
-                                        <div class="summary-icon bg-success ">
-                                            <i class="fa fa-money contas-receber"></i>
-                                        </div>
-                                    </div>
-                                    <div class="widget-summary-col">
-                                        <div class=" contas-receber  ">
-                                            <h4 >Falta receber</h4>
-                                            <div class="info">
-                                                <strong class="amount">R$ 0,00</strong>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </section>
-                    </div>  
-                    <div class="col-md-4 ">
-                        <section class="panel panel-featured-left panel-featured-success">
-                            <div class="panel-body sombra">
-                                <div class="widget-summary widget-summary-md">
-                                    <div class="widget-summary-col widget-summary-col-icon ">
-                                        <div class="summary-icon bg-success ">
-                                            <i class="fa fa-money contas-receber"></i>
-                                        </div>
-                                    </div>
-                                    <div class="widget-summary-col">
-                                        <div class=" contas-receber  ">
-                                            <h4 >Total a receber</h4>
-                                            <div class="info">
-                                                <strong class="amount">R$ 0,00</strong>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </section>
-                    </div>  
-                    <div class="col-md-4 ">
-                        <section class="panel panel-featured-left panel-featured-success">
-                            <div class="panel-body sombra">
-                                <div class="widget-summary widget-summary-md">
-                                    <div class="widget-summary-col widget-summary-col-icon ">
-                                        <div class="summary-icon bg-success ">
-                                            <i class="fa fa-money contas-receber"></i>
-                                        </div>
-                                    </div>
-                                    <div class="widget-summary-col">
-                                        <div class=" contas-receber  ">
-                                            <h4 >Total recebido</h4>
-                                            <div class="info">
-                                                <strong class="amount">R$ 0,00</strong>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </section>
-                    </div>  
- </center>
+    <!-- Cards de Métricas Principais (Contas a Receber e Contas a Pagar lado a lado) -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+        <!-- Bloco: Contas a Receber -->
+        <div class="bg-white border border-[#e3e8e6] rounded-2xl p-6 shadow-2xs flex flex-col gap-4">
+            <div class="flex items-center justify-between border-b border-[#e3e8e6] pb-3">
+                <h2 class="text-lg font-semibold text-[#0a241e] flex items-center gap-2">
+                    <i data-lucide="trending-up" class="w-5 h-5 text-[#008a4b]"></i>
+                    Contas a Receber
+                </h2>
+                <span class="text-xs font-semibold px-2.5 py-1 bg-emerald-50 text-[#008a4b] rounded-full">Receitas</span>
+            </div>
+            <!-- /.panel-heading -->
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div class="bg-[#f8faf9] p-4 rounded-xl flex flex-col gap-1 border border-[#e3e8e6]">
+                    <span class="text-xs text-[#5c706b] font-medium">Falta Receber</span>
+                    <span class="text-lg font-bold text-[#0a241e]">R$ 0,00</span>
+                </div>
+                <div class="bg-[#f8faf9] p-4 rounded-xl flex flex-col gap-1 border border-[#e3e8e6]">
+                    <span class="text-xs text-[#5c706b] font-medium">Total a Receber</span>
+                    <span class="text-lg font-bold text-[#0a241e]">R$ 0,00</span>
+                </div>
+                <div class="bg-[#f8faf9] p-4 rounded-xl flex flex-col gap-1 border border-[#e3e8e6]">
+                    <span class="text-xs text-[#5c706b] font-medium">Total Recebido</span>
+                    <span class="text-lg font-bold text-[#008a4b]">R$ 0,00</span>
+                </div>
             </div>
             <!-- /.table-responsive -->
         </div>
         <!-- /.panel-body -->
-    </div>    
-    <!-- /.panel -->
-</div>
 
+        <!-- Bloco: Contas a Pagar -->
+        <div class="bg-white border border-[#e3e8e6] rounded-2xl p-6 shadow-2xs flex flex-col gap-4">
+            <div class="flex items-center justify-between border-b border-[#e3e8e6] pb-3">
+                <h2 class="text-lg font-semibold text-[#0a241e] flex items-center gap-2">
+                    <i data-lucide="trending-down" class="w-5 h-5 text-red-500"></i>
+                    Contas a Pagar
+                </h2>
+                <span class="text-xs font-semibold px-2.5 py-1 bg-red-50 text-red-600 rounded-full">Despesas</span>
+            </div>
+            <!-- /.panel-heading -->
 
-<div class="col-lg-6">
-    <div class="panel panel-default">
-        <div class="panel-heading ">
-            <strong> Contas a Pagar </strong>  
-        </div>
-        <!-- /.panel-heading -->
-        <div class="panel-body">
-            <div class="table-responsive">
-                <center>
-
-                    <div class="col-md-4 ">
-                        <section class="panel panel-featured-left panel-featured-success">
-                            <div class="panel-body sombra">
-                                <div class="widget-summary widget-summary-md">
-                                    <div class="widget-summary-col widget-summary-col-icon ">
-                                        <div class="summary-icon bg-success ">
-                                            <i class="fa fa-money contas-pagar"></i>
-                                        </div>
-                                    </div>
-                                    <div class="widget-summary-col">
-                                        <div class=" contas-pagar  ">
-                                            <h4 >Falta pagar</h4>
-                                            <div class="info">
-                                                <strong class="amount">R$ 0,00</strong>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </section>
-                    </div>  
-                    <div class="col-md-4 ">
-                        <section class="panel panel-featured-left panel-featured-success">
-                            <div class="panel-body sombra">
-                                <div class="widget-summary widget-summary-md">
-                                    <div class="widget-summary-col widget-summary-col-icon ">
-                                        <div class="summary-icon bg-success ">
-                                            <i class="fa fa-money contas-pagar"></i>
-                                        </div>
-                                    </div>
-                                    <div class="widget-summary-col">
-                                        <div class=" contas-pagar  ">
-                                            <h4 >Total a pagar</h4>
-                                            <div class="info">
-                                                <strong class="amount">R$ 0,00</strong>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </section>
-                    </div>  
-                    <div class="col-md-4 ">
-                        <section class="panel panel-featured-left panel-featured-success">
-                            <div class="panel-body sombra">
-                                <div class="widget-summary widget-summary-md">
-                                    <div class="widget-summary-col widget-summary-col-icon ">
-                                        <div class="summary-icon bg-success ">
-                                            <i class="fa fa-money contas-pagar"></i>
-                                        </div>
-                                    </div>
-                                    <div class="widget-summary-col">
-                                        <div class=" contas-receber  ">
-                                            <h4 >Total pago</h4>
-                                            <div class="info">
-                                                <strong class="amount">R$ 0,00</strong>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </section>
-                    </div>  
- </center>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div class="bg-[#f8faf9] p-4 rounded-xl flex flex-col gap-1 border border-[#e3e8e6]">
+                    <span class="text-xs text-[#5c706b] font-medium">Falta Pagar</span>
+                    <span class="text-lg font-bold text-[#0a241e]">R$ 0,00</span>
+                </div>
+                <div class="bg-[#f8faf9] p-4 rounded-xl flex flex-col gap-1 border border-[#e3e8e6]">
+                    <span class="text-xs text-[#5c706b] font-medium">Total a Pagar</span>
+                    <span class="text-lg font-bold text-[#0a241e]">R$ 0,00</span>
+                </div>
+                <div class="bg-[#f8faf9] p-4 rounded-xl flex flex-col gap-1 border border-[#e3e8e6]">
+                    <span class="text-xs text-[#5c706b] font-medium">Total Pago</span>
+                    <span class="text-lg font-bold text-red-600">R$ 0,00</span>
+                </div>
             </div>
             <!-- /.table-responsive -->
         </div>
         <!-- /.panel-body -->
-    </div>    
-    <!-- /.panel -->
-</div>
-    
-    
-    
-    
-    
-        <div class="col-lg-6">
-    <div class="panel panel-default">
-        <div class="panel-heading ">
-            <strong> Movimentações de Receitas  </strong>  
-        </div>
 
-               
-                    
-<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-    <script type="text/javascript">
-      google.charts.load("current", {packages:["corechart"]});
-      google.charts.setOnLoadCallback(drawChart);
-      function drawChart() {
-        var data = google.visualization.arrayToDataTable([
-          ['Task', 'Hours per Day'],
-          ['Falta Receber',     11],
-          ['Total a Receber',      2],
-          ['Total Recebido',  2],
-         
-        ]);
-
-        var options = {
-          
-          is3D: true,
-        };
-
-        var chart = new google.visualization.PieChart(document.getElementById('piechart_3d'));
-        chart.draw(data, options);
-      }
-    </script>
-                   
-                   <div id="piechart_3d" style="width: 750px; height:400px;"></div>
-                 
-            <!-- /.table-responsive -->
-        </div>
-        <!-- /.panel-body -->
-    </div>    
+    </div>
     <!-- /.panel -->
 
-    
-    
-    
-        <div class="col-lg-6">
-    <div class="panel panel-default">
-        <div class="panel-heading ">
-            <strong> Despesas </strong>  
-        </div>
-        <!-- /.panel-heading -->
-       <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-    <script type="text/javascript">
-      google.charts.load("current", {packages:["corechart"]});
-      google.charts.setOnLoadCallback(drawChart);
-      function drawChart() {
-        var data = google.visualization.arrayToDataTable([
-          ['Task', 'Hours per Day'],
-          ['Falta Pagar',     60],
-          ['Total a pagar',      30],
-          ['Total pago',  20],
-         
-        ]);
+    <!-- Seção dos 2 Gráficos de Rosca LADO A LADO -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-        var options = {
-          
-          is3D: true,
-        };
-
-        var chart = new google.visualization.PieChart(document.getElementById('piechart_3d2'));
-        chart.draw(data, options);
-      }
-    </script>
-                   
-                   <div id="piechart_3d2" style="width: 750px; height:400px;"></div>
-            <!-- /.table-responsive -->
-        </div>
-        <!-- /.panel-body -->
-    </div>    
-    <!-- /.panel -->
-</div>  
-    
-    
-    <div class="col-lg-6">
-    <div class="panel panel-default">
-        <div class="panel-heading ">
-            <strong> Gastos por Categoria </strong>  
+        <!-- Movimentações de Receitas -->
+        <div class="bg-white border border-[#e3e8e6] rounded-2xl p-6 shadow-2xs flex flex-col gap-4">
+            <h3 class="text-base font-semibold text-[#0a241e] flex items-center gap-2 border-b border-[#e3e8e6] pb-3">
+                <i data-lucide="pie-chart" class="w-4 h-4 text-[#008a4b]"></i>
+                Movimentações de Receitas
+            </h3>
+            <div class="relative w-full h-[240px] flex items-center justify-center">
+                <canvas id="chart-receitas"></canvas>
+            </div>
         </div>
 
-        
-        
-        <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-  <script type="text/javascript">
-    google.charts.load("current", {packages:['corechart']});
-    google.charts.setOnLoadCallback(drawChart);
-   
-   function getValueAt(column, dataTable, row) {
-        return dataTable.getFormattedValue(row, column);
-        
-      }
-    
-    function drawChart() {
-      var data = google.visualization.arrayToDataTable([
-        ["Element", "Density", { role: "style" } ],
-        ["Água", 8.94, "#b87333"],
-        ["Luz", 10.49, "silver"],
-        ["Salário", 19.30, "gold"],
-        ["Papel", 21.45, "color: #e5e4e2"]
-        
-      ]);
-
-      var view = new google.visualization.DataView(data);
-      view.setColumns([0, 1,
-                       { calc: "stringify",
-                         sourceColumn: 1,
-                         type: "string",
-                         role: "annotation" },
-                       2]);
-
-      var options = {
-       
-        width: 750,
-        height: 400,
-        bar: {groupWidth: "95%"},
-        legend: { position: "none" },
-      };
-      
-      
-              
-              
-      var chart = new google.visualization.ColumnChart(document.getElementById("columnchart_values"));
-      chart.draw(view, options);
-  }
-  </script>
-  
-<div id="columnchart_values" style="width: 750px; height: 400px;"></div>
-        
-        
-        
-        
-        <!-- /.panel-body -->
-    </div>    
-    <!-- /.panel -->
-</div>
-    
-    
-    
-    <div class="col-lg-6">
-    <div class="panel panel-default">
-        <div class="panel-heading ">
-            <strong> Receitas / Despesas </strong>  
+        <!-- Movimentações de Despesas -->
+        <div class="bg-white border border-[#e3e8e6] rounded-2xl p-6 shadow-2xs flex flex-col gap-4">
+            <h3 class="text-base font-semibold text-[#0a241e] flex items-center gap-2 border-b border-[#e3e8e6] pb-3">
+                <i data-lucide="pie-chart" class="w-4 h-4 text-red-500"></i>
+                Movimentações de Despesas
+            </h3>
+            <div class="relative w-full h-[240px] flex items-center justify-center">
+                <canvas id="chart-despesas"></canvas>
+            </div>
         </div>
 
-        <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-    <script type="text/javascript">
-      google.charts.load('current', {'packages':['bar']});
-      google.charts.setOnLoadCallback(drawChart);
+    </div>
 
-      function drawChart() {
-        var data = google.visualization.arrayToDataTable([
-          ['MESES', 'Receitas', 'Despesas'],
-          ['JAN', 1000, 400,],
-          ['FEV', 1170, 250],
-          ['MAR', 660, 30],
-          ['ABR', 660, 1120],
-          ['MAI', 680, 110],
-          ['JUN', 660, 300],
-          ['JUL', 670, 11],
-          ['AGO', 500, 1130],
-          ['SET', 800, 110],
-          ['OUT', 300, 100],
-          ['NOV', 580, 130],
-          ['DEZ', 475, 118]
-         
-        ]);
-
-        var options = {
-          chart: {
-            
-            
-          }
-        };
-
-        var chart = new google.charts.Bar(document.getElementById('columnchart_material'));
-
-        chart.draw(data, google.charts.Bar.convertOptions(options));
-      }
-    </script>
-    
-    
-    
-    
-    <div id="columnchart_material" style="width: 750px; height: 400px;"></div>
-        <!-- /.panel-body -->
-    </div>    
-    <!-- /.panel -->
-</div>
-    
-    
-    
-    
-    
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+    <!-- Gráfico 3: Comparativo Geral de Balanço Mensal (Barras) -->
+    <div class="bg-white border border-[#e3e8e6] rounded-2xl p-6 shadow-2xs flex flex-col gap-4">
+        <h3 class="text-base font-semibold text-[#0a241e] flex items-center gap-2 border-b border-[#e3e8e6] pb-3">
+            <i data-lucide="bar-chart-3" class="w-4 h-4 text-[#008a4b]"></i>
+            Balanço Mensal (Receitas vs Despesas)
+        </h3>
+        <div class="relative w-full h-[260px]">
+            <canvas id="chart-balanco"></canvas>
+        </div>
+    </div>
 
 </div> <!--Fim do caminho-din-->
 
+<!-- Script do Chart.js (mesma biblioteca utilizada na Dashboard) -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // 1. Gráfico de Receitas (Rosca)
+        const ctxReceitas = document.getElementById('chart-receitas');
+        if (ctxReceitas) {
+            new Chart(ctxReceitas, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Falta Receber', 'Total a Receber', 'Total Recebido'],
+                    datasets: [{
+                        data: [11, 2, 2],
+                        backgroundColor: ['#f59e0b', '#008a4b', '#10b981'],
+                        borderWidth: 2,
+                        borderColor: '#ffffff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom' }
+                    }
+                }
+            });
+        }
 
+        // 2. Gráfico de Despesas (Rosca)
+        const ctxDespesas = document.getElementById('chart-despesas');
+        if (ctxDespesas) {
+            new Chart(ctxDespesas, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Falta Pagar', 'Total a Pagar', 'Total Pago'],
+                    datasets: [{
+                        data: [5, 8, 3],
+                        backgroundColor: ['#ef4444', '#f97316', '#64748b'],
+                        borderWidth: 2,
+                        borderColor: '#ffffff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom' }
+                    }
+                }
+            });
+        }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        // 3. Gráfico de Balanço (Barras)
+        const ctxBalanco = document.getElementById('chart-balanco');
+        if (ctxBalanco) {
+            new Chart(ctxBalanco, {
+                type: 'bar',
+                data: {
+                    labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],
+                    datasets: [
+                        {
+                            label: 'Receitas (R$)',
+                            data: [12000, 15000, 14000, 18000, 16000, 21000, 19000, 22000, 20000, 23000, 25000, 28000],
+                            backgroundColor: '#008a4b',
+                            borderRadius: 6
+                        },
+                        {
+                            label: 'Despesas (R$)',
+                            data: [8000, 9500, 9000, 11000, 10500, 13000, 12000, 14000, 13500, 15000, 16000, 18000],
+                            backgroundColor: '#ef4444',
+                            borderRadius: 6
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'top' }
+                    },
+                    scales: {
+                        y: { beginAtZero: true }
+                    }
+                }
+            });
+        }
+    });
+</script>
 
 @endsection

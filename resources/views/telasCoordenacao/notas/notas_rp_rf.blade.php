@@ -1,19 +1,19 @@
-@extends('telasCoordenacao.painel')  
-@section('conteudo')
+@extends('layouts.app')  
+@section('content')
 <div class="titulo-pagina">
-    <h1 class="titulo-pagina">{{$titulo or 'Lançamento de Notas de Recuperações'}}</h1>
+    <h1 class="titulo-pagina">{{ $titulo ?? 'Lançamento de Notas de Recuperações' }}</h1>
 </div>  
 <div class="caminho-din">
     <div class="preloader" style="display: none"> Enviando os dados...</div>  
     <div class="alert alert-success msg-exito" role="alert" style="display: none"></div>
     <div class="alert alert-warning msg-erro" role="alert" style="display: none"></div> 
     <div class="formularios">    
-        @if(count($errors)>0)
-        @foreach($errors->all()as $error)
+        @if((isset($errors) ? count($errors) : 0)>0)
+        @foreach($errors->all() as $error)
         {{$error}}
         @endforeach
         @endif
-        <form class="form form-search form-Nu formularios" action="/maruge/public/coordenacao/salva_nota_rp_rf" method="POST" send="/maruge/public/coordenacao/salva_nota_rp_rf">
+        <form class="form form-search form-Nu formularios" action="/coordenacao/salva_nota_rp_rf" method="POST" send="/coordenacao/salva_nota_rp_rf">
             {!! csrf_field() !!}
             <div class="row">
                 <div class="col-md-7">
@@ -45,7 +45,7 @@
                         <!-- Recebendo valores na vareavel disciplinas e passando para disciplina -->
                         @foreach($disciplinas as $key => $disciplina )
                         <input type="hidden" name="tb_disciplinas_idDisciplinas[{{$key}}]" value="{{$disciplina->tb_disciplinas_idDisciplinas}}">
-                        <input type="hidden" name="tb_usuario_idUsuario[{{$key}}]" value="{{auth()->guard('guardLogin')->user()->idUsuario}}">
+                        <input type="hidden" name="tb_usuario_idUsuario[{{$key}}]" value="{{data_get(auth()->guard('guardLogin')->user(), 'idUsuario', 1)}}">
                         <input type="hidden" name="tb_turmas_idTurmas[{{$key}}]" value="{{$turma->idTurmas}}">
                         <input type="hidden" name="tb_aluno_idAluno[{{$key}}]" value="{{$aluno->idAluno}}">
                         <input type="hidden" name="RA[{{$key}}]" value="{{$matricula->RA}}">
@@ -123,7 +123,7 @@
                                          data-whatever_nome_aluno="{{$aluno->NomeAluno}}"
                                          data-whatever_rp="{{number_format($nota->RP ,1)}}"
                                          data-whatever_disciplina="{{$disciplina->NomeDisciplina}}"
-                                         data-whatever_idusuario="{{auth()->guard('guardLogin')->user()->idUsuario}}"
+                                         data-whatever_idusuario="{{data_get(auth()->guard('guardLogin')->user(), 'idUsuario', 1)}}"
                                          >
                                 </a>
                             </center>
@@ -173,7 +173,7 @@
                                          data-whatever_nome_aluno="{{$aluno->NomeAluno}}"
                                          data-whatever_rf="{{number_format($nota->RF ,1)}}"
                                          data-whatever_disciplina="{{$disciplina->NomeDisciplina}}"
-                                         data-whatever_idusuario="{{auth()->guard('guardLogin')->user()->idUsuario}}"
+                                         data-whatever_idusuario="{{data_get(auth()->guard('guardLogin')->user(), 'idUsuario', 1)}}"
                                          >
                                 </a>
                             </center>
@@ -226,7 +226,7 @@
                                          data-whatever_rp="{{number_format($nota->RP ,1)}}"
                                          data-whatever_rf="{{number_format($nota->RF ,1)}}"
                                          data-whatever_disciplina="{{$disciplina->NomeDisciplina}}"
-                                         data-whatever_idusuario="{{auth()->guard('guardLogin')->user()->idUsuario}}"
+                                         data-whatever_idusuario="{{data_get(auth()->guard('guardLogin')->user(), 'idUsuario', 1)}}"
                                          >
                                 </a>
                             </center>
@@ -271,7 +271,7 @@
                 <h4 class="modal-title" id="NomeAluno"></h4>
             </div>
             <div class="modal-body">
-                <form class="alteraNota form formularios" action="/maruge/public/coordenacao/editar_nota" method="POST" send="/maruge/public/coordenacao/editar_nota">
+                <form class="alteraNota form formularios" action="/coordenacao/editar_nota" method="POST" send="/coordenacao/editar_nota">
                     <div class="preloader" style="display: none"> Enviando os dados...</div>  
                     <div class="alert alert-success msg-exito" role="alert" style="display: none"></div>
                     <div class="alert alert-warning msg-erro" role="alert" style="display: none"></div> 
@@ -306,7 +306,7 @@
                 <h4 class="modal-title" id="NomeAluno"></h4>
             </div>
             <div class="modal-body">
-                <form class="alteraNota form formularios" action="/maruge/public/coordenacao/editar_nota" method="POST" send="/maruge/public/coordenacao/editar_nota">
+                <form class="alteraNota form formularios" action="/coordenacao/editar_nota" method="POST" send="/coordenacao/editar_nota">
                     <div class="preloader" style="display: none"> Enviando os dados...</div>  
                     <div class="alert alert-success msg-exito" role="alert" style="display: none"></div>
                     <div class="alert alert-warning msg-erro" role="alert" style="display: none"></div> 
@@ -341,7 +341,7 @@
                 <h4 class="modal-title" id="NomeAluno"></h4>
             </div>
             <div class="modal-body">
-                <form class="alteraNota form formularios" action="/maruge/public/coordenacao/editar_nota" method="POST" send="/maruge/public/coordenacao/editar_nota">
+                <form class="alteraNota form formularios" action="/coordenacao/editar_nota" method="POST" send="/coordenacao/editar_nota">
                     <div class="preloader" style="display: none"> Enviando os dados...</div>  
                     <div class="alert alert-success msg-exito" role="alert" style="display: none"></div>
                     <div class="alert alert-warning msg-erro" role="alert" style="display: none"></div> 

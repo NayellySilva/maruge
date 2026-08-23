@@ -1,4 +1,5 @@
 @import 'tailwindcss';
+@import './select-styles.css';
 
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
@@ -79,11 +80,21 @@ body {
     gap: 6px;
     flex-grow: 1;
     overflow-y: auto;
-    scrollbar-width: none; /* Oculta a barra de rolagem para um design limpo */
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
 }
 
 .sidebar-menu::-webkit-scrollbar {
-    display: none;
+    width: 4px;
+}
+
+.sidebar-menu::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
+}
+
+.sidebar-menu::-webkit-scrollbar-track {
+    background: transparent;
 }
 
 .sidebar-item {
@@ -149,11 +160,13 @@ body {
     max-height: 0;
     overflow: hidden;
     transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-    padding-left: 26px; /* Alinha a linha vertical com a primeira letra */
+    padding-left: 26px;
+    /* Alinha a linha vertical com a primeira letra */
 }
 
 .sidebar-item.expanded .submenu {
-    max-height: 450px; /* Ajusta à altura dos itens do submenu */
+    max-height: 2000px;
+    /* Garante expansao total de todos os submenus sem nenhum corte */
 }
 
 .submenu-list {
@@ -288,7 +301,7 @@ body {
     position: sticky;
     top: 0;
     z-index: 99;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .mobile-menu-toggle {
@@ -336,36 +349,47 @@ body {
     }
 }
 
-/* Estilo das Abas de Navegação */
-.tab-button {
-    padding: 0.75rem 1.5rem;
-    font-size: 0.875rem;
-    font-weight: 500;
-    color: #2563eb;
-    cursor: pointer;
-    border: 1px solid transparent;
-    border-bottom: none;
-    background: transparent;
-    transition: all .2s;
+/* Estilo das Abas de Navegação (Estilo Bootstrap Clássico) */
+.tab-container {
+    border-bottom: 1px solid #ddd !important;
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 4px !important;
+    font-size: 0.875rem !important;
+    margin-bottom: 1.5rem !important;
 }
 
-.tab-button:hover {
-    color: #008a4b;
+.tab-btn {
+    padding: 10px 16px !important;
+    font-weight: 500 !important;
+    font-size: 0.875rem !important;
+    transition: all 0.15s ease-in-out !important;
+    outline: none !important;
+    margin-bottom: -1px !important;
+    border-top-left-radius: 4px !important;
+    border-top-right-radius: 4px !important;
+    border: 1px solid transparent !important;
+    cursor: pointer !important;
+    background-color: transparent;
+    position: relative !important;
 }
 
 .tab-active {
-    padding: 0.75rem 1.5rem;
-    font-size: 0.875rem;
-    font-weight: 500;
-    background: #fff;
-    color: #2c2c2c;
-    cursor: pointer;
-    border: 1px solid #d1d5db;
-    border-bottom: 1px solid #fff;
-    border-radius: 6px 6px 0 0;
-    position: relative;
-    top: 1px;
-    z-index: 10;
-    transition: all .2s;
+    background-color: #fff !important;
+    border-color: #ddd #ddd #fff #ddd !important;
+    /* Borda inferior branca para cobrir a linha do container */
+    color: #008a4b !important;
+    /* Verde selecionado pelo usuário */
+    z-index: 2 !important;
 }
 
+.tab-inactive {
+    background-color: transparent !important;
+    border-color: transparent !important;
+    color: #145bac !important;
+    z-index: 1 !important;
+}
+
+.tab-inactive:hover {
+    color: #000000 !important;
+}

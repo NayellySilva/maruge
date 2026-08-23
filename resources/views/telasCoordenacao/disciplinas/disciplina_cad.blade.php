@@ -50,9 +50,9 @@
 
             <!-- Corpo do Modal / Formulário -->
             @if(isset($disciplina))
-                <form class="form form-search form-Nu formularios" action="/maruge/public/coordenacao/disciplina_editar/{{$disciplina->idDisciplinas}}" method="POST">
+                <form class="form form-search form-Nu formularios" action="/coordenacao/disciplina_editar/{{$disciplina->idDisciplinas}}" method="POST">
             @else
-                <form class="form form-search form-Nu formularios" action="/maruge/public/coordenacao/disciplina_cad" method="POST" send="/maruge/public/coordenacao/disciplina_cad">
+                <form class="form form-search form-Nu formularios" action="/coordenacao/disciplina_cad" method="POST" send="/coordenacao/disciplina_cad">
             @endif
                 {!! csrf_field() !!}
                 
@@ -64,7 +64,7 @@
                     <div class="alert alert-success msg-exito bg-emerald-50 text-emerald-700 text-sm p-3 rounded-xl border border-emerald-100 text-center font-medium" role="alert" style="display: none"></div>
                     <div class="alert alert-warning msg-erro bg-red-50 text-red-700 text-sm p-3 rounded-xl border border-red-100 text-center font-medium" role="alert" style="display: none"></div> 
 
-                    @if(count($errors) > 0)
+                    @if((isset($errors) ? count($errors) : 0) > 0)
                         <div class="bg-red-50 text-red-600 text-sm p-3 rounded-xl border border-red-100">
                             @foreach($errors->all() as $error)
                                 <p>{{ $error }}</p>

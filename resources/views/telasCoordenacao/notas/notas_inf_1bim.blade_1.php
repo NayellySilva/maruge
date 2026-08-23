@@ -1,7 +1,7 @@
-@extends('telasCoordenacao.painel')  
-@section('conteudo')
+@extends('layouts.app')  
+@section('content')
 <div class="titulo-pagina">
-    <h1 class="titulo-pagina">{{$titulo or 'Lançamento de Notas Educação Infantil'}}</h1>
+    <h1 class="titulo-pagina">{{ $titulo ?? 'Lançamento de Notas Educação Infantil' }}</h1>
 </div>  
 <div class="caminho-din">
     <div class="preloader" style="display: none"> Enviando os dados...</div>  
@@ -9,13 +9,13 @@
     <div class="alert alert-warning msg-erro" role="alert" style="display: none"></div> 
 
     <div class="formularios">    
-        @if(count($errors)>0)
-        @foreach($errors->all()as $error)
+        @if((isset($errors) ? count($errors) : 0)>0)
+        @foreach($errors->all() as $error)
         {{$error}}
         @endforeach
         @endif
 
-        <form class="form form-search form-Nu formularios" action="/maruge/public/coordenacao/notas_cad" method="POST" send="/maruge/public/coordenacao/notas_cad">
+        <form class="form form-search form-Nu formularios" action="/coordenacao/notas_cad" method="POST" send="/coordenacao/notas_cad">
             {!! csrf_field() !!}
             <!--PRIMEIRA LINHA REFERENTE A TODOS OS CAMPOS REFERENTE A TURMA-->
             <div class="row">

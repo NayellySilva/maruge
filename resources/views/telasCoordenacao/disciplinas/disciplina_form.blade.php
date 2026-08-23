@@ -1,7 +1,7 @@
-@extends('telasCoordenacao.painel')  
-@section('conteudo')
+@extends('layouts.app')  
+@section('content')
 <div class="titulo-pagina">
-    <h1 class="titulo-pagina">{{$titulo or 'Nova Disciplina'}}</h1>
+    <h1 class="titulo-pagina">{{ $titulo ?? 'Nova Disciplina' }}</h1>
 
 </div> 
 <div class="caminho-din">
@@ -10,21 +10,21 @@
     <div class="alert alert-warning msg-erro" role="alert" style="display: none"></div> 
 
     <div class="formularios">    
-        @if(count($errors)>0)
-        @foreach($errors->all()as $error)
+        @if((isset($errors) ? count($errors) : 0)>0)
+        @foreach($errors->all() as $error)
         {{$error}}
         @endforeach
         @endif
 
         @if(isset($disciplina))
-        <form class="form form-search form-Nu formularios" action="/maruge/public/coordenacao/editar_disciplina/{{$disciplina->idDisciplinas}}" method="POST">
+        <form class="form form-search form-Nu formularios" action="/coordenacao/editar_disciplina/{{$disciplina->idDisciplinas}}" method="POST">
 
             <!--LINHA QUE INFORMA A DISCIPLINA DIGITANTO, ESSA LINHA PERTENCE A CONDIÇÃO DE EDITAR-->
             <div class="row">
                 <div class="col-md-6">
                     <div class="form-group">
                         <label for="NomeDisciplina">Nome de disciplina:</label>
-                        <input type="texto" name="NomeDisciplina" placeholder="Digite o nome da disciplina"  class="form-control" value="{{$disciplina->NomeDisciplina or old('NomeDisciplina')}}">
+                        <input type="texto" name="NomeDisciplina" placeholder="Digite o nome da disciplina"  class="form-control" value="{{ $disciplina->NomeDisciplina ?? old('NomeDisciplina') }}">
                     </div>
                 </div>
 
@@ -32,19 +32,19 @@
                     <div class="form-group">
                         <br>
                         <button type="submit" class="btn btn-success">ATUALIZAR</button>
-                        <button type="reset" class="btn btn-default"> <a href="/maruge/public/coordenacao/disciplina_inf"> CANCELAR</button>
+                        <button type="reset" class="btn btn-default"> <a href="/coordenacao/disciplina_inf"> CANCELAR</button>
                     </div>
                 </div>
             </div>
 
             @else
-            <form class="form form-search form-Nu formularios" action="/maruge/public/coordenacao/caddisciplina" method="POST" send="/maruge/public/coordenacao/caddisciplina">
+            <form class="form form-search form-Nu formularios" action="/coordenacao/caddisciplina" method="POST" send="/coordenacao/caddisciplina">
                 <!--PRIMEIRA LINHA REFERENTE AOS CAMPOS (NOME DA DISCIPLINA INFORMADA DIGITANDO)-->
                 <div class="row">
                     <div class="col-md-6">
                         <div class="form-group">
                             <label for="NomeDisciplina">Nome de disciplina:</label>
-                            <input type="texto" name="NomeDisciplina" placeholder="Digite o nome da disciplina"  class="form-control" value="{{$disciplina->NomeDisciplina or old('NomeDisciplina')}}">
+                            <input type="texto" name="NomeDisciplina" placeholder="Digite o nome da disciplina"  class="form-control" value="{{ $disciplina->NomeDisciplina ?? old('NomeDisciplina') }}">
                         </div>
                     </div>
 

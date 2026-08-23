@@ -1,5 +1,5 @@
-@extends('telasCoordenacao.painel')  
-@section('conteudo')
+@extends('layouts.app')  
+@section('content')
 <div class="titulo-pagina">
     <h1 class="titulo-pagina">{{$titulo}}</h1>
 </div> 
@@ -9,8 +9,8 @@
     <div class="alert alert-warning msg-erro" role="alert" style="display: none"></div> 
  
     <div class="formularios">    
-        @if(count($errors)>0)
-        @foreach($errors->all()as $error)
+        @if((isset($errors) ? count($errors) : 0)>0)
+        @foreach($errors->all() as $error)
         {{$error}}
         @endforeach
         @endif
@@ -20,7 +20,7 @@
         @if(isset($boleto_unico))
       
 
-        <form class="form form-search form-Nu formularios" action="/maruge/public/coordenacao/financeiro_baixar" method="POST" send="/maruge/public/coordenacao/financeiro_baixar">
+        <form class="form form-search form-Nu formularios" action="/coordenacao/financeiro_baixar" method="POST" send="/coordenacao/financeiro_baixar">
             @forelse($boleto_unico as $boleto)  
 
             <div class="relatorios-titulo"> ALUNO(A) - {{$boleto->NomeAluno}} <br> <br> </div>
@@ -114,11 +114,14 @@
                 <div class="col-md-1">
                     <div class="form-group">
                         <label for="PAGAMENTO">PAGAMENTO:</label>
-                        <select class="form-control" name="status_pagamento">
+                        <div class="select-wrapper">
+    <select class="form-control maruge-select" name="status_pagamento">
                             <option></option>
                             <option value="PAGO">PAGO</option>
                             <option value="PARCIAL">PARCIAL</option>
                         </select>
+    <i data-lucide="chevron-down" class="select-icon"></i>
+</div>
                     </div>
                 </div>
                 <div class="col-md-2">

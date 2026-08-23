@@ -1,11 +1,11 @@
-@extends('telasCoordenacao.painel')  
-@section('conteudo')
+@extends('layouts.app')  
+@section('content')
 <div class="titulo-pagina">
 	<h1 class="titulo-pagina">Relatórios</h1>
 	</div> 
 	<div class="caminho-din">
 			<div class="imagens-geral col-md-4 sombra">
-                        <a href="/maruge/public/coordenacao/relatorios_bimestrais">  
+                        <a href="/coordenacao/relatorios_bimestrais">  
                         <div class="imagem imagens-geral">
 			<img src="{{url('imgs/icones/Relatorio_bimestral.png')}}" alt="Relatórios Bimestrais">
 			</div>
@@ -18,7 +18,7 @@
 			</div>
 
 			<div class="imagens-geral col-md-4 sombra">
-                        <a href="/maruge/public/coordenacao/mapas_notas">
+                        <a href="/coordenacao/mapas_notas">
 			<div class="imagem imagens-geral">
 			<img src="{{url('imgs/icones/relatorio_notas.png')}}" alt="Mapas de Notas">
 			</div>
@@ -31,7 +31,7 @@
 			</div>
 
 			<div class="imagens-geral col-md-4 sombra">
-                        <a href="/maruge/public/coordenacao/resultados">  
+                        <a href="/coordenacao/resultados">  
 			<div class="imagem imagens-geral">
 			<img src="{{url('imgs/icones/aprovado_reprovado.png')}}" alt="Relatório de Resultados">
 			</div>
@@ -44,7 +44,7 @@
 			</div>
 			
                         <div class="imagens-geral col-md-4 sombra">
-                        <a href="/maruge/public/coordenacao/gabaritos">  
+                        <a href="/coordenacao/gabaritos">  
 			<div class="imagem imagens-geral">
 			<img src="{{url('imgs/icones/gabarito.png')}}" alt="Gabaritos">
 			</div>
@@ -57,7 +57,7 @@
 			</div>
 
 			<div class="imagens-geral col-md-4 sombra">
-                        <a href="/maruge/public/coordenacao/relatorio_alunos_matriculados">  
+                        <a href="/coordenacao/relatorio_alunos_matriculados">  
 			<div class="imagem imagens-geral">
 			<img src="{{url('imgs/icones/aluno_ativo.png')}}"  alt="Relatório Alunos Matriculados">
 			</div>
@@ -70,7 +70,7 @@
 			</div>
 
 			<div class="imagens-geral col-md-4 sombra">
-                        <a href="/maruge/public/coordenacao/relatorio_alunos_inativos_ou_transferidos">  
+                        <a href="/coordenacao/relatorio_alunos_inativos_ou_transferidos">  
 			<div class="imagem imagens-geral">
 			<img src="{{url('imgs/icones/alunos_inativo.png')}}" alt="Relatório Alunos Inativos e Transferidos">
 			</div>
@@ -83,7 +83,7 @@
 			</div>
 
 			<div class="imagens-geral col-md-4 sombra">
-                        <a href="/maruge/public/coordenacao/relatorio_alunos_turmas">  
+                        <a href="/coordenacao/relatorio_alunos_turmas">  
 			<div class="imagem imagens-geral">
 			<img src="{{url('imgs/icones/aluno_ativo.png')}}" alt="Nova Escola">
 			</div>
@@ -95,7 +95,7 @@
                         </a>
 			</div>
                         <div class="imagens-geral col-md-4 sombra">
-                        <a href="/maruge/public/coordenacao/relatorio_pre_matriculados">
+                        <a href="/coordenacao/relatorio_pre_matriculados">
 			<div class="imagem imagens-geral">
 			<img src="{{url('imgs/icones/alunos.png')}}" alt="Alunos Pré-Matriculados">
 			</div>

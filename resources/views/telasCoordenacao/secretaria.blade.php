@@ -1,11 +1,11 @@
-@extends('telasCoordenacao.painel')  
-@section('conteudo')
+@extends('layouts.app')  
+@section('content')
 <div class="titulo-pagina">
 	<h1 class="titulo-pagina">Secretaria</h1>
 	</div> 
 	<div class="caminho-din">
 			<div class="imagens-geral col-md-4 sombra">
-                        <a href="/maruge/public/coordenacao/escola_inf">                             
+                        <a href="/coordenacao/escola_inf">                             
 			<div class="imagem imagens-geral">
 			<img src="{{url('imgs/icones/escola.png')}}" alt="Informações da Escola">
 			</div>
@@ -17,7 +17,7 @@
 			</div>
 			</div>
                         <div class="imagens-geral col-md-4 sombra">
-                        <a href="/maruge/public/coordenacao/disciplina_inf">
+                        <a href="/coordenacao/disciplina_inf">
 			<div class="imagem imagens-geral">
 			<img src="{{url('imgs/icones/disciplinas.png')}}" alt="Informações das Disciplinas">
 			</div>
@@ -29,7 +29,7 @@
 			</div>
 			</div>
 			<div class="imagens-geral col-md-4 sombra">
-                        <a href="/maruge/public/coordenacao/turma_inf">
+                        <a href="/coordenacao/turma_inf">
 			<div class="imagem imagens-geral">
 			<img src="{{url('imgs/icones/turma.png')}}" alt="Informações das turmas">
 			</div>
@@ -42,7 +42,7 @@
 			</div>
 
 			<div class="imagens-geral col-md-4 sombra">
-                        <a href="/maruge/public/coordenacao/aluno_inf">
+                        <a href="/coordenacao/aluno_inf">
 			<div class="imagem imagens-geral">
 			<img src="{{url('imgs/icones/alunos.png')}}" alt="Informações dos alunos">
 			</div>
@@ -55,7 +55,7 @@
 			</div>
 
 			<div class="imagens-geral col-md-4 sombra">
-                        <a href="/maruge/public/coordenacao/funcionario_inf">
+                        <a href="/coordenacao/funcionario_inf">
 			<div class="imagem imagens-geral">
 			<img src="{{url('imgs/icones/funcionario.png')}}" alt="Funcionários">
 			</div>
@@ -68,7 +68,7 @@
 			</div>
 
 			<div class="imagens-geral col-md-4 sombra">
-                        <a href="/maruge/public/coordenacao/usuario_inf">
+                        <a href="/coordenacao/usuario_inf">
 			<div class="imagem imagens-geral">
 			<img src="{{url('imgs/icones/usuario.png')}}" alt="Usuário">
 			</div>
@@ -81,7 +81,7 @@
 			</div>
 
 			<div class="imagens-geral col-md-4 sombra">
-                        <a href="/maruge/public/coordenacao/turma_disciplina_inf">
+                        <a href="/coordenacao/turma_disciplina_inf">
 			<div class="imagem imagens-geral">
 			<img src="{{url('imgs/icones/turmas_disciplina.png')}}" alt="Turma">
 			</div>
@@ -94,7 +94,7 @@
 			</div>
 
 			<div class="imagens-geral col-md-4 sombra">
-                        <a href="/maruge/public/coordenacao/declaracoes">
+                        <a href="/coordenacao/declaracoes">
 			<div class="imagem imagens-geral">
 			<img src="{{url('imgs/icones/declaracao.png')}}" alt="Declarações">
 			</div>
@@ -108,7 +108,7 @@
 			</div>
 
 			<div class="imagens-geral col-md-4 sombra">
-                        <a href="/maruge/public/coordenacao/frequencias">
+                        <a href="/coordenacao/frequencias">
 			<div class="imagem imagens-geral">
 			<img src="{{url('imgs/icones/frequenia.png')}}" alt="Frequencias">
 			</div>
@@ -121,7 +121,7 @@
 			</div>
 
 			<div class="imagens-geral col-md-4 sombra">
-                        <a href="/maruge/public/coordenacao/recibos">
+                        <a href="/coordenacao/recibos">
 			<div class="imagem imagens-geral">
 			<img src="{{url('imgs/icones/carne.png')}}" alt="Recibos">
 			</div>
@@ -135,7 +135,7 @@
 
 			
                         <div class="imagens-geral col-md-4 sombra">
-                        <a href="/maruge/public/coordenacao/notas">    
+                        <a href="/coordenacao/notas">    
 			<div class="imagem imagens-geral">
 			<img src="{{url('imgs/icones/lanca_notas.png')}}" alt="Notas">
 			</div>
@@ -148,7 +148,7 @@
 			</div>
     
 			<div class="imagens-geral col-md-4 sombra">
-                        <a href="/maruge/public/coordenacao/boletins">
+                        <a href="/coordenacao/boletins">
 			<div class="imagem imagens-geral">
 			<img src="{{url('imgs/icones/boletim.png')}}" alt="boletim">
 			</div>
@@ -161,7 +161,7 @@
 			</div>
             
 			<div class="imagens-geral col-md-4 sombra">
-                        <a href="/maruge/public/coordenacao/historico">
+                        <a href="/coordenacao/historico">
 			<div class="imagem imagens-geral">
 			<img src="{{url('imgs/icones/historico.png')}}" alt="boletim">
 			</div>
@@ -176,7 +176,7 @@
     
     
 			<div class="imagens-geral col-md-4 sombra">
-                        <a href="/maruge/public/coordenacao/aluno_rematricula">
+                        <a href="/coordenacao/aluno_rematricula">
 			<div class="imagem imagens-geral">
 			<img src="{{url('imgs/icones/rematricula.png')}}" alt="Lista de Alunos para rematricular">
 			</div>
@@ -189,7 +189,7 @@
 			</div>
             
 			<div class="imagens-geral col-md-4 sombra">
-                        <a href="/maruge/public/coordenacao/aluno_pre_matricula_lista">
+                        <a href="/coordenacao/aluno_pre_matricula_lista">
 			<div class="imagem imagens-geral">
 			<img src="{{url('imgs/icones/pre-matricula.png')}}" alt="Lista de Alunos para rematricular">
 			</div>
@@ -201,7 +201,7 @@
 			</div>
 			</div>
                         <div class="imagens-geral col-md-4 sombra">
-                        <a href="/maruge/public/coordenacao/aluno_pre_matriculado">
+                        <a href="/coordenacao/aluno_pre_matriculado">
 			<div class="imagem imagens-geral">
 			<img src="{{url('imgs/icones/reserva.png')}}" alt="Alunos Pré-Matriculados">
 			</div>
@@ -213,7 +213,7 @@
 			</div>
 			</div>
                         <div class="imagens-geral col-md-4 sombra">
-                        <a href="/maruge/public/coordenacao/lanche_inf">
+                        <a href="/coordenacao/lanche_inf">
 			<div class="imagem imagens-geral">
 			<img src="{{url('imgs/icones/lanche.png')}}" alt="Produto">
 			</div>
@@ -225,7 +225,7 @@
 			</div>
 			</div>
                         <div class="imagens-geral col-md-4 sombra">
-                        <a href="/maruge/public/coordenacao/aulas_inf">
+                        <a href="/coordenacao/aulas_inf">
 			<div class="imagem imagens-geral">
 			<img src="{{url('imgs/icones/aulas.png')}}" alt="Aulas">
 			</div>

@@ -1,9 +1,9 @@
-@extends('telasCoordenacao.painel')  
-@section('conteudo')
+@extends('layouts.app')  
+@section('content')
 
 
 <div  class="col-md-8" titulo-pagina">
-      <h1 class="titulo-pagina">{{$titulo or 'Atividades em Vídeo'}} </h1>
+      <h1 class="titulo-pagina">{{ $titulo ?? 'Atividades em Vídeo' }} </h1>
 </div> 
 
 
@@ -95,7 +95,7 @@
        @empty
                                         <div class="alert alert-warning alert-dismissible" role="alert">
                                             <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                                            <strong>Desculpe ! </strong> Nenhuma turma cadastrada, para cadastras<a href="/maruge/public/coordenacao/turma_cad" class="alert-link"> Clique aqui.</a>
+                                            <strong>Desculpe ! </strong> Nenhuma turma cadastrada, para cadastras<a href="/coordenacao/turma_cad" class="alert-link"> Clique aqui.</a>
                                         </div>
                                           <tr>
                                             <td colspan="500"> Nenhuma turma cadastrada !</td>

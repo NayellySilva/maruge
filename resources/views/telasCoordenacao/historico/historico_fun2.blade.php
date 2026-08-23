@@ -1,8 +1,6 @@
 <html>
-    <header>   
+    <head>
         <title>{{$titulo}}</title>
-    </header>
-    <body>
         <style media="print">
             .botao {
                 display: none;
@@ -11,12 +9,10 @@
         <!--CSS Personalizado para o Painel-->
         <link rel="stylesheet" href="{{asset('css/painel.css')}}">
         <!-- CSS - Para fazer Reset nos Paineis-->
-        <link rel="stylesheet" href="{{asset('css/reset.css')}}">    
-        <!-- CSS compilada e minificada on-line do bootstrap-->
-        <link href="{{url('https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css')}}" rel="stylesheet">
-        <!-- Bootstrap -->
-        <link href="{{asset('css/bootstrap.min.css')}}" rel="stylesheet">
-        <button type="button"  value="Imprimir" onClick="window.print()" class="botao btn-imprimir"> Imprimir</button>
+        <link rel="stylesheet" href="{{asset('css/reset.css')}}">
+    </head>
+    <body>
+        <button type="button" value="Imprimir" onClick="window.print()" class="botao btn-imprimir"> Imprimir</button>
         <table class="timbre">
             <tr>
                 <td>
@@ -51,7 +47,7 @@
                 <tr>
                     <th width="50">CÓD.</th>
                     <th>DISCIPLINAS</th>
-                    <th width="80"><center>1º BIM</center></th>
+            <th width="80"><center>1º BIM</center></th>
             <th width="80"><center>2º BIM</center></td>
             <th width="80"><center>REC.P</center></th>
             <th width="80"><center>3º BIM</center></th>

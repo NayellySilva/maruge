@@ -2,14 +2,9 @@
 
 @section('content')
 @php
-    $professores = collect();
-    $turmas = collect();
-
-    try {
-        $disciplinasDoProfessor = \DB::table('tb_turmas_disciplinas')->orderBy('NomeTurma')->get();
-    } catch (\Exception $e) {
-        $disciplinasDoProfessor = collect();
-    }
+    $disciplinasDoProfessor = $disciplinasDoProfessor ?? collect();
+    $professores = $professores ?? collect();
+    $turmas = $turmas ?? collect();
 @endphp
 <div class="flex flex-col gap-6">
     <!-- Localização (Breadcrumb) -->
@@ -36,21 +31,32 @@
         <!-- Filtrar por Professor -->
         <div class="w-full sm:w-64">
             <form method="GET" action="{{ url()->current() }}" class="w-full">
-                <div class="flex items-center bg-white border border-[#e3e8e6] rounded-xl px-4 py-2.5 transition-all relative">
-                    @if(request()->input('idTurmas'))
-                        <input type="hidden" name="idTurmas" value="{{ request()->input('idTurmas') }}">
-                    @endif
-                    <select name="idFuncionarios" onchange="this.form.submit()" class="w-full bg-transparent text-sm text-[#0a241e] focus:outline-none appearance-none cursor-pointer pr-6">
-                        <option value="">Filtrar por Professor</option>
+                @if(request()->input('idTurmas'))
+                    <input type="hidden" name="idTurmas" value="{{ request()->input('idTurmas') }}">
+                @endif
+                <div class="relative">
+                    <select
+                        name="idFuncionarios"
+                        onchange="this.form.submit()"
+                        class="w-full h-11 appearance-none bg-white border border-[#e3e8e6] rounded-xl px-4 pr-10 text-sm text-[#0a241e] focus:outline-none focus:border-[#008a4b] focus:ring-2 focus:ring-[#008a4b]/10 cursor-pointer transition-all"
+                    >
+                        <option value="" disabled {{ !request()->has('idFuncionarios') ? 'selected' : '' }}>
+                            Filtrar por Professor
+                        </option>
+                        <option value="" {{ request()->input('idFuncionarios') === '' ? 'selected' : '' }}>
+                            Todos os Professores
+                        </option>
                         @foreach($professores as $prof)
                             <option value="{{ $prof->idFuncionarios }}" {{ request()->input('idFuncionarios') == $prof->idFuncionarios ? 'selected' : '' }}>
                                 {{ $prof->NomeFuncionario }}
                             </option>
                         @endforeach
                     </select>
-                    <div class="absolute right-4 text-[#95aba5] pointer-events-none">
-                        <i data-lucide="chevron-down" class="w-4 h-4"></i>
-                    </div>
+
+                    <i
+                        data-lucide="chevron-down"
+                        class="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#95aba5] pointer-events-none"
+                    ></i>
                 </div>
             </form>
         </div>
@@ -58,21 +64,32 @@
         <!-- Filtrar por Turma -->
         <div class="w-full sm:w-64">
             <form method="GET" action="{{ url()->current() }}" class="w-full">
-                <div class="flex items-center bg-white border border-[#e3e8e6] rounded-xl px-4 py-2.5 transition-all relative">
-                    @if(request()->input('idFuncionarios'))
-                        <input type="hidden" name="idFuncionarios" value="{{ request()->input('idFuncionarios') }}">
-                    @endif
-                    <select name="idTurmas" onchange="this.form.submit()" class="w-full bg-transparent text-sm text-[#0a241e] focus:outline-none appearance-none cursor-pointer pr-6">
-                        <option value="">Filtrar por Turma</option>
+                @if(request()->input('idFuncionarios'))
+                    <input type="hidden" name="idFuncionarios" value="{{ request()->input('idFuncionarios') }}">
+                @endif
+                <div class="relative">
+                    <select
+                        name="idTurmas"
+                        onchange="this.form.submit()"
+                        class="w-full h-11 appearance-none bg-white border border-[#e3e8e6] rounded-xl px-4 pr-10 text-sm text-[#0a241e] focus:outline-none focus:border-[#008a4b] focus:ring-2 focus:ring-[#008a4b]/10 cursor-pointer transition-all"
+                    >
+                        <option value="" disabled {{ !request()->has('idTurmas') ? 'selected' : '' }}>
+                            Filtrar por Turma
+                        </option>
+                        <option value="" {{ request()->input('idTurmas') === '' ? 'selected' : '' }}>
+                            Todas as Turmas
+                        </option>
                         @foreach($turmas as $t)
                             <option value="{{ $t->idTurmas }}" {{ request()->input('idTurmas') == $t->idTurmas ? 'selected' : '' }}>
                                 {{ $t->NomeTurma }}
                             </option>
                         @endforeach
                     </select>
-                    <div class="absolute right-4 text-[#95aba5] pointer-events-none">
-                        <i data-lucide="chevron-down" class="w-4 h-4"></i>
-                    </div>
+
+                    <i
+                        data-lucide="chevron-down"
+                        class="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#95aba5] pointer-events-none"
+                    ></i>
                 </div>
             </form>
         </div>
@@ -100,12 +117,15 @@
                 <tbody class="divide-y divide-[#e3e8e6]">
                     @forelse($disciplinasDoProfessor ?? [] as $vinculo)
                         <tr class="hover:bg-[#f8faf9]/50 transition-colors">
-                            <td class="px-6 py-4 text-sm font-semibold text-[#0a241e]">{{ $vinculo->NomeTurma }}</td>
-                            <td class="px-6 py-4 text-sm text-[#0a241e]">{{ $vinculo->NomeDisciplina }}</td>
-                            <td class="px-6 py-4 text-sm text-[#0a241e]">{{ $vinculo->NomeFuncionario }}</td>
+                            <td class="px-6 py-4 text-sm font-semibold text-[#0a241e]">{{ data_get($vinculo, 'NomeTurma', '-') }}</td>
+                            <td class="px-6 py-4 text-sm text-[#0a241e]">{{ data_get($vinculo, 'NomeDisciplina', '-') }}</td>
+                            <td class="px-6 py-4 text-sm text-[#0a241e]">{{ data_get($vinculo, 'NomeFuncionario', '-') }}</td>
                             <td class="px-6 py-4 text-sm text-center">
-                                <div class="flex justify-center">
-                                    <a href="{{ url('/coordenacao/turma_disciplina/deletar/' . $vinculo->idTurmas_Disciplinas) }}" class="text-[#e3503e] hover:text-[#c73927] p-2 rounded-lg hover:bg-red-50 transition-all group" title="Remover Vínculo">
+                                <div class="flex justify-center gap-1.5">
+                                    <a href="{{ url('/coordenacao/turma_disciplina_cad') }}" class="inline-flex items-center justify-center p-2 rounded-lg text-[#5c706b] hover:text-[#008a4b] hover:bg-[#ecfdf5] transition-all" title="Editar Lotação">
+                                        <i data-lucide="pencil" class="w-4 h-4"></i>
+                                    </a>
+                                    <a href="{{ url('/coordenacao/turma_disciplina/deletar/' . ($vinculo->idTurmas_Disciplinas ?? $vinculo->tb_turmas_idTurmas)) }}" onclick="return confirm('Deseja realmente remover este vínculo?');" class="inline-flex items-center justify-center p-2 rounded-lg text-[#5c706b] hover:text-red-600 hover:bg-red-50 transition-all group" title="Remover Vínculo">
                                         <i data-lucide="trash-2" class="w-4 h-4 group-hover:scale-110 transition-transform"></i>
                                     </a>
                                 </div>

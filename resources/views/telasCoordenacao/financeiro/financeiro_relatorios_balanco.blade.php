@@ -1,5 +1,5 @@
-@extends('telasCoordenacao.painel')  
-@section('conteudo')
+@extends('layouts.app')
+@section('content')
 <div class="titulo-endereco">
     <a href="#"> Financeiro / Relatórios     </a>
 </div>
@@ -32,14 +32,15 @@
                             <div class="panel-body">
                                 <div class="table-responsive">
                                     <center> 
-                                        <form  method="POST" action="/maruge/public/coordenacao/financeiro_pesq_relatorio">
+                                        <form  method="POST" action="/coordenacao/financeiro_pesq_relatorio">
                                             {!! csrf_field() !!}                      
                                           
                                             
                                             <div class="col-md-2">
                                                 <div class="form-group">
                                                     <label for="turma">Turma:</label>
-                                                    <select class="form-control" name="idTurmas">
+                                                    <div class="select-wrapper">
+    <select class="form-control maruge-select" name="idTurmas">
                                                         <option ></option>                                        
                                                        
                                                         
@@ -51,6 +52,8 @@
   
                                                         
                                                </select>
+    <i data-lucide="chevron-down" class="select-icon"></i>
+</div>
                                                 </div>
                                             </div>
                                             
@@ -58,7 +61,8 @@
                                             <div class="col-md-3">
                                                 <div class="form-group">
                                                     <label for="Mês">Mês:</label>
-                                                    <select class="form-control" name="Meses" required="required" >
+                                                    <div class="select-wrapper">
+    <select class="form-control maruge-select" name="Meses" required="required" >
                                                         <option ></option>                                        
                                                         <option>JANEIRO </option>
                                                         <option>FEVEREIRO </option>
@@ -73,6 +77,8 @@
                                                         <option>NOVEMBRO</option>
                                                         <option>DEZEMBRO</option>                                        
                                                     </select>
+    <i data-lucide="chevron-down" class="select-icon"></i>
+</div>
                                                 </div>
                                             </div>
                                             
@@ -80,12 +86,15 @@
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label for="Situação">Situação:</label>
-                                                    <select class="form-control" name="status_pagamento" required="required" >
+                                                    <div class="select-wrapper">
+    <select class="form-control maruge-select" name="status_pagamento" required="required" >
                                                         <option ></option>
                                                         <option> PAGO</option>
                                                         <option> PARCIAL</option>
                                                         <option> ABERTO</option>
                                                     </select>
+    <i data-lucide="chevron-down" class="select-icon"></i>
+</div>
                                                 </div>
                                             </div>
                                             <div class="panel-body">
@@ -173,14 +182,15 @@
                             <div class="panel-body">
                                 <div class="table-responsive">
                                     <center> 
-                                        <form  method="POST" action="/maruge/public/coordenacao/financeiro_pesq_relatorio_turma">
+                                        <form  method="POST" action="/coordenacao/financeiro_pesq_relatorio_turma">
                                             {!! csrf_field() !!}                      
                                           
                                             
                                             <div class="col-md-2">
                                                 <div class="form-group">
                                                     <label for="turma">Turma:</label>
-                                                    <select class="form-control" name="idTurmas">
+                                                    <div class="select-wrapper">
+    <select class="form-control maruge-select" name="idTurmas">
                                                         <option ></option>                                        
                                                        
                                                         
@@ -192,6 +202,8 @@
   
                                                         
                                                </select>
+    <i data-lucide="chevron-down" class="select-icon"></i>
+</div>
                                                 </div>
                                             </div>
                                             
@@ -199,7 +211,8 @@
                                             <div class="col-md-3">
                                                 <div class="form-group">
                                                     <label for="Mês">Mês:</label>
-                                                    <select class="form-control" name="Meses" required="required" >
+                                                    <div class="select-wrapper">
+    <select class="form-control maruge-select" name="Meses" required="required" >
                                                         <option ></option>                                        
                                                         <option>JANEIRO </option>
                                                         <option>FEVEREIRO </option>
@@ -214,6 +227,8 @@
                                                         <option>NOVEMBRO</option>
                                                         <option>DEZEMBRO</option>                                        
                                                     </select>
+    <i data-lucide="chevron-down" class="select-icon"></i>
+</div>
                                                 </div>
                                             </div>
                                             
@@ -301,7 +316,7 @@
                             <div class="panel-body">
                                 <div class="table-responsive">
                                     <center> 
-                                        <form  method="POST" action="/maruge/public/coordenacao/financeiro_pesq_relatorio_balanco">
+                                        <form  method="POST" action="/coordenacao/financeiro_pesq_relatorio_balanco">
                                             {!! csrf_field() !!}                      
                                           
                                             
@@ -310,7 +325,8 @@
                                             <div class="col-md-2">
                                                 <div class="form-group">
                                                     <label for="turma">Turma:</label>
-                                                    <select class="form-control" name="idTurmas">
+                                                    <div class="select-wrapper">
+    <select class="form-control maruge-select" name="idTurmas">
                                                         <option ></option>                                        
                                                        
                                                         
@@ -321,6 +337,8 @@
        
                                                           
                                                </select>
+    <i data-lucide="chevron-down" class="select-icon"></i>
+</div>
                                                 </div>
                                             </div>
                                                                                       -->
@@ -328,11 +346,14 @@
                                             <div class="col-md-3">
                                                 <div class="form-group">
                                                     <label for="Ano">Ano:</label>
-                                                    <select class="form-control" name="Ano" required="required" >
+                                                    <div class="select-wrapper">
+    <select class="form-control maruge-select" name="Ano" required="required" >
                                                         <option ></option>                                        
                                                         <option>2020 </option>
                                                         <option>2021 </option>
                                                     </select>
+    <i data-lucide="chevron-down" class="select-icon"></i>
+</div>
                                                 </div>
                                             </div>
                                             

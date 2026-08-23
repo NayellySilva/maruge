@@ -1,5 +1,5 @@
-@extends('telasCoordenacao.painel')  
-@section('conteudo')
+@extends('layouts.app')  
+@section('content')
 <div class="titulo-endereco">
     <a href="#">
     Carnês / Filtro por Turmas 
@@ -8,7 +8,7 @@
 <div class="col-md-5">
     <div class="form-group">
         <label for="SituacaoAluno ">Localizar aluno:</label>
-        <form class="form-search pesquisar" method="POST" action="/maruge/public/coordenacao/acordo_pesq">
+        <form class="form-search pesquisar" method="POST" action="/coordenacao/acordo_pesq">
             {!! csrf_field() !!}
             <input type="texto" name="pesquisar" placeholder="Pesquisar Aluno"  class="form-control">
             <button class="btn-pesquisar"><i class="fa fa-search" aria-hidden="true"></i></button>
@@ -18,15 +18,18 @@
 <div class="col-md-3">
     <div class="form-group">
         <label for="NomeTurma">Filtrar por turma:</label>
-        <form class="form-search pesquisar"method="POST" action="/maruge/public/coordenacao/acordo_filtro">
+        <form class="form-search pesquisar"method="POST" action="/coordenacao/acordo_filtro">
            {!! csrf_field() !!}
-            <select class="form-control" name="idTurmas" >
+            <div class="select-wrapper">
+    <select class="form-control maruge-select" name="idTurmas" >
                 <option></option>
                 @forelse($turmas as $turma)  
                 <option value="{{$turma->idTurmas}}">{{$turma->NomeTurma}}</option>
                 @empty
                 @endforelse 
             </select>
+    <i data-lucide="chevron-down" class="select-icon"></i>
+</div>
             <button class="btn-filtro" type="submit" > <i class="fa fa-search" aria-hidden="true"></i></button>
         </form>
     </div>

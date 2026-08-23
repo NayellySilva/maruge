@@ -1,7 +1,7 @@
-@extends('telasCoordenacao.painel')  
-@section('conteudo')
+@extends('layouts.app')  
+@section('content')
 <div class="titulo-pagina">
-    <h1 class="titulo-pagina">{{$titulo or 'Nova Aula'}}</h1>
+    <h1 class="titulo-pagina">{{ $titulo ?? 'Nova Aula' }}</h1>
 
 </div> 
 <div class="caminho-din">
@@ -10,16 +10,16 @@
     <div class="alert alert-warning msg-erro" role="alert" style="display: none"></div> 
 
     <div class="formularios">    
-        @if(count($errors)>0)
-        @foreach($errors->all()as $error)
+        @if((isset($errors) ? count($errors) : 0)>0)
+        @foreach($errors->all() as $error)
         {{$error}}
         @endforeach
         @endif
 
         @if(isset($aula))
-        <form class="form form-search form-Nu formularios" action="/maruge/public/coordenacao/aula_editar/{{$aula->idAula}}" method="POST">
+        <form class="form form-search form-Nu formularios" action="/coordenacao/aula_editar/{{$aula->idAula}}" method="POST">
             @else
-            <form class="form form-search form-Nu formularios" action="/maruge/public/coordenacao/aula_cad" method="POST" send="/maruge/public/coordenacao/aula_cad">
+            <form class="form form-search form-Nu formularios" action="/coordenacao/aula_cad" method="POST" send="/coordenacao/aula_cad">
                 @endif 
                 {!! csrf_field() !!}
                 <!--PRIMEIRA LINHA REFERENTE AOS CAMPOS (nome funcionário - cpf - rg - função )-->
@@ -37,7 +37,7 @@
                                 <!--
                                 <input type="text" name="aula" id="aula" class="form-control" placeholder="Link da Aula" value="{{old('aula')}}">
                           -->
-                          <textarea  class="form-control ajuste" rows="1" type="text" name="aula">{{$aula->aula or old('')}}</textarea>
+                          <textarea  class="form-control ajuste" rows="1" type="text" name="aula">{{ $aula->aula ?? old('') }}</textarea>
                                 </div>
                         </div>
 
@@ -53,7 +53,7 @@
                                     <i class="fa fa-calendar" aria-hidden="true"></i>
                                 </div>
                               
-                                <input type="date" name="data_aula" class="form-control"  value="{{$aula->data_aula or old('')}}">
+                                <input type="date" name="data_aula" class="form-control"  value="{{ $aula->data_aula ?? old('') }}">
                             </div>
                         </div>
 
@@ -65,7 +65,8 @@
                                 <div class="input-group-addon">
                                     <i class="fa fa-users" aria-hidden="true"></i>
                                 </div>
-                                <select class="form-control" name="tb_turmas_idTurmas">
+                                <div class="select-wrapper">
+    <select class="form-control maruge-select" name="tb_turmas_idTurmas">
                                     
                                     
                                     @if(isset($aula))
@@ -77,7 +78,7 @@
                                     
                                     
                                     @forelse($turmas as $turma) 
-                                    <option value="{{$turma->idTurmas}}">{{$turma->NomeTurma or old('')}}</option>
+                                    <option value="{{$turma->idTurmas}}">{{ $turma->NomeTurma ?? old('') }}</option>
                                     @empty
                                     @endforelse 
                                     <!--Fim do laço da turma para editar-->
@@ -101,6 +102,8 @@
                                     
                                     
                                 </select>
+    <i data-lucide="chevron-down" class="select-icon"></i>
+</div>
                                 
                                 
                                 
@@ -122,7 +125,7 @@
                     <div class="col-md-5">
                         <div class="form-group">
                             <label for="ObsAula" >Comentário da Aula</label>
-                            <textarea  class="form-control ajuste" rows="8" type="text" name="ObsAula" maxlength="1000">{{$aula->ObsAula or old('')}}</textarea>
+                            <textarea  class="form-control ajuste" rows="8" type="text" name="ObsAula" maxlength="1000">{{ $aula->ObsAula ?? old('') }}</textarea>
 
                         </div>
                     </div>

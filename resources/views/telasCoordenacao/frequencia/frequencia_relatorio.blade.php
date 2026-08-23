@@ -1,26 +1,19 @@
-@extends('telasCoordenacao.painel')  
-@section('conteudo')
 <html>
-    <header>   
+    <head>
         <title>{{$titulo}}</title>
-    </header>
-    <body>
-        <!-- CSS compilada e minificada on-line do bootstrap-->
-        <link href="{{url('https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css')}}" rel="stylesheet">
-        <!-- Bootstrap -->
-        <link href="{{asset('css/bootstrap.min.css')}}" rel="stylesheet">
-        <!-- Font Awesome -->
-        <link rel="stylesheet" href="{{asset('font-awesome/css/font-awesome.min.css')}}">
-        <!--CSS Personalizado para o Painel-->
+        <style media="print">
+            .botao {
+                display: none;
+            }
+        </style>
+        <!-- CSS Personalizado para o Painel -->
         <link rel="stylesheet" href="{{asset('css/painel.css')}}">
-        <!-- CSS - Para fazer Reset nos Paineis-->
-        <link rel="stylesheet" href="{{asset('css/reset.css')}}">       
-        <!-- favicon-->
-        <link rel="stylesheet" href="{{asset('imgs/favicon.png')}}">     
-        <!-- Jquery Local-->
-        <script src="{{asset('css/jquery-3.0.0.js')}}" ></script> 
-       
-        <button type="button"  value="Imprimir" id="imprimir_conteudo"  class="botao btn-imprimir"> Imprimir</button>
+        <!-- CSS para Reset de Estilos -->
+        <link rel="stylesheet" href="{{asset('css/reset.css')}}">
+    </head>
+    <body>
+        <!-- Botão de impressão (ocultado automaticamente no modo de impressão) -->
+        <button type="button" value="Imprimir" onClick="window.print()" class="botao btn-imprimir"> Imprimir</button>
        
         <div class="imprimir_conteudo">
         <table class="timbre">
@@ -38,16 +31,7 @@
                     @empty
                     @endforelse
                 </td>
-            </tr>    
-            
-            
-            
-            
-            
-                      
-            
-            
-            
+            </tr>                  
         </table>
         <div class="relatorios-titulo"> RELATÓRIO DE FREQUÊNCIAS DA TURMA {{$turma->NomeTurma}} 
             <br>
@@ -545,4 +529,3 @@
 </table>
 </body>
 </html>
-@endsection

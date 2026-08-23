@@ -26,7 +26,7 @@
         </div>
 
         <!-- Alert de Erros de Validação -->
-        @if(count($errors) > 0)
+        @if((isset($errors) ? count($errors) : 0) > 0)
             <div class="bg-red-50 border border-red-200 text-red-700 p-4 rounded-xl mb-6 text-sm flex gap-3 items-start">
                 <i data-lucide="alert-circle" class="w-5 h-5 shrink-0 mt-0.5"></i>
                 <div>
@@ -65,8 +65,13 @@
                 <!-- Situação -->
                 <div class="md:col-span-2 flex flex-col gap-1.5">
                     <label for="SituacaoTurma" class="text-sm font-medium text-[#0a241e]">Situação:</label>
-                    <div class="flex items-center bg-[#f8faf9] border border-[#e3e8e6] rounded-xl px-4 py-2.5 focus-within:border-gray-400 transition-all">
-                        <select id="SituacaoTurma" name="SituacaoTurma" class="w-full bg-transparent text-sm text-[#0a241e] focus:outline-none appearance-none cursor-pointer pr-6" required>
+                    <div class="relative">
+                        <select
+                            id="SituacaoTurma"
+                            name="SituacaoTurma"
+                            class="w-full h-11 appearance-none bg-white border border-[#e3e8e6] rounded-xl px-4 pr-10 text-sm text-[#0a241e] focus:outline-none focus:border-[#008a4b] focus:ring-2 focus:ring-[#008a4b]/10 cursor-pointer transition-all"
+                            required
+                        >
                             @if(isset($turma))
                                 <option value="{{ $turma->SituacaoTurma }}" selected>{{ $turma->SituacaoTurma }}</option>
                             @else
@@ -75,9 +80,10 @@
                             <option value="ATIVO" {{ old('SituacaoTurma') == 'ATIVO' ? 'selected' : '' }}>ATIVO</option>
                             <option value="INATIVO" {{ old('SituacaoTurma') == 'INATIVO' ? 'selected' : '' }}>INATIVO</option>
                         </select>
-                        <div class="text-[#95aba5] pointer-events-none -ml-4">
-                            <i data-lucide="chevron-down" class="w-4 h-4"></i>
-                        </div>
+                        <i
+                            data-lucide="chevron-down"
+                            class="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#95aba5] pointer-events-none"
+                        ></i>
                     </div>
                 </div>
 
@@ -85,19 +91,7 @@
                 <div class="md:col-span-2 flex flex-col gap-1.5">
                     <label for="AnoLetivo" class="text-sm font-medium text-[#0a241e]">Ano Letivo:</label>
                     <div class="flex items-center bg-[#f8faf9] border border-[#e3e8e6] rounded-xl px-4 py-2.5 focus-within:border-gray-400 transition-all">
-                        <select id="AnoLetivo" name="AnoLetivo" class="w-full bg-transparent text-sm text-[#0a241e] focus:outline-none appearance-none cursor-pointer pr-6" required>
-                            @if(isset($turma))
-                                <option value="{{ $turma->AnoLetivo }}" selected>{{ $turma->AnoLetivo }}</option>
-                            @else
-                                <option value="" disabled selected>Selecione</option>
-                            @endif
-                            @for($ano = 2017; $ano <= 2028; $ano++)
-                                <option value="{{ $ano }}" {{ old('AnoLetivo') == $ano ? 'selected' : '' }}>{{ $ano }}</option>
-                            @endfor
-                        </select>
-                        <div class="text-[#95aba5] pointer-events-none -ml-4">
-                            <i data-lucide="chevron-down" class="w-4 h-4"></i>
-                        </div>
+                        <input type="number" id="AnoLetivo" name="AnoLetivo" value="{{ old('AnoLetivo', $turma->AnoLetivo ?? date('Y')) }}" placeholder="Ex: {{ date('Y') }}" min="2000" max="2100" class="w-full bg-transparent text-sm text-[#0a241e] focus:outline-none" required>
                     </div>
                 </div>
             </div>

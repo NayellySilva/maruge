@@ -1,7 +1,7 @@
-@extends('telasCoordenacao.painel')  
-@section('conteudo')
+@extends('layouts.app')  
+@section('content')
 <div  class="col-md-8" titulo-pagina">
-      <h1 class="titulo-pagina">{{$titulo or 'Aulas da Turma:'}} {{$turmaAula->NomeTurma}}</h1>
+      <h1 class="titulo-pagina">{{ $titulo ?? 'Aulas da Turma:' }} {{$turmaAula->NomeTurma}}</h1>
 </div> 
 <div >
     <div class="col-md-1">
@@ -59,7 +59,7 @@
 @empty
 <div class="alert alert-warning alert-dismissible" role="alert">
     <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-    <strong>Desculpe ! </strong> Nenhuma aula cadastrada<a href="/maruge/public/coordenacao/aula_cad" class="alert-link"> Clique aqui.</a>
+    <strong>Desculpe ! </strong> Nenhuma aula cadastrada<a href="/coordenacao/aula_cad" class="alert-link"> Clique aqui.</a>
 </div>
 <tr>
     <td colspan="500"> Nenhuma aula cadastrada !</td>

@@ -1,6 +1,3 @@
-@extends('telasCoordenacao.painel')
-@section('conteudo')
-
 <!-- Bootstrap (apenas CDN, remova se preferir o local) -->
 <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
 <!-- Font Awesome -->
@@ -222,6 +219,4 @@
             location.reload();
         }, 1000);
     };
-</script>
-
-@endsection
+</script>

@@ -1,12 +1,19 @@
 <html>
-    <header>   
+    <head>
         <title>{{$titulo}}</title>
-    </header>
+        <style media="print">
+            .botao {
+                display: none;
+            }
+        </style>
+        <!-- CSS Personalizado para o Painel -->
+        <link rel="stylesheet" href="{{asset('css/painel.css')}}">
+        <!-- CSS para Reset de Estilos -->
+        <link rel="stylesheet" href="{{asset('css/reset.css')}}">
+    </head>
     <body>
-        <!--CSS Personalizado para o Painel-->
-        <link rel="stylesheet" href="{{url('css/painel.css')}}">
-        <!-- CSS - Para fazer Reset nos Paineis-->
-        <link rel="stylesheet" href="{{url('css/reset.css')}}">       
+        <!-- Botão de impressão (ocultado automaticamente no modo de impressão) -->
+        <button type="button" value="Imprimir" onClick="window.print()" class="botao btn-imprimir"> Imprimir</button>
 
 
         @forelse($escolas as $escola)

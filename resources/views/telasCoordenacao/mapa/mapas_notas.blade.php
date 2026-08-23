@@ -1,87 +1,181 @@
-@extends('telasCoordenacao.painel')  
-@section('conteudo')
-<div class="titulo-endereco">
-    <a href="#">
-    Relatórios / Mapas de Notas
-    </a>
-</div>
-<div class="col-md-5">
-    <div class="form-group">
-        <label for="Localizar Turma">Localizar Turma:</label>
-        <form class="form-search pesquisar" method="post" action="/maruge/public/coordenacao/mapas_pesq">
-            {!! csrf_field() !!}
-            <input type="texto" name="pesquisar" placeholder="Pesquisar Turma"  class="form-control">
-            <button class="btn-pesquisar"><i class="fa fa-search" aria-hidden="true"></i></button>
-        </form>
+@extends('layouts.app')
+
+@section('content')
+
+@php
+    // Busca paginada das turmas cadastradas
+    try {
+        $turmas = \DB::table('tb_turmas')
+            ->orderBy('NomeTurma')
+            ->paginate(15);
+    } catch (\Exception $e) {
+        $turmas = new \Illuminate\Pagination\LengthAwarePaginator([], 0, 15);
+    }
+@endphp
+
+<div class="flex flex-col gap-6">
+
+    <!-- Localização (Breadcrumb) -->
+    <div class="text-sm text-[#5c706b]">
+        <a href="{{ url('/coordenacao') }}" class="hover:text-[#008a4b] transition-colors">Relatórios</a>
+        <span class="mx-2">/</span>
+        <span class="font-semibold text-[#0a241e]">Mapas de Notas</span>
     </div>
-</div>
-<div class="col-md-3">
-    <div class="form-group">
-        <label for="Filtrar Turma">Filtrar por Situação:</label>
-        <form class="form-search pesquisar"method="post" action="/maruge/public/coordenacao/mapas_filtro">
-            {!! csrf_field() !!}
-            <select class="form-control" name="SituacaoTurma" >
-                <option></option>
 
-                <option>ATIVO</option>
-                <option>INATIVO</option>
-
-            </select>
-
-
-            <button class="btn-filtro" type="submit" > <i class="fa fa-search" aria-hidden="true"></i></button>
-        </form>
+    <!-- Cabeçalho Principal -->
+    <div class="flex justify-between items-center">
+        <div class="flex flex-col gap-1">
+            <h1 class="text-3xl font-semibold text-[#0a241e]">Mapas de Notas</h1>
+            <p class="text-sm text-[#5c706b]">Turmas Cadastradas: ({{ $turmas->total() }})</p>
+        </div>
     </div>
-</div>
 
-<div class="col-md-4">
-    <div class="quant-alunos">                           
-        <h2 class="quant-alunos">Turmas Cadastradas:  ({{$turmas->total()}})</h2>
+    <!-- Filtros de Busca e Seleção por Situação -->
+    <div class="flex flex-col sm:flex-row gap-4 items-center">
+        <!-- Localizar Turma -->
+        <div class="w-full sm:w-80">
+            <form method="POST" action="{{ url('/coordenacao/mapas_pesq') }}" class="w-full">
+                @csrf
+                <div class="flex items-center bg-white border border-[#e3e8e6] rounded-xl px-4 py-2.5 transition-all">
+                    <input type="text" name="pesquisar" placeholder="Pesquisar Turma" class="w-full bg-transparent text-sm focus:outline-none">
+                    <button type="submit" class="text-[#5c706b] hover:text-[#008a4b] ml-2">
+                        <i data-lucide="search" class="w-4 h-4"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
 
-    </div> 
-</div>
+        <!-- Menu Dropdown de Filtro -->
+        <div class="w-full sm:w-64">
+            <form method="POST" action="{{ url('/coordenacao/mapas_filtro') }}" class="w-full">
+                @csrf
+                <div class="relative">
+                    <select
+                        name="SituacaoTurma"
+                        onchange="this.form.submit()"
+                        class="w-full h-11 appearance-none bg-white border border-[#e3e8e6] rounded-xl px-4 pr-10 text-sm text-[#0a241e] focus:outline-none focus:border-[#008a4b] focus:ring-2 focus:ring-[#008a4b]/10 cursor-pointer transition-all"
+                    >
+                        <option value="" disabled {{ !request()->has('SituacaoTurma') ? 'selected' : '' }}>
+                            Filtrar por Situação
+                        </option>
+                        <option value="" {{ request()->input('SituacaoTurma') === '' ? 'selected' : '' }}>
+                            Todos
+                        </option>
+                        <option value="ATIVO" {{ request()->input('SituacaoTurma') == 'ATIVO' ? 'selected' : '' }}>
+                            Ativo
+                        </option>
+                        <option value="INATIVO" {{ request()->input('SituacaoTurma') == 'INATIVO' ? 'selected' : '' }}>
+                            Inativo
+                        </option>
+                    </select>
 
+                    <i
+                        data-lucide="chevron-down"
+                        class="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#95aba5] pointer-events-none"
+                    ></i>
+                </div>
+            </form>
+        </div>
+    </div>
 
+    <!-- Tabela de Turmas e Impressão de Mapas de Notas -->
+    <div class="bg-white border border-[#e3e8e6] rounded-2xl overflow-hidden shadow-2xs">
+        <div class="overflow-x-auto">
+            <table class="w-full border-collapse">
+                <thead>
+                    <tr class="bg-[#f8faf9] border-b border-[#e3e8e6]">
+                        <th class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-[#5c706b]">CÓD</th>
+                        <th class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-[#5c706b]">Nome Turma</th>
+                        <th class="px-4 py-4 text-center text-xs font-semibold uppercase tracking-wider text-[#5c706b]">1º BIM</th>
+                        <th class="px-4 py-4 text-center text-xs font-semibold uppercase tracking-wider text-[#5c706b]">2º BIM</th>
+                        <th class="px-4 py-4 text-center text-xs font-semibold uppercase tracking-wider text-[#5c706b]">3º BIM</th>
+                        <th class="px-4 py-4 text-center text-xs font-semibold uppercase tracking-wider text-[#5c706b]">4º BIM</th>
+                        <th class="px-4 py-4 text-center text-xs font-semibold uppercase tracking-wider text-[#5c706b]">GLOBAL</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-[#e3e8e6]">
+                    <!-- Recebendo valores na vareavel turmas e passando para turma-->
+                    @forelse($turmas as $turma)
+                        <tr class="hover:bg-[#f8faf9]/50 transition-colors">
+                            <td class="px-6 py-4 text-sm text-[#5c706b]">{{ $turma->idTurmas }}</td>
+                            <td class="px-6 py-4 text-sm font-semibold text-[#0a241e]">{{ $turma->NomeTurma }}</td>
 
+                            <!-- Mapa 1º Bimestre -->
+                            <td class="px-4 py-4 text-sm text-center">
+                                <a href="{{ url('/coordenacao/mapa_1bim/' . $turma->idTurmas) }}"
+                                   target="_blank"
+                                   class="inline-flex items-center justify-center p-2 rounded-lg text-[#5c706b] hover:text-[#008a4b] hover:bg-[#ecfdf5] transition-all"
+                                   title="Imprimir 1º Bimestre">
+                                    <i data-lucide="printer" class="w-4 h-4"></i>
+                                </a>
+                            </td>
 
+                            <!-- Mapa 2º Bimestre -->
+                            <td class="px-4 py-4 text-sm text-center">
+                                <a href="{{ url('/coordenacao/mapa_2bim/' . $turma->idTurmas) }}"
+                                   target="_blank"
+                                   class="inline-flex items-center justify-center p-2 rounded-lg text-[#5c706b] hover:text-[#008a4b] hover:bg-[#ecfdf5] transition-all"
+                                   title="Imprimir 2º Bimestre">
+                                    <i data-lucide="printer" class="w-4 h-4"></i>
+                                </a>
+                            </td>
 
-<div class="caminho-din">
+                            <!-- Mapa 3º Bimestre -->
+                            <td class="px-4 py-4 text-sm text-center">
+                                <a href="{{ url('/coordenacao/mapa_3bim/' . $turma->idTurmas) }}"
+                                   target="_blank"
+                                   class="inline-flex items-center justify-center p-2 rounded-lg text-[#5c706b] hover:text-[#008a4b] hover:bg-[#ecfdf5] transition-all"
+                                   title="Imprimir 3º Bimestre">
+                                    <i data-lucide="printer" class="w-4 h-4"></i>
+                                </a>
+                            </td>
 
-    <table class="table table-hover">
-        <thead>
-        <tr>
-        <th>CÓD</th>
-        <th>NOME TURMA</th>
-        <th><center>1º BIM</center></th>
-        <th><center>2º BIM</center></th>
-        <th><center>3º BIM</center></th>
-        <th><center>4º BIM</center></th>
-        <th><center>GLOBAL</center></th>
-        </tr>
-    </thead>   
-        <!-- Recebendo valores na vareavel escolas e passando para escola-->
-        @forelse($turmas as $turma ) 
-        <center>
-            <tr>
-                <td>{{$turma->idTurmas}}</td>
-                <td>{{$turma->NomeTurma}}</td>
-                <td> <a href="{{url("/coordenacao/mapa_1bim/$turma->idTurmas")}}"target="_blank" ><center> <img src="{{url('imgs/icones/imprimir.png')}}" alt="1º Bimestre"</center></td>
-                <td> <a href="{{url("/coordenacao/mapa_2bim/$turma->idTurmas")}}"target="_blank" ><center> <img src="{{url('imgs/icones/imprimir.png')}}" alt="1º Bimestre"</center></td>
-                <td> <a href="{{url("/coordenacao/mapa_3bim/$turma->idTurmas")}}"target="_blank" ><center> <img src="{{url('imgs/icones/imprimir.png')}}" alt="1º Bimestre"</center></td>
-                <td> <a href="{{url("/coordenacao/mapa_4bim/$turma->idTurmas")}}"target="_blank" ><center> <img src="{{url('imgs/icones/imprimir.png')}}" alt="1º Bimestre"</center></td>
-                <td> <a href="{{url("/coordenacao/mapa_global/$turma->idTurmas")}}"target="_blank" ><center> <img src="{{url('imgs/icones/imprimir.png')}}" alt="1º Bimestre"</center></td>
-            </tr>
-                                        @empty
-                                        <div class="alert alert-warning alert-dismissible" role="alert">
-                                            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                                            <strong>Desculpe ! </strong> Nenhuma turma cadastrada, para cadastras<a href="/maruge/public/coordenacao/turma_cad" class="alert-link"> Clique aqui.</a>
-                                        </div>
-                                        <tr>
-                                            <td colspan="500"> Nenhuma turma cadastrada !</td>
-                                        </tr>
-                                        @endforelse
-                                        </table> 
-                                        <div>{!! $turmas->render()!!} </div>
-                                        </div>
-                                        </div> <!--Fim do caminho-din-->
-                                        @endsection
+                            <!-- Mapa 4º Bimestre -->
+                            <td class="px-4 py-4 text-sm text-center">
+                                <a href="{{ url('/coordenacao/mapa_4bim/' . $turma->idTurmas) }}"
+                                   target="_blank"
+                                   class="inline-flex items-center justify-center p-2 rounded-lg text-[#5c706b] hover:text-[#008a4b] hover:bg-[#ecfdf5] transition-all"
+                                   title="Imprimir 4º Bimestre">
+                                    <i data-lucide="printer" class="w-4 h-4"></i>
+                                </a>
+                            </td>
+
+                            <!-- Mapa Global -->
+                            <td class="px-4 py-4 text-sm text-center">
+                                <a href="{{ url('/coordenacao/mapa_global/' . $turma->idTurmas) }}"
+                                   target="_blank"
+                                   class="inline-flex items-center justify-center p-2 rounded-lg text-[#5c706b] hover:text-[#008a4b] hover:bg-[#ecfdf5] transition-all"
+                                   title="Imprimir Mapa Global">
+                                    <i data-lucide="printer" class="w-4 h-4"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    @empty
+                        <!-- Estado sem registros -->
+                        <tr>
+                            <td colspan="7" class="px-6 py-12 text-center">
+                                <div class="flex flex-col items-center gap-3">
+                                    <div class="w-16 h-16 rounded-full bg-[#f8faf9] flex items-center justify-center text-[#95aba5]">
+                                        <i data-lucide="map" class="w-8 h-8"></i>
+                                    </div>
+                                    <p class="text-sm text-[#0a241e] font-medium">Nenhuma turma encontrada</p>
+                                    <p class="text-xs text-[#5c706b]">Cadastre turmas para visualizar os mapas de notas</p>
+                                </div>
+                            </td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Paginação -->
+    @if($turmas->hasPages())
+        <div class="flex justify-center mt-2">
+            {{ $turmas->links() }}
+        </div>
+    @endif
+
+</div> <!--Fim do caminho-din-->
+
+@endsection

@@ -1,22 +1,18 @@
 <html>
-    <header>   
+    <head>
         <title>{{$titulo}}</title>
-    </header>
-    <body>
         <style media="print">
             .botao {
                 display: none;
             }
         </style>
-        <!--CSS Personalizado para o Painel-->
+        <!-- CSS Personalizado para o Painel -->
         <link rel="stylesheet" href="{{asset('css/painel.css')}}">
-        <!-- CSS - Para fazer Reset nos Paineis-->
-        <link rel="stylesheet" href="{{asset('css/reset.css')}}">    
-        <!-- CSS compilada e minificada on-line do bootstrap-->
-        <link href="{{url('https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css')}}" rel="stylesheet">
-        <!-- Bootstrap -->
-        <link href="{{asset('css/bootstrap.min.css')}}" rel="stylesheet">
-        <button type="button"  value="Imprimir" onClick="window.print()" class="botao btn-imprimir"> Imprimir</button>
+        <!-- CSS para Reset de Estilos -->
+        <link rel="stylesheet" href="{{asset('css/reset.css')}}">
+    </head>
+    <body>
+        <button type="button" value="Imprimir" onClick="window.print()" class="botao btn-imprimir"> Imprimir</button>
 
         <table class="timbre">
             <tr>

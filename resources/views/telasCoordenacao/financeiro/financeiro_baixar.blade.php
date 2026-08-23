@@ -1,5 +1,5 @@
-@extends('telasCoordenacao.painel')  
-@section('conteudo')
+@extends('layouts.app')  
+@section('content')
 <div class="titulo-endereco">
     <a href="#">
         Financeiro / Recebimentos 
@@ -51,7 +51,7 @@
     
     
     <h4> <label for="SituacaoAluno">LOCALIZAR TÍTULO:</label></h4>
-    <form  method="POST" action="/maruge/public/coordenacao/financeiro_pesq">
+    <form  method="POST" action="/coordenacao/financeiro_pesq">
                     {!! csrf_field() !!}                      
             <div class="row">                        
                         <div class="col-md-3">
@@ -65,23 +65,29 @@
                         <div class="col-md-3">
                             <div class="form-group">
                                 <label for="Ano Letivo">Ano Letivo:</label>
-                                    <select class="form-control" name="AnoLetivo" >
+                                    <div class="select-wrapper">
+    <select class="form-control maruge-select" name="AnoLetivo" >
                                     <option></option>
                                     @forelse($AnosLetivos as $AnosLetivo)  
                                     <option value="{{$AnosLetivo->AnoLetivo}}">{{$AnosLetivo->AnoLetivo}}</option>
                                     @empty
                                     @endforelse 
                                     </select>
+    <i data-lucide="chevron-down" class="select-icon"></i>
+</div>
                             </div>
                         </div>
                 -->
                 <div class="col-md-1">
                             <div class="form-group">
                                 <label for="Ano Letivo">Ano Letivo:</label>
-                                <select class="form-control" name="AnoLetivo" >
+                                <div class="select-wrapper">
+    <select class="form-control maruge-select" name="AnoLetivo" >
                                     <option>2022</option>
                                     <option>2023</option>
                                 </select>
+    <i data-lucide="chevron-down" class="select-icon"></i>
+</div>
                             </div>
                 </div>
                  
@@ -101,7 +107,7 @@
                                 
                                 Swal.fire({
   title: 'Verificar Débitos Anteriores.',
-  imageUrl: '/maruge/public/SweetAlert2/mascote.png' ,
+  imageUrl: '/SweetAlert2/mascote.png' ,
   imageWidth: 160,
   imageHeight: 120,
   icon: 'error',
@@ -110,7 +116,7 @@
   background: '#fff url(/images/trees.png)',
   backdrop: `
   rgba(0,0,123,0.4)
-  url("/maruge/public/SweetAlert2/tenor2.gif")
+  url("/SweetAlert2/tenor2.gif")
   center top
   no-repeat
     `
@@ -1091,7 +1097,7 @@
                 <h4 class="modal_Observacoes-titulo">ATENÇÃO CONFIRMAR DADOS DE PAGAMENTO:</h4>
             </div>
             <div class="modal-body"> 
-                <form class="alteraNota form formularios" action="/maruge/public/coordenacao/financeiro_baixar" method="POST" send="/maruge/public/coordenacao/financeiro_baixar">
+                <form class="alteraNota form formularios" action="/coordenacao/financeiro_baixar" method="POST" send="/coordenacao/financeiro_baixar">
                     <div class="preloader" style="display: none"> Enviando os dados...</div>  
                     <div class="alert alert-success msg-exito" role="alert" style="display: none"></div>
                     <div class="alert alert-warning msg-erro" role="alert" style="display: none"></div> 
@@ -1140,11 +1146,14 @@
                             </div>
                            
                             <div class="col-md-3">
-                                <select class="custom-select my-1 mr-sm-2 form-control" name="status_pagamento">
+                                <div class="select-wrapper">
+    <select class="custom-select my-1 mr-sm-2 form-control maruge-select" name="status_pagamento">
                                     <option></option>
                                     <option value="PAGO">PAGO</option>
                                     <option value="PARCIAL">PARCIAL</option>
                                 </select>
+    <i data-lucide="chevron-down" class="select-icon"></i>
+</div>
                             </div>
                          
                             
@@ -1171,7 +1180,8 @@
                             </div>
                            
                             <div class="col-md-3">
-                                <select class="custom-select my-1 mr-sm-2 form-control" name="forma_pgto">
+                                <div class="select-wrapper">
+    <select class="custom-select my-1 mr-sm-2 form-control maruge-select" name="forma_pgto">
                                     <option></option>
                                     <option value="DINHEIRO">DINHEIRO</option>
                                     <option value="DÉBITO">DÉBITO</option>
@@ -1184,6 +1194,8 @@
                                     <option value="T.OUTROS">T.OUTROS</option>
                                                                  
                                 </select>
+    <i data-lucide="chevron-down" class="select-icon"></i>
+</div>
                             </div>
                         
                         
@@ -1220,7 +1232,7 @@
                 <h4 class="modal_Observacoes-titulo">ATENÇÃO CONFIRMAR DADOS DE PAGAMENTO:</h4>
             </div>
             <div class="modal-body"> 
-                <form class="alteraNota form formularios" action="/maruge/public/coordenacao/financeiro_baixar_acordo" method="POST" send="/maruge/public/coordenacao/financeiro_baixar_acordo">
+                <form class="alteraNota form formularios" action="/coordenacao/financeiro_baixar_acordo" method="POST" send="/coordenacao/financeiro_baixar_acordo">
                     <div class="preloader" style="display: none"> Enviando os dados...</div>  
                     <div class="alert alert-success msg-exito" role="alert" style="display: none"></div>
                     <div class="alert alert-warning msg-erro" role="alert" style="display: none"></div> 
@@ -1265,11 +1277,14 @@
                                 <label class="my-1 mr-2" for="inlineFormCustomSelectPref">&nbsp&nbsp;PAGAMENTO:</label> 
                             </div>
                             <div class="col-md-3">
-                                <select class="custom-select my-1 mr-sm-2 form-control" name="status_pagamento">
+                                <div class="select-wrapper">
+    <select class="custom-select my-1 mr-sm-2 form-control maruge-select" name="status_pagamento">
                                     <option></option>
                                     <option value="PAGO">PAGO</option>
                                     <option value="PARCIAL">PARCIAL</option>
                                 </select>
+    <i data-lucide="chevron-down" class="select-icon"></i>
+</div>
                             </div>
                             <div class="col-md-2">
                                 <label  for="ValorPGTO">RECEBIDO:</label>
@@ -1290,7 +1305,8 @@
                             </div>
                            
                             <div class="col-md-3">
-                                <select class="custom-select my-1 mr-sm-2 form-control" name="forma_pgto">
+                                <div class="select-wrapper">
+    <select class="custom-select my-1 mr-sm-2 form-control maruge-select" name="forma_pgto">
                                     <option></option>
                                     <option value="DINHEIRO">DINHEIRO</option>
                                     <option value="DÉBITO">DÉBITO</option>
@@ -1304,6 +1320,8 @@
                                     <option value="T.OUTROS">T.OUTROS</option>
                                                                  
                                 </select>
+    <i data-lucide="chevron-down" class="select-icon"></i>
+</div>
                             </div>
                         
                         
@@ -1335,7 +1353,7 @@
                 <h4 class="modal_Observacoes-titulo">2º VIA COMPROVANTE DE PAGAMENTO:</h4>
             </div>
             <div class="modal-body"> 
-                <form class="alteraNota form formularios" action="/maruge/public/coordenacao/financeiro_comprovante" method="POST" send="/maruge/public/coordenacao/financeiro_comprovante">
+                <form class="alteraNota form formularios" action="/coordenacao/financeiro_comprovante" method="POST" send="/coordenacao/financeiro_comprovante">
                     <div class="preloader" style="display: none"> Enviando os dados...</div>  
                     <div class="alert alert-success msg-exito" role="alert" style="display: none"></div>
                     <div class="alert alert-warning msg-erro" role="alert" style="display: none"></div> 
@@ -1442,7 +1460,7 @@
                 <h4 class="modal_Observacoes-titulo">2º VIA COMPROVANTE DE PAGAMENTO:</h4>
             </div>
             <div class="modal-body"> 
-                <form class="alteraNota form formularios" action="/maruge/public/coordenacao/financeiro_comprovante_acordo" method="POST" send="/maruge/public/coordenacao/financeiro_comprovante_acordo">
+                <form class="alteraNota form formularios" action="/coordenacao/financeiro_comprovante_acordo" method="POST" send="/coordenacao/financeiro_comprovante_acordo">
                     <div class="preloader" style="display: none"> Enviando os dados...</div>  
                     <div class="alert alert-success msg-exito" role="alert" style="display: none"></div>
                     <div class="alert alert-warning msg-erro" role="alert" style="display: none"></div> 

@@ -1,7 +1,7 @@
-@extends('telasCoordenacao.painel')  
-@section('conteudo')
+@extends('layouts.app')  
+@section('content')
 <div class="titulo-pagina">
-    <h1 class="titulo-pagina">{{$titulo or 'Nova Escola'}}</h1>
+    <h1 class="titulo-pagina">{{ $titulo ?? 'Nova Escola' }}</h1>
 
 </div> 
 <div class="caminho-din">
@@ -10,16 +10,16 @@
     <div class="alert alert-warning msg-erro" role="alert" style="display: none"></div> 
 
     <div class="formularios">    
-        @if(count($errors)>0)
-        @foreach($errors->all()as $error)
+        @if((isset($errors) ? count($errors) : 0)>0)
+        @foreach($errors->all() as $error)
         {{$error}}
         @endforeach
         @endif
 
         @if(isset($escolas))
-        <form class="form form-search form-Nu formularios" action="/maruge/public/coordenacao/editar_escola/{{$escolas->idEscola}}" method="POST">
+        <form class="form form-search form-Nu formularios" action="/coordenacao/editar_escola/{{$escolas->idEscola}}" method="POST">
             @else
-            <form class="form form-search form-Nu formularios" action="/maruge/public/coordenacao/cadescola" method="POST" send="/maruge/public/coordenacao/cadescola">
+            <form class="form form-search form-Nu formularios" action="/coordenacao/cadescola" method="POST" send="/coordenacao/cadescola">
                 @endif 
                 {!! csrf_field() !!}
                 <!--PRIMEIRA LINHA REFERENTE AOS CAMPOS (NOME DA INSTITUIÇÃO - ENDEREÇO - Nº)-->
@@ -27,21 +27,21 @@
                     <div class="col-md-5">
                         <div class="form-group">
                             <label for="NomeEscola">Nome da Instituição:</label>
-                            <input type="texto" name="NomeEscola" placeholder="Nome da Instituição"  class="form-control" value="{{$escolas->NomeEscola or old('NomeEscola')}}">
+                            <input type="texto" name="NomeEscola" placeholder="Nome da Instituição"  class="form-control" value="{{ $escolas->NomeEscola ?? old('NomeEscola') }}">
                         </div>
                     </div>
 
                     <div class="col-md-5">
                         <div class="form-group">
                             <label for="Rua">Endereço:</label>
-                            <input type="texto" name="Rua" placeholder="Endereço" class="form-control" value="{{$endereco->Rua or old('Rua')}}">
+                            <input type="texto" name="Rua" placeholder="Endereço" class="form-control" value="{{ $endereco->Rua ?? old('Rua') }}">
                         </div>
                     </div>
 
                     <div class="col-md-2">
                         <div class="form-group">
                             <label for="Numero">Nº:</label>
-                            <input type="texto" name="Numero" placeholder="Número" class="form-control" value="{{$endereco->Numero or old('Numero')}}">
+                            <input type="texto" name="Numero" placeholder="Número" class="form-control" value="{{ $endereco->Numero ?? old('Numero') }}">
                         </div>
                     </div>
                 </div>
@@ -50,33 +50,33 @@
                     <div class="col-md-3">
                         <div class="form-group">
                             <label for="Cidade">Cidade:</label>
-                            <input type="texto" name="Cidade" placeholder="Cidade" class="form-control" value="{{$endereco->Cidade or old('Cidade')}}">
+                            <input type="texto" name="Cidade" placeholder="Cidade" class="form-control" value="{{ $endereco->Cidade ?? old('Cidade') }}">
                         </div>
                     </div>
 
                     <div class="col-md-2">
                         <div class="form-group">
                             <label for="Cep">Cep:</label>
-                            <input type="texto" name="CEP" id="CEP" placeholder="CEP" class="form-control" value="{{$endereco->CEP or old('CEP')}}">
+                            <input type="texto" name="CEP" id="CEP" placeholder="CEP" class="form-control" value="{{ $endereco->CEP ?? old('CEP') }}">
                         </div>
                     </div>
 
                     <div class="col-md-3">
                         <div class="form-group">
                             <label for="Bairro">Bairro:</label>
-                            <input type="texto" name="Bairro" placeholder="Bairro" class="form-control" value="{{$endereco->Bairro or old('Bairro')}}">
+                            <input type="texto" name="Bairro" placeholder="Bairro" class="form-control" value="{{ $endereco->Bairro ?? old('Bairro') }}">
                         </div>
                     </div>
                     <div class="col-md-2">
                         <div class="form-group">
                             <label for="Fone1">Fixo:</label>
-                            <input type="texto" name="Fone1" placeholder="Telefone Fixo" id="Fone1" class="form-control" value="{{$endereco->Fone1 or old('Fone1')}}">
+                            <input type="texto" name="Fone1" placeholder="Telefone Fixo" id="Fone1" class="form-control" value="{{ $endereco->Fone1 ?? old('Fone1') }}">
                         </div>
                     </div>
                     <div class="col-md-2">
                         <div class="form-group">
                             <label for="Fone2">Celular:</label>
-                            <input type="texto" name="Fone2" placeholder="Telefone Celular" id="Fone2" class="form-control" value="{{$endereco->Fone2 or old('Fone2')}}">
+                            <input type="texto" name="Fone2" placeholder="Telefone Celular" id="Fone2" class="form-control" value="{{ $endereco->Fone2 ?? old('Fone2') }}">
                         </div>
                     </div>
                 </div>
@@ -85,8 +85,9 @@
                     <div class="col-md-3">
                         <div class="form-group">
                             <label for="Estado">Estado:</label>
-                            <select class="form-control" name="Estado" id="estado"  value="" >
-                                <option >{{$endereco->Estado or old('Estado')}}</option>
+                            <div class="select-wrapper">
+    <select class="form-control maruge-select" name="Estado" id="estado"  value="" >
+                                <option >{{ $endereco->Estado ?? old('Estado') }}</option>
                                 <option> ACRE </option>
                                 <option> ALAGOAS</option>
                                 <option> AMAPÁ</option>
@@ -115,24 +116,26 @@
                                 <option> SERGIPE</option>
                                 <option> TOCANTINS</option>
                             </select>
+    <i data-lucide="chevron-down" class="select-icon"></i>
+</div>
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="form-group">
                             <label for="EmailColegio">E-mail:</label>
-                            <input type="texto" name="EmailColegio" placeholder="E-mail"  class="form-control" value="{{$escolas->EmailColegio or old('EmailColegio')}}">
+                            <input type="texto" name="EmailColegio" placeholder="E-mail"  class="form-control" value="{{ $escolas->EmailColegio ?? old('EmailColegio') }}">
                         </div>
                     </div>
                     <div class="col-md-2">
                         <div class="form-group">
                             <label for="CNPJ">CNPJ:</label>
-                            <input type="texto" name="CNPJ" placeholder="Número do CNPJ" id="CNPJ" class="form-control" value="{{$escolas->CNPJ or old('CNPJ')}}">
+                            <input type="texto" name="CNPJ" placeholder="Número do CNPJ" id="CNPJ" class="form-control" value="{{ $escolas->CNPJ ?? old('CNPJ') }}">
                         </div>
                     </div>
                     <div class="col-md-2">
                         <div class="form-group">
                             <label for="NumeroInep">Inep:</label>
-                            <input type="texto" name="NumeroInep" placeholder="Número Inep" class="form-control" value="{{$escolas->NumeroInep or old('NumeroInep')}}">
+                            <input type="texto" name="NumeroInep" placeholder="Número Inep" class="form-control" value="{{ $escolas->NumeroInep ?? old('NumeroInep') }}">
                         </div>
                     </div>
                 </div>

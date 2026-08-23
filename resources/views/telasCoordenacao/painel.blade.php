@@ -75,7 +75,7 @@
                         <li>
                             <a href="{{url("/coordenacao/funcionario_perfil/$usuario->idFuncionarios")}}" >Perfil</a>
                         </li>
-                        <li><a href="/maruge/public/logout">Sair</a></li>
+                        <li><a href="/logout">Sair</a></li>
                     </ul>
                 </div>
             </div> <!--Fim perfil-->
@@ -124,23 +124,53 @@ TAVA BLOQUEANDO O LOGOUT, VERIFICA SE VAI SOFRE ALGUM IMPACTO
         <script>
 /*Ajax para salva os dados dos fomularios*/
 $(function () {
-    jQuery("form.formularios").submit(function () {
-        jQuery("msg-erro").hide();
-        jQuery("msg-exito").hide();
-        jQuery()
-        var dadosForm = jQuery(this).serialize();
+    jQuery(document).on("submit", "form.formularios, form.form-Nu", function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        jQuery(".msg-erro").hide();
+        jQuery(".msg-exito").hide();
+        var formObj = jQuery(this);
+        var dadosForm = formObj.serialize();
+        var targetUrl = formObj.attr("send") || formObj.attr("action");
+
         jQuery.ajax({
-            url: jQuery(this).attr("send"),
+            url: targetUrl,
             data: dadosForm,
             type: "POST",
-            beforeSend: preloader()
+            headers: {
+                'X-CSRF-TOKEN': jQuery('meta[name="csrf-token"]').attr('content')
+            },
+            beforeSend: function() {
+                if (typeof preloader === 'function') preloader();
+            }
         }).done(function (data) {
-            Fimpreloader();
-// Quando os cadastros de qualquer formularios for realizado com sucesso deverá retorna 1
-            if (data == "1") {
-                jQuery(".msg-exito").html("Cadastro realizado com sucesso!");
-                jQuery(".msg-exito").show();
-                setTimeout("jQuery('msg-exito').hide();location.reload()", 2500);
+            if (typeof Fimpreloader === 'function') Fimpreloader();
+            var dataStr = String(data).trim();
+
+            if (dataStr == "1" || dataStr == "11") {
+                jQuery(".msg-exito").html("Cadastro realizado com sucesso!").show();
+                setTimeout(function() {
+                    location.reload();
+                }, 1500);
+            } else if (dataStr == "escolaExistente") {
+                jQuery(".msg-erro").html("Desculpe, já existe uma escola cadastrada!").show();
+            } else if (dataStr == "DesciplinaNaoinformada") {
+                jQuery(".msg-erro").html("Nenhuma disciplina informada!").show();
+            } else if (dataStr == "alunojacadastrado") {
+                jQuery(".msg-erro").html("Desculpe, Aluno já cadastrado!").show();
+            } else {
+                jQuery(".msg-exito").html("Operação realizada com sucesso!").show();
+                setTimeout(function() {
+                    location.reload();
+                }, 1500);
+            }
+        }).fail(function() {
+            if (typeof Fimpreloader === 'function') Fimpreloader();
+            jQuery(".msg-erro").html("Erro ao processar o formulário.").show();
+        });
+
+        return false;
+    });
                 /*Codição se ja existir uma escola cadastrada*/
             } else if (data == "escolaExistente") {
                 jQuery(".msg-erro").html("Desculpa já existe uma escola cadastrada !");
@@ -150,13 +180,13 @@ $(function () {
             } else if (data == "EscolaAtualizada") {
                 jQuery(".msg-exito").html("Escola atualizada com sucesso!");
                 jQuery(".msg-exito").show();
-                setTimeout("jQuery('msg-exito').hide();location.href ='/maruge/public/coordenacao/escola_inf';", 2500);
+                setTimeout("jQuery('msg-exito').hide();location.href ='/coordenacao/escola_inf';", 2500);
             }
             /*Codição quando é criado um carnê novo com sucesso*/
             else if (data == "carnecadastrado") {
                 jQuery(".msg-exito").html("Carnêr cadastrado com sucesso!");
                 jQuery(".msg-exito").show();
-                setTimeout("jQuery('msg-exito').hide();location.href ='/maruge/public//coordenacao/recibos';", 2500);
+                setTimeout("jQuery('msg-exito').hide();location.href ='/coordenacao/recibos';", 2500);
 
             }
             /*Codição quando é criado um ACOORDO novo com sucesso*/
@@ -182,26 +212,26 @@ $(function () {
             else if (data == "AlunoAtualizado") {
                 jQuery(".msg-exito").html("Aluno atualizado com sucesso!");
                 jQuery(".msg-exito").show();
-                setTimeout("jQuery('msg-exito').hide();location.href ='/maruge/public/coordenacao/aluno_inf';", 2500);
+                setTimeout("jQuery('msg-exito').hide();location.href ='/coordenacao/aluno_inf';", 2500);
             }
             /*Codição quando atualização do aluno for realizada*/
             else if (data == "AlunoTransferido") {
                 jQuery(".msg-exito").html("Aluno transferido com sucesso!");
                 jQuery(".msg-exito").show();
-                setTimeout("jQuery('msg-exito').hide();location.href ='/maruge/public/coordenacao/aluno_inf';", 2500);
+                setTimeout("jQuery('msg-exito').hide();location.href ='/coordenacao/aluno_inf';", 2500);
             }
             /*Codição se não informar o nome da disciplina*/
             else if (data == "DesciplinaNaoinformada") {
                 jQuery(".msg-erro").html("Nenhuma disciplina informada!");
                 jQuery(".msg-erro").show();
-                setTimeout("jQuery('msg-erro').hide();location.href ='/maruge/public/coordenacao/disciplina_cad';", 2000);
+                setTimeout("jQuery('msg-erro').hide();location.href ='/coordenacao/disciplina_cad';", 2000);
                 /*Codição se não informar o nome da disciplina para update*/
             }
             /*Aluno Já existente*/
             else if (data == "alunojacadastrado") {
                 jQuery(".msg-erro").html("Desculpe, Aluno já cadastrado");
                 jQuery(".msg-erro").show();
-                setTimeout("jQuery('msg-erro').hide();location.href ='/maruge/public/coordenacao/aluno_cad';", 2000);
+                setTimeout("jQuery('msg-erro').hide();location.href ='/coordenacao/aluno_cad';", 2000);
             /*Aula Já Cadastrada*/
             } else if (data == "aulajacadastrada") {
                 jQuery(".msg-erro").html("Desculpe, Aula já cadastrado !");
@@ -219,18 +249,18 @@ $(function () {
             } else if (data == "LancheAtualizado") {
                 jQuery(".msg-erro").html("Lanche Atualizado com Sucesso!");
                 jQuery(".msg-erro").show();
-                setTimeout("jQuery('msg-erro').hide();location.href ='/maruge/public/coordenacao/lanche_inf';", 2000);
+                setTimeout("jQuery('msg-erro').hide();location.href ='/coordenacao/lanche_inf';", 2000);
 
             } else if (data == "jaexistereserva") {
                 jQuery(".msg-erro").html("Desculpe, já existe uma pré-matrícula pra esse aluno.");
                 jQuery(".msg-erro").show();
-                setTimeout("jQuery('msg-erro').hide();location.href ='/maruge/public/coordenacao/aluno_pre_matricula_lista';", 2000);
+                setTimeout("jQuery('msg-erro').hide();location.href ='/coordenacao/aluno_pre_matricula_lista';", 2000);
 
             } /*Codição se o update da disciplina for realizada com sucesso*/
             else if (data == "disciplinaatualizada") {
                 jQuery(".msg-exito").html("Disciplina atualizada com sucesso !");
                 jQuery(".msg-exito").show();
-                setTimeout("jQuery('msg-exito').hide();location.href ='/maruge/public/coordenacao/disciplina_inf';", 2000);
+                setTimeout("jQuery('msg-exito').hide();location.href ='/coordenacao/disciplina_inf';", 2000);
                 /*Codição se não informar 2 campos ao mesmo tempo*/
             } else if (data == "2campos") {
                 jQuery(".msg-erro").html("Não é possivel digitar e selecionar disciplinas, por favor digite ou selecione a disciplina!");
@@ -240,14 +270,14 @@ $(function () {
             } else if (data == "turmaatualizada") {
                 jQuery(".msg-exito").html("Turma atualizada com sucesso !");
                 jQuery(".msg-exito").show();
-                setTimeout("jQuery('msg-exito').hide();location.href ='/maruge/public/coordenacao/turma_inf';", 2000);
+                setTimeout("jQuery('msg-exito').hide();location.href ='/coordenacao/turma_inf';", 2000);
             
     
     
     } else if (data == "Aulaatualizada") {
                 jQuery(".msg-exito").html("Aula atualizada com sucesso !");
                 jQuery(".msg-exito").show();
-                setTimeout("jQuery('msg-exito').hide();location.href ='/maruge/public/coordenacao/aulas_inf';", 2000);
+                setTimeout("jQuery('msg-exito').hide();location.href ='/coordenacao/aulas_inf';", 2000);
 
 
 
@@ -282,7 +312,7 @@ $(function () {
                 jQuery(".msg-exito").html("Pagamento Recebido com Sucesso");
                 jQuery(".msg-exito").show();
                 setTimeout("jQuery('msg-exito').hide();location.reload($(this).attr('href'))", 1000);
-              //  window.open("/maruge/public/coordenacao/recibo_mensalidade/}}","","height=400,width=400,left=40,top=40");
+              //  window.open("/coordenacao/recibo_mensalidade/}}","","height=400,width=400,left=40,top=40");
               } 
             
   
@@ -292,7 +322,7 @@ $(function () {
             else if (data == "codNaoinformado") {
                 jQuery(".msg-erro").html("Código de Barras ou RA não informado!");
                 jQuery(".msg-erro").show();
-                setTimeout("jQuery('msg-erro').hide();location.href ='/maruge/public/coordenacao/financeiro_receber';", 2000);
+                setTimeout("jQuery('msg-erro').hide();location.href ='/coordenacao/financeiro_receber';", 2000);
                 /*Codição se não informar o nome da disciplina para update*/
             } 
             
@@ -314,7 +344,7 @@ $(function () {
             else if (data == "FuncionarioAtualizado") {
                 jQuery(".msg-exito").html("Funcionário atualizado com sucesso!");
                 jQuery(".msg-exito").show();
-                setTimeout("jQuery('msg-exito').hide();location.href ='/maruge/public/coordenacao/funcionario_inf';", 2000);
+                setTimeout("jQuery('msg-exito').hide();location.href ='/coordenacao/funcionario_inf';", 2000);
             }
             /*Codição frequencia com sucesso*/
             else if (data == "FrequenciaRealizada") {
@@ -333,14 +363,14 @@ $(function () {
             else if (data == "UsuarioAtualizado") {
                 jQuery(".msg-exito").html("Usuário atualizado com sucesso!");
                 jQuery(".msg-exito").show();
-                setTimeout("jQuery('msg-exito').hide();location.href ='/maruge/public/coordenacao/usuario_inf';", 2000);
+                setTimeout("jQuery('msg-exito').hide();location.href ='/coordenacao/usuario_inf';", 2000);
             }
 
             /*Codição quando uma reserva for realizada*/
             else if (data == "ReservaAluno") {
                 jQuery(".msg-exito").html("Reseva foi realizada com sucesso !");
                 jQuery(".msg-exito").show();
-                setTimeout("jQuery('msg-exito').hide();location.href ='/maruge/public/coordenacao/aluno_pre_matricula_lista';", 2500);
+                setTimeout("jQuery('msg-exito').hide();location.href ='/coordenacao/aluno_pre_matricula_lista';", 2500);
             }
 
 

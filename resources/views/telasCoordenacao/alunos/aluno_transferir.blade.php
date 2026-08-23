@@ -1,19 +1,19 @@
-@extends('telasCoordenacao.painel')  
-@section('conteudo')
+@extends('layouts.app')  
+@section('content')
 <div class="titulo-pagina">
-    <h1 class="titulo-pagina">{{$titulo or 'Transferir Aluno'}}</h1>
+    <h1 class="titulo-pagina">{{ $titulo ?? 'Transferir Aluno' }}</h1>
 </div> 
 <div class="caminho-din">
     <div class="preloader" style="display: none"> Enviando os dados...</div>  
     <div class="alert alert-success msg-exito" role="alert" style="display: none"></div>
     <div class="alert alert-warning msg-erro" role="alert" style="display: none"></div> 
     <div class="formularios">    
-        @if(count($errors)>0)
-        @foreach($errors->all()as $error)
+        @if((isset($errors) ? count($errors) : 0)>0)
+        @foreach($errors->all() as $error)
         {{$error}}
         @endforeach
         @endif
-        <form class="form form-search form-Nu formularios" action="/maruge/public/coordenacao/aluno_transferir/{{$aluno->idAluno}}" method="POST">
+        <form class="form form-search form-Nu formularios" action="/coordenacao/aluno_transferir/{{$aluno->idAluno}}" method="POST">
                   <div class="row"> 
                         <!--PRIMEIRA LINHA REPRESENTANDO TODOS OS CAMPOS NECESSARIOS PARA CADASTRAR UM NOVO USUARIO-->
                                     <div class="col-md-5">
@@ -27,15 +27,19 @@
                     <div class="col-md-3">
                         <div class="form-group">
                                <label for="idTurma">Turma Atual:</label>
-                                    <select class="form-control" name="Ultima_Turma">       
-                                        <option value="{{$turma->NomeTurma}}"  >{{$turma->NomeTurma or old('')}}</option>
+                                    <div class="select-wrapper">
+    <select class="form-control maruge-select" name="Ultima_Turma">       
+                                         <option value="{{ $aluno->NomeTurma ?? 'Turma Atual' }}">{{ $aluno->NomeTurma ?? 'Turma Atual' }}</option>
                                     </select>
+    <i data-lucide="chevron-down" class="select-icon"></i>
+</div>
                         </div>
                     </div>             
                     <div class="col-md-3">
                         <div class="form-group">
                                <label for="idTurma">Transferir para a turma:</label>
-                                    <select class="form-control" name="tb_turmas_idTurmas">
+                                    <div class="select-wrapper">
+    <select class="form-control maruge-select" name="tb_turmas_idTurmas">
                                         <option></option>
                                         @forelse($turmas as $turma)  
                                         <option value="{{$turma->idTurmas}}">{{$turma->NomeTurma}}</option>
@@ -43,14 +47,19 @@
                                         @endforelse 
                                        
                                     </select>
+    <i data-lucide="chevron-down" class="select-icon"></i>
+</div>
                         </div>
                     </div>
                     <div class="col-md-2">
                         <div class="form-group">
                             <label for="SituacaoAluno ">Situação:</label>
-                                    <select class="form-control" name="SituacaoAluno">
+                                    <div class="select-wrapper">
+    <select class="form-control maruge-select" name="SituacaoAluno">
                                      <option> INATIVO </option>
                                     </select>
+    <i data-lucide="chevron-down" class="select-icon"></i>
+</div>
                         </div>
                     </div>
                    <div class="col-md-2">

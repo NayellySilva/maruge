@@ -8,13 +8,13 @@
     <div class="alert alert-success msg-exito" role="alert" style="display: none"></div>
     <div class="alert alert-warning msg-erro" role="alert" style="display: none"></div> 
     <div class="formularios">    
-        @if(count($errors)>0)
-        @foreach($errors->all()as $error)
+        @if((isset($errors) ? count($errors) : 0)>0)
+        @foreach($errors->all() as $error)
         {{$error}}
         @endforeach
         @endif
         @if(isset($usuario))
-        <form class="form form-search form-Nu formularios" action="/maruge/public/coordenacao/usuario_editar/{{$usuario->idUsuario}}" method="POST">
+        <form class="form form-search form-Nu formularios" action="/coordenacao/usuario_editar/{{$usuario->idUsuario}}" method="POST">
       
             <div class="row"> 
                         <!--PRIMEIRA LINHA REPRESENTANDO TODOS OS CAMPOS NECESSARIOS PARA CADASTRAR UM NOVO USUARIO-->
@@ -27,23 +27,24 @@
                         </div>
                     </div>
             
-            
-            
             @else
-            <form class="form form-search form-Nu formularios" action="/maruge/public/coordenacao/usuario_cad" method="POST" send="/maruge/public/coordenacao/usuario_cad">
+            <form class="form form-search form-Nu formularios" action="/coordenacao/usuario_cad" method="POST" send="/coordenacao/usuario_cad">
                              <!--PRIMEIRA LINHA REPRESENTANDO TODOS OS CAMPOS NECESSARIOS PARA CADASTRAR UM NOVO USUARIO-->
                                  
                               <div class="row"> 
                              <div class="col-md-5">
                         <div class="form-group">
                             <label for="NomeFuncionario">Selecione o novo Usuário:</label>
-                            <select class="form-control" name="Usuario">
-                                <option></option>
-                                @forelse($funcionarios as $funcionario)  
-                                <option value="{{$funcionario->idFuncionarios}}">{{$funcionario->NomeFuncionario}}</option>
-                                @empty
-                                @endforelse 
-                           </select>
+                            <div class="relative">
+                                <select name="Usuario" class="w-full h-11 appearance-none bg-white border border-[#e3e8e6] rounded-xl px-4 pr-10 text-sm text-[#0a241e] focus:outline-none focus:border-[#008a4b] focus:ring-2 focus:ring-[#008a4b]/10 cursor-pointer transition-all">
+                                    <option value="" disabled selected>Selecione o Usuário</option>
+                                    @forelse($funcionarios as $funcionario)  
+                                        <option value="{{$funcionario->idFuncionarios}}">{{$funcionario->NomeFuncionario}}</option>
+                                    @empty
+                                    @endforelse 
+                                </select>
+                                <i data-lucide="chevron-down" class="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#95aba5] pointer-events-none"></i>
+                            </div>
                         </div>
                     </div>
                    @endif 
@@ -58,27 +59,27 @@
                     <div class="col-md-2">
                         <div class="form-group">
                             <label for="Situacao">Situação:</label>
-                            <select class="form-control" name="Situacao">
-                               <!-- 
-                                <option >{{$usuario->Situacao or old('Situacao')}}</option>
-                               -->
-                               <option> </option>
-                                <option> ATIVO </option>
-                                <option> INATIVO</option>
-                            </select>
+                            <div class="relative">
+                                <select name="Situacao" class="w-full h-11 appearance-none bg-white border border-[#e3e8e6] rounded-xl px-4 pr-10 text-sm text-[#0a241e] focus:outline-none focus:border-[#008a4b] focus:ring-2 focus:ring-[#008a4b]/10 cursor-pointer transition-all">
+                                    <option value="" disabled selected>Selecione</option>
+                                    <option value="ATIVO"> ATIVO </option>
+                                    <option value="INATIVO"> INATIVO</option>
+                                </select>
+                                <i data-lucide="chevron-down" class="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#95aba5] pointer-events-none"></i>
+                            </div>
                         </div>
                     </div>
                     <div class="col-md-2">
                         <div class="form-group">
                             <label for="Nivel">Nível:</label>
-                            <select class="form-control" name="Nivel">
-                                <!--
-                                <option >{{$usuario->Nivel or old('Nivel')}}</option>
-                              -->
-                                <option> </option>
-                                <option>COORDENACÃO</option>
-                                <option>DOCENTE</option>
-                            </select>
+                            <div class="relative">
+                                <select name="Nivel" class="w-full h-11 appearance-none bg-white border border-[#e3e8e6] rounded-xl px-4 pr-10 text-sm text-[#0a241e] focus:outline-none focus:border-[#008a4b] focus:ring-2 focus:ring-[#008a4b]/10 cursor-pointer transition-all">
+                                    <option value="" disabled selected>Selecione o Nível</option>
+                                    <option value="COORDENACÃO">COORDENACÃO</option>
+                                    <option value="DOCENTE">DOCENTE</option>
+                                </select>
+                                <i data-lucide="chevron-down" class="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#95aba5] pointer-events-none"></i>
+                            </div>
                         </div>
                     </div>
                 </div>
