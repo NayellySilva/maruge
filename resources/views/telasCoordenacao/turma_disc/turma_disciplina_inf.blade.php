@@ -156,7 +156,14 @@
                             <td class="px-6 py-4 text-sm text-[#0a241e]">{{ data_get($vinculo, 'NomeFuncionario', '-') }}</td>
                             <td class="px-6 py-4 text-sm text-center">
                                 <div class="flex justify-center gap-1.5">
-                                    <a href="{{ url('/coordenacao/turma_disciplina_cad') }}" class="inline-flex items-center justify-center p-2 rounded-lg text-[#5c706b] hover:text-[#008a4b] hover:bg-[#ecfdf5] transition-all" title="Editar Lotação">
+                                    @php
+                                        $editParams = http_build_query([
+                                            'idTurmas' => data_get($vinculo, 'tb_turmas_idTurmas'),
+                                            'idDisciplinas' => data_get($vinculo, 'tb_disciplinas_idDisciplinas'),
+                                            'idFuncionarios' => data_get($vinculo, 'tb_funcionarios_idFuncionarios')
+                                        ]);
+                                    @endphp
+                                    <a href="{{ url('/coordenacao/turma_disc/turma_disciplina_cad?' . $editParams) }}" class="inline-flex items-center justify-center p-2 rounded-lg text-[#5c706b] hover:text-[#008a4b] hover:bg-[#ecfdf5] transition-all" title="Editar Lotação">
                                         <i data-lucide="pencil" class="w-4 h-4"></i>
                                     </a>
                                     <a href="{{ url('/coordenacao/turma_disciplina/deletar/' . ($vinculo->idTurmas_Disciplinas ?? $vinculo->tb_turmas_idTurmas)) }}" onclick="return confirm('Deseja realmente remover este vínculo?');" class="inline-flex items-center justify-center p-2 rounded-lg text-[#5c706b] hover:text-red-600 hover:bg-red-50 transition-all group" title="Remover Vínculo">

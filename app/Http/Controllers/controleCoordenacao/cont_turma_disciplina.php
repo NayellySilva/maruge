@@ -34,8 +34,12 @@ class cont_turma_disciplina extends Controller {
         $disciplinas = tb_disciplina::listagemDeDisciplinas();
         $professores = tb_funcionario::funcionarioDocentes();
         $disciplinasDoProfessor = tb_turmas_disciplinas::disciplinasDoProfessor();
-        //dd($disciplinasDoProfessor);
-        return view('telasCoordenacao.turma_disc.turma_disciplina_cad', compact('turmas','turmasLocadas', 'disciplinas', 'professores','disciplinasDoProfessor'));
+
+        $selTurma = request()->get('idTurmas');
+        $selDisciplina = request()->get('idDisciplinas');
+        $selProfessor = request()->get('idFuncionarios');
+
+        return view('telasCoordenacao.turma_disc.turma_disciplina_cad', compact('turmas','turmasLocadas', 'disciplinas', 'professores','disciplinasDoProfessor', 'selTurma', 'selDisciplina', 'selProfessor'));
     }
 // Colocando professor nas turmas com suas disciplinas (Suporte a seleção múltipla)
     public function postvincularProfessor() {

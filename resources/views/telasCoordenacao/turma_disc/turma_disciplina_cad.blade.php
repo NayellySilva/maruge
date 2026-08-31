@@ -89,12 +89,31 @@
             <div style="display: flex; flex-direction: row; gap: 24px; width: 100%; align-items: flex-start;">
                 
                 <!-- 1. Nome da Turma (Multi-select Customizado) -->
+                @php
+                    $selectedTurmas = (array) old('idTurmas', isset($selTurma) && $selTurma ? [$selTurma] : []);
+                    $checkedTurmaNames = [];
+                    foreach($turmas as $t) {
+                        if (in_array($t->idTurmas, $selectedTurmas)) {
+                            $checkedTurmaNames[] = $t->NomeTurma;
+                        }
+                    }
+                    if (count($checkedTurmaNames) === 0) {
+                        $labelTurmasText = 'Selecione a turma...';
+                        $labelTurmasClass = 'text-[#95aba5]';
+                    } elseif (count($checkedTurmaNames) === 1) {
+                        $labelTurmasText = $checkedTurmaNames[0];
+                        $labelTurmasClass = 'text-[#0a241e] font-semibold';
+                    } else {
+                        $labelTurmasText = count($checkedTurmaNames) . ' selecionada(s)';
+                        $labelTurmasClass = 'text-[#0a241e] font-semibold';
+                    }
+                @endphp
                 <div style="flex: 1 1 33%; min-width: 0;" class="relative flex flex-col gap-1.5" id="dropdown-container-turmas">
                     <label class="text-sm font-medium text-[#0a241e]">Nome da Turma:</label>
                     
                     <div onclick="toggleMultiDropdown('dropdown-menu-turmas', 'chevron-turmas')" 
                          class="w-full flex items-center justify-between bg-[#f8faf9] border border-[#e3e8e6] hover:border-[#008a4b]/50 rounded-2xl px-4 py-2.5 transition-all cursor-pointer shadow-2xs">
-                        <span id="label-turmas" class="text-sm text-[#95aba5] truncate">Selecione a turma...</span>
+                        <span id="label-turmas" class="text-sm {{ $labelTurmasClass }} truncate">{{ $labelTurmasText }}</span>
                         <div id="chevron-turmas" class="text-[#95aba5] transition-transform duration-200 shrink-0 ml-2">
                             <i data-lucide="chevron-down" class="w-4 h-4"></i>
                         </div>
@@ -113,8 +132,11 @@
 
                         <div class="overflow-y-auto custom-scroll flex flex-col gap-1 pr-1 grow min-h-0">
                             @foreach($turmas as $turma)
+                                @php
+                                    $isTurmaChecked = in_array($turma->idTurmas, $selectedTurmas);
+                                @endphp
                                 <label class="option-turma flex items-center gap-2.5 p-2 hover:bg-[#ecfdf5] rounded-xl transition-colors cursor-pointer text-xs text-[#0a241e]">
-                                    <input type="checkbox" name="idTurmas[]" value="{{ $turma->idTurmas }}" data-name="{{ $turma->NomeTurma }}" onchange="updateDropdownLabel('checkbox-turma', 'label-turmas', 'Selecione a turma...')" class="checkbox-turma rounded border-gray-300 text-[#008a4b] focus:ring-[#008a4b] w-4 h-4 shrink-0">
+                                    <input type="checkbox" name="idTurmas[]" value="{{ $turma->idTurmas }}" data-name="{{ $turma->NomeTurma }}" {{ $isTurmaChecked ? 'checked' : '' }} onchange="updateDropdownLabel('checkbox-turma', 'label-turmas', 'Selecione a turma...')" class="checkbox-turma rounded border-gray-300 text-[#008a4b] focus:ring-[#008a4b] w-4 h-4 shrink-0">
                                     <span class="option-title font-medium">{{ $turma->NomeTurma }}</span>
                                 </label>
                             @endforeach
@@ -123,12 +145,31 @@
                 </div>
 
                 <!-- 2. Nome da Disciplina (Multi-select Customizado) -->
+                @php
+                    $selectedDisciplinas = (array) old('idDisciplinas', isset($selDisciplina) && $selDisciplina ? [$selDisciplina] : []);
+                    $checkedDiscNames = [];
+                    foreach($disciplinas as $d) {
+                        if (in_array($d->idDisciplinas, $selectedDisciplinas)) {
+                            $checkedDiscNames[] = $d->NomeDisciplina;
+                        }
+                    }
+                    if (count($checkedDiscNames) === 0) {
+                        $labelDiscText = 'Selecione a disciplina...';
+                        $labelDiscClass = 'text-[#95aba5]';
+                    } elseif (count($checkedDiscNames) === 1) {
+                        $labelDiscText = $checkedDiscNames[0];
+                        $labelDiscClass = 'text-[#0a241e] font-semibold';
+                    } else {
+                        $labelDiscText = count($checkedDiscNames) . ' selecionada(s)';
+                        $labelDiscClass = 'text-[#0a241e] font-semibold';
+                    }
+                @endphp
                 <div style="flex: 1 1 33%; min-width: 0;" class="relative flex flex-col gap-1.5" id="dropdown-container-disciplinas">
                     <label class="text-sm font-medium text-[#0a241e]">Nome da Disciplina:</label>
                     
                     <div onclick="toggleMultiDropdown('dropdown-menu-disciplinas', 'chevron-disciplinas')" 
                          class="w-full flex items-center justify-between bg-[#f8faf9] border border-[#e3e8e6] hover:border-[#008a4b]/50 rounded-2xl px-4 py-2.5 transition-all cursor-pointer shadow-2xs">
-                        <span id="label-disciplinas" class="text-sm text-[#95aba5] truncate">Selecione a disciplina...</span>
+                        <span id="label-disciplinas" class="text-sm {{ $labelDiscClass }} truncate">{{ $labelDiscText }}</span>
                         <div id="chevron-disciplinas" class="text-[#95aba5] transition-transform duration-200 shrink-0 ml-2">
                             <i data-lucide="chevron-down" class="w-4 h-4"></i>
                         </div>
@@ -147,8 +188,11 @@
 
                         <div class="overflow-y-auto custom-scroll flex flex-col gap-1 pr-1 grow min-h-0">
                             @foreach($disciplinas as $disciplina)
+                                @php
+                                    $isDiscChecked = in_array($disciplina->idDisciplinas, $selectedDisciplinas);
+                                @endphp
                                 <label class="option-disciplina flex items-center gap-2.5 p-2 hover:bg-[#ecfdf5] rounded-xl transition-colors cursor-pointer text-xs text-[#0a241e]">
-                                    <input type="checkbox" name="idDisciplinas[]" value="{{ $disciplina->idDisciplinas }}" data-name="{{ $disciplina->NomeDisciplina }}" onchange="updateDropdownLabel('checkbox-disciplina', 'label-disciplinas', 'Selecione a disciplina...')" class="checkbox-disciplina rounded border-gray-300 text-[#008a4b] focus:ring-[#008a4b] w-4 h-4 shrink-0">
+                                    <input type="checkbox" name="idDisciplinas[]" value="{{ $disciplina->idDisciplinas }}" data-name="{{ $disciplina->NomeDisciplina }}" {{ $isDiscChecked ? 'checked' : '' }} onchange="updateDropdownLabel('checkbox-disciplina', 'label-disciplinas', 'Selecione a disciplina...')" class="checkbox-disciplina rounded border-gray-300 text-[#008a4b] focus:ring-[#008a4b] w-4 h-4 shrink-0">
                                     <span class="option-title font-medium">{{ $disciplina->NomeDisciplina }}</span>
                                 </label>
                             @endforeach
@@ -157,16 +201,23 @@
                 </div>
 
                 <!-- 3. Nome do Professor (Single-select Customizado no MESMO Estilo) -->
+                @php
+                    $selectedProfId = old('idFuncionarios', $selProfessor ?? '');
+                    $selectedProfObj = $selectedProfId ? $professores->firstWhere('idFuncionarios', $selectedProfId) : null;
+                    $selectedProfName = $selectedProfObj ? $selectedProfObj->NomeFuncionario : '';
+                @endphp
                 <div style="flex: 1 1 34%; min-width: 0;" class="relative flex flex-col gap-1.5" id="dropdown-container-professor">
                     <label class="text-sm font-medium text-[#0a241e]">Nome do Professor:</label>
                     
                     <!-- Input Oculto para submissão do formulário -->
-                    <input type="hidden" id="idFuncionarios" name="idFuncionarios" required>
+                    <input type="hidden" id="idFuncionarios" name="idFuncionarios" value="{{ $selectedProfId }}" required>
 
                     <!-- Trigger Box no MESMO Estilo Visual -->
                     <div onclick="toggleMultiDropdown('dropdown-menu-professor', 'chevron-professor')" 
                          class="w-full flex items-center justify-between bg-[#f8faf9] border border-[#e3e8e6] hover:border-[#008a4b]/50 rounded-2xl px-4 py-2.5 transition-all cursor-pointer shadow-2xs">
-                        <span id="label-professor" class="text-sm text-[#95aba5] truncate">Selecione o professor...</span>
+                        <span id="label-professor" class="text-sm {{ $selectedProfName ? 'text-[#0a241e] font-semibold' : 'text-[#95aba5]' }} truncate">
+                            {{ $selectedProfName ?: 'Selecione o professor...' }}
+                        </span>
                         <div id="chevron-professor" class="text-[#95aba5] transition-transform duration-200 shrink-0 ml-2">
                             <i data-lucide="chevron-down" class="w-4 h-4"></i>
                         </div>
@@ -298,6 +349,15 @@
             document.querySelectorAll('[id^="chevron-"]').forEach(c => c.classList.remove('rotate-180'));
         }
     });
+
+    function initDropdownLabelsNow() {
+        updateDropdownLabel('checkbox-turma', 'label-turmas', 'Selecione a turma...');
+        updateDropdownLabel('checkbox-disciplina', 'label-disciplinas', 'Selecione a disciplina...');
+    }
+
+    initDropdownLabelsNow();
+
+    document.addEventListener('DOMContentLoaded', initDropdownLabelsNow);
 </script>
 
 @endsection

@@ -79,31 +79,6 @@
                                class="w-full bg-[#f8faf9] border border-[#e3e8e6] rounded-xl px-4 py-2.5 text-sm text-[#0a241e] placeholder-[#95aba5] focus:outline-none focus:border-[#008a4b] transition-all" 
                                value="{{ $disciplina ? ($disciplina->NomeDisciplina ?? old('NomeDisciplina')) : old('NomeDisciplina') }}" required>
                     </div>
-
-                    <!-- Acordeão para Vincular Turmas -->
-                    <details class="group bg-[#f8faf9] border border-[#e3e8e6] rounded-xl overflow-hidden">
-                        <summary class="flex justify-between items-center px-4 py-3.5 font-medium text-sm text-[#0a241e] cursor-pointer select-none list-none [&::-webkit-details-marker]:hidden">
-                            <span>Vincular a Turmas (Opcional)</span>
-                            <div class="text-[#5c706b] transition-transform duration-200 group-open:rotate-180">
-                                <i data-lucide="chevron-down" class="w-4 h-4"></i>
-                            </div>
-                        </summary>
-                        <div class="px-4 pb-4 pt-2 border-t border-[#e3e8e6] bg-white">
-                            <!-- Checkboxes de Turmas -->
-                            <div class="grid grid-cols-2 gap-2 max-h-40 overflow-y-auto pr-1">
-                                @foreach($turmasList as $turmaItem)
-                                    <label class="flex items-center gap-2.5 px-3 py-2 rounded-xl hover:bg-[#f8faf9] transition-all cursor-pointer border border-[#e3e8e6]/50 hover:border-[#e3e8e6]">
-                                        <input type="checkbox" name="turmas[]" value="{{ $turmaItem->idTurmas }}" 
-                                               class="w-4 h-4 text-[#008a4b] border-[#e3e8e6] rounded-sm focus:ring-[#008a4b] focus:ring-2">
-                                        <div class="flex flex-col">
-                                            <span class="text-xs font-semibold text-[#0a241e]">{{ $turmaItem->NomeTurma }}</span>
-                                            <span class="text-[10px] text-[#5c706b]">Ano: {{ $turmaItem->AnoLetivo }}</span>
-                                        </div>
-                                    </label>
-                                @endforeach
-                            </div>
-                        </div>
-                    </details>
                 </div>
 
                 <!-- Rodapé do Modal / Botões -->
