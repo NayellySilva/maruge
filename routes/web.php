@@ -383,39 +383,11 @@ Route::get('/coordenacao/declaracoes_{tipo}/{id}', function ($tipo, $id) {
 
 // Rotas para emissão e visualização de Frequências da turma (virtual, mensal, edfisica, entrega, relatorio)
 Route::get('/coordenacao/frequencia_{tipo}/{id}', function ($tipo, $id) {
-    $tiposValidos = ['virtual', 'mensal', 'edfisica', 'entrega', 'relatorio'];
-    abort_if(!in_array($tipo, $tiposValidos), 404);
-
-    try {
-        $turma = \DB::table('tb_turmas')->where('idTurmas', $id)->first();
-    } catch (\Exception $e) { $turma = null; }
-
-    abort_if(!$turma, 404);
-
-    try {
-        $Alunos = \DB::table('tb_aluno')
-            ->join('tb_matriculas', 'tb_matriculas.idMatriculas', '=', 'tb_aluno.tb_matriculas_idMatriculas')
-            ->leftJoin('tb_endereco', 'tb_endereco.idEndereco', '=', 'tb_aluno.tb_endereco_idEndereco')
-            ->where('tb_aluno.tb_turmas_idTurmas', $id)
-            ->select('tb_aluno.*', 'tb_matriculas.RA', 'tb_matriculas.SituacaoAluno', 'tb_endereco.Rua', 'tb_endereco.Numero', 'tb_endereco.Bairro', 'tb_endereco.Cidade', 'tb_endereco.Estado', 'tb_endereco.Fone1')
-            ->orderBy('tb_aluno.NomeAluno')
-            ->get();
-    } catch (\Exception $e) { $Alunos = collect(); }
-
-    try {
-        $escolas = \DB::table('tb_escola')
-            ->leftJoin('tb_endereco', 'tb_endereco.idEndereco', '=', 'tb_escola.tb_endereco_idEndereco')
-            ->select('tb_escola.*', 'tb_endereco.*')
-            ->get();
-    } catch (\Exception $e) { $escolas = collect(); }
-
-    $meses = [1 => 'JANEIRO', 2 => 'FEVEREIRO', 3 => 'MARÇO', 4 => 'ABRIL', 5 => 'MAIO', 6 => 'JUNHO', 7 => 'JULHO', 8 => 'AGOSTO', 9 => 'SETEMBRO', 10 => 'OUTUBRO', 11 => 'NOVEMBRO', 12 => 'DEZEMBRO'];
-    $mes = $meses[(int)date('n')] ?? date('F');
-    $titulo = 'Frequência ' . ucfirst($tipo) . ' — ' . ($turma->NomeTurma ?? 'Turma');
-
-    $alunos = $Alunos;
-    return view("telasCoordenacao.frequencia.frequencia_{$tipo}",
-        compact('turma', 'Alunos', 'alunos', 'escolas', 'mes', 'titulo'));
+    $method = "frequencia_{$tipo}";
+    if (method_exists(\App\Http\Controllers\controleCoordenacao\cont_frequencias::class, $method)) {
+        return app(\App\Http\Controllers\controleCoordenacao\cont_frequencias::class)->$method($id);
+    }
+    abort(404);
 })->where('id', '[0-9]+');
 
 // Rotas para emissão do Boletim Escolar (Infantil, Fund1, Fund2 ou automático)
@@ -1072,9 +1044,18 @@ Route::get('/coordenacao/cadfuncionario', [cont_funcionario::class, 'novofuncion
 Route::post('/coordenacao/cadfuncionario', [cont_funcionario::class, 'postnovofuncionario']);
 Route::get('/coordenacao/funcionario_cad', [cont_funcionario::class, 'novofuncionario']);
 Route::post('/coordenacao/funcionario_cad', [cont_funcionario::class, 'postnovofuncionario']);
+Route::get('/coordenacao/funcionarios/funcionario_cad', [cont_funcionario::class, 'novofuncionario']);
 Route::get('/coordenacao/funcionario_inf', [cont_funcionario::class, 'funcionario_inf']);
+Route::get('/coordenacao/funcionarios/funcionario_inf', [cont_funcionario::class, 'funcionario_inf']);
+Route::post('/coordenacao/funcionario_pesq', [cont_funcionario::class, 'funcionario_pesq']);
+Route::get('/coordenacao/funcionario_perfil/{id}', [cont_funcionario::class, 'perfil']);
+Route::get('/coordenacao/funcionarios/funcionario_perfil/{id}', [cont_funcionario::class, 'perfil']);
 Route::get('/coordenacao/funcionario_editar/{id}', [cont_funcionario::class, 'editar']);
 Route::post('/coordenacao/funcionario_editar/{id}', [cont_funcionario::class, 'editando']);
+Route::get('/coordenacao/funcionarios/funcionario_editar/{id}', [cont_funcionario::class, 'editar']);
+Route::post('/coordenacao/funcionarios/funcionario_editar/{id}', [cont_funcionario::class, 'editando']);
+Route::get('/coordenacao/funcionario_deletar/{id}', [cont_funcionario::class, 'deletar']);
+Route::get('/coordenacao/funcionarios/funcionario_deletar/{id}', [cont_funcionario::class, 'deletar']);
 Route::get('/coordenacao/cadusuario', [cont_usuario::class, 'novousuario']);
 Route::post('/coordenacao/cadusuario', [cont_usuario::class, 'postnovousuario']);
 Route::get('/coordenacao/usuario_inf', [cont_usuario::class, 'usuario_inf']);
@@ -1164,6 +1145,8 @@ Route::get('/coordenacao/frequencias_filtro', [cont_frequencias::class, 'frequen
 Route::get('/coordenacao/frequencia_virtual/{id}', [cont_frequencias::class, 'frequencia_virtual']);
 Route::get('/coordenacao/frequencia/frequencia_virtual/{id}', [cont_frequencias::class, 'frequencia_virtual']);
 Route::post('/coordenacao/postnovafrequencia', [cont_frequencias::class, 'postnovafrequencia']);
+Route::post('/coordenacao/frequencia_cad', [cont_frequencias::class, 'postnovafrequencia']);
+Route::post('/coordenacao/frequencia/frequencia_cad', [cont_frequencias::class, 'postnovafrequencia']);
 Route::get('/coordenacao/frequencia_relatorio/{id}', [cont_frequencias::class, 'frequencia_relatorio']);
 Route::get('/coordenacao/frequencia/frequencia_relatorio/{id}', [cont_frequencias::class, 'frequencia_relatorio']);
 Route::get('/coordenacao/frequencia_mensal/{id}', [cont_frequencias::class, 'frequencia_mensal']);

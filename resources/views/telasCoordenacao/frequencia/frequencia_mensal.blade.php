@@ -3,7 +3,7 @@
         <title>{{$titulo}}</title>
         <style media="print">
             .botao {
-                display: none;
+                display: none !important;
             }
         </style>
         <!-- CSS Personalizado para o Painel -->
@@ -12,8 +12,24 @@
         <link rel="stylesheet" href="{{asset('css/reset.css')}}">
     </head>
     <body>
-        <!-- Botão de impressão (ocultado automaticamente no modo de impressão) -->
-        <button type="button" value="Imprimir" onClick="window.print()" class="botao btn-imprimir"> Imprimir</button>
+        <!-- Controles de Tela (Ocultados ao Imprimir) -->
+        <div class="botao" style="margin-bottom: 15px; display: flex; align-items: center; justify-content: space-between; gap: 10px;">
+            <button type="button" value="Imprimir" onClick="window.print()" class="btn-imprimir"> Imprimir Ficha Mensal</button>
+            
+            @php
+                $mesNumSelect = $mesNum ?? date('m');
+                $anoNumSelect = $anoNum ?? date('Y');
+                $turmaIdSelect = $turma->idTurmas ?? 0;
+            @endphp
+            <div style="display: flex; items-center; gap: 8px; font-family: sans-serif; font-size: 13px;">
+                <label>Mês:</label>
+                <select onchange="window.location.href='{{ url('/coordenacao/frequencia_mensal') }}/{{ $turmaIdSelect }}?mes='+this.value+'&ano={{ $anoNumSelect }}'" style="padding: 4px 8px; border-radius: 6px; border: 1px solid #ccc;">
+                    @foreach(['01'=>'01 - Janeiro', '02'=>'02 - Fevereiro', '03'=>'03 - Março', '04'=>'04 - Abril', '05'=>'05 - Maio', '06'=>'06 - Junho', '07'=>'07 - Julho', '08'=>'08 - Agosto', '09'=>'09 - Setembro', '10'=>'10 - Outubro', '11'=>'11 - Novembro', '12'=>'12 - Dezembro'] as $mK => $mV)
+                        <option value="{{ $mK }}" {{ $mesNumSelect == $mK ? 'selected' : '' }}>{{ $mV }}</option>
+                    @endforeach
+                </select>
+            </div>
+        </div>
 
         <table class="timbre-horizontal">
             <tr>
@@ -39,98 +55,67 @@
         <hr class="linha">   
         
        <table class="table-striped table-bordered mapa" >    
-            <thead  >
+            <thead>
                 <tr>        
-                    <th width="80"><center>Nº</center></th>
-                    <th width="80"><center>RA</center></th>
-                    <th >ALUNO</th>
-                    <th width="21">01</th>  
-                    <th width="21">02</th>  
-                    <th width="21">03</th>  
-                    <th width="21">04</th>  
-                    <th width="21">05</th>  
-                    <th width="21">06</th>  
-                    <th width="21">07</th>  
-                    <th width="21">08</th>  
-                    <th width="21">09</th>  
-                    <th width="21">10</th>  
-                    <th width="21">11</th>  
-                    <th width="21">12</th>  
-                    <th width="21">13</th>  
-                    <th width="21">14</th>  
-                    <th width="21">15</th>  
-                    <th width="21">16</th>  
-                    <th width="21">17</th>  
-                    <th width="21">18</th>  
-                    <th width="21">19</th>  
-                    <th width="21">20</th>  
-                    <th width="21">21</th>  
-                    <th width="21">22</th>  
-                    <th width="21">23</th>  
-                    <th width="21">24</th>  
-                    <th width="21">25</th>  
-                    <th width="21">26</th>  
-                    <th width="21">27</th>  
-                    <th width="21">28</th>  
-                    <th width="21">29</th>  
-                    <th width="21">30</th>  
-                    <th width="21">31</th>  
+                    <th width="40"><center>Nº</center></th>
+                    <th width="70"><center>RA</center></th>
+                    <th>ALUNO</th>
+                    @for($d = 1; $d <= 31; $d++)
+                        <th width="21" style="text-align: center; font-size: 11px;">{{ str_pad($d, 2, '0', STR_PAD_LEFT) }}</th>
+                    @endfor
                 </tr>
             </thead> 
             
-            
-                @php
-                $contando = 0;
-                @endphp
-            
-            
+            @php
+            $contando = 0;
+            $frequenciaMatriz = $frequenciaMatriz ?? [];
+            @endphp
             
             @forelse($Alunos as $Aluno)      
-            <tr >
-                
+            <tr>
                  @if (isset ($Aluno))
                     @php
-                    $contando == ($contando++)
+                    $contando++;
                     @endphp
                 <td><center>{{$contando }}</center></td>
                 
                 <td><center>{{$Aluno->RA}}</center></td>
-                <td>{{$Aluno->NomeAluno}}</td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
+                <td>{{ mb_strtoupper($Aluno->NomeAluno) }}</td>
+                
+                <!-- Colunas Consolidadas dos Dias 01 a 31 -->
+                @for($d = 1; $d <= 31; $d++)
+                    @php
+                        $sigla = $frequenciaMatriz[$Aluno->idAluno][$d] ?? '';
+                    @endphp
+                    <td style="text-align: center; font-size: 11px; font-weight: bold; font-family: monospace;">
+                        @if($sigla === 'P')
+                            <span style="color: #008a4b;">P</span>
+                        @elseif($sigla === 'F')
+                            <span style="color: #e11d48;">F</span>
+                        @elseif($sigla === 'J')
+                            <span style="color: #d97706;">J</span>
+                        @elseif($sigla === 'A')
+                            <span style="color: #0284c7;">A</span>
+                        @endif
+                    </td>
+                @endfor
             </tr>
             @endif
             @empty
+                <tr>
+                    <td colspan="34" style="text-align: center; padding: 20px; color: #888;">
+                        Nenhum aluno cadastrado nesta turma.
+                    </td>
+                </tr>
             @endforelse
         </table>
+
+        <!-- Legenda -->
+        <div style="margin-top: 15px; font-family: sans-serif; font-size: 11px; color: #555; display: flex; gap: 15px;">
+            <span><strong style="color: #008a4b;">P</strong>: Presente</span>
+            <span><strong style="color: #e11d48;">F</strong>: Falta</span>
+            <span><strong style="color: #d97706;">J</strong>: Justificado</span>
+            <span><strong style="color: #0284c7;">A</strong>: Atestado</span>
+        </div>
     </body>
 </html>

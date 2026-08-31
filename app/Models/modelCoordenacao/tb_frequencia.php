@@ -5,183 +5,225 @@ namespace App\Models\modelCoordenacao;
 use Illuminate\Database\Eloquent\Model;
 
 class tb_frequencia extends Model {
-   protected $table = 'tb_frequencia';
+    protected $table = 'tb_frequencia';
     protected $primaryKey = 'idfrequencia';
     public $timestamps = false;
-    //Campos que podem ser preenchido com informação do usuario
+
+    // Campos que podem ser preenchidos com informação do usuário
     protected $fillable = [
-        'inf_dia', 'dia', 'mes', 'ano', 'situacao','RA','tb_aluno_idAluno','tb_turmas_idTurmas'
-        ];
-    //Relacionamento com a tabela turma
+        'tb_turmas_idTurmas',
+        'tb_aluno_idAluno',
+        'DataFrequencia',
+        'Dia',
+        'Mes',
+        'Ano',
+        'Presenca',
+        'inf_dia',
+        'dia',
+        'mes',
+        'ano',
+        'situacao',
+        'RA'
+    ];
+
+    // Relacionamento com a tabela turma
     public function turmaAluno() {
         return $this->hasOne('App\Models\modelCoordenacao\tb_turma', 'idTurmas', 'tb_turmas_idTurmas');
     }
-        
-    //Relacionamento com a tabela Aluno
+
+    // Relacionamento com a tabela Aluno
     public function RfrequenciaAluno() {
         return $this->hasOne('App\Models\modelCoordenacao\tb_aluno', 'idAluno', 'tb_aluno_idAluno');
     }
-    //Metodo pra salva nota dos alunos educação infantil 1bim
+
+    // Salva a frequência em lote/matriz no estilo planilha
+    public static function salvarMatrizFrequencia($idTurma, $mes, $ano, array $matrix) {
+        $mesStr = str_pad($mes, 2, '0', STR_PAD_LEFT);
+        $anoStr = (string)$ano;
+
+        \DB::transaction(function() use ($idTurma, $mesStr, $anoStr, $matrix) {
+            foreach ($matrix as $idAluno => $dias) {
+                if (!is_array($dias)) continue;
+
+                // Verifica se o aluno realmente existe na tabela tb_aluno para evitar erro de chave estrangeira
+                $alunoExiste = \DB::table('tb_aluno')->where('idAluno', $idAluno)->exists();
+                if (!$alunoExiste) continue;
+
+                foreach ($dias as $dia => $situacao) {
+                    $diaStr = str_pad($dia, 2, '0', STR_PAD_LEFT);
+                    $dataFreq = "{$diaStr}/{$mesStr}/{$anoStr}";
+                    $val = trim((string)$situacao);
+
+                    if ($val === '') {
+                        \DB::table('tb_frequencia')
+                            ->where('tb_turmas_idTurmas', $idTurma)
+                            ->where('tb_aluno_idAluno', $idAluno)
+                            ->where(function($q) use ($diaStr) {
+                                $q->where('Dia', $diaStr)->orWhere('dia', $diaStr);
+                            })
+                            ->where(function($q) use ($mesStr) {
+                                $q->where('Mes', $mesStr)->orWhere('mes', $mesStr);
+                            })
+                            ->delete();
+                    } else {
+                        $exists = \DB::table('tb_frequencia')
+                            ->where('tb_turmas_idTurmas', $idTurma)
+                            ->where('tb_aluno_idAluno', $idAluno)
+                            ->where(function($q) use ($diaStr) {
+                                $q->where('Dia', $diaStr)->orWhere('dia', $diaStr);
+                            })
+                            ->where(function($q) use ($mesStr) {
+                                $q->where('Mes', $mesStr)->orWhere('mes', $mesStr);
+                            })
+                            ->first();
+
+                        if ($exists) {
+                            \DB::table('tb_frequencia')
+                                ->where('tb_turmas_idTurmas', $idTurma)
+                                ->where('tb_aluno_idAluno', $idAluno)
+                                ->where(function($q) use ($diaStr) {
+                                    $q->where('Dia', $diaStr)->orWhere('dia', $diaStr);
+                                })
+                                ->where(function($q) use ($mesStr) {
+                                    $q->where('Mes', $mesStr)->orWhere('mes', $mesStr);
+                                })
+                                ->update([
+                                    'DataFrequencia' => $dataFreq,
+                                    'Presenca'       => $val,
+                                    'Dia'            => $diaStr,
+                                    'Mes'            => $mesStr,
+                                    'Ano'            => $anoStr,
+                                ]);
+                        } else {
+                            \DB::table('tb_frequencia')->insert([
+                                'tb_turmas_idTurmas' => $idTurma,
+                                'tb_aluno_idAluno'   => $idAluno,
+                                'DataFrequencia'     => $dataFreq,
+                                'Dia'                => $diaStr,
+                                'Mes'                => $mesStr,
+                                'Ano'                => $anoStr,
+                                'Presenca'           => $val,
+                            ]);
+                        }
+                    }
+                }
+            }
+        });
+
+        return true;
+    }
+
+    // Metodo pra salvar formulário tradicional de chamada
     public static function salvandoFrequencia($dadosForm) {
-        $count = count($dadosForm["RA"]); // CRIANDO UM CONTADO COM REFERENCIAS AOS RA DOS ALUNOS
-        if ($count > 0) { // SE CONTE FOR MAIOR QUE ZERO ELE ENTRA NO FOR
-            $frequencia = [];   // CRIANDO UM ARRAY NOVO PRA FICA RECEBENDO DADOS DOS ARRAYS
+        $count = count($dadosForm["RA"] ?? []);
+        if ($count > 0) {
             for ($i = 0; $i < $count; $i++) {
                 if (!empty($dadosForm["RA"][$i])) {
-                    $frequencia = [// ARRAY RECEBENDO OS DADOS DO FOR
-                        'tb_turmas_idTurmas' => $dadosForm["tb_turmas_idTurmas"][$i],
-                        'tb_aluno_idAluno' => $dadosForm["tb_aluno_idAluno"][$i],
-                        'RA' => $dadosForm["RA"][$i],
-                        'inf_dia' => $dadosForm["inf_dia"][$i],
-                        'dia' => $dadosForm["dia"],//[$i],
-                        'mes' => $dadosForm["mes"],//[$i],
-                        'ano' => $dadosForm["ano"][$i],
-                        'situacao' => $dadosForm["situacao"][$i],
-                    ];
-                    $contador = tb_frequencia::select()// buscando Inf_dia/turma e aluno para verificar se a chamada ja foi realizada , se tive realizada ela vai atualizar.
-                           ->select('tb_frequencia.*')
-                            ->where('tb_turmas_idTurmas', '=', $dadosForm["tb_turmas_idTurmas"][$i])
-                            ->where('tb_aluno_idAluno', '=', $dadosForm["tb_aluno_idAluno"][$i])
-                           // ->where('inf_dia', '=', $dadosForm["inf_dia"][$i])
-                            ->where('dia', '=', $dadosForm["dia"])
-                            ->where('mes', '=', $dadosForm["mes"])
-                            ->count();
-                    if ($contador >= 1) {// se a busca acima retorna verdadeiro, ou seja estive dados ele tem que pegar os dados e atualizar
-                        $atualizando[] = tb_frequencia::select()
-                                ->select('tb_frequencia.*')
-                                ->where('tb_turmas_idTurmas', '=', $dadosForm["tb_turmas_idTurmas"][$i])
-                                ->where('tb_aluno_idAluno', '=', $dadosForm["tb_aluno_idAluno"][$i])
-                                ->where('dia', '=', $dadosForm["dia"])
-                                ->where('mes', '=', $dadosForm["mes"])
-                                ->update($frequencia);
-                    } else { // salva as notas caso não exista um disciplina na turma vinculada ao aluno.
-                        tb_frequencia::create($frequencia);// SALVANDO OS DADOS NO BANCO
+                    $idTurma = $dadosForm["tb_turmas_idTurmas"][$i] ?? null;
+                    $idAluno = $dadosForm["tb_aluno_idAluno"][$i] ?? null;
+                    
+                    $diaRaw = is_array($dadosForm["dia"] ?? null) ? ($dadosForm["dia"][$i] ?? date('d')) : ($dadosForm["dia"] ?? date('d'));
+                    $mesRaw = is_array($dadosForm["mes"] ?? null) ? ($dadosForm["mes"][$i] ?? date('m')) : ($dadosForm["mes"] ?? date('m'));
+                    $anoRaw = is_array($dadosForm["ano"] ?? null) ? ($dadosForm["ano"][$i] ?? date('Y')) : ($dadosForm["ano"] ?? date('Y'));
+
+                    $diaStr = str_pad((string)$diaRaw, 2, '0', STR_PAD_LEFT);
+                    $mesStr = str_pad((string)$mesRaw, 2, '0', STR_PAD_LEFT);
+                    $anoStr = (string)$anoRaw;
+                    $situacao = $dadosForm["situacao"][$i] ?? 'PRESENTE';
+
+                    if ($idTurma && $idAluno) {
+                        self::salvarMatrizFrequencia($idTurma, $mesStr, $anoStr, [
+                            $idAluno => [
+                                $diaStr => $situacao
+                            ]
+                        ]);
                     }
                 }
             }
             return "FrequenciaRealizada";
         }
-    }  
-    
-    
-    
-    
-    
-    
-    
-        //Metodo que filtra o aluno por turma
-   // Buscando a frequencia do aluno, referente a mes informada no parametro
-    public static function Busca_Frequencia_do_Aluno($idAluno,$mes) {
-        return tb_frequencia::select()
-                       ->select('tb_frequencia.mes')
-                       ->where('tb_frequencia.tb_aluno_idAluno', '=', $idAluno)
-                       ->where('tb_frequencia.mes', '=', $mes)
-                       ->groupBy('tb_frequencia.mes')
-                       ->get();
     }
-   // Buscando as presença do aluno do aluno, referente a mes informada no parametro
-    public static function Busca_Presenca($idAluno,$mes) {
-                    return tb_frequencia::select()
-                        ->select('tb_frequencia.situacao')
-                        ->where('tb_frequencia.tb_aluno_idAluno', '=', $idAluno)
-                        ->where('tb_frequencia.mes', '=', $mes)
-                        ->where('tb_frequencia.situacao', '=', "PRESENTE")
-                        ->count();
-    }
-   // Buscando as presença do aluno do aluno, referente a mes informada no parametro
-    public static function Busca_Falta($idAluno,$mes) {
-                    return tb_frequencia::select()
-                        ->select('tb_frequencia.situacao')
-                        ->where('tb_frequencia.tb_aluno_idAluno', '=', $idAluno)
-                        ->where('tb_frequencia.mes', '=', $mes)
-                        ->where('tb_frequencia.situacao', '=', "FALTA")
-                        ->count();
-    }
-   // Buscando as presença do aluno do aluno, referente a mes informada no parametro
-    public static function Busca_Justificado($idAluno,$mes) {
-                    return tb_frequencia::select()
-                        ->select('tb_frequencia.situacao')
-                        ->where('tb_frequencia.tb_aluno_idAluno', '=', $idAluno)
-                        ->where('tb_frequencia.mes', '=', $mes)
-                        ->where('tb_frequencia.situacao', '=', "JUSTIFICADO")
-                        ->count();
-    }
-    
-    
-    
-        //Metodo que busca os alunos e suas faltas
-    public static function buscandoFrequenciadoAluno($idTurma) {       
-         $FrequenciadoAluno = tb_frequencia::select()
-                //->orderBy('NomeAluno')
-                ->join('tb_aluno', 'tb_aluno.idAluno', '=', 'tb_frequencia.tb_aluno_idAluno')
-                ->join('tb_turmas', 'tb_turmas.idTurmas', '=', 'tb_frequencia.tb_turmas_idTurmas')
-                ->select('tb_frequencia.*')
-                ->where('tb_frequencia.tb_turmas_idTurmas', $idTurma)
-              //  ->where('tb_matriculas.SituacaoAluno', 'ATIVO')
-                ->get();
-        return $FrequenciadoAluno;
-    }
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-        //Metodo que busca os alunos e suas faltas
-    public static function buscandoFrequenciadoAluno222($idTurma) {       
-         $FrequenciadoAluno = tb_frequencia::select()
-                //->orderBy('NomeAluno')
-                ->join('tb_aluno', 'tb_aluno.idAluno', '=', 'tb_frequencia.tb_aluno_idAluno')
-                ->join('tb_turmas', 'tb_turmas.idTurmas', '=', 'tb_frequencia.tb_turmas_idTurmas')
-                ->select('tb_frequencia.*')
-                ->where('tb_frequencia.tb_turmas_idTurmas', $idTurma)
-              //  ->where('tb_matriculas.SituacaoAluno', 'ATIVO')
-                ->get();
-        return $FrequenciadoAluno;
-    }
-    
-    
-    
-    
-    
-        //Metodo que busca os alunos e suas faltas
-    public static function buscandoFrequenciadoAluno2($idTurma) {       
-         $FrequenciadoAluno = tb_aluno::select()
-                ->orderBy('NomeAluno')
-                ->join('tb_matriculas', 'tb_matriculas.idMatriculas', '=', 'tb_aluno.tb_matriculas_idMatriculas')
-                ->join('tb_turmas', 'tb_turmas.idTurmas', '=', 'tb_aluno.tb_turmas_idTurmas')
 
-                ->select('tb_aluno.idAluno', 'tb_aluno.NomeAluno', 'tb_aluno.DataNascimento', 'tb_matriculas.RA', 'tb_matriculas.SituacaoAluno', 'tb_turmas.NomeTurma')
-                ->where('tb_aluno.tb_turmas_idTurmas', $idTurma)
-                ->where('tb_matriculas.SituacaoAluno', 'ATIVO')
-                ->get();
-        return $FrequenciadoAluno;
-
+    // Buscando a frequencia do aluno, referente ao mes informado
+    public static function Busca_Frequencia_do_Aluno($idAluno, $mes) {
+        $mesStr = str_pad($mes, 2, '0', STR_PAD_LEFT);
+        return tb_frequencia::where('tb_aluno_idAluno', '=', $idAluno)
+            ->where(function($q) use ($mesStr) {
+                $q->where('mes', '=', $mesStr)->orWhere('Mes', '=', $mesStr);
+            })
+            ->get();
     }
-    
-    
-    
-    
 
-    
-    
-    
-    
-    
-    
-    
- } //CHAVE PRINCIPAL
+    // Buscando as presenças do aluno
+    public static function Busca_Presenca($idAluno, $mes) {
+        $mesStr = str_pad($mes, 2, '0', STR_PAD_LEFT);
+        return tb_frequencia::where('tb_aluno_idAluno', '=', $idAluno)
+            ->where(function($q) use ($mesStr) {
+                $q->where('mes', '=', $mesStr)->orWhere('Mes', '=', $mesStr);
+            })
+            ->where(function($q) {
+                $q->whereIn('situacao', ['PRESENTE', 'P'])
+                  ->orWhereIn('Presenca', ['PRESENTE', 'P']);
+            })
+            ->count();
+    }
+
+    // Buscando as faltas do aluno
+    public static function Busca_Falta($idAluno, $mes) {
+        $mesStr = str_pad($mes, 2, '0', STR_PAD_LEFT);
+        return tb_frequencia::where('tb_aluno_idAluno', '=', $idAluno)
+            ->where(function($q) use ($mesStr) {
+                $q->where('mes', '=', $mesStr)->orWhere('Mes', '=', $mesStr);
+            })
+            ->where(function($q) {
+                $q->whereIn('situacao', ['FALTA', 'F'])
+                  ->orWhereIn('Presenca', ['FALTA', 'F']);
+            })
+            ->count();
+    }
+
+    // Buscando as justificativas do aluno
+    public static function Busca_Justificado($idAluno, $mes) {
+        $mesStr = str_pad($mes, 2, '0', STR_PAD_LEFT);
+        return tb_frequencia::where('tb_aluno_idAluno', '=', $idAluno)
+            ->where(function($q) use ($mesStr) {
+                $q->where('mes', '=', $mesStr)->orWhere('Mes', '=', $mesStr);
+            })
+            ->where(function($q) {
+                $q->whereIn('situacao', ['JUSTIFICADO', 'FJ', 'ATESTADO', 'A'])
+                  ->orWhereIn('Presenca', ['JUSTIFICADO', 'FJ', 'ATESTADO', 'A']);
+            })
+            ->count();
+    }
+
+    // Buscando os atestados do aluno
+    public static function Busca_Atestado($idAluno, $mes) {
+        $mesStr = str_pad($mes, 2, '0', STR_PAD_LEFT);
+        return tb_frequencia::where('tb_aluno_idAluno', '=', $idAluno)
+            ->where(function($q) use ($mesStr) {
+                $q->where('mes', '=', $mesStr)->orWhere('Mes', '=', $mesStr);
+            })
+            ->where(function($q) {
+                $q->whereIn('situacao', ['ATESTADO', 'A'])
+                  ->orWhereIn('Presenca', ['ATESTADO', 'A']);
+            })
+            ->count();
+    }
+
+    public static function buscandoFrequenciadoAluno($idTurma) {
+        return tb_frequencia::join('tb_aluno', 'tb_aluno.idAluno', '=', 'tb_frequencia.tb_aluno_idAluno')
+            ->join('tb_turmas', 'tb_turmas.idTurmas', '=', 'tb_frequencia.tb_turmas_idTurmas')
+            ->select('tb_frequencia.*')
+            ->where('tb_frequencia.tb_turmas_idTurmas', $idTurma)
+            ->get();
+    }
+
+    public static function buscandoFrequenciadoAluno2($idTurma) {
+        return tb_aluno::orderBy('NomeAluno')
+            ->join('tb_matriculas', 'tb_matriculas.idMatriculas', '=', 'tb_aluno.tb_matriculas_idMatriculas')
+            ->join('tb_turmas', 'tb_turmas.idTurmas', '=', 'tb_aluno.tb_turmas_idTurmas')
+            ->select('tb_aluno.idAluno', 'tb_aluno.NomeAluno', 'tb_aluno.DataNascimento', 'tb_matriculas.RA', 'tb_matriculas.SituacaoAluno', 'tb_turmas.NomeTurma')
+            ->where('tb_matriculas.SituacaoAluno', 'ATIVO')
+            ->get();
+    }
+}
