@@ -88,6 +88,10 @@
 
                                 <!--Fazendo Média COMUM-->
                                 @php 
+                                if (isset($nota->RB1) && $nota->RB1 > 0 && $nota->RB1 > $nota->AB1) { $nota->AB1 = $nota->RB1; }
+                                if (isset($nota->RB2) && $nota->RB2 > 0 && $nota->RB2 > $nota->AB2) { $nota->AB2 = $nota->RB2; }
+                                if (isset($nota->RB3) && $nota->RB3 > 0 && $nota->RB3 > $nota->AB3) { $nota->AB3 = $nota->RB3; }
+                                if (isset($nota->RB4) && $nota->RB4 > 0 && $nota->RB4 > $nota->AB4) { $nota->AB4 = $nota->RB4; }
                                 $media = ($nota->AB1+$nota->AB2+$nota->AB3+$nota->AB4)/4; 
                                 @endphp
                                 <!-- / Fazendo Média COMUM -->

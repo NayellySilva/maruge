@@ -71,6 +71,12 @@
                     @forelse($notasDoAluno as $nota)
                     <!-- VERIFICA SE EXISTE NOTA NA DISCIPLINA QUE ESTA DENTRO DO LAÇO CORRENTE -->
                     @if (isset ($nota->AB1))
+                    @php
+                    if (isset($nota->RB1) && $nota->RB1 > 0 && $nota->RB1 > $nota->AB1) { $nota->AB1 = $nota->RB1; }
+                    if (isset($nota->RB2) && $nota->RB2 > 0 && $nota->RB2 > $nota->AB2) { $nota->AB2 = $nota->RB2; }
+                    if (isset($nota->RB3) && $nota->RB3 > 0 && $nota->RB3 > $nota->AB3) { $nota->AB3 = $nota->RB3; }
+                    if (isset($nota->RB4) && $nota->RB4 > 0 && $nota->RB4 > $nota->AB4) { $nota->AB4 = $nota->RB4; }
+                    @endphp
                     <!--CAMPOS DE DA TABELA DA  AB1-->
                     @if (($nota->AB1) == 0)
                     <td><center><div>-</div></center></td> 

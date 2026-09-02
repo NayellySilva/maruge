@@ -88,10 +88,19 @@
 
                                 <!--Fazendo Média COMUM-->
                                 @php 
-                                $nota->AB1 = ($nota->AB1+$nota->AM1)/2; 
-                                $nota->AB2 = ($nota->AB2+$nota->AM2)/2;
-                                $nota->AB3 = ($nota->AB3+$nota->AM3)/2; 
-                                $nota->AB4 = ($nota->AB4+$nota->AM4)/2;
+                                $nb1 = ($nota->AB1+$nota->AM1)/2; 
+                                if (isset($nota->RB1) && $nota->RB1 > 0 && $nota->RB1 > $nb1) { $nb1 = $nota->RB1; }
+                                $nb2 = ($nota->AB2+$nota->AM2)/2; 
+                                if (isset($nota->RB2) && $nota->RB2 > 0 && $nota->RB2 > $nb2) { $nb2 = $nota->RB2; }
+                                $nb3 = ($nota->AB3+$nota->AM3)/2; 
+                                if (isset($nota->RB3) && $nota->RB3 > 0 && $nota->RB3 > $nb3) { $nb3 = $nota->RB3; }
+                                $nb4 = ($nota->AB4+$nota->AM4)/2; 
+                                if (isset($nota->RB4) && $nota->RB4 > 0 && $nota->RB4 > $nb4) { $nb4 = $nota->RB4; }
+
+                                $nota->AB1 = $nb1; 
+                                $nota->AB2 = $nb2; 
+                                $nota->AB3 = $nb3; 
+                                $nota->AB4 = $nb4; 
                                 $media = ($nota->AB1+$nota->AB2+$nota->AB3+$nota->AB4)/4; 
                                 @endphp
                                 <!-- / Fazendo Média COMUM -->
