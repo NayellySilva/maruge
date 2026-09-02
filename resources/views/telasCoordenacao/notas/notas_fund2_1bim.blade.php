@@ -39,6 +39,7 @@
                                 <th>DISCIPLINAS</th>
                                 <th><center>MENSAL</center></th>
                         <th><center>1º BIMESTRE</center></th>
+                        <th><center>RECUPERAÇÃO</center></th>
                         <th>MÉDIA</th>
                         <th><center>EDITAR</center></th>
                         </tr>
@@ -74,6 +75,9 @@
                                     <input type="text" name="AB1[{{$key}}]"placeholder="0.00"  class="form-control nota" min="0" max="10" >
                                 </div>  
                             </center> 
+                            </td>
+                            <td>
+                                <center><div class="col-md-4">-</div></center>
                             </td>
                             <td>
                                 <div class="col-md-4 " > - </div> 
@@ -121,11 +125,27 @@
                             <!-- fim da condição do azul -->
                             @endif
                             @php
-                            $media = ($nota->AM1)/2;
+                            $mediaBase = ($nota->AM1)/2;
+                            $mediaFinal = (isset($nota->RB1) && $nota->RB1 > 0 && $nota->RB1 > $mediaBase) ? $nota->RB1 : $mediaBase;
                             @endphp
 
                             <td>
-                                <div class="col-md-4  notaVermelha">{{number_format($media ,1)}}</div>
+                                <center>
+                                @if($mediaBase < 7)
+                                    <div class="col-md-4 col-md-offset-4">
+                                        <input type="text" name="RB1[{{$key}}]" value="{{ ($nota->RB1 ?? 0) > 0 ? number_format($nota->RB1, 1) : '' }}" placeholder="0.00" class="form-control nota" min="0" max="10">
+                                    </div>
+                                @else
+                                    <div class="col-md-4">-</div>
+                                @endif
+                                </center>
+                            </td>
+                            <td>
+                                @if($mediaFinal < 7)
+                                    <div class="col-md-4 notaVermelha">{{number_format($mediaFinal ,1)}}</div>
+                                @else
+                                    <div class="col-md-4 notaAzul">{{number_format($mediaFinal ,1)}}</div>
+                                @endif
                             </td>
                             <td>
                             <center> 
@@ -181,11 +201,27 @@
                             <!-- fim da condição do azul -->
                             @endif
                              @php
-                            $media = ($nota->AB1)/2;
+                            $mediaBase = ($nota->AB1)/2;
+                            $mediaFinal = (isset($nota->RB1) && $nota->RB1 > 0 && $nota->RB1 > $mediaBase) ? $nota->RB1 : $mediaBase;
                             @endphp
 
                             <td>
-                                <div class="col-md-4  notaVermelha">{{number_format($media ,1)}}</div>
+                                <center>
+                                @if($mediaBase < 7)
+                                    <div class="col-md-4 col-md-offset-4">
+                                        <input type="text" name="RB1[{{$key}}]" value="{{ ($nota->RB1 ?? 0) > 0 ? number_format($nota->RB1, 1) : '' }}" placeholder="0.00" class="form-control nota" min="0" max="10">
+                                    </div>
+                                @else
+                                    <div class="col-md-4">-</div>
+                                @endif
+                                </center>
+                            </td>
+                            <td>
+                                @if($mediaFinal < 7)
+                                    <div class="col-md-4 notaVermelha">{{number_format($mediaFinal ,1)}}</div>
+                                @else
+                                    <div class="col-md-4 notaAzul">{{number_format($mediaFinal ,1)}}</div>
+                                @endif
                             </td>
                             <td>
                             <center> 
@@ -243,17 +279,30 @@
                             @endif
 
                             @php
-                            $media = ($nota->AM1 + $nota->AB1)/2;
+                            $mediaBase = ($nota->AM1 + $nota->AB1)/2;
+                            $mediaFinal = (isset($nota->RB1) && $nota->RB1 > 0 && $nota->RB1 > $mediaBase) ? $nota->RB1 : $mediaBase;
                             @endphp
 
-                            <!-- VERIFICANDO A COR DA MÉDIA -->
-                            @if (($media) < 7)
                             <td>
-                                <div class="col-md-4  notaVermelha">{{number_format($media ,1)}}</div>
+                                <center>
+                                @if($mediaBase < 7 || (isset($nota->RB1) && $nota->RB1 > 0))
+                                    <div class="col-md-4 col-md-offset-4">
+                                        <input type="text" name="RB1[{{$key}}]" value="{{ ($nota->RB1 ?? 0) > 0 ? number_format($nota->RB1, 1) : '' }}" placeholder="0.00" class="form-control nota" min="0" max="10">
+                                    </div>
+                                @else
+                                    <div class="col-md-4">-</div>
+                                @endif
+                                </center>
+                            </td>
+
+                            <!-- VERIFICANDO A COR DA MÉDIA -->
+                            @if (($mediaFinal) < 7)
+                            <td>
+                                <div class="col-md-4  notaVermelha">{{number_format($mediaFinal ,1)}}</div>
                             </td>
                             @else
                             <td>
-                                <div class="col-md-4 notaAzul">{{number_format($media ,1)}}</div>
+                                <div class="col-md-4 notaAzul">{{number_format($mediaFinal ,1)}}</div>
                             </td>
                             @endif
                             <td>
@@ -296,6 +345,7 @@
                             <td><center><div class="col-md-4 col-md-offset-4" >                                  
                                     <input type="text" name="AB1[{{$key}}]"placeholder="0.00"  class="form-control nota" min="0" max="10" >
                                 </div>  </center> </td>
+                            <td><center><div class="col-md-4">-</div></center></td>
                             <td>
                                 <div class="col-md-4 " > - </div> 
                             </td>

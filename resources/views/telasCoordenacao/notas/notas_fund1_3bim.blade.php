@@ -31,13 +31,13 @@
                         <label for="NomeTurma">Turma: {{$turma->NomeTurma}}</label>
                     </div>
                 </div>
-                <div class="caminho-din">
-                    <table class="table table-hover">
+                <div class="caminho-din">                    <table class="table table-hover">
                         <thead>
                             <tr>
                                 <th>CÓD. DISC. </th>
                                 <th>DISCIPLINAS</th>
                                 <th><center>3º BIMESTRE</center></th>
+                                <th><center>RECUPERAÇÃO</center></th>
                         <th><center>EDITAR</center></th>
                         </tr>
                         </thead>   
@@ -63,7 +63,9 @@
                                     <input type="text" name="AB3[{{$key}}]"placeholder="0.00"  class="form-control nota" min="0" max="10" >
                                 </div>  
                             </center>
-                        </td> <td>
+                        </td> 
+                        <td><center><div class="col-md-4">-</div></center></td>
+                        <td>
                     <center> <img src="{{url('imgs/icones/inativo.png')}}" alt="editar"</center></td>
                     </tr> 
                     </td>
@@ -74,6 +76,13 @@
                         </div>  
                     </center>
                     </td> 
+                    <td>
+                    <center>
+                        <div class="col-md-4 col-md-offset-4">
+                            <input type="text" name="RB3[{{$key}}]" value="{{ ($nota->RB3 ?? 0) > 0 ? number_format($nota->RB3, 1) : '' }}" placeholder="0.00" class="form-control nota" min="0" max="10">
+                        </div>
+                    </center>
+                    </td>
                     <td> 
                     <center><a href="#">
                             <img src="{{url('imgs/icones/editar.png')}}" data-toggle="modal" data-target="#edita_nota_3bim_fun1" 
@@ -90,9 +99,20 @@
                     @else
                     <td><center><div class="col-md-4 col-md-offset-4 notaAzul" >                  
                             {{number_format($nota->AB3 ,1)}} 
+                            <input type="hidden" name="AB3[{{$key}}]" value="{{$nota->AB3}}" >
                         </div>  
                     </center> </td>
-                    </td> 
+                    <td>
+                    <center>
+                        @if(isset($nota->RB3) && $nota->RB3 > 0)
+                            <div class="col-md-4 col-md-offset-4">
+                                <input type="text" name="RB3[{{$key}}]" value="{{ number_format($nota->RB3, 1) }}" placeholder="0.00" class="form-control nota" min="0" max="10">
+                            </div>
+                        @else
+                            <div class="col-md-4">-</div>
+                        @endif
+                    </center>
+                    </td>
                     <td> 
                     <center><a href="#">
                             <img src="{{url('imgs/icones/editar.png')}}" data-toggle="modal" data-target="#edita_nota_3bim_fun1" 
@@ -113,7 +133,9 @@
                             <input type="text" name="AB3[{{$key}}]"placeholder="0.00"  class="form-control nota" min="0" max="10" >
                         </div>  
                     </center>
-                </td> <td><center> <img src="{{url('imgs/icones/inativo.png')}}" alt="editar"</center></td>
+                </td> 
+                <td><center><div class="col-md-4">-</div></center></td>
+                <td><center> <img src="{{url('imgs/icones/inativo.png')}}" alt="editar"</center></td>
             </tr> 
             @endforelse 
             <!-- FIM DO FOREACHO QUE LISTA A DISCIPLINA-->

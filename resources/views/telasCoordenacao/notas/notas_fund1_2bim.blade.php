@@ -31,13 +31,13 @@
                         <label for="NomeTurma">Turma: {{$turma->NomeTurma}}</label>
                     </div>
                 </div>
-                <div class="caminho-din">
-                    <table class="table table-hover">
+                <div class="caminho-din">                    <table class="table table-hover">
                         <thead>
                             <tr>
                                 <th>CÓD. DISC. </th>
                                 <th>DISCIPLINAS</th>
                                 <th><center>2º BIMESTRE</center></th>
+                                <th><center>RECUPERAÇÃO</center></th>
                         <th><center>EDITAR</center></th>
                         </tr>
                         </thead>   
@@ -63,18 +63,26 @@
                                     <input type="text" name="AB2[{{$key}}]"placeholder="0.00"  class="form-control nota" min="0" max="10" >
                                 </div>  
                             </center>
-                        </td> <td>
+                        </td> 
+                        <td><center><div class="col-md-4">-</div></center></td>
+                        <td>
                     <center> <img src="{{url('imgs/icones/inativo.png')}}" alt="editar"</center></td>
                     </tr> 
                     </td>
                     @elseif (($nota->AB2) < 7)
                     <td><center><div class="col-md-4 col-md-offset-4 notaVermelha" >                  
-                            {{number_format($nota->AB2 ,1)}}  
+                            {{number_format($nota->AB2 ,1)}} 
                             <input type="hidden" name="AB2[{{$key}}]" value="{{$nota->AB2}}" >
-
                         </div>  
                     </center>
                     </td> 
+                    <td>
+                    <center>
+                        <div class="col-md-4 col-md-offset-4">
+                            <input type="text" name="RB2[{{$key}}]" value="{{ ($nota->RB2 ?? 0) > 0 ? number_format($nota->RB2, 1) : '' }}" placeholder="0.00" class="form-control nota" min="0" max="10">
+                        </div>
+                    </center>
+                    </td>
                     <td> 
                     <center><a href="#">
                             <img src="{{url('imgs/icones/editar.png')}}" data-toggle="modal" data-target="#edita_nota_2bim_fun1" 
@@ -94,7 +102,17 @@
                             <input type="hidden" name="AB2[{{$key}}]" value="{{$nota->AB2}}" >
                         </div>  
                     </center> </td>
-                    </td> 
+                    <td>
+                    <center>
+                        @if(isset($nota->RB2) && $nota->RB2 > 0)
+                            <div class="col-md-4 col-md-offset-4">
+                                <input type="text" name="RB2[{{$key}}]" value="{{ number_format($nota->RB2, 1) }}" placeholder="0.00" class="form-control nota" min="0" max="10">
+                            </div>
+                        @else
+                            <div class="col-md-4">-</div>
+                        @endif
+                    </center>
+                    </td>
                     <td> 
                     <center><a href="#">
                             <img src="{{url('imgs/icones/editar.png')}}" data-toggle="modal" data-target="#edita_nota_2bim_fun1" 
@@ -115,9 +133,11 @@
                             <input type="text" name="AB2[{{$key}}]"placeholder="0.00"  class="form-control nota" min="0" max="10" >
                         </div>  
                     </center>
-                </td> <td><center> <img src="{{url('imgs/icones/inativo.png')}}" alt="editar"</center></td>
+                </td> 
+                <td><center><div class="col-md-4">-</div></center></td>
+                <td><center> <img src="{{url('imgs/icones/inativo.png')}}" alt="editar"</center></td>
             </tr> 
-            @endforelse 
+            @endforelseelse 
             <!-- FIM DO FOREACHO QUE LISTA A DISCIPLINA-->
             @endforeach
     </table> 
