@@ -10,8 +10,8 @@ class tb_notas extends Model {
     protected $primaryKey = 'idNotas';
     //Campos que podem ser preenchido com informação do usuario
     protected $fillable = [
-        'RA', 'AM1', 'AB1', 'AM2', 'AB2',
-        'AM3', 'AB3', 'AM4', 'AB4', 'RP', 'RF',
+        'RA', 'AM1', 'AB1', 'RB1', 'AM2', 'AB2', 'RB2',
+        'AM3', 'AB3', 'RB3', 'AM4', 'AB4', 'RB4', 'RP', 'RF',
         'tb_disciplinas_idDisciplinas', 'tb_usuario_idUsuario',
         'tb_turmas_idTurmas', 'tb_aluno_idAluno'
     ];
@@ -236,15 +236,18 @@ class tb_notas extends Model {
         if ($count > 0) { // SE CONTE FOR MAIOR QUE ZERO ELE ENTRA NO FOR
             $nota = [];   // CRIANDO UM ARRAY NOVO PRA FICA RECEBENDO DADOS DOS ARRAYS
             for ($i = 0; $i < $count; $i++) {
-                if (!empty($dadosForm["AB1"][$i])) {
+                if (isset($dadosForm["AB1"][$i]) || isset($dadosForm["RB1"][$i])) {
                     $nota = [// ARRAY RECEBENDO OS DADOS DO FOR
-                        'AB1' => $dadosForm["AB1"][$i],
+                        'AB1' => $dadosForm["AB1"][$i] ?? null,
                         'tb_disciplinas_idDisciplinas' => $dadosForm["tb_disciplinas_idDisciplinas"][$i],
                         'tb_usuario_idUsuario' => $dadosForm["tb_usuario_idUsuario"][$i],
                         'tb_turmas_idTurmas' => $dadosForm["tb_turmas_idTurmas"][$i],
                         'RA' => $dadosForm["RA"][$i],
                         'tb_aluno_idAluno' => $dadosForm["tb_aluno_idAluno"][$i],
                     ];
+                    if (isset($dadosForm["RB1"][$i])) {
+                        $nota['RB1'] = $dadosForm["RB1"][$i];
+                    }
                     $contador = tb_notas::select()// buscando disciplina/turma e aluno para verificar se é caso de salvar ou atualizar pois cada disciplina tem seus bimestres
                             ->select('tb_notas.*')
                             ->where('tb_disciplinas_idDisciplinas', '=', $dadosForm["tb_disciplinas_idDisciplinas"][$i])
@@ -273,15 +276,18 @@ class tb_notas extends Model {
         if ($count > 0) { // SE CONTE FOR MAIOR QUE ZERO ELE ENTRA NO FOR
             $nota = [];   // CRIANDO UM ARRAY NOVO PRA FICA RECEBENDO DADOS DOS ARRAYS
             for ($i = 0; $i < $count; $i++) {
-                if (!empty($dadosForm["AB2"][$i])) {
+                if (isset($dadosForm["AB2"][$i]) || isset($dadosForm["RB2"][$i])) {
                     $nota = [// ARRAY RECEBENDO OS DADOS DO FOR
-                        'AB2' => $dadosForm["AB2"][$i],
+                        'AB2' => $dadosForm["AB2"][$i] ?? null,
                         'tb_disciplinas_idDisciplinas' => $dadosForm["tb_disciplinas_idDisciplinas"][$i],
                         'tb_usuario_idUsuario' => $dadosForm["tb_usuario_idUsuario"][$i],
                         'tb_turmas_idTurmas' => $dadosForm["tb_turmas_idTurmas"][$i],
                         'RA' => $dadosForm["RA"][$i],
                         'tb_aluno_idAluno' => $dadosForm["tb_aluno_idAluno"][$i],
                     ];
+                    if (isset($dadosForm["RB2"][$i])) {
+                        $nota['RB2'] = $dadosForm["RB2"][$i];
+                    }
                     $contador = tb_notas::select()// buscando disciplina/turma e aluno para verificar se é caso de salvar ou atualizar pois cada disciplina tem seus bimestres
                             ->select('tb_notas.*')
                             ->where('tb_disciplinas_idDisciplinas', '=', $dadosForm["tb_disciplinas_idDisciplinas"][$i])
@@ -310,15 +316,18 @@ class tb_notas extends Model {
         if ($count > 0) { // SE CONTE FOR MAIOR QUE ZERO ELE ENTRA NO FOR
             $nota = [];   // CRIANDO UM ARRAY NOVO PRA FICA RECEBENDO DADOS DOS ARRAYS
             for ($i = 0; $i < $count; $i++) {
-                if (!empty($dadosForm["AB3"][$i])) {
+                if (isset($dadosForm["AB3"][$i]) || isset($dadosForm["RB3"][$i])) {
                     $nota = [// ARRAY RECEBENDO OS DADOS DO FOR
-                        'AB3' => $dadosForm["AB3"][$i],
+                        'AB3' => $dadosForm["AB3"][$i] ?? null,
                         'tb_disciplinas_idDisciplinas' => $dadosForm["tb_disciplinas_idDisciplinas"][$i],
                         'tb_usuario_idUsuario' => $dadosForm["tb_usuario_idUsuario"][$i],
                         'tb_turmas_idTurmas' => $dadosForm["tb_turmas_idTurmas"][$i],
                         'RA' => $dadosForm["RA"][$i],
                         'tb_aluno_idAluno' => $dadosForm["tb_aluno_idAluno"][$i],
                     ];
+                    if (isset($dadosForm["RB3"][$i])) {
+                        $nota['RB3'] = $dadosForm["RB3"][$i];
+                    }
                     $contador = tb_notas::select()// buscando disciplina/turma e aluno para verificar se é caso de salvar ou atualizar pois cada disciplina tem seus bimestres
                             ->select('tb_notas.*')
                             ->where('tb_disciplinas_idDisciplinas', '=', $dadosForm["tb_disciplinas_idDisciplinas"][$i])
@@ -347,16 +356,18 @@ class tb_notas extends Model {
         if ($count > 0) { // SE CONTE FOR MAIOR QUE ZERO ELE ENTRA NO FOR
             $nota = [];   // CRIANDO UM ARRAY NOVO PRA FICA RECEBENDO DADOS DOS ARRAYS
             for ($i = 0; $i < $count; $i++) {
-                if (!empty($dadosForm["AB4"][$i])) {
+                if (isset($dadosForm["AB4"][$i]) || isset($dadosForm["RB4"][$i])) {
                     $nota = [// ARRAY RECEBENDO OS DADOS DO FOR
-                        'AB4' => $dadosForm["AB4"][$i],
+                        'AB4' => $dadosForm["AB4"][$i] ?? null,
                         'tb_disciplinas_idDisciplinas' => $dadosForm["tb_disciplinas_idDisciplinas"][$i],
                         'tb_usuario_idUsuario' => $dadosForm["tb_usuario_idUsuario"][$i],
                         'tb_turmas_idTurmas' => $dadosForm["tb_turmas_idTurmas"][$i],
                         'RA' => $dadosForm["RA"][$i],
                         'tb_aluno_idAluno' => $dadosForm["tb_aluno_idAluno"][$i],
                     ];
-
+                    if (isset($dadosForm["RB4"][$i])) {
+                        $nota['RB4'] = $dadosForm["RB4"][$i];
+                    }
 
                     $contador = tb_notas::select()// buscando disciplina/turma e aluno para verificar se é caso de salvar ou atualizar pois cada disciplina tem seus bimestres
                             ->select('tb_notas.*')
@@ -364,8 +375,6 @@ class tb_notas extends Model {
                             ->where('tb_turmas_idTurmas', '=', $dadosForm["tb_turmas_idTurmas"][$i])
                             ->where('tb_aluno_idAluno', '=', $dadosForm["tb_aluno_idAluno"][$i])
                             ->count();
-
-
 
                     if ($contador >= 1) {// se a busca acima retorna verdadeiro, ou seja estive dados ele tem que pegar os dados e atualizar
                         $atualizando[] = tb_notas::select()
@@ -388,16 +397,19 @@ class tb_notas extends Model {
         if ($count > 0) { // SE CONTE FOR MAIOR QUE ZERO ELE ENTRA NO FOR
             $nota = [];   // CRIANDO UM ARRAY NOVO PRA FICA RECEBENDO DADOS DOS ARRAYS
             for ($i = 0; $i < $count; $i++) {
-      if (!empty($dadosForm["AM1"][$i]) or ($dadosForm["AB1"][$i])   ) {
+                if (!empty($dadosForm["AM1"][$i]) or !empty($dadosForm["AB1"][$i]) or isset($dadosForm["RB1"][$i])) {
                     $nota = [// ARRAY RECEBENDO OS DADOS DO FOR
-                        'AM1' => $dadosForm["AM1"][$i],
-                        'AB1' => $dadosForm["AB1"][$i],
+                        'AM1' => $dadosForm["AM1"][$i] ?? null,
+                        'AB1' => $dadosForm["AB1"][$i] ?? null,
                         'tb_disciplinas_idDisciplinas' => $dadosForm["tb_disciplinas_idDisciplinas"][$i],
                         'tb_usuario_idUsuario' => $dadosForm["tb_usuario_idUsuario"][$i],
                         'tb_turmas_idTurmas' => $dadosForm["tb_turmas_idTurmas"][$i],
                         'RA' => $dadosForm["RA"][$i],
                         'tb_aluno_idAluno' => $dadosForm["tb_aluno_idAluno"][$i],
                     ];
+                    if (isset($dadosForm["RB1"][$i])) {
+                        $nota['RB1'] = $dadosForm["RB1"][$i];
+                    }
                     $contador = tb_notas::select()// buscando disciplina/turma e aluno para verificar se é caso de salvar ou atualizar pois cada disciplina tem seus bimestres
                             ->select('tb_notas.*')
                             ->where('tb_disciplinas_idDisciplinas', '=', $dadosForm["tb_disciplinas_idDisciplinas"][$i])
@@ -425,16 +437,19 @@ class tb_notas extends Model {
         if ($count > 0) { // SE CONTE FOR MAIOR QUE ZERO ELE ENTRA NO FOR
             $nota = [];   // CRIANDO UM ARRAY NOVO PRA FICA RECEBENDO DADOS DOS ARRAYS
             for ($i = 0; $i < $count; $i++) {
-      if (!empty($dadosForm["AM2"][$i]) or ($dadosForm["AB2"][$i])   ) {
+                if (!empty($dadosForm["AM2"][$i]) or !empty($dadosForm["AB2"][$i]) or isset($dadosForm["RB2"][$i])) {
                     $nota = [// ARRAY RECEBENDO OS DADOS DO FOR
-                        'AM2' => $dadosForm["AM2"][$i],
-                        'AB2' => $dadosForm["AB2"][$i],
+                        'AM2' => $dadosForm["AM2"][$i] ?? null,
+                        'AB2' => $dadosForm["AB2"][$i] ?? null,
                         'tb_disciplinas_idDisciplinas' => $dadosForm["tb_disciplinas_idDisciplinas"][$i],
                         'tb_usuario_idUsuario' => $dadosForm["tb_usuario_idUsuario"][$i],
                         'tb_turmas_idTurmas' => $dadosForm["tb_turmas_idTurmas"][$i],
                         'RA' => $dadosForm["RA"][$i],
                         'tb_aluno_idAluno' => $dadosForm["tb_aluno_idAluno"][$i],
                     ];
+                    if (isset($dadosForm["RB2"][$i])) {
+                        $nota['RB2'] = $dadosForm["RB2"][$i];
+                    }
                     $contador = tb_notas::select()// buscando disciplina/turma e aluno para verificar se é caso de salvar ou atualizar pois cada disciplina tem seus bimestres
                             ->select('tb_notas.*')
                             ->where('tb_disciplinas_idDisciplinas', '=', $dadosForm["tb_disciplinas_idDisciplinas"][$i])
@@ -462,16 +477,19 @@ class tb_notas extends Model {
         if ($count > 0) { // SE CONTE FOR MAIOR QUE ZERO ELE ENTRA NO FOR
             $nota = [];   // CRIANDO UM ARRAY NOVO PRA FICA RECEBENDO DADOS DOS ARRAYS
             for ($i = 0; $i < $count; $i++) {
-      if (!empty($dadosForm["AM3"][$i]) or ($dadosForm["AB3"][$i])   ) {
+                if (!empty($dadosForm["AM3"][$i]) or !empty($dadosForm["AB3"][$i]) or isset($dadosForm["RB3"][$i])) {
                     $nota = [// ARRAY RECEBENDO OS DADOS DO FOR
-                        'AM3' => $dadosForm["AM3"][$i],
-                        'AB3' => $dadosForm["AB3"][$i],
+                        'AM3' => $dadosForm["AM3"][$i] ?? null,
+                        'AB3' => $dadosForm["AB3"][$i] ?? null,
                         'tb_disciplinas_idDisciplinas' => $dadosForm["tb_disciplinas_idDisciplinas"][$i],
                         'tb_usuario_idUsuario' => $dadosForm["tb_usuario_idUsuario"][$i],
                         'tb_turmas_idTurmas' => $dadosForm["tb_turmas_idTurmas"][$i],
                         'RA' => $dadosForm["RA"][$i],
                         'tb_aluno_idAluno' => $dadosForm["tb_aluno_idAluno"][$i],
                     ];
+                    if (isset($dadosForm["RB3"][$i])) {
+                        $nota['RB3'] = $dadosForm["RB3"][$i];
+                    }
                     $contador = tb_notas::select()// buscando disciplina/turma e aluno para verificar se é caso de salvar ou atualizar pois cada disciplina tem seus bimestres
                             ->select('tb_notas.*')
                             ->where('tb_disciplinas_idDisciplinas', '=', $dadosForm["tb_disciplinas_idDisciplinas"][$i])
@@ -499,16 +517,19 @@ class tb_notas extends Model {
         if ($count > 0) { // SE CONTE FOR MAIOR QUE ZERO ELE ENTRA NO FOR
             $nota = [];   // CRIANDO UM ARRAY NOVO PRA FICA RECEBENDO DADOS DOS ARRAYS
             for ($i = 0; $i < $count; $i++) {
-      if (!empty($dadosForm["AM4"][$i]) or ($dadosForm["AB4"][$i])   ) {
+                if (!empty($dadosForm["AM4"][$i]) or !empty($dadosForm["AB4"][$i]) or isset($dadosForm["RB4"][$i])) {
                     $nota = [// ARRAY RECEBENDO OS DADOS DO FOR
-                        'AM4' => $dadosForm["AM4"][$i],
-                        'AB4' => $dadosForm["AB4"][$i],
+                        'AM4' => $dadosForm["AM4"][$i] ?? null,
+                        'AB4' => $dadosForm["AB4"][$i] ?? null,
                         'tb_disciplinas_idDisciplinas' => $dadosForm["tb_disciplinas_idDisciplinas"][$i],
                         'tb_usuario_idUsuario' => $dadosForm["tb_usuario_idUsuario"][$i],
                         'tb_turmas_idTurmas' => $dadosForm["tb_turmas_idTurmas"][$i],
                         'RA' => $dadosForm["RA"][$i],
                         'tb_aluno_idAluno' => $dadosForm["tb_aluno_idAluno"][$i],
                     ];
+                    if (isset($dadosForm["RB4"][$i])) {
+                        $nota['RB4'] = $dadosForm["RB4"][$i];
+                    }
                     $contador = tb_notas::select()// buscando disciplina/turma e aluno para verificar se é caso de salvar ou atualizar pois cada disciplina tem seus bimestres
                             ->select('tb_notas.*')
                             ->where('tb_disciplinas_idDisciplinas', '=', $dadosForm["tb_disciplinas_idDisciplinas"][$i])
