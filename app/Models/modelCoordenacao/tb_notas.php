@@ -34,11 +34,10 @@ class tb_notas extends Model {
 
 // Buscando a nota do aluno, referente a disciplina informada no parametro
     public static function busca_notas_do_aluno($idAluno, $disciplina) {
-        return tb_notas::select()
-                        ->select('tb_notas.*')
+        return tb_notas::select('tb_notas.*')
                         ->where('tb_notas.tb_aluno_idAluno', '=', $idAluno)
                         ->where('tb_notas.tb_disciplinas_idDisciplinas', '=', $disciplina)
-                        ->get('AB1');
+                        ->get();
     }
 // Buscando a nota do aluno, referente a disciplina informada no parametro
     public static function busca_notas_do_aluno_grafico($idAluno) {
