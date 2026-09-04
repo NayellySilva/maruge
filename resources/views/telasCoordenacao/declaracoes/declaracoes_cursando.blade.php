@@ -39,7 +39,7 @@
             <!-- Título e Texto Principal da Declaração -->
             <div class="declaracao-titulo"> DECLARAÇÃO </div>
             <div class="declaracao">
-                <p>Declaramos para os devidos fins que, <strong>{{$aluno->NomeAluno}}</strong>, está devidamente matriculado (a) nesse estabelecimento de ensino, sob o número de matrícula, <strong>{{$matricula->RA}}</strong>, cursando o <strong>{{$turma->NomeTurma}}</strong>.</p>
+                <p>Declaramos para os devidos fins que, <strong>{{$aluno->NomeAluno}}</strong>, está devidamente matriculado (a) nesse estabelecimento de ensino, sob o número de matrícula, <strong>{{ $aluno->NumeroMac ?? $matricula->RA }}</strong>, cursando o <strong>{{$turma->NomeTurma}}</strong>.</p>
             </div>
 
             <!-- Informações de Filiação e Data -->

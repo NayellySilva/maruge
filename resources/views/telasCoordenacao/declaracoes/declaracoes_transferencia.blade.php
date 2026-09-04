@@ -41,7 +41,7 @@
             <div class="declaracao">
                 <p>Declaramos para os devidos fins que , <strong>{{$aluno->NomeAluno}}</strong>,
                     cursou nesse estabelecimento de ensino, sob o número de matrícula, <strong>
-                    {{$matricula->RA}},</strong> no período {{$matricula->DataMatricula}} até {{$dia}} na turma do <strong>{{$turma->NomeTurma}}</strong>, estando apto (a) a dar continuidade a série.</p>
+                    {{ $aluno->NumeroMac ?? $matricula->RA }},</strong> no período {{$matricula->DataMatricula}} até {{$dia}} na turma do <strong>{{$turma->NomeTurma}}</strong>, estando apto (a) a dar continuidade a série.</p>
             </div>
 
             <!-- Informações de Filiação e Data -->

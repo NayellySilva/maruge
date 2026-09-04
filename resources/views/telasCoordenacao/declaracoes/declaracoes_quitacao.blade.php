@@ -40,7 +40,7 @@
             <div class="declaracao-titulo"> DECLARAÇÃO </div>
             <div class="declaracao">
                 <p>Declaramos para os devidos fins, que, <strong>{{$aluno->NomeAluno}}</strong>, inscrito (a) sob o número de matrícula,
-                    <strong>{{$matricula->RA}}</strong>, está com todas suas mensalidades quitadas referente ao ano <strong>{{$turma->AnoLetivo}}</strong>.</p>
+                    <strong>{{ $aluno->NumeroMac ?? $matricula->RA }}</strong>, está com todas suas mensalidades quitadas referente ao ano <strong>{{$turma->AnoLetivo}}</strong>.</p>
             </div>
 
             <!-- Informações de Filiação e Data -->

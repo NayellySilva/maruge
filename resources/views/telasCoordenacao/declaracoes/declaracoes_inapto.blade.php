@@ -130,7 +130,7 @@
     <div>
         <p>
             Declaramos para os devidos fins que <strong>{{ $aluno->NomeAluno ?? 'NOME DO ALUNO' }}</strong>,
-            inscrito(a) sob o número de matrícula <strong>{{ $matricula->RA ?? '' }}</strong>,
+            inscrito(a) sob o número de matrícula <strong>{{ $aluno->NumeroMac ?? $matricula->RA ?? '' }}</strong>,
             aluno(a) desta Unidade Escolar no ano letivo de <strong>{{ date('Y') }}</strong>,
             e:
         </p>

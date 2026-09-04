@@ -5,11 +5,7 @@
 @php
     // Busca inicial de alunos com paginação e associação da turma
     try {
-        $Alunos = \DB::table('tb_alunos')
-            ->leftJoin('tb_turmas', 'tb_alunos.tb_turmas_idTurmas', '=', 'tb_turmas.idTurmas')
-            ->select('tb_alunos.*', 'tb_turmas.NomeTurma')
-            ->orderBy('NomeAluno')
-            ->paginate(15);
+        $Alunos = \App\Models\modelCoordenacao\tb_aluno::listagemAluno();
     } catch (\Exception $e) {
         $Alunos = new \Illuminate\Pagination\LengthAwarePaginator([], 0, 15);
     }
@@ -109,7 +105,7 @@
                 <thead>
                     <tr class="bg-[#f8faf9] border-b border-[#e3e8e6]">
                         <th class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-[#5c706b]">Nome do Aluno</th>
-                        <th class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-[#5c706b]">RA</th>
+                        <th class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-[#5c706b]">Nº MAC</th>
                         <th class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-[#5c706b]">Turma</th>
                         <th class="px-6 py-4 text-center text-xs font-semibold uppercase tracking-wider text-[#5c706b]">Emitir Declarações</th>
                     </tr>
@@ -119,7 +115,7 @@
                     @forelse($Alunos as $Aluno)
                         <tr class="hover:bg-[#f8faf9]/50 transition-colors">
                             <td class="px-6 py-4 text-sm font-semibold text-[#0a241e]">{{ $Aluno->NomeAluno }}</td>
-                            <td class="px-6 py-4 text-sm text-[#5c706b]">{{ $Aluno->RA }}</td>
+                            <td class="px-6 py-4 text-sm text-[#5c706b]">{{ $Aluno->NumeroMac ?? $Aluno->RA ?? '-' }}</td>
                             <td class="px-6 py-4 text-sm text-[#0a241e]">{{ $Aluno->NomeTurma ?? '-' }}</td>
                             <td class="px-6 py-4 text-sm text-center">
                                 <!-- Botões para cada modalidade de declaração -->
