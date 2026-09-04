@@ -144,7 +144,7 @@
             <table class="w-full border-collapse text-sm">
                 <thead>
                     <tr class="bg-[#f8faf9] border-b border-[#e3e8e6]">
-                        <th class="px-4 py-3.5 text-left text-xs font-bold uppercase text-[#5c706b]">RA</th>
+                        <th class="px-4 py-3.5 text-left text-xs font-bold uppercase text-[#5c706b]">Nº MAC</th>
                         <th class="px-4 py-3.5 text-left text-xs font-bold uppercase text-[#5c706b]">NOME ALUNO</th>
                         <th class="px-4 py-3.5 text-center text-xs font-bold uppercase text-[#5c706b]">SAÍDA.</th>
                         <th class="px-4 py-3.5 text-center text-xs font-bold uppercase text-[#5c706b]">FONE MÃE</th>
@@ -156,7 +156,7 @@
                 <tbody class="divide-y divide-[#e3e8e6]">
                     @forelse($alunos as $aluno)
                         <tr class="hover:bg-[#f8faf9]/50 transition-colors">
-                            <td class="px-4 py-3 text-xs text-[#5c706b] font-mono">{{ $aluno->RA ?? '-' }}</td>
+                            <td class="px-4 py-3 text-xs text-[#5c706b] font-mono">{{ $aluno->NumeroMac ?? $aluno->RA ?? '-' }}</td>
                             <td class="px-4 py-3 text-xs font-bold text-[#0a241e] uppercase">{{ $aluno->NomeAluno }}</td>
                             <td class="px-4 py-3 text-center text-xs font-mono text-[#5c706b]">{{ $aluno->Saida ?? '0000-00-00' }}</td>
                             <td class="px-4 py-3 text-center text-xs text-[#5c706b]">{{ $aluno->FoneMae1 ?? '-' }}</td>
@@ -213,7 +213,7 @@
     <table style="width: 100%; border-collapse: collapse; font-size: 9.5px; font-family: Arial, sans-serif;">
         <thead>
             <tr style="border-bottom: 2px solid #000; background-color: #f8faf9;">
-                <th style="padding: 6px 4px; text-align: left; font-weight: bold; width: 10%;">RA</th>
+                <th style="padding: 6px 4px; text-align: left; font-weight: bold; width: 10%;">Nº MAC</th>
                 <th style="padding: 6px 4px; text-align: left; font-weight: bold; width: 28%;">NOME ALUNO</th>
                 <th style="padding: 6px 4px; text-align: center; font-weight: bold; width: 12%;">SAÍDA.</th>
                 <th style="padding: 6px 4px; text-align: center; font-weight: bold; width: 14%;">FONE MÃE</th>
@@ -225,7 +225,7 @@
         <tbody>
             @foreach($alunos as $aluno)
                 <tr style="border-bottom: 1px solid #e2e8f0;">
-                    <td style="padding: 5px 4px; font-family: monospace;">{{ $aluno->RA ?? '-' }}</td>
+                    <td style="padding: 5px 4px; font-family: monospace;">{{ $aluno->NumeroMac ?? $aluno->RA ?? '-' }}</td>
                     <td style="padding: 5px 4px; font-weight: bold; text-transform: uppercase;">{{ $aluno->NomeAluno }}</td>
                     <td style="padding: 5px 4px; text-align: center; font-family: monospace;">{{ $aluno->Saida ?? '0000-00-00' }}</td>
                     <td style="padding: 5px 4px; text-align: center;">{{ $aluno->FoneMae1 ?? '-' }}</td>

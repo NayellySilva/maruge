@@ -50,10 +50,9 @@
        
        
         <div class="inf_aluno_Relatorio">
-           
-
-            <p><strong>Matrícula:  </strong> {{ $matricula->RA}}</p>    
-            <p> <strong>Aluno(a):</strong>{{ $aluno->NomeAluno}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <strong>Turma: </strong> {{$turma->NomeTurma}}</p>    
+          <div class="inf_aluno">
+            <p><strong>Nº MAC: </strong> {{ $aluno->NumeroMac ?? $aluno->RA ?? '-' }}</p> 
+            <p> <strong>Aluno(a):</strong>{{ $aluno->NomeAluno}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <strong>Turma: </strong> {{$turma->NomeTurma}}</p> 
         </div>      
         
         <br>

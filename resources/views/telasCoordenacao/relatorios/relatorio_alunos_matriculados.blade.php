@@ -145,7 +145,7 @@
                 <thead>
                     <tr class="bg-[#f8faf9] border-b border-[#e3e8e6]">
                         <th class="px-3 py-3.5 text-center text-xs font-bold uppercase text-[#5c706b]">Nº</th>
-                        <th class="px-3 py-3.5 text-left text-xs font-bold uppercase text-[#5c706b]">RA</th>
+                        <th class="px-3 py-3.5 text-left text-xs font-bold uppercase text-[#5c706b]">Nº MAC</th>
                         <th class="px-3 py-3.5 text-left text-xs font-bold uppercase text-[#5c706b]">NOME ALUNO</th>
                         <th class="px-3 py-3.5 text-center text-xs font-bold uppercase text-[#5c706b]">NASC.</th>
                         <th class="px-3 py-3.5 text-left text-xs font-bold uppercase text-[#5c706b]">NOME DA MÃE</th>
@@ -159,7 +159,7 @@
                     @forelse($alunos as $index => $aluno)
                         <tr class="hover:bg-[#f8faf9]/50 transition-colors">
                             <td class="px-3 py-3 text-center text-xs text-[#5c706b] font-mono">{{ $index + 1 }}</td>
-                            <td class="px-3 py-3 text-xs text-[#5c706b] font-mono">{{ $aluno->RA ?? '-' }}</td>
+                            <td class="px-3 py-3 text-xs text-[#5c706b] font-mono">{{ $aluno->NumeroMac ?? $aluno->RA ?? '-' }}</td>
                             <td class="px-3 py-3 text-xs font-bold text-[#0a241e] uppercase">{{ $aluno->NomeAluno }}</td>
                             <td class="px-3 py-3 text-center text-xs text-[#5c706b]">{{ $aluno->DataNascimento ? date('d/m/Y', strtotime($aluno->DataNascimento)) : '-' }}</td>
                             <td class="px-3 py-3 text-xs text-[#0a241e] uppercase">{{ $aluno->NomeMae ?? '-' }}</td>
@@ -216,7 +216,7 @@
         <thead>
             <tr style="border-bottom: 2px solid #000; background-color: #f8faf9;">
                 <th style="padding: 6px 3px; text-align: center; font-weight: bold; width: 3%;">Nº</th>
-                <th style="padding: 6px 4px; text-align: left; font-weight: bold; width: 8%;">RA</th>
+                <th style="padding: 6px 4px; text-align: left; font-weight: bold; width: 8%;">Nº MAC</th>
                 <th style="padding: 6px 4px; text-align: left; font-weight: bold; width: 20%;">NOME ALUNO</th>
                 <th style="padding: 6px 4px; text-align: center; font-weight: bold; width: 8%;">NASC.</th>
                 <th style="padding: 6px 4px; text-align: left; font-weight: bold; width: 16%;">NOME DA MÃE</th>
@@ -230,7 +230,7 @@
             @foreach($alunos as $index => $aluno)
                 <tr style="border-bottom: 1px solid #e2e8f0;">
                     <td style="padding: 5px 3px; text-align: center;">{{ $index + 1 }}</td>
-                    <td style="padding: 5px 4px; font-family: monospace;">{{ $aluno->RA ?? '-' }}</td>
+                    <td style="padding: 5px 4px; font-family: monospace;">{{ $aluno->NumeroMac ?? $aluno->RA ?? '-' }}</td>
                     <td style="padding: 5px 4px; font-weight: bold; text-transform: uppercase;">{{ $aluno->NomeAluno }}</td>
                     <td style="padding: 5px 4px; text-align: center;">{{ $aluno->DataNascimento ? date('d/m/Y', strtotime($aluno->DataNascimento)) : '-' }}</td>
                     <td style="padding: 5px 4px; text-transform: uppercase;">{{ $aluno->NomeMae ?? '-' }}</td>

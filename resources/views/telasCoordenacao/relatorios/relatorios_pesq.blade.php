@@ -74,7 +74,7 @@
         <thead>
             <tr>
                 <th>NOME DO ALUNO</th>
-                <th>RA</th>
+                <th>Nº MAC</th>
                 <th><center>TURMA</center></th>
         <th><center>1º BIM.</center></th>
         <th><center>2º BIM.</center></th>
@@ -87,7 +87,7 @@
         <center>
             <tr>
                 <td>{{$Aluno->NomeAluno}}</td>
-                <td>{{$Aluno->RA}}</td>
+                <td>{{$Aluno->NumeroMac ?? $Aluno->RA ?? '-'}}</td>
                 <td><center>{{$Aluno->NomeTurma}}</td>             
                  <td> <a href="{{url("/coordenacao/boletim_acompanhamento_1bim/$Aluno->idAluno")}}"target="_blank" ><center> <img src="{{url('imgs/icones/imprimir.png')}}" alt="1º Bimestre"</center></td>
                 <td> <a href="{{url("/coordenacao/boletim_acompanhamento_2bim/$Aluno->idAluno")}}"target="_blank" ><center> <img src="{{url('imgs/icones/imprimir.png')}}" alt="2º Bimestre"</center></td>

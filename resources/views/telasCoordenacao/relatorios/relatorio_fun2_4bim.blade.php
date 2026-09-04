@@ -37,8 +37,8 @@
                 @endforeach
             </strong></div>
         <div class="inf_aluno">
-            <p><strong>Matricula:  </strong> {{ $matricula->RA}}</p>    
-            <p> <strong>Aluno(a):</strong>{{ $aluno->NomeAluno}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <strong>Turma: </strong> {{$turma->NomeTurma}}</p>    
+            <p><strong>Nº MAC: </strong> {{ $aluno->NumeroMac ?? $aluno->RA ?? '-' }}</p> 
+            <p> <strong>Aluno(a):</strong>{{ $aluno->NomeAluno}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <strong>Turma: </strong> {{$turma->NomeTurma}}</p> 
         </div>      
         <div class="boletim_acompanhamento_fun1">
             <p><strong>Tarefas de casa – organização – realização:</strong> (    ) Precisa Melhorar    (    ) Bom       (    ) Excelente   </p>
