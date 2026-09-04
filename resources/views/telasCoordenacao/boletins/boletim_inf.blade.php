@@ -63,11 +63,11 @@
    
         </div>
         <div class="inf_aluno_boletim">
-            <p><strong>Matricula:  </strong> {{ $matricula->RA}}  <strong>Ano:</strong> @foreach($anoletivo as $anoletivo)
+            <p><strong>Nº MAC: </strong> {{ $aluno->NumeroMac ?? $matricula->RA }} <strong>Ano:</strong> @foreach($anoletivo as $anoletivo)
                 {{$anoletivo->AnoLetivo}}
-                @endforeach </p>    
-            <p> <strong>Aluno(a):</strong>{{ $aluno->NomeAluno}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <strong>Turma: </strong> {{$turma->NomeTurma}}</p>    
-            <p> <strong>Filiação:</strong>{{ $Pais->NomePai}}&nbsp;/ {{ $Pais->NomeMae}}</p>    
+                @endforeach </p> 
+            <p> <strong>Aluno(a):</strong>{{ $aluno->NomeAluno}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <strong>Turma: </strong> {{$turma->NomeTurma}}</p> 
+            <p> <strong>Filiação:</strong>{{ $Pais->NomePai ?? '-'}}&nbsp;/ {{ $Pais->NomeMae ?? '-'}}</p> 
         </div>      
    
         

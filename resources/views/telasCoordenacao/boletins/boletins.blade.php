@@ -5,11 +5,7 @@
 @php
     // Busca inicial de alunos cadastrados com suas turmas
     try {
-        $Alunos = \DB::table('tb_alunos')
-            ->leftJoin('tb_turmas', 'tb_alunos.tb_turmas_idTurmas', '=', 'tb_turmas.idTurmas')
-            ->select('tb_alunos.*', 'tb_turmas.NomeTurma')
-            ->orderBy('NomeAluno')
-            ->paginate(15);
+        $Alunos = \App\Models\modelCoordenacao\tb_aluno::listagemAluno();
     } catch (\Exception $e) {
         $Alunos = new \Illuminate\Pagination\LengthAwarePaginator([], 0, 15);
     }
@@ -109,7 +105,7 @@
                 <thead>
                     <tr class="bg-[#f8faf9] border-b border-[#e3e8e6]">
                         <th class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-[#5c706b]">Nome do Aluno</th>
-                        <th class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-[#5c706b]">RA</th>
+                        <th class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-[#5c706b]">Nº MAC</th>
                         <th class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-[#5c706b]">Turma</th>
                         <th class="px-6 py-4 text-center text-xs font-semibold uppercase tracking-wider text-[#5c706b]">Emitir Boletim</th>
                     </tr>
@@ -119,40 +115,15 @@
                     @forelse($Alunos as $Aluno)
                         <tr class="hover:bg-[#f8faf9]/50 transition-colors">
                             <td class="px-6 py-4 text-sm font-semibold text-[#0a241e]">{{ $Aluno->NomeAluno }}</td>
-                            <td class="px-6 py-4 text-sm text-[#5c706b]">{{ $Aluno->RA }}</td>
+                            <td class="px-6 py-4 text-sm text-[#5c706b]">{{ $Aluno->NumeroMac ?? $Aluno->RA ?? '-' }}</td>
                             <td class="px-6 py-4 text-sm text-[#0a241e]">{{ $Aluno->NomeTurma ?? '-' }}</td>
                             <td class="px-6 py-4 text-sm text-center">
-                                <div class="flex flex-wrap justify-center gap-1.5">
-                                    <!-- Botão de emissão automática / padrão -->
-                                    <a href="{{ url('/coordenacao/boletim/' . $Aluno->idAluno) }}"
-                                       target="_blank"
-                                       class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-medium bg-emerald-50 text-emerald-700 hover:bg-emerald-100 transition-colors"
-                                       title="Boletim Escolar">
-                                        <i data-lucide="printer" class="w-3.5 h-3.5"></i> Imprimir Boletim
-                                    </a>
-
-                                    <!-- Opções específicas de modalidade -->
-                                    <a href="{{ url('/coordenacao/boletim_inf/' . $Aluno->idAluno) }}"
-                                       target="_blank"
-                                       class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-medium bg-purple-50 text-purple-700 hover:bg-purple-100 transition-colors"
-                                       title="Boletim Educação Infantil">
-                                        Infantil
-                                    </a>
-
-                                    <a href="{{ url('/coordenacao/boletim_fun1/' . $Aluno->idAluno) }}"
-                                       target="_blank"
-                                       class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-medium bg-blue-50 text-blue-700 hover:bg-blue-100 transition-colors"
-                                       title="Boletim Fundamental 1">
-                                        Fund 1
-                                    </a>
-
-                                    <a href="{{ url('/coordenacao/boletim_fun2/' . $Aluno->idAluno) }}"
-                                       target="_blank"
-                                       class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-medium bg-amber-50 text-amber-700 hover:bg-amber-100 transition-colors"
-                                       title="Boletim Fundamental 2">
-                                        Fund 2
-                                    </a>
-                                </div>
+                                <a href="{{ url('/coordenacao/boletim/' . $Aluno->idAluno) }}"
+                                   target="_blank"
+                                   class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-semibold bg-[#008a4b] text-white hover:bg-[#00703c] transition-all shadow-2xs"
+                                   title="Imprimir Boletim Escolar">
+                                    <i data-lucide="printer" class="w-4 h-4"></i> Imprimir Boletim
+                                </a>
                             </td>
                         </tr>
                     @empty

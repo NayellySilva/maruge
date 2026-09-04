@@ -36,9 +36,9 @@
             </strong>
         </div>
         <div class="inf_aluno_boletim">
-            <p><strong>Matricula:  </strong> {{ $matricula->RA}}</p>    
-            <p> <strong>Aluno(a):</strong>{{ $aluno->NomeAluno}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <strong>Turma: </strong> {{$turma->NomeTurma}}</p>    
-            <p> <strong>Filiação:</strong>{{ $Pais->NomePai}}&nbsp;/ {{ $Pais->NomeMae}}</p>    
+            <p><strong>Nº MAC: </strong> {{ $aluno->NumeroMac ?? $matricula->RA }}</p> 
+            <p> <strong>Aluno(a):</strong>{{ $aluno->NomeAluno}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <strong>Turma: </strong> {{$turma->NomeTurma}}</p> 
+            <p> <strong>Filiação:</strong>{{ $Pais->NomePai ?? '-'}}&nbsp;/ {{ $Pais->NomeMae ?? '-'}}</p> 
         </div>      
     <center class="titulo-boletim"><strong>BOLETIM</strong></center>
     <center>
