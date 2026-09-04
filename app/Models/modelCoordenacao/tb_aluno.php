@@ -102,7 +102,7 @@ class tb_aluno extends Model {
         return tb_aluno::orderBy('tb_aluno.NomeAluno')
                         ->leftJoin('tb_matriculas', 'tb_matriculas.idMatriculas', '=', 'tb_aluno.tb_matriculas_idMatriculas')
                         ->leftJoin('tb_turmas', 'tb_turmas.idTurmas', '=', 'tb_aluno.tb_turmas_idTurmas')
-                        ->select('tb_aluno.idAluno', 'tb_aluno.NomeAluno', 'tb_matriculas.RA', 'tb_matriculas.SituacaoAluno', 'tb_turmas.NomeTurma')
+                        ->select('tb_aluno.idAluno', 'tb_aluno.NomeAluno', 'tb_aluno.NumeroMac', 'tb_matriculas.RA', 'tb_matriculas.SituacaoAluno', 'tb_turmas.NomeTurma')
                         ->where(function($query) {
                             $query->whereIn('tb_matriculas.SituacaoAluno', ['ATIVO', 'MATRICULADO'])
                                   ->orWhereNull('tb_matriculas.SituacaoAluno')
@@ -119,7 +119,7 @@ class tb_aluno extends Model {
                         ->orderBy('NomeAluno')
                         ->join('tb_matriculas', 'tb_matriculas.idMatriculas', '=', 'tb_aluno.tb_matriculas_idMatriculas')
                         ->join('tb_turmas', 'tb_turmas.idTurmas', '=', 'tb_aluno.tb_turmas_idTurmas')
-                        ->select('tb_aluno.idAluno', 'tb_aluno.NomeAluno', 'tb_matriculas.RA', 'tb_matriculas.SituacaoAluno', 'tb_turmas.NomeTurma')
+                        ->select('tb_aluno.idAluno', 'tb_aluno.NomeAluno', 'tb_aluno.NumeroMac', 'tb_matriculas.RA', 'tb_matriculas.SituacaoAluno', 'tb_turmas.NomeTurma')
                       //  ->where('tb_matriculas.SituacaoAluno', 'ATIVO')
                 ->paginate(10);
     }
@@ -135,7 +135,7 @@ class tb_aluno extends Model {
                         ->orderBy('NomeAluno')
                         ->join('tb_matriculas', 'tb_matriculas.idMatriculas', '=', 'tb_aluno.tb_matriculas_idMatriculas')
                         ->join('tb_turmas', 'tb_turmas.idTurmas', '=', 'tb_aluno.tb_turmas_idTurmas')
-                        ->select('tb_aluno.idAluno', 'tb_aluno.NomeAluno', 'tb_matriculas.RA', 'tb_matriculas.SituacaoAluno', 'tb_turmas.NomeTurma')
+                        ->select('tb_aluno.idAluno', 'tb_aluno.NomeAluno', 'tb_aluno.NumeroMac', 'tb_matriculas.RA', 'tb_matriculas.SituacaoAluno', 'tb_turmas.NomeTurma')
                         ->where('tb_matriculas.SituacaoAluno', 'ATIVO')
                         ->paginate(10);
     }
@@ -165,7 +165,7 @@ class tb_aluno extends Model {
                         ->join('tb_matriculas', 'tb_matriculas.idMatriculas', '=', 'tb_aluno.tb_matriculas_idMatriculas')
                         ->join('tb_turmas', 'tb_turmas.idTurmas', '=', 'tb_aluno.tb_turmas_idTurmas')
                         ->join('tb_pais', 'tb_pais.idPais', '=', 'tb_aluno.tb_pais_idPais')
-                        ->select('tb_aluno.NomeAluno', 'tb_aluno.DataNascimento', 'tb_matriculas.RA', 'tb_turmas.NomeTurma', 'tb_pais.FonePai1', 'tb_pais.FoneMae1', 'tb_aluno.Sexo','tb_pais.NomeMae','tb_pais.NomePai')
+                        ->select('tb_aluno.NomeAluno', 'tb_aluno.DataNascimento', 'tb_aluno.NumeroMac', 'tb_matriculas.RA', 'tb_turmas.NomeTurma', 'tb_pais.FonePai1', 'tb_pais.FoneMae1', 'tb_aluno.Sexo','tb_pais.NomeMae','tb_pais.NomePai')
                         ->where('tb_matriculas.SituacaoAluno', 'ATIVO')
                         ->get();
     }
@@ -178,7 +178,7 @@ class tb_aluno extends Model {
                         ->join('tb_matriculas', 'tb_matriculas.idMatriculas', '=', 'tb_aluno.tb_matriculas_idMatriculas')
                         ->join('tb_turmas', 'tb_turmas.idTurmas', '=', 'tb_aluno.tb_turmas_idTurmas')
                         ->join('tb_pais', 'tb_pais.idPais', '=', 'tb_aluno.tb_pais_idPais')
-                        ->select('tb_aluno.NomeAluno', 'tb_aluno.DataNascimento', 'tb_aluno.Ultima_Turma', 'tb_matriculas.RA', 'tb_matriculas.Saida', 'tb_turmas.NomeTurma', 'tb_turmas.AnoLetivo', 'tb_pais.FonePai1', 'tb_pais.FoneMae1')
+                        ->select('tb_aluno.NomeAluno', 'tb_aluno.DataNascimento', 'tb_aluno.Ultima_Turma', 'tb_aluno.NumeroMac', 'tb_matriculas.RA', 'tb_matriculas.Saida', 'tb_turmas.NomeTurma', 'tb_turmas.AnoLetivo', 'tb_pais.FonePai1', 'tb_pais.FoneMae1')
                       // ->where('tb_matriculas.SituacaoAluno', 'INATIVO')
                       // ->where('tb_matriculas.SituacaoAluno', '<>', 'ATIVO')
                         ->get();
@@ -194,7 +194,7 @@ class tb_aluno extends Model {
                         ->join('tb_matriculas', 'tb_matriculas.idMatriculas', '=', 'tb_aluno.tb_matriculas_idMatriculas')
                         ->join('tb_turmas', 'tb_turmas.idTurmas', '=', 'tb_aluno.tb_turmas_idTurmas')
                         //  ->join('tb_pais', 'tb_pais.idPais', '=', 'tb_aluno.tb_pais_idPais')
-                        ->select('tb_aluno.idAluno', 'tb_aluno.NomeAluno', 'tb_matriculas.RA', 'tb_matriculas.SituacaoAluno', 'tb_turmas.NomeTurma')
+                        ->select('tb_aluno.idAluno', 'tb_aluno.NomeAluno', 'tb_aluno.NumeroMac', 'tb_matriculas.RA', 'tb_matriculas.SituacaoAluno', 'tb_turmas.NomeTurma')
                         ->where('tb_matriculas.SituacaoAluno', '<>', 'ATIVO')
                         ->paginate(10);
     }
@@ -205,7 +205,7 @@ class tb_aluno extends Model {
                         ->join('tb_matriculas', 'tb_matriculas.idMatriculas', '=', 'tb_aluno.tb_matriculas_idMatriculas')
                         ->join('tb_turmas', 'tb_turmas.idTurmas', '=', 'tb_aluno.tb_turmas_idTurmas')
                         //  ->join('tb_pais', 'tb_pais.idPais', '=', 'tb_aluno.tb_pais_idPais')
-                        ->select('tb_aluno.idAluno', 'tb_aluno.NomeAluno', 'tb_matriculas.RA', 'tb_matriculas.SituacaoAluno', 'tb_turmas.NomeTurma')
+                        ->select('tb_aluno.idAluno', 'tb_aluno.NomeAluno', 'tb_aluno.NumeroMac', 'tb_matriculas.RA', 'tb_matriculas.SituacaoAluno', 'tb_turmas.NomeTurma')
                         ->paginate(10);
     }
     // Metodo que pesquisa o aluno pos palavra chave
@@ -214,7 +214,7 @@ class tb_aluno extends Model {
                 ->orderBy('NomeAluno')
                 ->join('tb_matriculas', 'tb_matriculas.idMatriculas', '=', 'tb_aluno.tb_matriculas_idMatriculas')
                 ->join('tb_turmas', 'tb_turmas.idTurmas', '=', 'tb_aluno.tb_turmas_idTurmas')
-                ->select('tb_aluno.idAluno', 'tb_aluno.NomeAluno', 'tb_matriculas.RA', 'tb_turmas.NomeTurma', 'tb_matriculas.SituacaoAluno')
+                ->select('tb_aluno.idAluno', 'tb_aluno.NomeAluno', 'tb_aluno.NumeroMac', 'tb_matriculas.RA', 'tb_turmas.NomeTurma', 'tb_matriculas.SituacaoAluno')
                 ->where('NomeAluno', 'LIKE', "%$palavrachave%")
                 ->where('tb_matriculas.SituacaoAluno', '<>', 'INATIVO')
                 ->get();
@@ -226,7 +226,7 @@ class tb_aluno extends Model {
                 ->orderBy('NomeAluno')
                 ->join('tb_matriculas', 'tb_matriculas.idMatriculas', '=', 'tb_aluno.tb_matriculas_idMatriculas')
                 ->join('tb_turmas', 'tb_turmas.idTurmas', '=', 'tb_aluno.tb_turmas_idTurmas')
-                ->select('tb_aluno.idAluno', 'tb_aluno.NomeAluno', 'tb_matriculas.RA', 'tb_turmas.NomeTurma', 'tb_matriculas.SituacaoAluno')
+                ->select('tb_aluno.idAluno', 'tb_aluno.NomeAluno', 'tb_aluno.NumeroMac', 'tb_matriculas.RA', 'tb_turmas.NomeTurma', 'tb_matriculas.SituacaoAluno')
                 ->where('NomeAluno', 'LIKE', "%$palavrachave%")
                // ->where('tb_matriculas.SituacaoAluno', 'ATIVO')
                 ->get();
@@ -238,7 +238,7 @@ class tb_aluno extends Model {
                 ->orderBy('NomeAluno')
                 ->join('tb_matriculas', 'tb_matriculas.idMatriculas', '=', 'tb_aluno.tb_matriculas_idMatriculas')
                 ->join('tb_turmas', 'tb_turmas.idTurmas', '=', 'tb_aluno.tb_turmas_idTurmas')
-                ->select('tb_aluno.idAluno', 'tb_aluno.NomeAluno', 'tb_matriculas.RA', 'tb_turmas.NomeTurma', 'tb_matriculas.SituacaoAluno')
+                ->select('tb_aluno.idAluno', 'tb_aluno.NomeAluno', 'tb_aluno.NumeroMac', 'tb_matriculas.RA', 'tb_turmas.NomeTurma', 'tb_matriculas.SituacaoAluno')
                 ->where('NomeAluno', 'LIKE', "%$palavrachave%")
             //    ->where('tb_matriculas.SituacaoAluno', 'ATIVO')
                 ->get();
@@ -250,7 +250,7 @@ class tb_aluno extends Model {
                 ->orderBy('NomeAluno')
                 ->join('tb_matriculas', 'tb_matriculas.idMatriculas', '=', 'tb_aluno.tb_matriculas_idMatriculas')
                 ->join('tb_turmas', 'tb_turmas.idTurmas', '=', 'tb_aluno.tb_turmas_idTurmas')
-                ->select('tb_aluno.idAluno', 'tb_aluno.NomeAluno', 'tb_matriculas.RA', 'tb_turmas.NomeTurma', 'tb_matriculas.SituacaoAluno')
+                ->select('tb_aluno.idAluno', 'tb_aluno.NomeAluno', 'tb_aluno.NumeroMac', 'tb_matriculas.RA', 'tb_turmas.NomeTurma', 'tb_matriculas.SituacaoAluno')
                 ->where('NomeAluno', 'LIKE', "%$palavrachave%")
                 ->where('tb_matriculas.SituacaoAluno', '<>', 'ATIVO')
             //    ->where('tb_matriculas.SituacaoAluno', 'INATIVO')
@@ -263,7 +263,7 @@ class tb_aluno extends Model {
                 ->orderBy('NomeAluno')
                 ->join('tb_matriculas', 'tb_matriculas.idMatriculas', '=', 'tb_aluno.tb_matriculas_idMatriculas')
                 ->join('tb_turmas', 'tb_turmas.idTurmas', '=', 'tb_aluno.tb_turmas_idTurmas')
-                ->select('tb_aluno.idAluno', 'tb_aluno.NomeAluno', 'tb_matriculas.RA', 'tb_turmas.NomeTurma', 'tb_matriculas.SituacaoAluno')
+                ->select('tb_aluno.idAluno', 'tb_aluno.NomeAluno', 'tb_aluno.NumeroMac', 'tb_matriculas.RA', 'tb_turmas.NomeTurma', 'tb_matriculas.SituacaoAluno')
                 ->where('NomeAluno', 'LIKE', "%$palavrachave%")
                 ->paginate(50);
         return $Alunos;
@@ -277,7 +277,7 @@ class tb_aluno extends Model {
                 ->leftJoin('tb_endereco', 'tb_endereco.idEndereco', '=', 'tb_aluno.tb_endereco_idEndereco')
                 ->select(
                     'tb_aluno.idAluno', 'tb_aluno.NomeAluno','tb_aluno.DataNascimento', 
-                    'tb_matriculas.RA', 'tb_matriculas.SituacaoAluno', 'tb_turmas.NomeTurma',
+                    'tb_aluno.NumeroMac', 'tb_matriculas.RA', 'tb_matriculas.SituacaoAluno', 'tb_turmas.NomeTurma',
                     'tb_endereco.Rua', 'tb_endereco.Numero', 'tb_endereco.Bairro', 'tb_endereco.Cidade', 'tb_endereco.Estado', 'tb_endereco.Fone1'
                 )
                 ->where('tb_aluno.tb_turmas_idTurmas', $idTurma)
@@ -292,7 +292,7 @@ class tb_aluno extends Model {
                 ->join('tb_matriculas', 'tb_matriculas.idMatriculas', '=', 'tb_aluno.tb_matriculas_idMatriculas')
                 ->join('tb_turmas', 'tb_turmas.idTurmas', '=', 'tb_aluno.tb_turmas_idTurmas')
                 ->join('tb_pais', 'tb_pais.idPais', '=', 'tb_aluno.tb_pais_idPais')
-                ->select('tb_aluno.idAluno', 'tb_aluno.NomeAluno', 'tb_aluno.DataNascimento', 'tb_matriculas.RA', 'tb_matriculas.SituacaoAluno', 'tb_turmas.NomeTurma','tb_pais.NomeMae','tb_pais.NomePai','tb_pais.FonePai1', 'tb_pais.FoneMae1')
+                ->select('tb_aluno.idAluno', 'tb_aluno.NomeAluno', 'tb_aluno.DataNascimento', 'tb_aluno.NumeroMac', 'tb_matriculas.RA', 'tb_matriculas.SituacaoAluno', 'tb_turmas.NomeTurma','tb_pais.NomeMae','tb_pais.NomePai','tb_pais.FonePai1', 'tb_pais.FoneMae1')
                 ->where('tb_aluno.tb_turmas_idTurmas', $idturmas)
                 ->where('tb_matriculas.SituacaoAluno', 'ATIVO')
                 ->get();
@@ -316,6 +316,7 @@ class tb_aluno extends Model {
                 
                 ->select(
                         'tb_aluno.idAluno', 'tb_aluno.NomeAluno', 'tb_aluno.DataNascimento', 
+                        'tb_aluno.NumeroMac',
                         'tb_matriculas.RA',
                         'tb_matriculas.Email',
                         'tb_matriculas.SituacaoAluno', 
