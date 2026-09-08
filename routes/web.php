@@ -442,13 +442,8 @@ Route::get('/coordenacao/boletim/{id}', function ($id) {
 
     $titulo = 'Boletim Escolar — ' . ($aluno->NomeAluno ?? 'Aluno');
 
-    $nomeTurma = strtoupper($turma->NomeTurma ?? '');
-    $view = 'telasCoordenacao.boletins.boletim_fun1';
-    if (str_contains($nomeTurma, 'INFANTIL') || str_contains($nomeTurma, 'INF')) {
-        $view = 'telasCoordenacao.boletins.boletim_inf';
-    } elseif (str_contains($nomeTurma, '6') || str_contains($nomeTurma, '7') || str_contains($nomeTurma, '8') || str_contains($nomeTurma, '9') || str_contains($nomeTurma, 'FUNDAMENTAL II')) {
-        $view = 'telasCoordenacao.boletins.boletim_fun2';
-    }
+    $nivel = \App\Http\Controllers\controleCoordenacao\cont_relatorios::determinarNivelTurma($turma->NomeTurma ?? '');
+    $view = "telasCoordenacao.boletins.boletim_{$nivel}";
 
     return view($view, compact('aluno', 'matricula', 'turma', 'Pais', 'escolas', 'anoletivo', 'disciplinas', 'notasgraficos', 'titulo'));
 })->where('id', '[0-9]+');
@@ -543,13 +538,8 @@ Route::get('/coordenacao/lancamentos_notas_{bim}/{id}', function ($bim, $id) {
     if ($bim === 'rec') {
         $view = 'telasCoordenacao.notas.notas_rp_rf';
     } else {
-        $nomeTurma = strtoupper($turma->NomeTurma ?? '');
-        $nivel = 'fund1';
-        if (str_contains($nomeTurma, 'INFANTIL') || str_contains($nomeTurma, 'INF')) {
-            $nivel = 'inf';
-        } elseif (str_contains($nomeTurma, '6') || str_contains($nomeTurma, '7') || str_contains($nomeTurma, '8') || str_contains($nomeTurma, '9') || str_contains($nomeTurma, 'FUNDAMENTAL II')) {
-            $nivel = 'fund2';
-        }
+        $nivelCode = \App\Http\Controllers\controleCoordenacao\cont_relatorios::determinarNivelTurma($turma->NomeTurma ?? '');
+        $nivel = ($nivelCode === 'fun1') ? 'fund1' : (($nivelCode === 'fun2') ? 'fund2' : 'inf');
         $view = "telasCoordenacao.notas.notas_{$nivel}_{$bim}";
     }
 

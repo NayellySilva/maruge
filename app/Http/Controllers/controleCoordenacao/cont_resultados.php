@@ -71,7 +71,8 @@ class cont_resultados extends Controller {
         $professores = tb_turmas_disciplinas::ProfessoreSuasDisciplinas($idTurmas);
         $titulo = $tituloPadrao ?: "Resultados — {$turma->NomeTurma}";
 
-        $nivel = cont_relatorios::determinarNivelTurma($turma->NomeTurma ?? '');
+        $rawNivel = cont_relatorios::determinarNivelTurma($turma->NomeTurma ?? '');
+        $nivel = ($rawNivel === 'fun1') ? 'fund1' : (($rawNivel === 'fun2') ? 'fund2' : 'inf');
 
         if ($nivel === 'inf' && in_array($tipo, ['parcial', 'final'])) {
             return view('telasCoordenacao.resultado.resultado_inf_parcial_final', compact('titulo', 'escolas', 'turma', 'Alunos', 'alunos', 'disciplinas', 'professores'));

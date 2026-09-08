@@ -57,13 +57,7 @@ class cont_mapas extends Controller {
         return view('telasCoordenacao.mapa.mapas_filtro', compact('turmas'));
     }
     public static function determinarNivelTurma($nomeTurma) {
-        $nome = strtoupper($nomeTurma ?? '');
-        if (str_contains($nome, 'INFANTIL') || str_contains($nome, 'INF')) {
-            return 'inf';
-        } elseif (str_contains($nome, '6') || str_contains($nome, '7') || str_contains($nome, '8') || str_contains($nome, '9') || str_contains($nome, 'FUNDAMENTAL II')) {
-            return 'fund2';
-        }
-        return 'fund1';
+        return cont_relatorios::determinarNivelTurma($nomeTurma);
     }
 
     private function renderizarMapa($idTurmas, $tipo) {
@@ -78,7 +72,8 @@ class cont_mapas extends Controller {
         $disciplinas = tb_turmas_disciplinas::disciplinaTurma($idTurmas);
 
         $nomeTurma = $turma->NomeTurma ?? '';
-        $nivel = self::determinarNivelTurma($nomeTurma);
+        $rawNivel = self::determinarNivelTurma($nomeTurma);
+        $nivel = ($rawNivel === 'fun1') ? 'fund1' : (($rawNivel === 'fun2') ? 'fund2' : 'inf');
 
         $titulos = [
             '1bim' => 'Mapa de Nota 1º Bimestre',

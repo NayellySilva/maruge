@@ -156,10 +156,11 @@ class cont_relatorios extends Controller {
     }
 
     public static function determinarNivelTurma($nomeTurma) {
-        $nome = strtoupper($nomeTurma ?? '');
-        if (str_contains($nome, 'INFANTIL') || str_contains($nome, 'INF')) {
+        $nome = mb_strtoupper($nomeTurma ?? '');
+        if (preg_match('/\b(INFANTIL|INF)\b/i', $nome)) {
             return 'inf';
-        } elseif (str_contains($nome, '6') || str_contains($nome, '7') || str_contains($nome, '8') || str_contains($nome, '9') || str_contains($nome, 'FUNDAMENTAL II')) {
+        }
+        if (preg_match('/\b(6[ºo]?|7[ºo]?|8[ºo]?|9[ºo]?)\s*(ANO)?\b/i', $nome) || preg_match('/\bFUNDAMENTAL\s*(II|2)\b/i', $nome)) {
             return 'fun2';
         }
         return 'fun1';
