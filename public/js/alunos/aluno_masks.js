@@ -80,6 +80,23 @@
             .replace(/(\/\d{4})\d+?$/, '$1');
     };
 
+    // 6b. Formatar RG (Somente números, limite de 12 dígitos)
+    const applyRgMask = (value) => {
+        if (!value) return '';
+        return value.replace(/\D/g, '').slice(0, 12);
+    };
+
+    // 6c. Formatar Moeda / Valor (0,00)
+    const applyCurrencyMask = (value) => {
+        if (!value) return '';
+        let clean = value.replace(/\D/g, '');
+        if (!clean) return '';
+        let number = (parseInt(clean, 10) / 100).toFixed(2);
+        let parts = number.split('.');
+        parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+        return parts.join(',');
+    };
+
     // 7. Funções de Validação de CPF
     function validateCPF(cpf) {
         cpf = cpf.replace(/[^\d]+/g, '');
@@ -160,7 +177,7 @@
             target.value = applyCepMask(target.value);
             // Dispara a busca ViaCEP automaticamente se tiver 8 dígitos digitados
             const cleanCep = target.value.replace(/\D/g, '');
-            if (cleanCep.length === 8 && !target.dataset.fetching) {
+            if (cleanCep.length === 8 && !target.dataset.fetching && target.dataset.lastFetchedCep !== cleanCep) {
                 fetchViaCep(target);
             }
         }
@@ -169,6 +186,16 @@
         if (type === 'text' && isMatch(target, ['data', 'nascimento', 'emissao', 'matricula'])) {
             target.value = applyDateMask(target.value);
         }
+
+        // RG (apenas números)
+        if (type === 'text' && isMatch(target, ['rg', 'rgfuncionario', 'rgaluno'])) {
+            target.value = applyRgMask(target.value);
+        }
+
+        // Salário / Mensalidade / Valores Monetários
+        if (type === 'text' && isMatch(target, ['salario', 'mensalidade', 'valor', 'renda', 'preco'])) {
+            target.value = applyCurrencyMask(target.value);
+        }
     });
 
     // 9. Função Universal do ViaCEP (Validador e Autocompletar por API)
@@ -176,7 +203,10 @@
         const cep = cepInput.value.replace(/\D/g, '');
         if (cep.length !== 8) return;
 
+        if (cepInput.dataset.lastFetchedCep === cep || cepInput.dataset.fetching === "true") return;
+
         cepInput.dataset.fetching = "true";
+        cepInput.dataset.lastFetchedCep = cep;
         const form = cepInput.closest('form') || document;
 
         const rua = form.querySelector('input[name="Rua"], input[id="Rua"], input[name="logradouro"], input[id="logradouro"], input[name="Endereco"]');
