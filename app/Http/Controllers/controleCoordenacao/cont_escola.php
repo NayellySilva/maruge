@@ -48,6 +48,9 @@ class cont_escola extends Controller {
         $dadosForm = request()->all();
         $validando = Validator::make($dadosForm, tb_escola::$camposObg);
         if ($validando->fails()) {
+            if (!request()->ajax() && !request()->wantsJson()) {
+                return redirect()->back()->withErrors($validando)->withInput();
+            }
             $messages = $validando->messages();
             $displayErros = '';
             foreach ($messages->all("<p>:message</p>") as $errors) {
@@ -56,13 +59,22 @@ class cont_escola extends Controller {
         }
         $escola = tb_escola::count();
         if ($escola >= 1) {
+            if (!request()->ajax() && !request()->wantsJson()) {
+                return redirect('/coordenacao/escola/escola_inf')->with('error', 'Desculpe, já existe uma escola cadastrada!');
+            }
             return 'escolaExistente';
         } else {
             $novoEndereco = new tb_endereco($dadosForm);
             $novoEndereco->save();
             $novaEscola = new tb_escola($dadosForm);
+            if (empty($novaEscola->NumeroInep)) {
+                $novaEscola->NumeroInep = $dadosForm['NumeroInep'] ?? $dadosForm['INEP'] ?? $dadosForm['Inep'] ?? '00000000';
+            }
             $novaEscola->tb_endereco_idEndereco = $novoEndereco->idEndereco;
             $novaEscola->save();
+            if (!request()->ajax() && !request()->wantsJson()) {
+                return redirect('/coordenacao/escola/escola_inf')->with('success', 'Escola cadastrada com sucesso!');
+            }
             return 1;
         }
     }
@@ -76,7 +88,7 @@ class cont_escola extends Controller {
 //Metodo que busca os dados para edição e direciona ao seu formulario.
     public function editar($idEscola) {
         $escolas = $this->tb_escola->find($idEscola);
-        $endereco = $escolas->endEscola;
+        $endereco = $escolas ? $escolas->endEscola : null;
         $titulo = 'Editar dados da escola';
         return view('telasCoordenacao.escola.escola_cad', compact('escolas', 'endereco', 'titulo'));
     }
@@ -84,8 +96,8 @@ class cont_escola extends Controller {
 // Metodo para vizualizar informações da escola
     public function perfil($idEscola) {
         $escolas = $this->tb_escola->find($idEscola);
-        $idEndereco = $escolas->tb_endereco_idEndereco;
-        $endereco = $this->tb_endereco->find($idEndereco);
+        $idEndereco = $escolas ? $escolas->tb_endereco_idEndereco : null;
+        $endereco = $idEndereco ? $this->tb_endereco->find($idEndereco) : null;
         return view('telasCoordenacao.escola.escola_vis', compact('escolas', 'endereco'));
     }
 
@@ -94,6 +106,9 @@ class cont_escola extends Controller {
         $dadosForm = request()->all();
         $validando = Validator::make($dadosForm, tb_escola::$camposObg);
         if ($validando->fails()) {
+            if (!request()->ajax() && !request()->wantsJson()) {
+                return redirect()->back()->withErrors($validando)->withInput();
+            }
             $messages = $validando->messages();
             $displayErros = '';
             foreach ($messages->all("<p>:message</p>") as $errors) {
@@ -101,15 +116,18 @@ class cont_escola extends Controller {
             } return $displayErros;
         }
         $escolas = $this->tb_escola->find($idEscola);
-        $updateEscola = $escolas->update($dadosForm);
-        $idEndereco = $escolas->tb_endereco_idEndereco;
-        $endereco = $this->tb_endereco->find($idEndereco);
-        $updateEndereco = $endereco->update($dadosForm);
-        if ($updateEscola) {
-            return 'EscolaAtualizada';
-        } else {
-            
+        if ($escolas) {
+            $escolas->update($dadosForm);
+            $idEndereco = $escolas->tb_endereco_idEndereco;
+            $endereco = $this->tb_endereco->find($idEndereco);
+            if ($endereco) {
+                $endereco->update($dadosForm);
+            }
         }
+        if (!request()->ajax() && !request()->wantsJson()) {
+            return redirect('/coordenacao/escola/escola_inf')->with('success', 'Dados da escola atualizados com sucesso!');
+        }
+        return 'EscolaAtualizada';
     }
 
     // Metodo que Gera o PDF da Ficha completa da Escola
