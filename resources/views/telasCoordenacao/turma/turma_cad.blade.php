@@ -67,14 +67,14 @@
                     <label for="SituacaoTurma" class="text-sm font-medium text-[#0a241e]">Situação:</label>
                     <div class="relative" id="dropdown-container-situacao-cad">
                         <!-- Input Oculto para envio no formulário -->
-                        <input type="hidden" id="SituacaoTurma" name="SituacaoTurma" value="{{ old('SituacaoTurma', $turma->SituacaoTurma ?? '') }}" required>
+                        <input type="hidden" id="SituacaoTurma" name="SituacaoTurma" value="{{ old('SituacaoTurma', $turma?->SituacaoTurma ?? '') }}" required>
 
                         <!-- Trigger Box no MESMO Estilo Visual de turma_inf -->
                         <div onclick="toggleMultiDropdown('dropdown-menu-situacao-cad', 'chevron-situacao-cad')" 
                              class="w-full flex items-center justify-between bg-white border border-[#e3e8e6] hover:border-[#008a4b]/50 rounded-xl px-4 py-2.5 transition-all cursor-pointer shadow-2xs h-11">
-                            <span id="label-situacao-cad" class="text-sm font-medium truncate {{ old('SituacaoTurma', $turma->SituacaoTurma ?? '') ? 'text-[#0a241e]' : 'text-[#95aba5]' }}">
+                            <span id="label-situacao-cad" class="text-sm font-medium truncate {{ old('SituacaoTurma', $turma?->SituacaoTurma ?? '') ? 'text-[#0a241e]' : 'text-[#95aba5]' }}">
                                 @php
-                                    $valSituacao = old('SituacaoTurma', $turma->SituacaoTurma ?? '');
+                                    $valSituacao = old('SituacaoTurma', $turma?->SituacaoTurma ?? '');
                                 @endphp
                                 @if($valSituacao == 'ATIVO')
                                     ATIVO

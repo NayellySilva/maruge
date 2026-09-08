@@ -110,7 +110,7 @@
                         <tr class="hover:bg-[#f8faf9]/50 transition-colors">
                             <td class="px-6 py-4 text-sm text-[#5c706b]">{{ $turma->idTurmas }}</td>
                             <td class="px-6 py-4 text-sm font-semibold text-[#0a241e]">{{ $turma->NomeTurma }}</td>
-                            <td class="px-6 py-4 text-sm text-[#0a241e] text-center">RS: {{ number_format((float)($turma->Mensalidade ?? 0), 2, ',', '.') }}</td>
+                            <td class="px-6 py-4 text-sm text-[#0a241e] text-center">R$: {{ number_format((float)($turma->Mensalidade ?? 0), 2, ',', '.') }}</td>
                             <td class="px-6 py-4 text-sm text-[#0a241e] text-center">{{ $turma->AnoLetivo }}</td>
                             <td class="px-6 py-4 text-sm text-center">
                                 @if($turma->SituacaoTurma == 'ATIVO')

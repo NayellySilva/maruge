@@ -409,6 +409,9 @@
         };
 
         // Aliases para compatibilidade de chamadas existentes nas views
+        window.checkFuncaoSenhaVisibility = window.checkFuncaoSenhaVisibility || function() {};
+        window.checkFuncaoSenhaVisibilityForm = window.checkFuncaoSenhaVisibilityForm || function() {};
+
         window.toggleMultiDropdown = window.toggleMarugeDropdown;
         window.filterDropdownOptions = window.filterMarugeDropdownOptions;
         window.selectSingleOption = function(val, text, inputId, labelId, menuId, chevronId, autoSubmit) {
