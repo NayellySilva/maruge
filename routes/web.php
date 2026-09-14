@@ -22,12 +22,12 @@ use App\Http\Controllers\controleCoordenacao\cont_financeiro;
 use App\Http\Controllers\controleCoordenacao\cont_recibos;
 use App\Http\Controllers\controleCoordenacao\cont_lanche;
 use App\Http\Controllers\controleCoordenacao\cont_gabarito;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\controleLogin\loginPrincipal;
 use App\Http\Controllers\controleLogin\loginAluno;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+Route::get('/api/aniversariantes', [DashboardController::class, 'aniversariantes'])->name('api.aniversariantes');
 
 Route::get('/usuarios', function () {
     $Usuarios = tb_usuario::listagemUsuarios();

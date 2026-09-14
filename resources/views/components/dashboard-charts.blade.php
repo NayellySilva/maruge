@@ -1,3 +1,10 @@
+@props([
+    'matriculas' => array_fill(0, 12, 0),
+    'notasLabels' => [],
+    'notasValues' => [],
+    'mensalidades' => ['pagas' => 0, 'atrasadas' => 0, 'parcial' => 0]
+])
+
 <!-- Card de Gráficos de Indicadores Escolares -->
 <div class="bg-white border border-[#e3e8e6] rounded-2xl p-6 shadow-2xs flex flex-col gap-6">
     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -47,15 +54,15 @@
             <div class="flex flex-col gap-5 text-sm font-semibold text-gray-700 select-none pr-12">
                 <div class="flex items-center gap-3">
                     <span class="w-4 h-4 rounded-full bg-[#09492f] shrink-0"></span>
-                    <span class="text-base text-gray-800">Pagas em Dia</span>
+                    <span class="text-base text-gray-800">Pagas em Dia ({{ number_format($mensalidades['pagas'] ?? 0, 0, ',', '.') }})</span>
                 </div>
                 <div class="flex items-center gap-3">
                     <span class="w-4 h-4 rounded-full bg-[#ffb300] shrink-0"></span>
-                    <span class="text-base text-gray-800">Atrasadas (&lt; 30 dias)</span>
+                    <span class="text-base text-gray-800">Em Aberto ({{ number_format($mensalidades['atrasadas'] ?? 0, 0, ',', '.') }})</span>
                 </div>
                 <div class="flex items-center gap-3">
-                    <span class="w-4 h-4 rounded-full bg-[#f43f5e] shrink-0"></span>
-                    <span class="text-base text-gray-800">Inadimplentes</span>
+                    <span class="w-4 h-4 rounded-full bg-[#3b82f6] shrink-0"></span>
+                    <span class="text-base text-gray-800">Parcial ({{ number_format($mensalidades['parcial'] ?? 0, 0, ',', '.') }})</span>
                 </div>
             </div>
         </div>
@@ -67,6 +74,15 @@
         let chartMatriculas = null;
         let chartNotas = null;
         let chartMensalidades = null;
+
+        const dbMatriculas = @json($matriculas);
+        const dbNotasLabels = @json($notasLabels);
+        const dbNotasValues = @json($notasValues);
+        const dbMensalidades = [
+            {{ (int)($mensalidades['pagas'] ?? 0) }},
+            {{ (int)($mensalidades['atrasadas'] ?? 0) }},
+            {{ (int)($mensalidades['parcial'] ?? 0) }}
+        ];
 
         function initCharts() {
             if (chartMatriculas) chartMatriculas.destroy();
@@ -89,17 +105,17 @@
                         labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],
                         datasets: [{
                             label: 'Matrículas',
-                            data: [1936, 1950, 1973, 1991, 2009, 2053, 2050, 2053, 2059, 2068, 2077, 2091],
+                            data: dbMatriculas,
                             borderColor: '#008a4b',
                             borderWidth: 3,
                             pointBackgroundColor: '#008a4b',
                             pointBorderColor: '#ffffff',
                             pointBorderWidth: 1.5,
-                            pointRadius: 5,
-                            pointHoverRadius: 7,
+                            pointRadius: 4,
+                            pointHoverRadius: 6,
                             fill: true,
                             backgroundColor: gradient,
-                            tension: 0.4
+                            tension: 0.3
                         }]
                     },
                     options: {
@@ -125,10 +141,8 @@
                                 }
                             },
                             y: {
-                                min: 1900,
-                                max: 2100,
+                                beginAtZero: true,
                                 ticks: {
-                                    stepSize: 50,
                                     color: '#9ca3af',
                                     font: { family: 'Instrument Sans', size: 11, weight: '600' }
                                 },
@@ -144,18 +158,16 @@
             }
 
             if (ctxNotas) {
+                const bgColors = dbNotasValues.map(v => v >= 7.0 ? '#09492f' : (v >= 5.0 ? '#008a4b' : '#f43f5e'));
+
                 chartNotas = new Chart(ctxNotas, {
                     type: 'bar',
                     data: {
-                        labels: ['6a', '6b', '7a', '7b', '8', '9', '1', '2', '3', '4', '5a', '5b'],
+                        labels: dbNotasLabels,
                         datasets: [{
                             label: 'Média de Notas',
-                            data: [6.0, 7.5, 5.2, 8.2, 9.5, 4.5, 3.5, 9.0, 7.2, 8.2, 4.5, 6.0],
-                            backgroundColor: [
-                                '#cce3db', '#cce3db', '#cce3db', '#cce3db', 
-                                '#09492f',
-                                '#cce3db', '#cce3db', '#cce3db', '#cce3db', '#cce3db', '#cce3db', '#cce3db'
-                            ],
+                            data: dbNotasValues,
+                            backgroundColor: bgColors,
                             borderRadius: 6,
                             borderSkipped: false
                         }]
@@ -176,7 +188,7 @@
                                 grid: { display: false },
                                 ticks: {
                                     color: '#9ca3af',
-                                    font: { family: 'Instrument Sans', size: 11, weight: '600' }
+                                    font: { family: 'Instrument Sans', size: 10, weight: '600' }
                                 }
                             },
                             y: {
@@ -202,10 +214,10 @@
                 chartMensalidades = new Chart(ctxMensalidades, {
                     type: 'doughnut',
                     data: {
-                        labels: ['Pagas em Dia', 'Atrasadas (< 30 dias)', 'Inadimplentes'],
+                        labels: ['Pagas em Dia', 'Em Aberto', 'Parcial'],
                         datasets: [{
-                            data: [35, 40, 25],
-                            backgroundColor: ['#09492f', '#ffb300', '#f43f5e'],
+                            data: dbMensalidades,
+                            backgroundColor: ['#09492f', '#ffb300', '#3b82f6'],
                             borderWidth: 0,
                             hoverOffset: 4
                         }]

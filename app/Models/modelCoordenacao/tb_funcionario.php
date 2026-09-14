@@ -10,7 +10,7 @@ class tb_funcionario extends Model {
     protected $primaryKey = 'idFuncionarios';
     public $timestamps = false;
     protected $fillable = [
-        'NomeFuncionario', 'CPFFuncionario', 'RGFuncionario', 'Funcao',
+        'NomeFuncionario', 'CPFFuncionario', 'RGFuncionario', 'DataNascimento', 'Funcao',
         'Salario', 'EmailFuncionario', 'Formacao'
     ];
     // Campos Obrigatorios
@@ -37,6 +37,9 @@ class tb_funcionario extends Model {
         }
         if (!isset($novoFuncionario->Formacao)) {
             $novoFuncionario->Formacao = $dadosForm['Formacao'] ?? '';
+        }
+        if (isset($dadosForm['DataNascimento'])) {
+            $novoFuncionario->DataNascimento = $dadosForm['DataNascimento'];
         }
         $novoFuncionario->tb_endereco_idEndereco = $novoEndereco->idEndereco;
         $novoFuncionario->save();
