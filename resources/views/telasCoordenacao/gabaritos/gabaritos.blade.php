@@ -4,12 +4,15 @@
 
 @php
     // Busca paginada das turmas cadastradas
-    try {
-        $turmas = \DB::table('tb_turmas')
-            ->orderBy('NomeTurma')
-            ->paginate(15);
-    } catch (\Exception $e) {
-        $turmas = new \Illuminate\Pagination\LengthAwarePaginator([], 0, 15);
+    if (!isset($turmas)) {
+        try {
+            $turmas = \DB::table('tb_turmas')
+                ->whereIn('SituacaoTurma', ['ATIVO', 'ATIVA'])
+                ->orderBy('NomeTurma')
+                ->paginate(15);
+        } catch (\Exception $e) {
+            $turmas = new \Illuminate\Pagination\LengthAwarePaginator([], 0, 15);
+        }
     }
 @endphp
 
@@ -26,7 +29,7 @@
     <div class="flex justify-between items-center">
         <div class="flex flex-col gap-1">
             <h1 class="text-3xl font-semibold text-[#0a241e]">Gabaritos de Provas</h1>
-            <p class="text-sm text-[#5c706b]">Turmas Cadastradas: ({{ $turmas->total() }})</p>
+            <p class="text-sm text-[#5c706b]">Turmas encontradas: ({{ isset($turmas) ? (method_exists($turmas, 'total') ? $turmas->total() : count($turmas)) : 0 }})</p>
         </div>
     </div>
 
@@ -37,7 +40,7 @@
             <form method="POST" action="{{ url('/coordenacao/gabarito_pesq') }}" class="w-full">
                 @csrf
                 <div class="flex items-center bg-white border border-[#e3e8e6] rounded-xl px-4 py-2.5 transition-all">
-                    <input type="text" name="pesquisar" placeholder="Pesquisar Turma" class="w-full bg-transparent text-sm focus:outline-none">
+                    <input type="text" name="pesquisar" placeholder="Pesquisar Turma" class="w-full bg-transparent text-sm focus:outline-none" value="{{ request()->input('pesquisar') }}">
                     <button type="submit" class="text-[#5c706b] hover:text-[#008a4b] ml-2">
                         <i data-lucide="search" class="w-4 h-4"></i>
                     </button>
@@ -50,19 +53,23 @@
             <form method="POST" action="{{ url('/coordenacao/gabarito_filtro') }}" class="w-full">
                 @csrf
                 <div class="relative" id="dropdown-container-sit-gabaritos">
-                    <input type="hidden" id="SituacaoTurma" name="SituacaoTurma" value="{{ request()->input('SituacaoTurma', '') }}">
+                    <input type="hidden" id="SituacaoTurma" name="SituacaoTurma" value="{{ request()->input('SituacaoTurma', 'ATIVO') }}">
 
                     @php
-                        $valSitGab = request()->input('SituacaoTurma', '');
-                        $sitGabLabel = $valSitGab ? ucfirst(strtolower($valSitGab)) : 'Filtrar por Situação';
+                        $valSitGab = request()->input('SituacaoTurma', 'ATIVO');
+                        $sitGabLabel = $valSitGab ? ucfirst(strtolower($valSitGab)) : 'Ativo';
                     @endphp
 
                     <!-- Trigger Box -->
                     <div onclick="toggleMultiDropdown('dropdown-menu-sit-gabaritos', 'chevron-sit-gabaritos')" 
                          class="w-full flex items-center justify-between bg-white border border-[#e3e8e6] hover:border-[#008a4b]/50 rounded-xl px-4 py-2.5 transition-all cursor-pointer shadow-2xs h-11">
-                        <span id="label-sit-gabaritos" class="text-sm font-medium truncate {{ $valSitGab ? 'text-[#0a241e]' : 'text-[#95aba5]' }}">
-                            {{ $sitGabLabel }}
+                        <span id="label-sit-gabaritos" class="text-sm font-semibold truncate text-[#0a241e]">
+                            Situação: {{ $sitGabLabel }}
                         </span>
+                        <div id="chevron-sit-gabaritos" class="text-[#95aba5] transition-transform duration-200 shrink-0 ml-2">
+                            <i data-lucide="chevron-down" class="w-4 h-4"></i>
+                        </div>
+                    </div>
                         <div id="chevron-sit-gabaritos" class="text-[#95aba5] transition-transform duration-200 shrink-0 ml-2">
                             <i data-lucide="chevron-down" class="w-4 h-4"></i>
                         </div>

@@ -85,10 +85,61 @@ $dadosForm = request()->all();
    
     
 //Metodo que lista os alunos 
+//Metodo que lista os alunos (com suporte a filtros combinados de Situacao, Turma e Pesquisa - padrao: ATIVOS)
     public function aluno_inf() {
         $turmas = tb_turma::turmasAtivas();
-        $Alunos = tb_aluno::listagemAluno();
-        return view('telasCoordenacao.alunos.aluno_inf', compact('Alunos', 'turmas'));
+        $pesquisar = $this->request->get('pesquisar');
+        $idTurmas = $this->request->get('idTurmas');
+        $situacao = $this->request->get('situacao', 'ATIVO');
+        if (empty($situacao)) {
+            $situacao = 'ATIVO';
+        }
+
+        $query = tb_aluno::orderBy('tb_aluno.NomeAluno')
+            ->leftJoin('tb_matriculas', 'tb_matriculas.idMatriculas', '=', 'tb_aluno.tb_matriculas_idMatriculas')
+            ->leftJoin('tb_turmas', 'tb_turmas.idTurmas', '=', 'tb_aluno.tb_turmas_idTurmas')
+            ->select(
+                'tb_aluno.idAluno',
+                'tb_aluno.NomeAluno',
+                'tb_aluno.NumeroMac',
+                'tb_matriculas.RA',
+                'tb_matriculas.SituacaoAluno',
+                'tb_turmas.NomeTurma'
+            );
+
+        // Filtro de Situacao (Padrao: ATIVO)
+        if ($situacao === 'ATIVO') {
+            $query->where(function($q) {
+                $q->whereIn('tb_matriculas.SituacaoAluno', ['ATIVO', 'MATRICULADO']);
+            });
+        } elseif ($situacao === 'INATIVO') {
+            $query->where(function($q) {
+                $q->whereIn('tb_matriculas.SituacaoAluno', ['INATIVO', '[INATIVO]']);
+            });
+        } elseif ($situacao === 'TRANSFERIDO') {
+            $query->where('tb_matriculas.SituacaoAluno', 'TRANSFERIDO');
+        } elseif ($situacao === 'DESISTENTE') {
+            $query->where('tb_matriculas.SituacaoAluno', 'DESISTENTE');
+        } elseif ($situacao === 'TODOS') {
+            // Nao filtra por situacao
+        }
+
+        // Filtro por Turma
+        if (!empty($idTurmas)) {
+            $query->where('tb_aluno.tb_turmas_idTurmas', $idTurmas);
+        }
+
+        // Filtro por Pesquisa (Nome ou RA)
+        if (!empty($pesquisar)) {
+            $query->where(function($q) use ($pesquisar) {
+                $q->where('tb_aluno.NomeAluno', 'LIKE', "%{$pesquisar}%")
+                  ->orWhere('tb_matriculas.RA', 'LIKE', "%{$pesquisar}%");
+            });
+        }
+
+        $Alunos = $query->paginate(15)->appends($this->request->query());
+
+        return view('telasCoordenacao.alunos.aluno_inf', compact('Alunos', 'turmas', 'situacao', 'idTurmas', 'pesquisar'));
     }
 //Metodo que lista os alunos que estão pré-matrículados
     public function pre_matriculados() {
@@ -113,10 +164,7 @@ $dadosForm = request()->all();
 
 //Metodo pesquisar aluno por palavra chave
     public function aluno_pesq() {
-        $turmas = tb_turma::turmasAtivas();
-        $palavrachave = $this->request->get('pesquisar');
-        $Alunos = tb_aluno::pesquisar($palavrachave);
-        return view('telasCoordenacao.alunos.aluno_pesq', compact('Alunos', 'turmas'));
+        return $this->aluno_inf();
     }
 
 //Metodo pesquisar aluno por palavra chave para rematricular
@@ -137,13 +185,7 @@ $dadosForm = request()->all();
 
 //Metodo pesquisar aluno por filtro de turma
     public function aluno_filtro() {
-        $idTurma = $this->request->get('idTurmas');
-        $turmas = tb_turma::turmasAtivas();
-        if ($idTurma == null) {
-            
-        }
-        $Alunos = tb_aluno::filtroporTurma($idTurma);
-        return view('telasCoordenacao.alunos.aluno_inf', compact('Alunos', 'turmas'));
+        return $this->aluno_inf();
     }
 
     //Metodo que busca os dados para edição e direciona ao seu formulario.

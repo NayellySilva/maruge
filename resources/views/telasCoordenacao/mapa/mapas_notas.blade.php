@@ -4,12 +4,15 @@
 
 @php
     // Busca paginada das turmas cadastradas
-    try {
-        $turmas = \DB::table('tb_turmas')
-            ->orderBy('NomeTurma')
-            ->paginate(15);
-    } catch (\Exception $e) {
-        $turmas = new \Illuminate\Pagination\LengthAwarePaginator([], 0, 15);
+    if (!isset($turmas)) {
+        try {
+            $turmas = \DB::table('tb_turmas')
+                ->whereIn('SituacaoTurma', ['ATIVO', 'ATIVA'])
+                ->orderBy('NomeTurma')
+                ->paginate(15);
+        } catch (\Exception $e) {
+            $turmas = new \Illuminate\Pagination\LengthAwarePaginator([], 0, 15);
+        }
     }
 @endphp
 
@@ -23,21 +26,21 @@
     </div>
 
     <!-- Cabeçalho Principal -->
-    <div class="flex justify-between items-center">
-        <div class="flex flex-col gap-1">
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
             <h1 class="text-3xl font-semibold text-[#0a241e]">Mapas de Notas</h1>
-            <p class="text-sm text-[#5c706b]">Turmas Cadastradas: ({{ $turmas->total() }})</p>
+            <p class="text-sm text-[#5c706b]">Turmas encontradas: ({{ isset($turmas) ? (method_exists($turmas, 'total') ? $turmas->total() : count($turmas)) : 0 }})</p>
         </div>
     </div>
 
-    <!-- Filtros de Busca e Seleção por Situação -->
+    <!-- Filtros de Pesquisa e Seleção de Turma -->
     <div class="flex flex-col sm:flex-row gap-4 items-center">
-        <!-- Localizar Turma -->
+        <!-- Campo de Pesquisa -->
         <div class="w-full sm:w-80">
             <form method="POST" action="{{ url('/coordenacao/mapas_pesq') }}" class="w-full">
                 @csrf
                 <div class="flex items-center bg-white border border-[#e3e8e6] rounded-xl px-4 py-2.5 transition-all">
-                    <input type="text" name="pesquisar" placeholder="Pesquisar Turma" class="w-full bg-transparent text-sm focus:outline-none">
+                    <input type="text" name="pesquisar" placeholder="Pesquisar Turma" class="w-full bg-transparent text-sm focus:outline-none" value="{{ request()->input('pesquisar') }}">
                     <button type="submit" class="text-[#5c706b] hover:text-[#008a4b] ml-2">
                         <i data-lucide="search" class="w-4 h-4"></i>
                     </button>
@@ -50,18 +53,18 @@
             <form method="POST" action="{{ url('/coordenacao/mapas_filtro') }}" class="w-full">
                 @csrf
                 <div class="relative" id="dropdown-container-sit-mapas">
-                    <input type="hidden" id="SituacaoTurma" name="SituacaoTurma" value="{{ request()->input('SituacaoTurma', '') }}">
+                    <input type="hidden" id="SituacaoTurma" name="SituacaoTurma" value="{{ request()->input('SituacaoTurma', 'ATIVO') }}">
 
                     @php
-                        $valSitMapas = request()->input('SituacaoTurma', '');
-                        $sitMapasLabel = $valSitMapas ? ucfirst(strtolower($valSitMapas)) : 'Filtrar por Situação';
+                        $valSitMapas = request()->input('SituacaoTurma', 'ATIVO');
+                        $sitMapasLabel = $valSitMapas ? ucfirst(strtolower($valSitMapas)) : 'Ativo';
                     @endphp
 
                     <!-- Trigger Box -->
                     <div onclick="toggleMultiDropdown('dropdown-menu-sit-mapas', 'chevron-sit-mapas')" 
                          class="w-full flex items-center justify-between bg-white border border-[#e3e8e6] hover:border-[#008a4b]/50 rounded-xl px-4 py-2.5 transition-all cursor-pointer shadow-2xs h-11">
-                        <span id="label-sit-mapas" class="text-sm font-medium truncate {{ $valSitMapas ? 'text-[#0a241e]' : 'text-[#95aba5]' }}">
-                            {{ $sitMapasLabel }}
+                        <span id="label-sit-mapas" class="text-sm font-semibold truncate text-[#0a241e]">
+                            Situação: {{ $sitMapasLabel }}
                         </span>
                         <div id="chevron-sit-mapas" class="text-[#95aba5] transition-transform duration-200 shrink-0 ml-2">
                             <i data-lucide="chevron-down" class="w-4 h-4"></i>

@@ -10,11 +10,13 @@
         $Alunos = new \Illuminate\Pagination\LengthAwarePaginator([], 0, 15);
     }
 
-    // Listagem de turmas para o filtro
-    try {
-        $turmas = \DB::table('tb_turmas')->orderBy('NomeTurma')->get();
-    } catch (\Exception $e) {
-        $turmas = collect();
+    // Listagem de turmas para o filtro (apenas ativas)
+    if (!isset($turmas) || $turmas->isEmpty()) {
+        try {
+            $turmas = \DB::table('tb_turmas')->whereIn('SituacaoTurma', ['ATIVO', 'ATIVA'])->orderBy('NomeTurma')->get();
+        } catch (\Exception $e) {
+            $turmas = collect();
+        }
     }
 @endphp
 

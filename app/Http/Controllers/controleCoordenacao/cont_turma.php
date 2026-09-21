@@ -57,10 +57,34 @@ class cont_turma extends Controller {
         }
     }
 
-// Metodo para busca as turmas ativas cadastradas
+// Metodo para busca as turmas (padrao: ATIVAS) com suporte a filtros combinados
     public function turma_inf() {
-        $turmas = tb_turma::listandoTurmasAtivas();
-        return view('telasCoordenacao.turma.turma_inf', compact('turmas'));
+        $pesquisar = $this->request->get('pesquisar');
+        $SituacaoTurma = $this->request->get('SituacaoTurma', 'ATIVO');
+        if (empty($SituacaoTurma)) {
+            $SituacaoTurma = 'ATIVO';
+        }
+
+        $query = tb_turma::orderBy('NomeTurma');
+
+        if ($SituacaoTurma === 'ATIVO') {
+            $query->whereIn('SituacaoTurma', ['ATIVO', 'ATIVA']);
+        } elseif ($SituacaoTurma === 'INATIVO') {
+            $query->whereIn('SituacaoTurma', ['INATIVO', 'INATIVA', '[INATIVO]']);
+        } elseif ($SituacaoTurma === 'TODOS') {
+            // Sem filtro de situacao
+        }
+
+        if (!empty($pesquisar)) {
+            $query->where(function($q) use ($pesquisar) {
+                $q->where('NomeTurma', 'LIKE', "%{$pesquisar}%")
+                  ->orWhere('AnoLetivo', 'LIKE', "%{$pesquisar}%");
+            });
+        }
+
+        $turmas = $query->paginate(15)->appends($this->request->query());
+
+        return view('telasCoordenacao.turma.turma_inf', compact('turmas', 'SituacaoTurma', 'pesquisar'));
     }
 
 //Metodo que busca os dados para edição e direciona ao seu formulario.
@@ -110,19 +134,12 @@ class cont_turma extends Controller {
 
     //Metodo pesquisar uma turma por palavra chave
     public function turma_pesq() {
-        $palavrachave = $this->request->get('pesquisar');
-        $turmas = tb_turma::pesquisar($palavrachave);
-        return view('telasCoordenacao.turma.turma_inf', compact('turmas'));
+        return $this->turma_inf();
     }
 
     //Metodo pesquisar turma por filtro Situação
     public function turma_filtro() {
-        $SituacaoTurma = $this->request->get('SituacaoTurma');
-        if ($SituacaoTurma == null) {
-            return redirect('/coordenacao/turma_inf');
-        }
-        $turmas = tb_turma::filtroporSituacaoTurma($SituacaoTurma);
-        return view('telasCoordenacao.turma.turma_filtro', compact('turmas'));
+        return $this->turma_inf();
     }
 
     //Metodo para deletar turma com verificação de vinculos

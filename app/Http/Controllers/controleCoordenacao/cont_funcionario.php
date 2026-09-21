@@ -87,10 +87,58 @@ class cont_funcionario extends Controller {
         }
     }
 
-    // Metodo para busca valores da tabela do bando de dados:    
+    // Metodo para busca valores da tabela do banco de dados (padrao: ATIVOS) com suporte a filtros combinados:
     public function funcionario_inf() {
-        $Funcionarios = tb_funcionario::informacaoFuncionario();
-        return view('telasCoordenacao.funcionarios.funcionario_inf', compact('Funcionarios'));
+        $pesquisar = $this->request->get('pesquisar');
+        $situacao = $this->request->get('situacao', 'ATIVO');
+        if (empty($situacao)) {
+            $situacao = 'ATIVO';
+        }
+
+        $query = tb_funcionario::orderBy('NomeFuncionario')
+            ->leftJoin('tb_endereco', 'tb_endereco.idEndereco', '=', 'tb_funcionarios.tb_endereco_idEndereco')
+            ->leftJoin('tb_usuario', 'tb_usuario.tb_funcionarios_idFuncionarios', '=', 'tb_funcionarios.idFuncionarios')
+            ->select(
+                'tb_funcionarios.idFuncionarios',
+                'tb_funcionarios.NomeFuncionario',
+                'tb_funcionarios.CPFFuncionario',
+                'tb_funcionarios.Funcao',
+                'tb_funcionarios.tb_endereco_idEndereco',
+                'tb_endereco.Fone1',
+                'tb_endereco.Fone2',
+                'tb_usuario.Situacao as SituacaoUsuario'
+            )
+            ->distinct();
+
+        if ($situacao === 'ATIVO') {
+            $query->where(function($q) {
+                $q->where('tb_funcionarios.NomeFuncionario', 'NOT LIKE', '%SAIU%')
+                  ->where('tb_funcionarios.NomeFuncionario', 'NOT LIKE', '%(SAIU)%')
+                  ->where(function($sub) {
+                      $sub->whereNull('tb_usuario.Situacao')
+                          ->orWhere('tb_usuario.Situacao', 'ATIVO');
+                  });
+            });
+        } elseif ($situacao === 'INATIVO') {
+            $query->where(function($q) {
+                $q->where('tb_funcionarios.NomeFuncionario', 'LIKE', '%SAIU%')
+                  ->orWhere('tb_usuario.Situacao', 'INATIVO');
+            });
+        } elseif ($situacao === 'TODOS') {
+            // Sem filtro de situacao
+        }
+
+        if (!empty($pesquisar)) {
+            $query->where(function($q) use ($pesquisar) {
+                $q->where('tb_funcionarios.NomeFuncionario', 'LIKE', "%{$pesquisar}%")
+                  ->orWhere('tb_funcionarios.CPFFuncionario', 'LIKE', "%{$pesquisar}%")
+                  ->orWhere('tb_funcionarios.Funcao', 'LIKE', "%{$pesquisar}%");
+            });
+        }
+
+        $Funcionarios = $query->paginate(15)->appends($this->request->query());
+
+        return view('telasCoordenacao.funcionarios.funcionario_inf', compact('Funcionarios', 'situacao', 'pesquisar'));
     }
 
     //Metodo que busca os dados para edição e direciona ao seu formulario.
@@ -185,9 +233,11 @@ class cont_funcionario extends Controller {
 
 //Metodo pesquisar Funcionario por palavra chave
     public function funcionario_pesq() {
-        $palavrachave = $this->request->get('pesquisar');
-        $Funcionarios = tb_funcionario::pesquisar($palavrachave);
-        return view('telasCoordenacao.funcionarios.funcionario_inf', compact('Funcionarios'));
+        return $this->funcionario_inf();
+    }
+
+    public function funcionario_filtro() {
+        return $this->funcionario_inf();
     }
 
 //FIM DA CLASSE CONTROLE DA ESCOLA  

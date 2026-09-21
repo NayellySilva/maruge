@@ -3,14 +3,30 @@
 @section('content')
 
 @php
+    $currentSituacao = request()->input('situacao', $situacao ?? 'ATIVO');
+    if (empty($currentSituacao)) {
+        $currentSituacao = 'ATIVO';
+    }
+
     if (!isset($Alunos)) {
         try {
-            $Alunos = \DB::table('tb_aluno')
+            $query = \DB::table('tb_aluno')
                 ->leftJoin('tb_matriculas', 'tb_aluno.tb_matriculas_idMatriculas', '=', 'tb_matriculas.idMatriculas')
                 ->leftJoin('tb_turmas', 'tb_aluno.tb_turmas_idTurmas', '=', 'tb_turmas.idTurmas')
                 ->select('tb_aluno.idAluno', 'tb_aluno.NomeAluno', 'tb_matriculas.RA', 'tb_matriculas.SituacaoAluno', 'tb_turmas.NomeTurma')
-                ->orderBy('NomeAluno')
-                ->paginate(15);
+                ->orderBy('NomeAluno');
+
+            if ($currentSituacao === 'ATIVO') {
+                $query->whereIn('tb_matriculas.SituacaoAluno', ['ATIVO', 'MATRICULADO']);
+            } elseif ($currentSituacao === 'INATIVO') {
+                $query->whereIn('tb_matriculas.SituacaoAluno', ['INATIVO', '[INATIVO]']);
+            } elseif ($currentSituacao === 'TRANSFERIDO') {
+                $query->where('tb_matriculas.SituacaoAluno', 'TRANSFERIDO');
+            } elseif ($currentSituacao === 'DESISTENTE') {
+                $query->where('tb_matriculas.SituacaoAluno', 'DESISTENTE');
+            }
+
+            $Alunos = $query->paginate(15);
         } catch (\Exception $e) {
             $Alunos = new \Illuminate\Pagination\LengthAwarePaginator([], 0, 15);
         }
@@ -18,7 +34,7 @@
 
     if (!isset($turmas)) {
         try {
-            $turmas = \DB::table('tb_turmas')->orderBy('NomeTurma')->get();
+            $turmas = \DB::table('tb_turmas')->whereIn('SituacaoTurma', ['ATIVO', 'ATIVA'])->orderBy('NomeTurma')->get();
         } catch (\Exception $e) {
             $turmas = collect();
         }
@@ -37,7 +53,7 @@
     <div class="flex justify-between items-center">
         <div class="flex flex-col gap-1">
             <h1 class="text-3xl font-semibold text-[#0a241e]">Alunos</h1>
-            <p class="text-sm text-[#5c706b]">Alunos cadastrados: ({{ $Alunos->total() }})</p>
+            <p class="text-sm text-[#5c706b]">Alunos encontrados: ({{ $Alunos->total() }})</p>
         </div>
         <a href="{{ url('/coordenacao/alunos/aluno_cad') }}" class="bg-[#008a4b] hover:bg-[#00703c] text-white font-medium px-6 py-2.5 rounded-full flex items-center gap-2 transition-all shadow-sm cursor-pointer">
             <i data-lucide="plus" class="w-5 h-5"></i>
@@ -46,11 +62,17 @@
     </div>
 
     <!-- Filtros -->
-    <div class="flex flex-col sm:flex-row gap-4 items-center">
+    <div class="flex flex-col sm:flex-row flex-wrap gap-4 items-center">
         <!-- Barra de Pesquisa -->
         <div class="w-full sm:w-80">
             <form method="GET" action="{{ url()->current() }}" class="w-full flex items-center bg-white border border-[#e3e8e6] rounded-xl px-4 py-2.5 transition-all">
-                <input type="text" name="pesquisar" placeholder="Pesquisar Aluno" value="{{ request()->input('pesquisar') }}" class="w-full bg-transparent text-sm focus:outline-none">
+                @if(request()->input('idTurmas'))
+                    <input type="hidden" name="idTurmas" value="{{ request()->input('idTurmas') }}">
+                @endif
+                @if(request()->input('situacao'))
+                    <input type="hidden" name="situacao" value="{{ request()->input('situacao') }}">
+                @endif
+                <input type="text" name="pesquisar" placeholder="Pesquisar Aluno por nome ou RA" value="{{ request()->input('pesquisar') }}" class="w-full bg-transparent text-sm focus:outline-none">
                 <button type="submit" class="text-[#5c706b] hover:text-[#008a4b] ml-2">
                     <i data-lucide="search" class="w-4 h-4"></i>
                 </button>
@@ -63,6 +85,9 @@
                 @if(request()->input('pesquisar'))
                     <input type="hidden" name="pesquisar" value="{{ request()->input('pesquisar') }}">
                 @endif
+                @if(request()->input('situacao'))
+                    <input type="hidden" name="situacao" value="{{ request()->input('situacao') }}">
+                @endif
                 <div class="relative" id="dropdown-container-turma-aluno">
                     <input type="hidden" id="idTurmas" name="idTurmas" value="{{ request()->input('idTurmas', '') }}">
 
@@ -73,7 +98,7 @@
                     <!-- Trigger Box -->
                     <div onclick="toggleMultiDropdown('dropdown-menu-turma-aluno', 'chevron-turma-aluno')" 
                          class="w-full flex items-center justify-between bg-white border border-[#e3e8e6] hover:border-[#008a4b]/50 rounded-xl px-4 py-2.5 transition-all cursor-pointer shadow-2xs h-11">
-                        <span id="label-turma-aluno" class="text-sm font-medium truncate {{ $selectedTurma ? 'text-[#0a241e]' : 'text-[#95aba5]' }}">
+                        <span id="label-turma-aluno" class="text-sm   {{ $selectedTurma ? 'text-[#0a241e]' : 'text-[#95aba5]' }}">
                             {{ $selectedTurma ? $selectedTurma->NomeTurma : 'Filtrar por Turma' }}
                         </span>
                         <div id="chevron-turma-aluno" class="text-[#95aba5] transition-transform duration-200 shrink-0 ml-2">
@@ -85,7 +110,7 @@
                     <div id="dropdown-menu-turma-aluno" class="hidden absolute top-full left-0 right-0 mt-1 bg-white border border-[#e3e8e6] rounded-xl shadow-xl z-50 p-2 flex flex-col gap-2 overflow-hidden" style="max-height: 240px;">
                         <!-- Campo de Busca -->
                         <div class="relative shrink-0">
-                            <input type="text" onkeyup="filterDropdownOptions('search-turma-aluno', 'option-turma-aluno')" id="search-turma-aluno" placeholder="Pesquisar..." class="w-full pl-3 pr-9 py-1.5 bg-[#f8faf9] border border-[#e3e8e6] rounded-lg text-xs focus:outline-none focus:border-[#008a4b]">
+                            <input type="text" onkeyup="filterDropdownOptions('search-turma-aluno', 'option-turma-aluno')" id="search-turma-aluno" placeholder="Pesquisar..." class="w-full pl-3 pr-9 py-1.5 bg-[#f8faf9] border border-[#e3e8e6] rounded-lg focus:outline-none focus:border-[#008a4b]">
                             <i data-lucide="search" class="w-3.5 h-3.5 text-[#95aba5] absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none"></i>
                         </div>
 
@@ -107,9 +132,70 @@
             </form>
         </div>
 
+        <!-- Filtrar por Situação (Padrão: Ativos) -->
+        <div class="w-full sm:w-56">
+            <form method="GET" action="{{ url()->current() }}" class="w-full">
+                @if(request()->input('pesquisar'))
+                    <input type="hidden" name="pesquisar" value="{{ request()->input('pesquisar') }}">
+                @endif
+                @if(request()->input('idTurmas'))
+                    <input type="hidden" name="idTurmas" value="{{ request()->input('idTurmas') }}">
+                @endif
+                <div class="relative" id="dropdown-container-situacao-aluno">
+                    <input type="hidden" id="situacao" name="situacao" value="{{ $currentSituacao }}">
+
+                    @php
+                        $labelSituacaoMap = [
+                            'ATIVO' => 'Ativo',
+                            'INATIVO' => 'Inativo',
+                            'TRANSFERIDO' => 'Transferido',
+                            'DESISTENTE' => 'Desistente',
+                            'TODOS' => 'Todos'
+                        ];
+                        $labelSituacaoTexto = $labelSituacaoMap[strtoupper($currentSituacao)] ?? 'Ativo';
+                    @endphp
+
+                    <!-- Trigger Box -->
+                    <div onclick="toggleMultiDropdown('dropdown-menu-situacao-aluno', 'chevron-situacao-aluno')" 
+                         class="w-full flex items-center justify-between bg-white border border-[#e3e8e6] hover:border-[#008a4b]/50 rounded-xl px-4 py-2.5 transition-all cursor-pointer shadow-2xs h-11">
+                        <span id="label-situacao-aluno" class="text-sm font-semibold truncate text-[#0a241e]">
+                            Situação: {{ $labelSituacaoTexto }}
+                        </span>
+                        <div id="chevron-situacao-aluno" class="text-[#95aba5] transition-transform duration-200 shrink-0 ml-2">
+                            <i data-lucide="chevron-down" class="w-4 h-4"></i>
+                        </div>
+                    </div>
+
+                    <!-- Dropdown Flutuante -->
+                    <div id="dropdown-menu-situacao-aluno" class="hidden absolute top-full left-0 right-0 mt-1 bg-white border border-[#e3e8e6] rounded-xl shadow-xl z-50 p-1.5 flex flex-col gap-0.5">
+                        <div onclick="selectSingleOption('ATIVO', 'Situação: Ativo', 'situacao', 'label-situacao-aluno', 'dropdown-menu-situacao-aluno', 'chevron-situacao-aluno', true)"
+                             class="flex items-center p-2 hover:bg-[#ecfdf5] rounded-lg transition-colors cursor-pointer text-[#0a241e] font-medium">
+                            <span>Ativo (Padrão)</span>
+                        </div>
+                        <div onclick="selectSingleOption('INATIVO', 'Situação: Inativo', 'situacao', 'label-situacao-aluno', 'dropdown-menu-situacao-aluno', 'chevron-situacao-aluno', true)"
+                             class="flex items-center p-2 hover:bg-[#ecfdf5] rounded-lg transition-colors cursor-pointer text-[#0a241e] font-medium">
+                            <span>Inativo</span>
+                        </div>
+                        <div onclick="selectSingleOption('TRANSFERIDO', 'Situação: Transferido', 'situacao', 'label-situacao-aluno', 'dropdown-menu-situacao-aluno', 'chevron-situacao-aluno', true)"
+                             class="flex items-center p-2 hover:bg-[#ecfdf5] rounded-lg transition-colors cursor-pointer text-[#0a241e] font-medium">
+                            <span>Transferido</span>
+                        </div>
+                        <div onclick="selectSingleOption('DESISTENTE', 'Situação: Desistente', 'situacao', 'label-situacao-aluno', 'dropdown-menu-situacao-aluno', 'chevron-situacao-aluno', true)"
+                             class="flex items-center p-2 hover:bg-[#ecfdf5] rounded-lg transition-colors cursor-pointer text-[#0a241e] font-medium">
+                            <span>Desistente</span>
+                        </div>
+                        <div onclick="selectSingleOption('TODOS', 'Situação: Todos', 'situacao', 'label-situacao-aluno', 'dropdown-menu-situacao-aluno', 'chevron-situacao-aluno', true)"
+                             class="flex items-center p-2 hover:bg-[#ecfdf5] rounded-lg transition-colors cursor-pointer text-[#0a241e] font-medium">
+                            <span>Todos</span>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+
         <!-- Limpar Filtros -->
-        @if(request()->input('pesquisar') || request()->input('idTurmas'))
-            <a href="{{ url()->current() }}" class="text-sm font-medium text-[#008a4b] hover:text-[#00703c] transition-colors whitespace-nowrap">
+        @if(request()->input('pesquisar') || request()->input('idTurmas') || (request()->input('situacao') && request()->input('situacao') !== 'ATIVO'))
+            <a href="{{ url('/coordenacao/aluno_inf') }}" class="text-sm font-medium text-[#008a4b] hover:text-[#00703c] transition-colors whitespace-nowrap">
                 Limpar filtros
             </a>
         @endif

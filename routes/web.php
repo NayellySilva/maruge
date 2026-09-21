@@ -29,10 +29,7 @@ use App\Http\Controllers\controleLogin\loginAluno;
 Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 Route::get('/api/aniversariantes', [DashboardController::class, 'aniversariantes'])->name('api.aniversariantes');
 
-Route::get('/usuarios', function () {
-    $Usuarios = tb_usuario::listagemUsuarios();
-    return view('telasCoordenacao.usuario_inf', compact('Usuarios'));
-})->name('usuarios.info');
+Route::get('/usuarios', [cont_usuario::class, 'usuario_inf'])->name('usuarios.info');
 
 Route::get('/api/feriados', function (\Illuminate\Http\Request $request) {
     $ano = (int)$request->query('ano', date('Y'));
@@ -1000,8 +997,8 @@ Route::post('/coordenacao/aluno_editar/{id}', [cont_aluno::class, 'editando']);
 Route::get('/coordenacao/aluno_transferir/{id}', [cont_aluno::class, 'transferir']);
 Route::post('/coordenacao/aluno_transferir/{id}', [cont_aluno::class, 'transferindo']);
 Route::get('/coordenacao/aluno_ficha/{id}', [cont_aluno::class, 'ficha']);
-Route::post('/coordenacao/aluno_pesq', [cont_aluno::class, 'aluno_pesq']);
-Route::get('/coordenacao/aluno_filtro', [cont_aluno::class, 'aluno_filtro']);
+Route::match(['get', 'post'], '/coordenacao/aluno_pesq', [cont_aluno::class, 'aluno_pesq']);
+Route::match(['get', 'post'], '/coordenacao/aluno_filtro', [cont_aluno::class, 'aluno_filtro']);
 Route::get('/coordenacao/aluno_rematricula', [cont_aluno::class, 'aluno_rematricula']);
 Route::post('/coordenacao/aluno_pesq_rematricula', [cont_aluno::class, 'aluno_pesq_rematricula']);
 
@@ -1011,7 +1008,8 @@ Route::post('/coordenacao/cadturma', [cont_turma::class, 'postnovaturma']);
 Route::get('/coordenacao/turma_inf', [cont_turma::class, 'turma_inf']);
 Route::get('/coordenacao/turma_editar/{id}', [cont_turma::class, 'editar']);
 Route::post('/coordenacao/editar_turma/{id}', [cont_turma::class, 'editando']);
-Route::post('/coordenacao/turma_pesq', [cont_turma::class, 'turma_pesq']);
+Route::match(['get', 'post'], '/coordenacao/turma_pesq', [cont_turma::class, 'turma_pesq']);
+Route::match(['get', 'post'], '/coordenacao/turma_filtro', [cont_turma::class, 'turma_filtro']);
 
 // Módulo de Disciplinas & Lotação
 Route::get('/coordenacao/disciplina_cad', [cont_disciplina::class, 'novadisciplina']);
@@ -1037,7 +1035,8 @@ Route::post('/coordenacao/funcionario_cad', [cont_funcionario::class, 'postnovof
 Route::get('/coordenacao/funcionarios/funcionario_cad', [cont_funcionario::class, 'novofuncionario']);
 Route::get('/coordenacao/funcionario_inf', [cont_funcionario::class, 'funcionario_inf']);
 Route::get('/coordenacao/funcionarios/funcionario_inf', [cont_funcionario::class, 'funcionario_inf']);
-Route::post('/coordenacao/funcionario_pesq', [cont_funcionario::class, 'funcionario_pesq']);
+Route::match(['get', 'post'], '/coordenacao/funcionario_pesq', [cont_funcionario::class, 'funcionario_pesq']);
+Route::match(['get', 'post'], '/coordenacao/funcionario_filtro', [cont_funcionario::class, 'funcionario_filtro']);
 Route::get('/coordenacao/funcionario_perfil/{id}', [cont_funcionario::class, 'perfil']);
 Route::get('/coordenacao/funcionarios/funcionario_perfil/{id}', [cont_funcionario::class, 'perfil']);
 Route::get('/coordenacao/funcionario_editar/{id}', [cont_funcionario::class, 'editar']);
@@ -1049,6 +1048,8 @@ Route::get('/coordenacao/funcionarios/funcionario_deletar/{id}', [cont_funcionar
 Route::get('/coordenacao/cadusuario', [cont_usuario::class, 'novousuario']);
 Route::post('/coordenacao/cadusuario', [cont_usuario::class, 'postnovousuario']);
 Route::get('/coordenacao/usuario_inf', [cont_usuario::class, 'usuario_inf']);
+Route::match(['get', 'post'], '/coordenacao/usuario_pesq', [cont_usuario::class, 'usuario_pesq']);
+Route::match(['get', 'post'], '/coordenacao/usuario_filtro', [cont_usuario::class, 'usuario_filtro']);
 Route::get('/coordenacao/usuario_editar/{id}', [cont_usuario::class, 'editar']);
 Route::post('/coordenacao/usuario_editar/{id}', [cont_usuario::class, 'editando']);
 Route::get('/coordenacao/escola/escola_inf', [cont_escola::class, 'escola_inf']);

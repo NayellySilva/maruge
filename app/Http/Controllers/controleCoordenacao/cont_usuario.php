@@ -72,16 +72,46 @@ class cont_usuario extends Controller {
             return $salvandoUsuario;
         }
     }
-    //Metodo que lista todos os usuarios
+    //Metodo que lista os usuarios (padrao: ATIVOS) com suporte a filtros combinados
     public function usuario_inf() {
-        $Usuarios = tb_usuario::listagemUsuarios();
-        return view('telasCoordenacao.usuarios.usuario_inf', compact('Usuarios'));
+        $pesquisar = $this->request->get('pesquisar');
+        $situacao = $this->request->get('situacao', 'ATIVO');
+        if (empty($situacao)) {
+            $situacao = 'ATIVO';
+        }
+
+        $query = tb_usuario::orderBy('tb_funcionarios.NomeFuncionario')
+            ->leftJoin('tb_funcionarios', 'tb_funcionarios.idFuncionarios', '=', 'tb_usuario.tb_funcionarios_idFuncionarios')
+            ->select('tb_funcionarios.NomeFuncionario', 'tb_usuario.*');
+
+        if ($situacao === 'ATIVO') {
+            $query->where('tb_usuario.Situacao', 'ATIVO');
+        } elseif ($situacao === 'INATIVO') {
+            $query->where('tb_usuario.Situacao', 'INATIVO');
+        } elseif ($situacao === 'TODOS') {
+            // Sem filtro de situacao
+        }
+
+        if (!empty($pesquisar)) {
+            $query->where(function($q) use ($pesquisar) {
+                $q->where('tb_funcionarios.NomeFuncionario', 'LIKE', "%{$pesquisar}%")
+                  ->orWhere('tb_usuario.CPFUsuario', 'LIKE', "%{$pesquisar}%")
+                  ->orWhere('tb_usuario.Nivel', 'LIKE', "%{$pesquisar}%");
+            });
+        }
+
+        $Usuarios = $query->paginate(15)->appends($this->request->query());
+
+        return view('telasCoordenacao.usuarios.usuario_inf', compact('Usuarios', 'situacao', 'pesquisar'));
     }
+
     //Metodo pesquisar usuario
     public function usuario_pesq() {
-        $palavrachave = $this->request->get('pesquisar');
-        $Usuarios = tb_usuario::pesquisarUsuario($palavrachave);
-        return view('telasCoordenacao.usuarios.usuario_inf', compact('Usuarios'));
+        return $this->usuario_inf();
+    }
+
+    public function usuario_filtro() {
+        return $this->usuario_inf();
     }
     //Metodo que busca os dados para edição e direciona ao seu formulario.
     public function editar($idUsuario) {

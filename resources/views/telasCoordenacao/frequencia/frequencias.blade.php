@@ -3,20 +3,28 @@
 @section('content')
 
 @php
-    // Busca paginada das turmas cadastradas
-    try {
-        $turmas = \DB::table('tb_turmas')
-            ->orderBy('NomeTurma')
-            ->paginate(15);
-    } catch (\Exception $e) {
-        $turmas = new \Illuminate\Pagination\LengthAwarePaginator([], 0, 15);
+    // Busca paginada das turmas ativas cadastradas
+    if (!isset($turmas) || (method_exists($turmas, 'isEmpty') && $turmas->isEmpty())) {
+        try {
+            $turmas = \DB::table('tb_turmas')
+                ->whereIn('SituacaoTurma', ['ATIVO', 'ATIVA'])
+                ->orderBy('NomeTurma')
+                ->paginate(15);
+        } catch (\Exception $e) {
+            $turmas = new \Illuminate\Pagination\LengthAwarePaginator([], 0, 15);
+        }
     }
 
-    // Listagem completa de turmas para o filtro do dropdown
-    try {
-        $turmasSelecte = \DB::table('tb_turmas')->orderBy('NomeTurma')->get();
-    } catch (\Exception $e) {
-        $turmasSelecte = collect();
+    // Listagem completa de turmas ativas para o filtro do dropdown
+    if (!isset($turmasSelecte) || (method_exists($turmasSelecte, 'isEmpty') && $turmasSelecte->isEmpty())) {
+        try {
+            $turmasSelecte = \DB::table('tb_turmas')
+                ->whereIn('SituacaoTurma', ['ATIVO', 'ATIVA'])
+                ->orderBy('NomeTurma')
+                ->get();
+        } catch (\Exception $e) {
+            $turmasSelecte = collect();
+        }
     }
 @endphp
 

@@ -2,10 +2,23 @@
 
 @section('content')
 @php
-    try {
-        $turmas = \DB::table('tb_turmas')->orderBy('NomeTurma')->get();
-    } catch (\Exception $e) {
-        $turmas = collect();
+    $currentSituacao = request()->input('SituacaoTurma', $SituacaoTurma ?? 'ATIVO');
+    if (empty($currentSituacao)) {
+        $currentSituacao = 'ATIVO';
+    }
+
+    if (!isset($turmas)) {
+        try {
+            $query = \DB::table('tb_turmas')->orderBy('NomeTurma');
+            if ($currentSituacao === 'ATIVO') {
+                $query->whereIn('SituacaoTurma', ['ATIVO', 'ATIVA']);
+            } elseif ($currentSituacao === 'INATIVO') {
+                $query->whereIn('SituacaoTurma', ['INATIVO', 'INATIVA', '[INATIVO]']);
+            }
+            $turmas = $query->paginate(15);
+        } catch (\Exception $e) {
+            $turmas = new \Illuminate\Pagination\LengthAwarePaginator([], 0, 15);
+        }
     }
 @endphp
 
@@ -18,26 +31,26 @@
     </div>
     <!-- Cabeçalho -->
     <div class="flex justify-between items-center">
-        
         <div class="flex flex-col gap-1">
             <h1 class="text-3xl font-semibold text-[#0a241e]">Turmas</h1>
-            <p class="text-sm text-[#5c706b]">Turmas cadastradas: ({{ isset($turmas) ? (method_exists($turmas, 'total') ? $turmas->total() : count($turmas)) : 0 }})</p>
+            <p class="text-sm text-[#5c706b]">Turmas encontradas: ({{ isset($turmas) ? (method_exists($turmas, 'total') ? $turmas->total() : count($turmas)) : 0 }})</p>
         </div>
         <a href="{{ url('/coordenacao/turma/turma_cad') }}" class="bg-[#008a4b] hover:bg-[#00703c] text-white font-medium px-6 py-2.5 rounded-full flex items-center gap-2 transition-all shadow-sm cursor-pointer">
             <i data-lucide="plus" class="w-5 h-5"></i>
             <span>Cadastrar Turma</span>
         </a>
-        
     </div>
 
     <!-- Filtros -->
-    <div class="flex flex-col sm:flex-row gap-4 items-center">
+    <div class="flex flex-col sm:flex-row flex-wrap gap-4 items-center">
         <!-- Barra de Pesquisa -->
         <div class="w-full sm:w-80">
-            <form method="post" action="{{ url('/coordenacao/turma_pesq') }}" class="w-full">
-                {!! csrf_field() !!}
+            <form method="GET" action="{{ url('/coordenacao/turma_inf') }}" class="w-full">
+                @if(request()->input('SituacaoTurma'))
+                    <input type="hidden" name="SituacaoTurma" value="{{ request()->input('SituacaoTurma') }}">
+                @endif
                 <div class="flex items-center bg-white border border-[#e3e8e6] rounded-xl px-4 py-2.5 transition-all">
-                    <input type="text" name="pesquisar" placeholder="Pesquisar Turma" class="w-full bg-transparent text-sm focus:outline-none">
+                    <input type="text" name="pesquisar" placeholder="Pesquisar Turma ou Ano" value="{{ request()->input('pesquisar') }}" class="w-full bg-transparent text-sm focus:outline-none">
                     <button type="submit" class="text-[#5c706b] hover:text-[#008a4b] ml-2">
                         <i data-lucide="search" class="w-4 h-4"></i>
                     </button>
@@ -45,50 +58,61 @@
             </form>
         </div>
 
-        <!-- Menu Dropdown de Filtro Customizado -->
+        <!-- Menu Dropdown de Filtro Situação (Padrão: Ativos) -->
         <div class="w-full sm:w-64">
-            <form method="post" action="{{ url('/coordenacao/turma_filtro') }}" class="w-full">
-                {!! csrf_field() !!}
+            <form method="GET" action="{{ url('/coordenacao/turma_inf') }}" class="w-full">
+                @if(request()->input('pesquisar'))
+                    <input type="hidden" name="pesquisar" value="{{ request()->input('pesquisar') }}">
+                @endif
 
                 <div class="relative" id="dropdown-container-situacao">
-                    <!-- Input Oculto para submissão do formulário -->
-                    <input type="hidden" id="SituacaoTurma" name="SituacaoTurma" value="{{ request()->input('SituacaoTurma', '') }}">
+                    <input type="hidden" id="SituacaoTurma" name="SituacaoTurma" value="{{ $currentSituacao }}">
 
-                    <!-- Trigger Box no Estilo Visual Premium -->
+                    @php
+                        $labelSituacaoMap = [
+                            'ATIVO' => 'Ativo',
+                            'INATIVO' => 'Inativo',
+                            'TODOS' => 'Todos'
+                        ];
+                        $labelSituacaoTexto = $labelSituacaoMap[strtoupper($currentSituacao)] ?? 'Ativo';
+                    @endphp
+
+                    <!-- Trigger Box -->
                     <div onclick="toggleMultiDropdown('dropdown-menu-situacao', 'chevron-situacao')" 
                          class="w-full flex items-center justify-between bg-white border border-[#e3e8e6] hover:border-[#008a4b]/50 rounded-xl px-4 py-2.5 transition-all cursor-pointer shadow-2xs h-11">
-                        <span id="label-situacao" class="text-sm font-medium truncate {{ request()->input('SituacaoTurma') ? 'text-[#0a241e]' : 'text-[#95aba5]' }}">
-                            @if(request()->input('SituacaoTurma') == 'ATIVO')
-                                Ativo
-                            @elseif(request()->input('SituacaoTurma') == 'INATIVO')
-                                Inativo
-                            @else
-                                Filtrar por Situação
-                            @endif
+                        <span id="label-situacao" class="text-sm font-semibold truncate text-[#0a241e]">
+                            Situação: {{ $labelSituacaoTexto }}
                         </span>
                         <div id="chevron-situacao" class="text-[#95aba5] transition-transform duration-200 shrink-0 ml-2">
                             <i data-lucide="chevron-down" class="w-4 h-4"></i>
                         </div>
                     </div>
 
-                    <!-- Dropdown Flutuante no Estilo Visual Premium -->
+                    <!-- Dropdown Flutuante -->
                     <div id="dropdown-menu-situacao" class="hidden absolute top-full left-0 right-0 mt-1 bg-white border border-[#e3e8e6] rounded-xl shadow-xl z-50 p-1.5 flex flex-col gap-0.5">
-                        <div onclick="selectSingleOption('', 'Todos', 'SituacaoTurma', 'label-situacao', 'dropdown-menu-situacao', 'chevron-situacao', true)"
-                             class="option-situacao flex items-center p-2.5 hover:bg-[#ecfdf5] rounded-lg transition-colors cursor-pointer text-xs text-[#0a241e]">
-                            <span class="option-title font-medium">Todos</span>
+                        <div onclick="selectSingleOption('ATIVO', 'Situação: Ativo', 'SituacaoTurma', 'label-situacao', 'dropdown-menu-situacao', 'chevron-situacao', true)"
+                             class="option-situacao flex items-center p-2 hover:bg-[#ecfdf5] rounded-lg transition-colors cursor-pointer text-xs text-[#0a241e] font-medium">
+                            <span>Ativo (Padrão)</span>
                         </div>
-                        <div onclick="selectSingleOption('ATIVO', 'Ativo', 'SituacaoTurma', 'label-situacao', 'dropdown-menu-situacao', 'chevron-situacao', true)"
-                             class="option-situacao flex items-center p-2.5 hover:bg-[#ecfdf5] rounded-lg transition-colors cursor-pointer text-xs text-[#0a241e]">
-                            <span class="option-title font-medium">Ativo</span>
+                        <div onclick="selectSingleOption('INATIVO', 'Situação: Inativo', 'SituacaoTurma', 'label-situacao', 'dropdown-menu-situacao', 'chevron-situacao', true)"
+                             class="option-situacao flex items-center p-2 hover:bg-[#ecfdf5] rounded-lg transition-colors cursor-pointer text-xs text-[#0a241e] font-medium">
+                            <span>Inativo</span>
                         </div>
-                        <div onclick="selectSingleOption('INATIVO', 'Inativo', 'SituacaoTurma', 'label-situacao', 'dropdown-menu-situacao', 'chevron-situacao', true)"
-                             class="option-situacao flex items-center p-2.5 hover:bg-[#ecfdf5] rounded-lg transition-colors cursor-pointer text-xs text-[#0a241e]">
-                            <span class="option-title font-medium">Inativo</span>
+                        <div onclick="selectSingleOption('TODOS', 'Situação: Todos', 'SituacaoTurma', 'label-situacao', 'dropdown-menu-situacao', 'chevron-situacao', true)"
+                             class="option-situacao flex items-center p-2 hover:bg-[#ecfdf5] rounded-lg transition-colors cursor-pointer text-xs text-[#0a241e] font-medium">
+                            <span>Todos</span>
                         </div>
                     </div>
                 </div>
             </form>
         </div>
+
+        <!-- Limpar Filtros -->
+        @if(request()->input('pesquisar') || (request()->input('SituacaoTurma') && request()->input('SituacaoTurma') !== 'ATIVO'))
+            <a href="{{ url('/coordenacao/turma_inf') }}" class="text-sm font-medium text-[#008a4b] hover:text-[#00703c] transition-colors whitespace-nowrap">
+                Limpar filtros
+            </a>
+        @endif
     </div>
 
     <!-- Seção da Tabela -->

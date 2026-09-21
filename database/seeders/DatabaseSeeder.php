@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Schema;
 
 class DatabaseSeeder extends Seeder
 {
@@ -15,8 +16,8 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        // Desativar restrições de chave estrangeira durante o seeding no SQLite
-        DB::statement('PRAGMA foreign_keys = OFF;');
+        // Desativar restrições de chave estrangeira durante o seeding
+        Schema::disableForeignKeyConstraints();
 
         // Limpar tabelas existentes para evitar duplicidade
         DB::table('tb_notas')->truncate();
@@ -32,14 +33,16 @@ class DatabaseSeeder extends Seeder
         DB::table('tb_pais')->truncate();
         DB::table('tb_endereco')->truncate();
 
-        DB::statement('PRAGMA foreign_keys = ON;');
+        Schema::enableForeignKeyConstraints();
 
         // 1. Criar Endereços
         $idEnderecoEscola = DB::table('tb_endereco')->insertGetId([
             'Fone1' => '(11) 99999-0001',
+            'Fone2' => '',
             'Numero' => '100',
             'Rua' => 'Rua Principal',
             'Bairro' => 'Centro',
+            'Referencia' => '',
             'CEP' => '01000-000',
             'Cidade' => 'São Paulo',
             'Estado' => 'SP'
@@ -47,9 +50,11 @@ class DatabaseSeeder extends Seeder
 
         $idEnderecoCoord = DB::table('tb_endereco')->insertGetId([
             'Fone1' => '(11) 99999-0002',
+            'Fone2' => '',
             'Numero' => '200',
             'Rua' => 'Rua das Flores',
             'Bairro' => 'Jardins',
+            'Referencia' => '',
             'CEP' => '02000-000',
             'Cidade' => 'São Paulo',
             'Estado' => 'SP'
@@ -57,9 +62,11 @@ class DatabaseSeeder extends Seeder
 
         $idEnderecoDocente = DB::table('tb_endereco')->insertGetId([
             'Fone1' => '(11) 99999-0003',
+            'Fone2' => '',
             'Numero' => '300',
             'Rua' => 'Av. Brasil',
             'Bairro' => 'Pinheiros',
+            'Referencia' => '',
             'CEP' => '03000-000',
             'Cidade' => 'São Paulo',
             'Estado' => 'SP'
@@ -67,9 +74,11 @@ class DatabaseSeeder extends Seeder
 
         $idEnderecoAluno1 = DB::table('tb_endereco')->insertGetId([
             'Fone1' => '(11) 98888-1111',
+            'Fone2' => '',
             'Numero' => '400',
             'Rua' => 'Rua dos Estudantes',
             'Bairro' => 'Vila Nova',
+            'Referencia' => '',
             'CEP' => '04000-000',
             'Cidade' => 'São Paulo',
             'Estado' => 'SP'

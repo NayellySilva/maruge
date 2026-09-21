@@ -24,7 +24,7 @@
                     <select
                         name="SituacaoTurma"
                         onchange="this.form.submit()"
-                        class="w-full h-11 appearance-none bg-white border border-[#e3e8e6] rounded-xl px-4 pr-10 text-sm text-[#0a241e] focus:outline-none focus:border-[#008a4b] focus:ring-2 focus:ring-[#008a4b]/10 cursor-pointer transition-all"
+                        class="w-full h-11 appearance-none bg-white border border-[#e3e8e6] rounded-xl px-4 pr-10 text-sm text-[#0a241e]"
                     >
                         <option value="" disabled selected>
                             Filtrar por Situação
