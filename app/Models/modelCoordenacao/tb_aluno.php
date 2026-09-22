@@ -110,6 +110,35 @@ class tb_aluno extends Model {
                         })
                         ->paginate(15);
     }
+
+    public static function listagemAlunoComFiltros(?string $termo = null, $idTurma = null, bool $somenteTurmasAtivas = false) {
+        // Mantém nome, RA, MAC e turma no mesmo query builder para todos os módulos.
+        return tb_aluno::orderBy('tb_aluno.NomeAluno')
+                        ->leftJoin('tb_matriculas', 'tb_matriculas.idMatriculas', '=', 'tb_aluno.tb_matriculas_idMatriculas')
+                        ->leftJoin('tb_turmas', 'tb_turmas.idTurmas', '=', 'tb_aluno.tb_turmas_idTurmas')
+                        ->select('tb_aluno.idAluno', 'tb_aluno.NomeAluno', 'tb_aluno.NumeroMac', 'tb_matriculas.RA', 'tb_matriculas.SituacaoAluno', 'tb_turmas.NomeTurma')
+                        ->where(function ($query) {
+                            $query->whereIn('tb_matriculas.SituacaoAluno', ['ATIVO', 'MATRICULADO'])
+                                    ->orWhereNull('tb_matriculas.SituacaoAluno')
+                                    ->orWhere('tb_matriculas.SituacaoAluno', '');
+                        })
+                        ->when($idTurma, function ($query) use ($idTurma) {
+                            $query->where('tb_aluno.tb_turmas_idTurmas', $idTurma);
+                        })
+                        ->when($somenteTurmasAtivas, function ($query) {
+                            $query->whereIn('tb_turmas.SituacaoTurma', ['ATIVO', 'ATIVA']);
+                        })
+                        ->when($termo !== null && trim($termo) !== '', function ($query) use ($termo) {
+                            $like = '%' . trim($termo) . '%';
+                            $query->where(function ($search) use ($like) {
+                                $search->where('tb_aluno.NomeAluno', 'LIKE', $like)
+                                        ->orWhere('tb_matriculas.RA', 'LIKE', $like)
+                                        ->orWhere('tb_aluno.NumeroMac', 'LIKE', $like);
+                            });
+                        })
+                        ->paginate(15)
+                        ->appends(request()->query());
+    }
   
     
 
@@ -219,6 +248,37 @@ class tb_aluno extends Model {
                 ->where('tb_matriculas.SituacaoAluno', '<>', 'INATIVO')
                 ->get();
         return $Alunos;
+    }
+
+    public static function pesquisarParaNotas(?string $termo, ?int $idTurma = null, bool $somenteTurmasAtivas = false) {
+        // Endpoint de notas limita o volume retornado e pode restringir às turmas ativas.
+        return tb_aluno::orderBy('tb_aluno.NomeAluno')
+                ->leftJoin('tb_matriculas', 'tb_matriculas.idMatriculas', '=', 'tb_aluno.tb_matriculas_idMatriculas')
+                ->leftJoin('tb_turmas', 'tb_turmas.idTurmas', '=', 'tb_aluno.tb_turmas_idTurmas')
+                ->select('tb_aluno.idAluno', 'tb_aluno.NomeAluno', 'tb_aluno.NumeroMac', 'tb_matriculas.RA', 'tb_turmas.NomeTurma')
+                ->where(function ($query) use ($termo) {
+                    if ($termo === null || trim($termo) === '') {
+                        return;
+                    }
+
+                    $like = '%' . trim($termo) . '%';
+                    $query->where('tb_aluno.NomeAluno', 'LIKE', $like)
+                            ->orWhere('tb_matriculas.RA', 'LIKE', $like)
+                            ->orWhere('tb_aluno.NumeroMac', 'LIKE', $like);
+                })
+                ->when($idTurma, function ($query) use ($idTurma) {
+                    $query->where('tb_aluno.tb_turmas_idTurmas', $idTurma);
+                })
+                ->when($somenteTurmasAtivas, function ($query) {
+                    $query->whereIn('tb_turmas.SituacaoTurma', ['ATIVO', 'ATIVA']);
+                })
+                ->where(function ($query) {
+                    $query->whereIn('tb_matriculas.SituacaoAluno', ['ATIVO', 'MATRICULADO'])
+                            ->orWhereNull('tb_matriculas.SituacaoAluno')
+                            ->orWhere('tb_matriculas.SituacaoAluno', '');
+                })
+                ->limit(60)
+                ->get();
     }
     // Metodo que pesquisa o aluno pos palavra chave
     public static function pesquisarAlunoBoleto($palavrachave) {

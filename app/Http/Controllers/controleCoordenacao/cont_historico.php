@@ -40,23 +40,22 @@ class cont_historico extends Controller {
 //Metodo chama a view principal para solicitar o boletim do aluno
     public function index() {
         $turmas = tb_turma::turmasAtivas();
-        $Alunos = tb_aluno::listagemAluno();
+        $idTurma = $this->request->get('idTurmas');
+        $Alunos = tb_aluno::listagemAlunoComFiltros($this->request->get('pesquisar'), $idTurma, true);
         return view('telasCoordenacao.historico.historico', compact('Alunos', 'turmas'));
     }
     //Metodo pesquisar aluno por palavra chave
     public function historico_pesq() {
         $turmas = tb_turma::turmasAtivas();
         $palavrachave = $this->request->get('pesquisar');
-        $Alunos = tb_aluno::pesquisar($palavrachave);
+        $Alunos = tb_aluno::listagemAlunoComFiltros($palavrachave, $this->request->get('idTurmas'), true);
         return view('telasCoordenacao.historico.historico_pesq', compact('Alunos', 'turmas'));
     }
     //Metodo pesquisar aluno por filtro de turma
     public function historico_filtro() {
         $idTurma = $this->request->get('idTurmas');
         $turmas = tb_turma::turmasAtivas();
-        if ($idTurma == null) {
-        }
-        $Alunos = tb_aluno::filtroporTurma($idTurma);
+        $Alunos = tb_aluno::listagemAlunoComFiltros($this->request->get('pesquisar'), $idTurma, true);
         return view('telasCoordenacao.historico.historico', compact('Alunos', 'turmas'));
     }    
     // Metodo que gera o boletim do aluno

@@ -336,6 +336,28 @@
         });
     </script>
 
+    <!-- Submissão automática para os formulários legados de pesquisa -->
+    <script>
+        (function () {
+            let searchTimer;
+
+            document.addEventListener('input', function (event) {
+                // Views legadas continuam funcionando, mas agora pesquisam sem exigir Enter.
+                const input = event.target.closest('input[name="pesquisar"]');
+                if (!input || input.type === 'hidden' || input.hasAttribute('data-live-search-input')) return;
+
+                const form = input.form;
+                if (!form) return;
+
+                window.clearTimeout(searchTimer);
+                searchTimer = window.setTimeout(function () {
+                    if (input.value.trim() === '' && form.method.toUpperCase() === 'POST') return;
+                    form.requestSubmit ? form.requestSubmit() : form.submit();
+                }, 350);
+            });
+        }());
+    </script>
+
     <!-- Máscaras Universais (CPF, CNPJ, Telefone, CEP, ViaCEP e IBGE) -->
     <script src="{{ asset('js/alunos/aluno_masks.js') }}"></script>
 

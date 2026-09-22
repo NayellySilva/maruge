@@ -13,6 +13,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use App\Services\NotaBimestralService;
 use Illuminate\Support\Facades\Validator;
 
 //INICIO DA CLASSE CONTROLE DO ALUNO
@@ -26,8 +27,9 @@ class cont_notas extends Controller {
     private $tb_pais;
     private $tb_notas;
     private $tb_matricula;
+    private $notaBimestralService;
 
-    public function __construct(Request $dadosForm, tb_matricula $tb_matricula, tb_pais $tb_pais, tb_aluno $tb_aluno, tb_notas $tb_notas, tb_endereco $tb_endereco, tb_turma $tb_turma, Validator $validator) {
+    public function __construct(Request $dadosForm, tb_matricula $tb_matricula, tb_pais $tb_pais, tb_aluno $tb_aluno, tb_notas $tb_notas, tb_endereco $tb_endereco, tb_turma $tb_turma, Validator $validator, NotaBimestralService $notaBimestralService) {
         $this->request = $dadosForm;
         $this->validator = $validator;
         $this->tb_aluno = $tb_aluno;
@@ -36,12 +38,13 @@ class cont_notas extends Controller {
         $this->tb_pais = $tb_pais;
         $this->tb_notas = $tb_notas;
         $this->tb_matricula = $tb_matricula;
+        $this->notaBimestralService = $notaBimestralService;
     }
 
 //Metodo que lista os alunos  
     public function index() {
         $turmas = tb_turma::turmasAtivas();
-        $Alunos = tb_aluno::listagemAluno();
+        $Alunos = tb_aluno::listagemAlunoComFiltros($this->request->get('pesquisar'), $this->request->get('idTurmas'), true);
         return view('telasCoordenacao.notas.notas', compact('Alunos', 'turmas'));
     }
 
@@ -49,18 +52,25 @@ class cont_notas extends Controller {
     public function notas_pesq() {
         $turmas = tb_turma::turmasAtivas();
         $palavrachave = $this->request->get('pesquisar');
-        $Alunos = tb_aluno::pesquisar($palavrachave);
+        $Alunos = tb_aluno::listagemAlunoComFiltros($palavrachave, $this->request->get('idTurmas'), true);
         return view('telasCoordenacao.notas.notas_pesq', compact('Alunos', 'turmas'));
+    }
+
+    public function notas_pesquisa_ajax() {
+        // A listagem de notas usa JSON para atualizar apenas a tabela durante a digitação.
+        $termo = $this->request->string('q')->toString();
+        $idTurma = $this->request->integer('idTurmas') ?: null;
+
+        return response()->json([
+            'items' => tb_aluno::pesquisarParaNotas($termo, $idTurma, true)->values(),
+        ]);
     }
 
 //Metodo pesquisar aluno por filtro de turma
     public function notas_filtro() {
         $idTurma = $this->request->get('idTurmas');
         $turmas = tb_turma::turmasAtivas();
-        if ($idTurma == null) {
-            
-        }
-        $Alunos = tb_aluno::filtroporTurma($idTurma);
+        $Alunos = tb_aluno::listagemAlunoComFiltros($this->request->get('pesquisar'), $idTurma, true);
         return view('telasCoordenacao.notas.notas', compact('Alunos', 'turmas'));
     }
 
@@ -210,7 +220,7 @@ class cont_notas extends Controller {
      * */
 //Metodo para salva as notas do primeiro 1bimes Fundamente I.
     public function salva_nota_1bim_fun1() {
-        $dadosForm = $this->request->all();
+        $dadosForm = $this->prepararDadosBimestre($this->request->all(), 1);
         $count = count($dadosForm["AB1"]);
         for ($i = 0; $i < $count; $i++) {
             if (!empty($dadosForm["AB1"][$i])) {
@@ -223,7 +233,7 @@ class cont_notas extends Controller {
 
 //Metodo para salva as notas do 2 bim Fundamente I.
     public function salva_nota_2bim_fun1() {
-        $dadosForm = $this->request->all();
+        $dadosForm = $this->prepararDadosBimestre($this->request->all(), 2);
         $count = count($dadosForm["AB2"]);
         for ($i = 0; $i < $count; $i++) {
             if (!empty($dadosForm["AB2"][$i])) {
@@ -236,7 +246,7 @@ class cont_notas extends Controller {
 
 //Metodo para salva as notas do 3 bim Fundamente I.
     public function salva_nota_3bim_fun1() {
-        $dadosForm = $this->request->all();
+        $dadosForm = $this->prepararDadosBimestre($this->request->all(), 3);
         $count = count($dadosForm["AB3"]);
         for ($i = 0; $i < $count; $i++) {
             if (!empty($dadosForm["AB3"][$i])) {
@@ -249,7 +259,7 @@ class cont_notas extends Controller {
 
 //Metodo para salva as notas do 4 bim Fundamente I.
     public function salva_nota_4bim_fun1() {
-        $dadosForm = $this->request->all();
+        $dadosForm = $this->prepararDadosBimestre($this->request->all(), 4);
         $count = count($dadosForm["AB4"]);
         for ($i = 0; $i < $count; $i++) {
             if (!empty($dadosForm["AB4"][$i])) {
@@ -262,7 +272,7 @@ class cont_notas extends Controller {
 
     // Salvar nota do primeiro bimestres fundamental II  
     public function salva_nota_1bim_fun2() {
-        $dadosForm = $this->request->all();
+        $dadosForm = $this->prepararDadosBimestre($this->request->all(), 1);
         $count = count($dadosForm["RA"]);
         for ($i = 0; $i < $count; $i++) {
             if (!empty($dadosForm["AM1"][$i]) or ( $dadosForm["AB1"][$i])) {
@@ -275,7 +285,7 @@ class cont_notas extends Controller {
 
     // Salvar nota do segundo bimestres fundamental II  
     public function salva_nota_2bim_fun2() {
-        $dadosForm = $this->request->all();
+        $dadosForm = $this->prepararDadosBimestre($this->request->all(), 2);
         $count = count($dadosForm["RA"]);
         for ($i = 0; $i < $count; $i++) {
             if (!empty($dadosForm["AM2"][$i]) or ( $dadosForm["AB2"][$i])) {
@@ -288,7 +298,7 @@ class cont_notas extends Controller {
 
     // Salvar nota do terceira bimestres fundamental II  
     public function salva_nota_3bim_fun2() {
-        $dadosForm = $this->request->all();
+        $dadosForm = $this->prepararDadosBimestre($this->request->all(), 3);
         $count = count($dadosForm["RA"]);
         for ($i = 0; $i < $count; $i++) {
             if (!empty($dadosForm["AM3"][$i]) or ( $dadosForm["AB3"][$i])) {
@@ -301,7 +311,7 @@ class cont_notas extends Controller {
 
     // Salvar nota do quarta bimestres fundamental II  
     public function salva_nota_4bim_fun2() {
-        $dadosForm = $this->request->all();
+        $dadosForm = $this->prepararDadosBimestre($this->request->all(), 4);
         $count = count($dadosForm["RA"]);
         for ($i = 0; $i < $count; $i++) {
             if (!empty($dadosForm["AM4"][$i]) or ( $dadosForm["AB4"][$i])) {
@@ -323,6 +333,15 @@ class cont_notas extends Controller {
             }
         }
         return "notaNaoInformada";
+    }
+
+    private function prepararDadosBimestre(array $dadosForm, int $bimestre): array {
+        // Centraliza a validação para impedir que cada handler aplique uma regra diferente.
+        try {
+            return $this->notaBimestralService->normalizarFormularioBimestre($dadosForm, $bimestre);
+        } catch (\InvalidArgumentException $exception) {
+            abort(422, $exception->getMessage());
+        }
     }
 
     //Edita Nota

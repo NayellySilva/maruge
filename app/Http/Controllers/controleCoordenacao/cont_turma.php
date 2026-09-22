@@ -77,8 +77,10 @@ class cont_turma extends Controller {
 
         if (!empty($pesquisar)) {
             $query->where(function($q) use ($pesquisar) {
-                $q->where('NomeTurma', 'LIKE', "%{$pesquisar}%")
-                  ->orWhere('AnoLetivo', 'LIKE', "%{$pesquisar}%");
+                $q->where('NomeTurma', 'LIKE', "%{$pesquisar}%");
+                if (preg_match('/^\d{4}$/', trim($pesquisar))) {
+                    $q->orWhere('AnoLetivo', 'LIKE', "%{$pesquisar}%");
+                }
             });
         }
 

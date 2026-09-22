@@ -1,5 +1,20 @@
 @extends('layouts.app')
 
+@php
+    $formatDate = function($date) {
+        if (!$date) return '';
+        if (preg_match('/^\d{4}-\d{2}-\d{2}$/', $date)) {
+            return $date;
+        }
+        if (preg_match('/^\d{2}\/\d{2}\/\d{4}$/', $date)) {
+            $parts = explode('/', $date);
+            return "{$parts[2]}-{$parts[1]}-{$parts[0]}";
+        }
+        $ts = strtotime(str_replace('/', '-', $date));
+        return $ts ? date('Y-m-d', $ts) : '';
+    };
+@endphp
+
 @section('content')
 <div class="flex flex-col gap-6 w-full">
     <!-- Localização (Breadcrumb) -->
@@ -48,25 +63,30 @@
         @endif
             {!! csrf_field() !!}
 
-            <!-- Primeira Linha: Nome, CPF, RG, Função -->
-            <div style="display: flex; flex-direction: row; gap: 16px; width: 100%; align-items: flex-end;">
+            <!-- Primeira Linha: Nome, Data de Nascimento, CPF, RG, Função -->
+            <div style="display: flex; flex-direction: row; gap: 16px; width: 100%; align-items: flex-end; flex-wrap: wrap;">
                 <!-- Nome -->
-                <div style="flex: 2 1 40%; min-width: 0; display: flex; flex-direction: column; gap: 6px;">
+                <div style="flex: 2 1 30%; min-width: 220px; display: flex; flex-direction: column; gap: 6px;">
                     <label for="NomeFuncionario" class="text-sm font-medium text-[#0a241e]">Nome do Funcionário:</label>
                     <input type="text" name="NomeFuncionario" placeholder="Nome do Funcionário" class="w-full bg-[#f8faf9] border border-[#e3e8e6] rounded-xl px-4 py-2.5 text-sm text-[#0a241e] focus:outline-none focus:border-gray-400 transition-all" value="{{ $funcionario->NomeFuncionario ?? old('NomeFuncionario') }}" required>
                 </div>
+                <!-- Data de Nascimento -->
+                <div style="flex: 1 1 15%; min-width: 150px; display: flex; flex-direction: column; gap: 6px;">
+                    <label for="DataNascimento" class="text-sm font-medium text-[#0a241e]">Data de Nascimento:</label>
+                    <input type="date" name="DataNascimento" id="DataNascimento" class="w-full bg-[#f8faf9] border border-[#e3e8e6] rounded-xl px-4 py-2.5 text-sm text-[#0a241e] focus:outline-none focus:border-gray-400 transition-all" value="{{ $formatDate($funcionario->DataNascimento ?? old('DataNascimento')) }}">
+                </div>
                 <!-- CPF -->
-                <div style="flex: 1 1 20%; min-width: 0; display: flex; flex-direction: column; gap: 6px;">
+                <div style="flex: 1 1 15%; min-width: 140px; display: flex; flex-direction: column; gap: 6px;">
                     <label for="CPFFuncionario" class="text-sm font-medium text-[#0a241e]">CPF:</label>
                     <input type="text" name="CPFFuncionario" id="CPFFuncionario" placeholder="CPF do Funcionário" class="mask-cpf w-full bg-[#f8faf9] border border-[#e3e8e6] rounded-xl px-4 py-2.5 text-sm text-[#0a241e] focus:outline-none focus:border-gray-400 transition-all" value="{{ $funcionario->CPFFuncionario ?? old('CPFFuncionario') }}">
                 </div>
                 <!-- RG -->
-                <div style="flex: 1 1 20%; min-width: 0; display: flex; flex-direction: column; gap: 6px;">
+                <div style="flex: 1 1 15%; min-width: 130px; display: flex; flex-direction: column; gap: 6px;">
                     <label for="RGFuncionario" class="text-sm font-medium text-[#0a241e]">RG do Funcionário:</label>
                     <input type="text" name="RGFuncionario" placeholder="RG" class="w-full bg-[#f8faf9] border border-[#e3e8e6] rounded-xl px-4 py-2.5 text-sm text-[#0a241e] focus:outline-none focus:border-gray-400 transition-all" value="{{ $funcionario->RGFuncionario ?? old('RGFuncionario') }}">
                 </div>
                 <!-- Função -->
-                <div style="flex: 1 1 20%; min-width: 0; display: flex; flex-direction: column; gap: 6px;">
+                <div style="flex: 1 1 18%; min-width: 160px; display: flex; flex-direction: column; gap: 6px;">
                     <label for="Funcao" class="text-sm font-medium text-[#0a241e]">Função:</label>
                     <div class="relative" id="dropdown-container-funcao">
                         @php
@@ -110,6 +130,17 @@
                         </div>
                     </div>
                 </div>
+
+                @if(isset($funcionario))
+                    <div style="flex: 1 1 14%; min-width: 140px; display: flex; flex-direction: column; gap: 6px;">
+                        <label for="Situacao" class="text-sm font-medium text-[#0a241e]">Situação:</label>
+                        @php $situacaoFuncionario = old('Situacao', $funcionario->Situacao ?? 'ATIVO'); @endphp
+                        <select name="Situacao" id="Situacao" class="w-full bg-[#f8faf9] border border-[#e3e8e6] rounded-xl px-4 py-2.5 text-sm text-[#0a241e] focus:outline-none focus:border-gray-400 transition-all">
+                            <option value="ATIVO" {{ $situacaoFuncionario === 'ATIVO' ? 'selected' : '' }}>Ativo</option>
+                            <option value="INATIVO" {{ $situacaoFuncionario === 'INATIVO' ? 'selected' : '' }}>Inativo</option>
+                        </select>
+                    </div>
+                @endif
 
                 <!-- Senha de Acesso (Exibida dinamicamente APENAS para Docente ou Coordenador) -->
                 @php

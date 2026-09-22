@@ -3,12 +3,7 @@
 @section('content')
 
 @php
-    // Busca inicial de alunos cadastrados com suas turmas
-    try {
-        $Alunos = \App\Models\modelCoordenacao\tb_aluno::listagemAluno();
-    } catch (\Exception $e) {
-        $Alunos = new \Illuminate\Pagination\LengthAwarePaginator([], 0, 15);
-    }
+    $Alunos = $Alunos ?? new \Illuminate\Pagination\LengthAwarePaginator([], 0, 15);
 
     // Listagem de turmas para o filtro (apenas ativas)
     if (!isset($turmas) || $turmas->isEmpty()) {

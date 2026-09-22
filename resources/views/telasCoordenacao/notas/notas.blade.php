@@ -4,11 +4,7 @@
 
 @php
     // Busca inicial de alunos com paginação e associação da turma
-    try {
-        $Alunos = \App\Models\modelCoordenacao\tb_aluno::listagemAluno();
-    } catch (\Exception $e) {
-        $Alunos = new \Illuminate\Pagination\LengthAwarePaginator([], 0, 15);
-    }
+    $Alunos = $Alunos ?? new \Illuminate\Pagination\LengthAwarePaginator([], 0, 15);
 
     // Listagem de turmas para o filtro (apenas ativas)
     if (!isset($turmas) || $turmas->isEmpty()) {
@@ -44,17 +40,18 @@
             <form method="POST" action="{{ url('/coordenacao/notas_pesq') }}" class="w-full">
                 @csrf
                 <div class="flex items-center bg-white border border-[#e3e8e6] rounded-xl px-4 py-2.5 transition-all">
-                    <input type="text" name="pesquisar" placeholder="Pesquisar Aluno" class="w-full bg-transparent text-sm focus:outline-none">
+                    <input type="text" name="pesquisar" placeholder="Pesquisar aluno, RA ou MAC" class="w-full bg-transparent text-sm focus:outline-none" data-live-search-input autocomplete="off">
                     <button type="submit" class="text-[#5c706b] hover:text-[#008a4b] ml-2">
                         <i data-lucide="search" class="w-4 h-4"></i>
                     </button>
                 </div>
+                <span class="mt-1 hidden text-xs text-[#5c706b]" data-search-status aria-live="polite"></span>
             </form>
         </div>
 
         <!-- Menu Dropdown de Filtro Customizado -->
         <div class="w-full sm:w-64">
-            <form method="GET" action="{{ url()->current() }}" class="w-full">
+            <form method="GET" action="{{ url('/coordenacao/notas/notas_filtro') }}" class="w-full">
                 <div class="relative" id="dropdown-container-turma-notas">
                     <input type="hidden" id="idTurmas" name="idTurmas" value="{{ request()->input('idTurmas', '') }}">
 
@@ -116,7 +113,7 @@
                         <th class="px-4 py-4 text-center text-xs font-semibold uppercase tracking-wider text-[#5c706b]">Rec.</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-[#e3e8e6]">
+                <tbody class="divide-y divide-[#e3e8e6]" data-live-search-results>
                     <!-- Laço exibindo os alunos -->
                     @forelse($Alunos as $Aluno)
                         <tr class="hover:bg-[#f8faf9]/50 transition-colors">
@@ -127,7 +124,6 @@
                             <!-- Coluna 1º Bimestre -->
                             <td class="px-4 py-4 text-sm text-center">
                                 <a href="{{ url('/coordenacao/lancamentos_notas_1bim/' . $Aluno->idAluno) }}"
-                                   target="_blank"
                                    class="inline-flex items-center justify-center p-2 rounded-lg text-[#5c706b] hover:text-[#008a4b] hover:bg-[#ecfdf5] transition-all"
                                    title="Lançar 1º Bimestre">
                                     <i data-lucide="edit-3" class="w-4 h-4"></i>
@@ -137,7 +133,6 @@
                             <!-- Coluna 2º Bimestre -->
                             <td class="px-4 py-4 text-sm text-center">
                                 <a href="{{ url('/coordenacao/lancamentos_notas_2bim/' . $Aluno->idAluno) }}"
-                                   target="_blank"
                                    class="inline-flex items-center justify-center p-2 rounded-lg text-[#5c706b] hover:text-[#008a4b] hover:bg-[#ecfdf5] transition-all"
                                    title="Lançar 2º Bimestre">
                                     <i data-lucide="edit-3" class="w-4 h-4"></i>
@@ -147,7 +142,6 @@
                             <!-- Coluna 3º Bimestre -->
                             <td class="px-4 py-4 text-sm text-center">
                                 <a href="{{ url('/coordenacao/lancamentos_notas_3bim/' . $Aluno->idAluno) }}"
-                                   target="_blank"
                                    class="inline-flex items-center justify-center p-2 rounded-lg text-[#5c706b] hover:text-[#008a4b] hover:bg-[#ecfdf5] transition-all"
                                    title="Lançar 3º Bimestre">
                                     <i data-lucide="edit-3" class="w-4 h-4"></i>
@@ -157,7 +151,6 @@
                             <!-- Coluna 4º Bimestre -->
                             <td class="px-4 py-4 text-sm text-center">
                                 <a href="{{ url('/coordenacao/lancamentos_notas_4bim/' . $Aluno->idAluno) }}"
-                                   target="_blank"
                                    class="inline-flex items-center justify-center p-2 rounded-lg text-[#5c706b] hover:text-[#008a4b] hover:bg-[#ecfdf5] transition-all"
                                    title="Lançar 4º Bimestre">
                                     <i data-lucide="edit-3" class="w-4 h-4"></i>
@@ -167,7 +160,6 @@
                             <!-- Coluna Recuperação -->
                             <td class="px-4 py-4 text-sm text-center">
                                 <a href="{{ url('/coordenacao/lancamentos_notas_rec/' . $Aluno->idAluno) }}"
-                                   target="_blank"
                                    class="inline-flex items-center justify-center p-2 rounded-lg text-[#5c706b] hover:text-red-600 hover:bg-red-50 transition-all"
                                    title="Lançar Recuperação">
                                     <i data-lucide="edit-3" class="w-4 h-4"></i>
@@ -201,5 +193,76 @@
     @endif
 
 </div>
+
+<script>
+    (function () {
+        const input = document.querySelector('[data-live-search-input]');
+        const results = document.querySelector('[data-live-search-results]');
+        const status = document.querySelector('[data-search-status]');
+        const turmaInput = document.querySelector('#idTurmas');
+        if (!input || !results) return;
+
+        let timer;
+        let controller;
+
+        const escapeHtml = function (value) {
+            return String(value ?? '').replace(/[&<>'"]/g, function (character) {
+                return {'&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#039;', '"': '&quot;'}[character];
+            });
+        };
+
+        const row = function (student) {
+            const id = Number(student.idAluno);
+            const base = '{{ url('/coordenacao/lancamentos_notas_') }}';
+            const link = function (bim) {
+                return base + bim + '/' + id;
+            };
+            const action = function (url, title, color) {
+                return '<a href="' + url + '" class="inline-flex items-center justify-center rounded-lg p-2 ' + color + ' transition-all" title="' + title + '"><i data-lucide="edit-3" class="h-4 w-4"></i></a>';
+            };
+            return '<tr class="border-b border-[#e3e8e6] hover:bg-[#f8faf9]/60 transition-colors">' +
+                '<td class="px-6 py-4 text-sm font-semibold text-[#0a241e]">' + escapeHtml(student.NomeAluno) + '</td>' +
+                '<td class="px-6 py-4 text-sm text-[#5c706b]">' + escapeHtml(student.NumeroMac || student.RA || '-') + '</td>' +
+                '<td class="px-6 py-4 text-sm text-[#0a241e]">' + escapeHtml(student.NomeTurma || '-') + '</td>' +
+                '<td class="px-4 py-4 text-center">' + action(link('1bim'), 'Lançar 1º Bimestre', 'text-[#5c706b] hover:text-[#008a4b] hover:bg-[#ecfdf5]') + '</td>' +
+                '<td class="px-4 py-4 text-center">' + action(link('2bim'), 'Lançar 2º Bimestre', 'text-[#5c706b] hover:text-[#008a4b] hover:bg-[#ecfdf5]') + '</td>' +
+                '<td class="px-4 py-4 text-center">' + action(link('3bim'), 'Lançar 3º Bimestre', 'text-[#5c706b] hover:text-[#008a4b] hover:bg-[#ecfdf5]') + '</td>' +
+                '<td class="px-4 py-4 text-center">' + action(link('4bim'), 'Lançar 4º Bimestre', 'text-[#5c706b] hover:text-[#008a4b] hover:bg-[#ecfdf5]') + '</td>' +
+                '<td class="px-4 py-4 text-center">' + action(link('rec'), 'Lançar Recuperação', 'text-[#5c706b] hover:text-red-600 hover:bg-red-50') + '</td>' +
+                '</tr>';
+        };
+
+        const search = function () {
+            if (controller) controller.abort();
+            controller = new AbortController();
+            const params = new URLSearchParams({q: input.value.trim()});
+            if (turmaInput && turmaInput.value) params.set('idTurmas', turmaInput.value);
+            status.textContent = 'Buscando...';
+            status.classList.remove('hidden');
+
+            fetch('{{ url('/coordenacao/notas/pesquisar') }}?' + params.toString(), {signal: controller.signal, headers: {'Accept': 'application/json'}})
+                .then(function (response) {
+                    if (!response.ok) throw new Error('Falha na busca');
+                    return response.json();
+                })
+                .then(function (data) {
+                    results.innerHTML = data.items.length
+                        ? data.items.map(row).join('')
+                        : '<tr><td colspan="8" class="px-6 py-12 text-center text-sm text-[#5c706b]">Nenhum aluno encontrado</td></tr>';
+                    status.textContent = data.items.length + (data.items.length === 1 ? ' aluno encontrado' : ' alunos encontrados');
+                    if (window.lucide) window.lucide.createIcons();
+                })
+                .catch(function (error) {
+                    if (error.name === 'AbortError') return;
+                    status.textContent = 'Não foi possível realizar a busca.';
+                });
+        };
+
+        input.addEventListener('input', function () {
+            window.clearTimeout(timer);
+            timer = window.setTimeout(search, 300);
+        });
+    }());
+</script>
 
 @endsection

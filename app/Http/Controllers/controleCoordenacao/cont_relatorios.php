@@ -46,7 +46,8 @@ class cont_relatorios extends Controller {
 //Metodo faz solicitação dos relatorios bimestrais dos alunos
     public function relatorios_bimestrais() {
         $turmas = tb_turma::turmasAtivas();
-        $Alunos = tb_aluno::listagemAluno();
+        $idTurma = $this->request->get('idTurmas');
+        $Alunos = tb_aluno::listagemAlunoComFiltros($this->request->get('pesquisar'), $idTurma);
         return view('telasCoordenacao.relatorios.relatorios_bimestrais', compact('Alunos', 'turmas'));
     }
 
@@ -54,10 +55,7 @@ class cont_relatorios extends Controller {
     public function relatorios_filtro() {
         $idTurma = $this->request->get('idTurmas');
         $turmas = tb_turma::turmasAtivas();
-        if ($idTurma == null) {
-            
-        }
-        $Alunos = tb_aluno::filtroporTurma($idTurma);
+        $Alunos = tb_aluno::listagemAlunoComFiltros($this->request->get('pesquisar'), $idTurma);
         return view('telasCoordenacao.relatorios.relatorios_bimestrais', compact('Alunos', 'turmas'));
     }
 

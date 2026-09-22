@@ -67,6 +67,23 @@
                     </div>
                 </div>
 
+                <!-- Data de Nascimento -->
+                <div class="flex items-center gap-4">
+                    <div class="w-9 h-9 rounded-xl bg-[#ecfdf5] flex items-center justify-center shrink-0">
+                        <i data-lucide="cake" class="w-4.5 h-4.5 text-[#008a4b]"></i>
+                    </div>
+                    <div class="min-w-0 flex-1">
+                        <span class="block text-[11px] font-semibold uppercase tracking-wider text-[#95aba5] mb-0.5">Data de Nascimento</span>
+                        <span class="text-sm font-medium text-[#0a241e]">
+                            @if(!empty($func->DataNascimento))
+                                {{ date('d/m/Y', strtotime(str_replace('/', '-', $func->DataNascimento))) }}
+                            @else
+                                -
+                            @endif
+                        </span>
+                    </div>
+                </div>
+
                 <!-- 2. E-mail -->
                 <div class="flex items-center gap-4">
                     <div class="w-9 h-9 rounded-xl bg-[#ecfdf5] flex items-center justify-center shrink-0">

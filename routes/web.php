@@ -533,14 +533,14 @@ Route::get('/coordenacao/lancamentos_notas_{bim}/{id}', function ($bim, $id) {
     $titulo = 'Lançamento de Notas — ' . ($aluno->NomeAluno ?? 'Aluno');
 
     if ($bim === 'rec') {
-        $view = 'telasCoordenacao.notas.notas_rp_rf';
+        $nivel = 'fund1';
     } else {
         $nivelCode = \App\Http\Controllers\controleCoordenacao\cont_relatorios::determinarNivelTurma($turma->NomeTurma ?? '');
         $nivel = ($nivelCode === 'fun1') ? 'fund1' : (($nivelCode === 'fun2') ? 'fund2' : 'inf');
-        $view = "telasCoordenacao.notas.notas_{$nivel}_{$bim}";
     }
 
-    return view($view, compact('aluno', 'matricula', 'turma', 'disciplinas', 'titulo'));
+    $bimestre = $bim;
+    return view('telasCoordenacao.notas.lancamento', compact('aluno', 'matricula', 'turma', 'disciplinas', 'titulo', 'bimestre', 'nivel'));
 })->where('id', '[0-9]+');
 
 // INTEGRAÇÃO GLOBAL: bloco desativado (if(false)) — duplicava rota já registrada mais
@@ -992,6 +992,7 @@ Route::post('/aluno/login', [loginAluno::class, 'postlogin']);
 
 // Módulo de Alunos
 Route::get('/coordenacao/aluno_inf', [cont_aluno::class, 'aluno_inf']);
+Route::get('/coordenacao/alunos/aluno_inf', [cont_aluno::class, 'aluno_inf']);
 Route::get('/coordenacao/aluno_editar/{id}', [cont_aluno::class, 'editar']);
 Route::post('/coordenacao/aluno_editar/{id}', [cont_aluno::class, 'editando']);
 Route::get('/coordenacao/aluno_transferir/{id}', [cont_aluno::class, 'transferir']);
@@ -1103,6 +1104,7 @@ Route::get('/coordenacao/relatorios/relatorio_pre_matriculado', [cont_relatorios
 // Módulo Pedagógico — Lançamento e Consulta de Notas Bimestrais
 Route::get('/coordenacao/notas/notas', [cont_notas::class, 'index']);
 Route::post('/coordenacao/notas/notas_pesq', [cont_notas::class, 'notas_pesq']);
+Route::get('/coordenacao/notas/pesquisar', [cont_notas::class, 'notas_pesquisa_ajax']);
 Route::get('/coordenacao/notas/notas_filtro', [cont_notas::class, 'notas_filtro']);
 Route::get('/coordenacao/notas_bimestre_1/{id}', [cont_notas::class, 'bimestre_1']);
 Route::get('/coordenacao/notas_bimestre_2/{id}', [cont_notas::class, 'bimestre_2']);
@@ -1122,6 +1124,9 @@ Route::post('/coordenacao/salva_nota_2bim_fun2', [cont_notas::class, 'salva_nota
 Route::post('/coordenacao/salva_nota_3bim_fun2', [cont_notas::class, 'salva_nota_3bim_fun2']);
 Route::post('/coordenacao/salva_nota_4bim_fun2', [cont_notas::class, 'salva_nota_4bim_fun2']);
 Route::post('/coordenacao/salva_nota_rp_rf', [cont_notas::class, 'salva_nota_rp_rf']);
+
+Route::get('/coordenacao/historico/historico', [cont_historico::class, 'index']);
+Route::get('/coordenacao/declaracoes/declaracoes', [cont_declaracoes::class, 'index']);
 
 // Módulo Pedagógico — Boletins
 Route::get('/coordenacao/boletins/boletins', [cont_boletins::class, 'index']);

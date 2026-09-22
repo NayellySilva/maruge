@@ -47,7 +47,8 @@ class cont_boletins extends Controller {
 //Metodo chama a view principal para solicitar o boletim do aluno
     public function index() {
         $turmas = tb_turma::turmasAtivas();
-        $Alunos = tb_aluno::listagemAluno();
+        $idTurma = $this->request->get('idTurmas');
+        $Alunos = tb_aluno::listagemAlunoComFiltros($this->request->get('pesquisar'), $idTurma);
         return view('telasCoordenacao.boletins.boletins', compact('Alunos', 'turmas'));
     }
 
@@ -64,10 +65,7 @@ class cont_boletins extends Controller {
     public function boletim_filtro() {
         $idTurma = $this->request->get('idTurmas');
         $turmas = tb_turma::turmasAtivas();
-        if ($idTurma == null) {
-           
-        }
-        $Alunos = tb_aluno::filtroporTurma($idTurma);
+        $Alunos = tb_aluno::listagemAlunoComFiltros($this->request->get('pesquisar'), $idTurma);
         return view('telasCoordenacao.boletins.boletins', compact('Alunos', 'turmas'));
     }
 

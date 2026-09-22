@@ -3,17 +3,8 @@
 @section('content')
 
 @php
-    try {
-        $Alunos = \App\Models\modelCoordenacao\tb_aluno::listagemAluno();
-    } catch (\Exception $e) {
-        $Alunos = new \Illuminate\Pagination\LengthAwarePaginator([], 0, 15);
-    }
-
-    try {
-        $turmas = \DB::table('tb_turmas')->orderBy('NomeTurma')->get();
-    } catch (\Exception $e) {
-        $turmas = collect();
-    }
+    $Alunos = $Alunos ?? new \Illuminate\Pagination\LengthAwarePaginator([], 0, 15);
+    $turmas = $turmas ?? collect();
 @endphp
 
 <div class="flex flex-col gap-6">

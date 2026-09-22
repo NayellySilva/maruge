@@ -44,7 +44,8 @@ class cont_declaracoes extends Controller {
 //Metodo Para Direcionar ao cadastro de um novo aluno
     public function index() {
         $turmas = tb_turma::turmasAtivas();
-        $Alunos = tb_aluno::listagemAluno();
+        $idTurma = $this->request->get('idTurmas');
+        $Alunos = tb_aluno::listagemAlunoComFiltros($this->request->get('pesquisar'), $idTurma, true);
         return view('telasCoordenacao.declaracoes.declaracoes', compact('Alunos', 'turmas'));
     }
 
@@ -52,10 +53,7 @@ class cont_declaracoes extends Controller {
     public function declaracao_filtro() {
         $idTurma = $this->request->get('idTurmas');
         $turmas = tb_turma::turmasAtivas();
-        if ($idTurma == null) {
-            
-        }
-        $Alunos = tb_aluno::filtroporTurma($idTurma);
+        $Alunos = tb_aluno::listagemAlunoComFiltros($this->request->get('pesquisar'), $idTurma, true);
         return view('telasCoordenacao.declaracoes.declaracoes', compact('Alunos', 'turmas'));
     }
 
@@ -63,7 +61,7 @@ class cont_declaracoes extends Controller {
     public function declaracao_pesq() {
         $turmas = tb_turma::turmasAtivas();
         $palavrachave = $this->request->get('pesquisar');
-        $Alunos = tb_aluno::pesquisar($palavrachave);
+        $Alunos = tb_aluno::listagemAlunoComFiltros($palavrachave, $this->request->get('idTurmas'), true);
         return view('telasCoordenacao.declaracoes.declaracoes_pesq', compact('Alunos', 'turmas'));
     }
 

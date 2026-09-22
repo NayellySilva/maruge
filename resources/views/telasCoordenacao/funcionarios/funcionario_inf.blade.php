@@ -118,7 +118,7 @@
                         @php
                             $isSaiu = str_contains(strtoupper($Funcionario->NomeFuncionario), 'SAIU');
                             $isUserInativo = strtoupper($Funcionario->SituacaoUsuario ?? '') === 'INATIVO';
-                            $isAtivo = !$isSaiu && !$isUserInativo;
+                            $isAtivo = strtoupper($Funcionario->SituacaoFuncionario ?? 'ATIVO') !== 'INATIVO' && !$isSaiu && !$isUserInativo;
                         @endphp
                         <tr class="hover:bg-[#f8faf9]/50 transition-colors">
                             <td class="px-6 py-4 text-sm font-semibold text-[#0a241e]">{{ $Funcionario->NomeFuncionario }}</td>

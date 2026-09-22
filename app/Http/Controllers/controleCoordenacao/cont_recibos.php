@@ -38,7 +38,8 @@ class cont_recibos extends Controller {
 //Metodo Para Direcionar página inicial de recibos
     public function index() {
         $turmas = tb_turma::turmasAtivas();
-        $Alunos = tb_aluno::listagemAlunoComBoletosRegistrados();
+        $idTurma = $this->request->get('idTurmas');
+        $Alunos = $idTurma ? tb_aluno::filtroporTurma($idTurma) : tb_aluno::listagemAlunoComBoletosRegistrados();
        // $Alunos = tb_aluno::listagemAluno();
         return view('telasCoordenacao.recibos.recibos', compact('Alunos', 'turmas'));
     }
@@ -57,9 +58,7 @@ class cont_recibos extends Controller {
     public function recibo_filtro() {
         $idTurma = $this->request->get('idTurmas');
         $turmas = tb_turma::turmasAtivas();
-        if ($idTurma == null) {
-        }
-        $Alunos = tb_aluno::filtroporTurma($idTurma);
+        $Alunos = $idTurma ? tb_aluno::filtroporTurma($idTurma) : tb_aluno::listagemAlunoComBoletosRegistrados();
         return view('telasCoordenacao.recibos.recibos', compact('Alunos', 'turmas'));
     }
 

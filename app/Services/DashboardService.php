@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 class DashboardService
 {
@@ -11,14 +12,21 @@ class DashboardService
      */
     public function getCounters(): array
     {
+        $hasAluno = Schema::hasTable('tb_aluno');
+        $hasMatriculas = Schema::hasTable('tb_matriculas');
+        $hasTurmas = Schema::hasTable('tb_turmas');
+        $hasDisciplinas = Schema::hasTable('tb_disciplinas');
+        $hasFuncionarios = Schema::hasTable('tb_funcionarios');
+        $hasUsuarios = Schema::hasTable('tb_usuario');
+
         return [
-            'quantAlunosCadastrados' => DB::table('tb_aluno')->count(),
-            'quantMatriculasAtivas' => \App\Models\modelCoordenacao\tb_matricula::quantMatriculasAtivas(),
-            'quantMatriculasInativas' => \App\Models\modelCoordenacao\tb_matricula::quantMatriculasInativas(),
-            'quantUsuarioCadastrados' => \App\Models\modelCoordenacao\tb_usuario::listagemUsuarios()->count(),
-            'quantTurmasAtivas' => \App\Models\modelCoordenacao\tb_turma::turmasAtivas()->count(),
-            'quantDisciplina' => \App\Models\modelCoordenacao\tb_disciplina::quantDisciplinasCadastradas(),
-            'quantFuncionariosCadastrados' => \App\Models\modelCoordenacao\tb_funcionario::funcionarioCadastrados()->count(),
+            'quantAlunosCadastrados' => $hasAluno ? DB::table('tb_aluno')->count() : 0,
+            'quantMatriculasAtivas' => $hasMatriculas ? \App\Models\modelCoordenacao\tb_matricula::quantMatriculasAtivas() : 0,
+            'quantMatriculasInativas' => $hasMatriculas ? \App\Models\modelCoordenacao\tb_matricula::quantMatriculasInativas() : 0,
+            'quantUsuarioCadastrados' => $hasUsuarios ? \App\Models\modelCoordenacao\tb_usuario::listagemUsuarios()->count() : 0,
+            'quantTurmasAtivas' => $hasTurmas ? \App\Models\modelCoordenacao\tb_turma::turmasAtivas()->count() : 0,
+            'quantDisciplina' => $hasDisciplinas ? \App\Models\modelCoordenacao\tb_disciplina::quantDisciplinasCadastradas() : 0,
+            'quantFuncionariosCadastrados' => $hasFuncionarios ? \App\Models\modelCoordenacao\tb_funcionario::funcionarioCadastrados()->count() : 0,
         ];
     }
 
@@ -27,6 +35,10 @@ class DashboardService
      */
     public function getMonthlyEnrollments(): array
     {
+        if (!Schema::hasTable('tb_matriculas')) {
+            return array_fill(0, 12, 0);
+        }
+
         $matriculas = DB::table('tb_matriculas')->select('DataMatricula')->get();
         $monthly = array_fill(0, 12, 0);
 
@@ -37,8 +49,8 @@ class DashboardService
             $mes = null;
             if (preg_match('/^\d{4}-(\d{2})-\d{2}/', $m->DataMatricula, $matches)) {
                 $mes = (int)$matches[1] - 1;
-            } elseif (preg_match('/^\d{2}\/(\d{2})\/\d{4}/', $m->DataMatricula, $matches)) {
-                $mes = (int)$matches[1] - 1;
+            } elseif (preg_match('/^\d{2}\/\d{2}\/\d{4}/', $m->DataMatricula)) {
+                $mes = (int)substr($m->DataMatricula, 3, 2) - 1;
             }
 
             if ($mes !== null && $mes >= 0 && $mes <= 11) {
@@ -54,6 +66,10 @@ class DashboardService
      */
     public function getClassGradeAverages(int $limit = 12): array
     {
+        if (!Schema::hasTable('tb_notas') || !Schema::hasTable('tb_turmas')) {
+            return ['labels' => [], 'values' => []];
+        }
+
         $turmasNotas = DB::table('tb_notas')
             ->join('tb_turmas', 'tb_notas.tb_turmas_idTurmas', '=', 'tb_turmas.idTurmas')
             ->select('tb_turmas.NomeTurma', DB::raw('ROUND(AVG((COALESCE(AM1,0)+COALESCE(AB1,0))/2), 1) as media'))
@@ -83,6 +99,14 @@ class DashboardService
      */
     public function getTuitionStatus(): array
     {
+        if (!Schema::hasTable('tb_carne')) {
+            return [
+                'pagas' => 0,
+                'atrasadas' => 0,
+                'parcial' => 0,
+            ];
+        }
+
         $statusCounts = DB::table('tb_carne')
             ->select('status_pagamento', DB::raw('count(*) as total'))
             ->groupBy('status_pagamento')
@@ -101,6 +125,10 @@ class DashboardService
      */
     public function getBirthdaysByMonth(int $targetMonth): array
     {
+        if (!Schema::hasTable('tb_aluno') || !Schema::hasTable('tb_matriculas')) {
+            return [];
+        }
+
         $colorsAlunos = [
             'bg-[#09492f]/10 text-[#09492f]',
             'bg-[#008a4b]/10 text-[#008a4b]',
@@ -152,6 +180,8 @@ class DashboardService
             $funcionarios = DB::table('tb_funcionarios')
                 ->whereNotNull('DataNascimento')
                 ->where('DataNascimento', '!=', '')
+                ->where('NomeFuncionario', 'not like', '%(SAIU)%')
+                ->where('NomeFuncionario', 'not like', '%(INATIVO)%')
                 ->select('NomeFuncionario', 'DataNascimento', 'Funcao')
                 ->get();
 

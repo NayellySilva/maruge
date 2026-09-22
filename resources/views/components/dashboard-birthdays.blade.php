@@ -64,7 +64,7 @@
                                 <p class="text-xs font-semibold text-gray-400 truncate">${p.role}</p>
                             </div>
                             <div class="text-right shrink-0">
-                                <span class="inline-block text-xs font-bold text-[#008a4b] bg-[#008a4b]/5 px-2.5 py-1 rounded-full">
+                                <span class="inline-block text-xs font-bold ${p.tipo === 'docente' ? 'text-[#b45309] bg-[#ffb300]/15' : 'text-[#008a4b] bg-[#008a4b]/5'} px-2.5 py-1 rounded-full">
                                     Dia ${p.day}
                                 </span>
                             </div>

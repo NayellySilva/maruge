@@ -90,11 +90,11 @@
                 <td>{{$Aluno->NomeAluno}}</td>
                 <td>{{$Aluno->RA}}</td>
                 <td><center>{{$Aluno->NomeTurma}}</td>             
-                <td> <a href="{{url("/coordenacao/lancamentos_notas_1bim/$Aluno->idAluno")}}"target="_blank" ><center> <img src="{{url('imgs/icones/editar.png')}}" alt="1º Bimestre"</center></td>
-                <td> <a href="{{url("/coordenacao/lancamentos_notas_2bim/$Aluno->idAluno")}}" target="_blank" ><center> <img src="{{url('imgs/icones/editar.png')}}" alt="2º Bimestre"</center></td>
-                <td> <a href="{{url("/coordenacao/lancamentos_notas_3bim/$Aluno->idAluno")}}" target="_blank"><center> <img src="{{url('imgs/icones/editar.png')}}" alt="3º Bimestre"</center></td>
-                <td> <a href="{{url("/coordenacao/lancamentos_notas_4bim/$Aluno->idAluno")}}" target="_blank" ><center> <img src="{{url('imgs/icones/editar.png')}}" alt="4º Bimestre"</center></td>
-                <td> <a href="{{url("/coordenacao/lancamentos_notas_rec/$Aluno->idAluno")}}" target="_blank" ><center> <img src="{{url('imgs/icones/editar.png')}}" alt="5º Bimestre"</center></td>
+                <td> <a href="{{ url('/coordenacao/lancamentos_notas_1bim/' . $Aluno->idAluno) }}"><center> <img src="{{url('imgs/icones/editar.png')}}" alt="1º Bimestre"</center></td>
+                <td> <a href="{{ url('/coordenacao/lancamentos_notas_2bim/' . $Aluno->idAluno) }}"><center> <img src="{{url('imgs/icones/editar.png')}}" alt="2º Bimestre"</center></td>
+                <td> <a href="{{ url('/coordenacao/lancamentos_notas_3bim/' . $Aluno->idAluno) }}"><center> <img src="{{url('imgs/icones/editar.png')}}" alt="3º Bimestre"</center></td>
+                <td> <a href="{{ url('/coordenacao/lancamentos_notas_4bim/' . $Aluno->idAluno) }}"><center> <img src="{{url('imgs/icones/editar.png')}}" alt="4º Bimestre"</center></td>
+                <td> <a href="{{ url('/coordenacao/lancamentos_notas_rec/' . $Aluno->idAluno) }}"><center> <img src="{{url('imgs/icones/editar.png')}}" alt="5º Bimestre"</center></td>
 
                 </tr>         
                 @empty

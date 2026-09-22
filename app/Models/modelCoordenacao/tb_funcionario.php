@@ -11,7 +11,7 @@ class tb_funcionario extends Model {
     public $timestamps = false;
     protected $fillable = [
         'NomeFuncionario', 'CPFFuncionario', 'RGFuncionario', 'DataNascimento', 'Funcao',
-        'Salario', 'EmailFuncionario', 'Formacao'
+        'Salario', 'EmailFuncionario', 'Formacao', 'Situacao'
     ];
     // Campos Obrigatorios
     static $camposObg = [
@@ -37,6 +37,9 @@ class tb_funcionario extends Model {
         }
         if (!isset($novoFuncionario->Formacao)) {
             $novoFuncionario->Formacao = $dadosForm['Formacao'] ?? '';
+        }
+        if (empty($novoFuncionario->Situacao)) {
+            $novoFuncionario->Situacao = 'ATIVO';
         }
         if (isset($dadosForm['DataNascimento'])) {
             $novoFuncionario->DataNascimento = $dadosForm['DataNascimento'];
@@ -70,11 +73,31 @@ class tb_funcionario extends Model {
 
 // Atualizando os dados dos funcionarios
     public static function editandofuncionario($dadosForm, $idFuncionarios) {
-        $Funcionario = tb_funcionario::select()->find($idFuncionarios);
+        $Funcionario = tb_funcionario::find($idFuncionarios);
+        if (!$Funcionario) {
+            return false;
+        }
+
         $updateFuncionario = $Funcionario->update($dadosForm);
+
         $idEndereco = $Funcionario->tb_endereco_idEndereco;
-        $endereco = tb_endereco::select()->find($idEndereco);
-        $updateEndereco = $endereco->update($dadosForm);
+        if ($idEndereco) {
+            $endereco = tb_endereco::find($idEndereco);
+            if ($endereco) {
+                $endereco->update($dadosForm);
+            } else {
+                $novoEndereco = new tb_endereco($dadosForm);
+                $novoEndereco->save();
+                $Funcionario->tb_endereco_idEndereco = $novoEndereco->idEndereco;
+                $Funcionario->save();
+            }
+        } else {
+            $novoEndereco = new tb_endereco($dadosForm);
+            $novoEndereco->save();
+            $Funcionario->tb_endereco_idEndereco = $novoEndereco->idEndereco;
+            $Funcionario->save();
+        }
+
         return $updateFuncionario;
     }
 

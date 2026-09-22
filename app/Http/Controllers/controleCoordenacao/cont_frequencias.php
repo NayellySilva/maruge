@@ -31,7 +31,8 @@ class cont_frequencias extends Controller {
     }
 //Metodo Para Direcionar página inicial das frequencias
     public function index() {  
-      $turmas = tb_turma::listandoTurmasAtivas();
+            $idTurma = $this->request->get('idTurmas');
+            $turmas = $idTurma ? tb_turma::filtroporidTurmas($idTurma) : tb_turma::listandoTurmasAtivas();
       $turmasSelecte = tb_turma::listandoTurmasAtivasNoSelect();
       return view('telasCoordenacao.frequencia.frequencias', compact('turmas','turmasSelecte'));   
     }

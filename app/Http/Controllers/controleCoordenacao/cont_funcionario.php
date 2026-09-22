@@ -103,6 +103,7 @@ class cont_funcionario extends Controller {
                 'tb_funcionarios.NomeFuncionario',
                 'tb_funcionarios.CPFFuncionario',
                 'tb_funcionarios.Funcao',
+                'tb_funcionarios.Situacao as SituacaoFuncionario',
                 'tb_funcionarios.tb_endereco_idEndereco',
                 'tb_endereco.Fone1',
                 'tb_endereco.Fone2',
@@ -111,17 +112,23 @@ class cont_funcionario extends Controller {
             ->distinct();
 
         if ($situacao === 'ATIVO') {
+            // Registros novos usam Situacao; registros antigos continuam cobertos pelo fallback legado.
             $query->where(function($q) {
-                $q->where('tb_funcionarios.NomeFuncionario', 'NOT LIKE', '%SAIU%')
-                  ->where('tb_funcionarios.NomeFuncionario', 'NOT LIKE', '%(SAIU)%')
-                  ->where(function($sub) {
-                      $sub->whereNull('tb_usuario.Situacao')
-                          ->orWhere('tb_usuario.Situacao', 'ATIVO');
+                $q->where('tb_funcionarios.Situacao', 'ATIVO')
+                  ->orWhere(function($legacy) {
+                      $legacy->whereNull('tb_funcionarios.Situacao')
+                          ->where('tb_funcionarios.NomeFuncionario', 'NOT LIKE', '%SAIU%')
+                          ->where('tb_funcionarios.NomeFuncionario', 'NOT LIKE', '%(SAIU)%')
+                          ->where(function($sub) {
+                              $sub->whereNull('tb_usuario.Situacao')
+                                  ->orWhere('tb_usuario.Situacao', 'ATIVO');
+                          });
                   });
             });
         } elseif ($situacao === 'INATIVO') {
             $query->where(function($q) {
-                $q->where('tb_funcionarios.NomeFuncionario', 'LIKE', '%SAIU%')
+                $q->where('tb_funcionarios.Situacao', 'INATIVO')
+                  ->orWhere('tb_funcionarios.NomeFuncionario', 'LIKE', '%SAIU%')
                   ->orWhere('tb_usuario.Situacao', 'INATIVO');
             });
         } elseif ($situacao === 'TODOS') {
@@ -153,6 +160,10 @@ class cont_funcionario extends Controller {
     // Metodo que realizar o update com os novos dados
     public function editando($idFuncionarios) {
         $dadosForm = request()->all();
+        // Restringe a situação aos dois estados exibidos no formulário de edição.
+        $dadosForm['Situacao'] = in_array(strtoupper($dadosForm['Situacao'] ?? 'ATIVO'), ['ATIVO', 'INATIVO'], true)
+            ? strtoupper($dadosForm['Situacao'])
+            : 'ATIVO';
         $validando = Validator::make($dadosForm, tb_funcionario::$camposObg);
         if ($validando->fails()) {
             if (!request()->ajax() && !request()->wantsJson()) {
