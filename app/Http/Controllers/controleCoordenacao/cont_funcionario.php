@@ -89,15 +89,18 @@ class cont_funcionario extends Controller {
 
     // Metodo para busca valores da tabela do banco de dados (padrao: ATIVOS) com suporte a filtros combinados:
     public function funcionario_inf() {
-        $pesquisar = $this->request->get('pesquisar');
-        $situacao = $this->request->get('situacao', 'ATIVO');
+        $pesquisar = request('pesquisar');
+        $situacao = request('situacao', 'ATIVO');
         if (empty($situacao)) {
             $situacao = 'ATIVO';
         }
 
         $query = tb_funcionario::orderBy('NomeFuncionario')
             ->leftJoin('tb_endereco', 'tb_endereco.idEndereco', '=', 'tb_funcionarios.tb_endereco_idEndereco')
-            ->leftJoin('tb_usuario', 'tb_usuario.tb_funcionarios_idFuncionarios', '=', 'tb_funcionarios.idFuncionarios')
+            ->leftJoin('tb_usuario', function($join) {
+                $join->on('tb_usuario.tb_funcionarios_idFuncionarios', '=', 'tb_funcionarios.idFuncionarios')
+                     ->whereRaw('tb_usuario.idUsuario = (SELECT MAX(u2.idUsuario) FROM tb_usuario u2 WHERE u2.tb_funcionarios_idFuncionarios = tb_funcionarios.idFuncionarios)');
+            })
             ->select(
                 'tb_funcionarios.idFuncionarios',
                 'tb_funcionarios.NomeFuncionario',
@@ -112,18 +115,14 @@ class cont_funcionario extends Controller {
             ->distinct();
 
         if ($situacao === 'ATIVO') {
-            // Registros novos usam Situacao; registros antigos continuam cobertos pelo fallback legado.
             $query->where(function($q) {
-                $q->where('tb_funcionarios.Situacao', 'ATIVO')
-                  ->orWhere(function($legacy) {
-                      $legacy->whereNull('tb_funcionarios.Situacao')
-                          ->where('tb_funcionarios.NomeFuncionario', 'NOT LIKE', '%SAIU%')
-                          ->where('tb_funcionarios.NomeFuncionario', 'NOT LIKE', '%(SAIU)%')
-                          ->where(function($sub) {
-                              $sub->whereNull('tb_usuario.Situacao')
-                                  ->orWhere('tb_usuario.Situacao', 'ATIVO');
-                          });
-                  });
+                $q->whereNull('tb_funcionarios.Situacao')
+                  ->orWhere('tb_funcionarios.Situacao', '!=', 'INATIVO');
+            })
+            ->where('tb_funcionarios.NomeFuncionario', 'NOT LIKE', '%SAIU%')
+            ->where(function($q) {
+                $q->whereNull('tb_usuario.Situacao')
+                  ->orWhere('tb_usuario.Situacao', '!=', 'INATIVO');
             });
         } elseif ($situacao === 'INATIVO') {
             $query->where(function($q) {
@@ -143,7 +142,7 @@ class cont_funcionario extends Controller {
             });
         }
 
-        $Funcionarios = $query->paginate(15)->appends($this->request->query());
+        $Funcionarios = $query->paginate(15)->appends(request()->query());
 
         return view('telasCoordenacao.funcionarios.funcionario_inf', compact('Funcionarios', 'situacao', 'pesquisar'));
     }
@@ -203,6 +202,13 @@ class cont_funcionario extends Controller {
                     $userExist->save();
                 }
             }
+        }
+
+        // Sincroniza a situação no usuário associado, se existir
+        $usuariosAssociados = \App\Models\modelCoordenacao\tb_usuario::where('tb_funcionarios_idFuncionarios', $idFuncionarios)->get();
+        foreach ($usuariosAssociados as $uAssoc) {
+            $uAssoc->Situacao = $dadosForm['Situacao'];
+            $uAssoc->save();
         }
 
         if ($updateFuncionario) {
