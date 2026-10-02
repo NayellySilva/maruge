@@ -188,15 +188,30 @@ class tb_aluno extends Model {
     
     
     //Relatorios de alunos matriculados (ATIVOS)
-    public static function alunoMatriculados() {
-        return tb_aluno::select()
-                        ->orderBy('NomeAluno')
+    public static function alunoMatriculados($idTurma = null, $pesquisar = null) {
+        $query = tb_aluno::orderBy('NomeAluno')
                         ->join('tb_matriculas', 'tb_matriculas.idMatriculas', '=', 'tb_aluno.tb_matriculas_idMatriculas')
                         ->join('tb_turmas', 'tb_turmas.idTurmas', '=', 'tb_aluno.tb_turmas_idTurmas')
-                        ->join('tb_pais', 'tb_pais.idPais', '=', 'tb_aluno.tb_pais_idPais')
-                        ->select('tb_aluno.NomeAluno', 'tb_aluno.DataNascimento', 'tb_aluno.NumeroMac', 'tb_matriculas.RA', 'tb_turmas.NomeTurma', 'tb_pais.FonePai1', 'tb_pais.FoneMae1', 'tb_aluno.Sexo','tb_pais.NomeMae','tb_pais.NomePai')
-                        ->where('tb_matriculas.SituacaoAluno', 'ATIVO')
-                        ->get();
+                        ->leftJoin('tb_pais', 'tb_pais.idPais', '=', 'tb_aluno.tb_pais_idPais')
+                        ->select('tb_aluno.idAluno', 'tb_aluno.NomeAluno', 'tb_aluno.DataNascimento', 'tb_aluno.NumeroMac', 'tb_matriculas.RA', 'tb_turmas.idTurmas', 'tb_turmas.NomeTurma', 'tb_pais.FonePai1', 'tb_pais.FoneMae1', 'tb_aluno.Sexo', 'tb_pais.NomeMae', 'tb_pais.NomePai')
+                        ->where('tb_matriculas.SituacaoAluno', 'ATIVO');
+
+        if ($idTurma) {
+            $query->where('tb_aluno.tb_turmas_idTurmas', $idTurma);
+        } else {
+            $query->whereIn('tb_turmas.SituacaoTurma', ['ATIVO', 'ATIVA']);
+        }
+
+        if (!empty($pesquisar)) {
+            $like = '%' . trim($pesquisar) . '%';
+            $query->where(function($q) use ($like) {
+                $q->where('tb_aluno.NomeAluno', 'LIKE', $like)
+                  ->orWhere('tb_matriculas.RA', 'LIKE', $like)
+                  ->orWhere('tb_aluno.NumeroMac', 'LIKE', $like);
+            });
+        }
+
+        return $query->get();
     }
     
     

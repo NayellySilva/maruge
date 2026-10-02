@@ -25,9 +25,14 @@ class cont_cadescola extends Controller {
         $this->tb_endereco = $tb_endereco;
     }
 
-//Metodo Para Direcionar ao cadastro de Escola (FormEscola)
     public function novaescola() {
-        return view('telasCoordenacao.escola.escola_form');
+        // Só existe uma escola: se já estiver cadastrada, abre direto a edição.
+        $escola = tb_escola::first();
+        if ($escola) {
+            return redirect('/coordenacao/escola_editar/' . $escola->idEscola);
+        }
+        $titulo = 'Cadastrar Escola';
+        return view('telasCoordenacao.escola.escola_cad', compact('titulo'));
     }
 //Metodo para salva uma nova escola
     public function postnovaescola() {

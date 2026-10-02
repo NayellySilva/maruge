@@ -47,26 +47,20 @@ class cont_boletins extends Controller {
 //Metodo chama a view principal para solicitar o boletim do aluno
     public function index() {
         $turmas = tb_turma::turmasAtivas();
-        $idTurma = $this->request->get('idTurmas');
-        $Alunos = tb_aluno::listagemAlunoComFiltros($this->request->get('pesquisar'), $idTurma);
-        return view('telasCoordenacao.boletins.boletins', compact('Alunos', 'turmas'));
+        $idTurma = request('idTurmas');
+        $pesquisar = request('pesquisar');
+        $Alunos = tb_aluno::listagemAlunoComFiltros($pesquisar, $idTurma, true);
+        return view('telasCoordenacao.boletins.boletins', compact('Alunos', 'turmas', 'pesquisar', 'idTurma'));
     }
 
- 
     //Metodo pesquisar aluno por palavra chave
     public function boletim_pesq() {
-        $turmas = tb_turma::turmasAtivas();
-        $palavrachave = $this->request->get('pesquisar');
-        $Alunos = tb_aluno::pesquisar($palavrachave);
-        return view('telasCoordenacao.boletins.boletim_pesq', compact('Alunos', 'turmas'));
+        return $this->index();
     }
      
     //Metodo pesquisar aluno por filtro de turma
     public function boletim_filtro() {
-        $idTurma = $this->request->get('idTurmas');
-        $turmas = tb_turma::turmasAtivas();
-        $Alunos = tb_aluno::listagemAlunoComFiltros($this->request->get('pesquisar'), $idTurma);
-        return view('telasCoordenacao.boletins.boletins', compact('Alunos', 'turmas'));
+        return $this->index();
     }
 
     

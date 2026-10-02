@@ -37,24 +37,40 @@ class cont_mapas extends Controller {
     }
 // Metodo para busca as turmas ativas cadastradas
     public function index() {
-        $turmas = tb_turma::listandoTurmasAtivas();
-        return view('telasCoordenacao.mapa.mapas_notas', compact('turmas'));
+        $pesquisar = request('pesquisar');
+        $SituacaoTurma = request('SituacaoTurma', 'ATIVO');
+        if (empty($SituacaoTurma)) {
+            $SituacaoTurma = 'ATIVO';
+        }
+
+        $query = tb_turma::orderBy('NomeTurma');
+
+        if ($SituacaoTurma === 'ATIVO') {
+            $query->whereIn('SituacaoTurma', ['ATIVO', 'ATIVA']);
+        } elseif ($SituacaoTurma === 'INATIVO') {
+            $query->whereIn('SituacaoTurma', ['INATIVO', 'INATIVA', '[INATIVO]']);
+        }
+
+        if (!empty($pesquisar)) {
+            $query->where(function($q) use ($pesquisar) {
+                $q->where('NomeTurma', 'LIKE', "%{$pesquisar}%");
+                if (preg_match('/^\d{4}$/', trim($pesquisar))) {
+                    $q->orWhere('AnoLetivo', 'LIKE', "%{$pesquisar}%");
+                }
+            });
+        }
+
+        $turmas = $query->paginate(15)->appends(request()->query());
+        return view('telasCoordenacao.mapa.mapas_notas', compact('turmas', 'SituacaoTurma', 'pesquisar'));
     }  
 //Metodo pesquisar turma por palavra chave
     public function mapas_pesq() {
-       $palavrachave = $this->request->get('pesquisar');
-        $turmas = tb_turma::pesquisar($palavrachave);
-        return view('telasCoordenacao.mapa.mapas_pesq', compact('turmas'));
+        return $this->index();
     }
 
 //Metodo pesquisar turma por filtro Situação
     public function mapas_filtro() {
-        $SituacaoTurma = $this->request->get('SituacaoTurma');
-        if ($SituacaoTurma == null) {
-            return redirect('/coordenacao/mapas_notas');
-        }
-        $turmas = tb_turma::filtroporSituacaoTurma($SituacaoTurma);
-        return view('telasCoordenacao.mapa.mapas_filtro', compact('turmas'));
+        return $this->index();
     }
     public static function determinarNivelTurma($nomeTurma) {
         return cont_relatorios::determinarNivelTurma($nomeTurma);

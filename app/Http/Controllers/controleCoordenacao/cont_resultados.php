@@ -39,23 +39,39 @@ class cont_resultados extends Controller {
     }
 
     public function index() {
-        $turmas = tb_turma::listandoTurmasAtivas();
-        return view('telasCoordenacao.resultado.resultados', compact('turmas'));
+        $pesquisar = request('pesquisar');
+        $SituacaoTurma = request('SituacaoTurma', 'ATIVO');
+        if (empty($SituacaoTurma)) {
+            $SituacaoTurma = 'ATIVO';
+        }
+
+        $query = tb_turma::orderBy('NomeTurma');
+
+        if ($SituacaoTurma === 'ATIVO') {
+            $query->whereIn('SituacaoTurma', ['ATIVO', 'ATIVA']);
+        } elseif ($SituacaoTurma === 'INATIVO') {
+            $query->whereIn('SituacaoTurma', ['INATIVO', 'INATIVA', '[INATIVO]']);
+        }
+
+        if (!empty($pesquisar)) {
+            $query->where(function($q) use ($pesquisar) {
+                $q->where('NomeTurma', 'LIKE', "%{$pesquisar}%");
+                if (preg_match('/^\d{4}$/', trim($pesquisar))) {
+                    $q->orWhere('AnoLetivo', 'LIKE', "%{$pesquisar}%");
+                }
+            });
+        }
+
+        $turmas = $query->paginate(15)->appends(request()->query());
+        return view('telasCoordenacao.resultado.resultados', compact('turmas', 'SituacaoTurma', 'pesquisar'));
     }
 
     public function resultados_pesq() {
-        $palavrachave = $this->request->get('pesquisar');
-        $turmas = tb_turma::pesquisar($palavrachave);
-        return view('telasCoordenacao.resultado.resultados_pesq', compact('turmas'));
+        return $this->index();
     }
 
     public function resultados_filtro() {
-        $SituacaoTurma = $this->request->get('SituacaoTurma');
-        if ($SituacaoTurma == null) {
-            return redirect('/coordenacao/resultados');
-        }
-        $turmas = tb_turma::filtroporSituacaoTurma($SituacaoTurma);
-        return view('telasCoordenacao.resultado.resultados_filtro', compact('turmas'));
+        return $this->index();
     }
 
     private function renderizarResultado($idTurmas, $tipo, $tituloPadrao = '') {

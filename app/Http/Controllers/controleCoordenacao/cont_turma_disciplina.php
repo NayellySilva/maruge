@@ -103,13 +103,31 @@ class cont_turma_disciplina extends Controller {
         $idFuncionarios = request()->get('idFuncionarios');
         $idTurmas = request()->get('idTurmas');
 
+        $query = \DB::table('tb_turmas_disciplinas')
+            ->join('tb_disciplinas', 'tb_disciplinas.idDisciplinas', '=', 'tb_turmas_disciplinas.tb_disciplinas_idDisciplinas')
+            ->join('tb_turmas', 'tb_turmas.idTurmas', '=', 'tb_turmas_disciplinas.tb_turmas_idTurmas')
+            ->join('tb_funcionarios', 'tb_funcionarios.idFuncionarios', '=', 'tb_turmas_disciplinas.tb_funcionarios_idFuncionarios')
+            ->whereIn('tb_turmas.SituacaoTurma', ['ATIVO', 'ATIVA'])
+            ->select(
+                'tb_turmas.NomeTurma as NomeTurma',
+                'tb_disciplinas.NomeDisciplina as NomeDisciplina',
+                'tb_funcionarios.NomeFuncionario as NomeFuncionario',
+                'tb_turmas_disciplinas.tb_turmas_idTurmas',
+                'tb_turmas_disciplinas.tb_disciplinas_idDisciplinas',
+                'tb_turmas_disciplinas.tb_funcionarios_idFuncionarios',
+                'tb_turmas_disciplinas.idTurmas_Disciplinas'
+            )
+            ->orderBy('tb_turmas.NomeTurma');
+
         if ($idFuncionarios) {
-            $disciplinasDoProfessor = tb_turmas_disciplinas::professorEscolhido($idFuncionarios);
-        } elseif ($idTurmas) {
-            $disciplinasDoProfessor = tb_turmas_disciplinas::turmaEscolhida($idTurmas);
-        } else {
-            $disciplinasDoProfessor = tb_turmas_disciplinas::listadisciplinasDoProfessor();
+            $query->where('tb_funcionarios.idFuncionarios', $idFuncionarios);
         }
+
+        if ($idTurmas) {
+            $query->where('tb_turmas.idTurmas', $idTurmas);
+        }
+
+        $disciplinasDoProfessor = $query->paginate(20);
 
         return view('telasCoordenacao.turma_disc.turma_disciplina_inf', compact('turmas', 'disciplinasDoProfessor', 'professores'));
     }

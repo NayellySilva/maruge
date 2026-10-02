@@ -46,40 +46,34 @@ class cont_relatorios extends Controller {
 //Metodo faz solicitação dos relatorios bimestrais dos alunos
     public function relatorios_bimestrais() {
         $turmas = tb_turma::turmasAtivas();
-        $idTurma = $this->request->get('idTurmas');
-        $Alunos = tb_aluno::listagemAlunoComFiltros($this->request->get('pesquisar'), $idTurma);
-        return view('telasCoordenacao.relatorios.relatorios_bimestrais', compact('Alunos', 'turmas'));
+        $idTurma = request('idTurmas');
+        $pesquisar = request('pesquisar');
+        $Alunos = tb_aluno::listagemAlunoComFiltros($pesquisar, $idTurma, true);
+        return view('telasCoordenacao.relatorios.relatorios_bimestrais', compact('Alunos', 'turmas', 'pesquisar', 'idTurma'));
     }
 
 //Metodo pesquisar aluno por filtro de turma
     public function relatorios_filtro() {
-        $idTurma = $this->request->get('idTurmas');
-        $turmas = tb_turma::turmasAtivas();
-        $Alunos = tb_aluno::listagemAlunoComFiltros($this->request->get('pesquisar'), $idTurma);
-        return view('telasCoordenacao.relatorios.relatorios_bimestrais', compact('Alunos', 'turmas'));
+        return $this->relatorios_bimestrais();
     }
 
     //Metodo pesquisar aluno por palavra chave
     public function relatorios_pesq() {
-        $turmas = tb_turma::turmasAtivas();
-        $palavrachave = $this->request->get('pesquisar');
-        $Alunos = tb_aluno::pesquisar($palavrachave);
-        return view('telasCoordenacao.relatorios.relatorios_pesq', compact('Alunos', 'turmas'));
+        return $this->relatorios_bimestrais();
     }
 //Metodo que gerar um relatório em pdf cos alunos matriculados
     public function alunosMatriculados() {
         $escolas = tb_escola::informacaoEscolar(); // Dados para forma o timbre (cabeçario)  
-        $alunos = tb_aluno::alunoMatriculados(); // Buscando os alunos matriculados
+        $turmas = tb_turma::turmasAtivas();
+        $idTurma = request('idTurmas');
+        $pesquisar = request('pesquisar');
+        $alunos = tb_aluno::alunoMatriculados($idTurma, $pesquisar); // Buscando os alunos matriculados
         // Buscando o dia mes e ano 
         setlocale(LC_ALL, 'pt_BR', 'pt_BR.utf-8', 'pt_BR.utf-8', 'portuguese');
         date_default_timezone_set('America/Sao_Paulo');
         $dia = strftime('%d de %B de %Y', strtotime('today'));
         $titulo = 'Alunos Matriculados';
-        // Gerando o PDF
-        // $pdf = \App::make('dompdf.wrapper');
-        //$pdf->loadHTML(view('telasCoordenacao.relatorios.relatorio_alunos_matriculados', compact('titulo','escolas','dia','alunos')));
-        //return $pdf->stream();
-        return view('telasCoordenacao.relatorios.relatorio_alunos_matriculados', compact('titulo', 'escolas', 'dia', 'alunos'));
+        return view('telasCoordenacao.relatorios.relatorio_alunos_matriculados', compact('titulo', 'escolas', 'dia', 'alunos', 'turmas', 'idTurma', 'pesquisar'));
     }
 //Metodo que gerar um relatório em pdf cos alunos transferidos ou desistente (INATIVOS)
     public function alunosTransferidos() {
