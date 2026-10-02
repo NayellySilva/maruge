@@ -1,11 +1,7 @@
 <html>
     <head>
         <title>{{$titulo}}</title>
-        <style media="print">
-            .botao {
-                display: none;
-            }
-        </style>
+        <x-estilo-impressao />
         <!-- CSS Personalizado para o Painel -->
         <link rel="stylesheet" href="{{asset('css/painel.css')}}">
         <!-- CSS para Reset de Estilos -->

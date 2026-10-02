@@ -1,108 +1,90 @@
-<html>
-    <header>   
-        <title>{{$titulo ?? 'Resultado'}}</title>
-        <style media="print">
-            .botao { display: none !important; }
-        </style>
-    </header>
-    <body>
-        @php
-            if (!isset($escolas) || empty($escolas) || !isset($escolas->first()->Rua)) {
-                try { $escolas = \App\Models\modelCoordenacao\tb_escola::informacaoEscolar(); } catch (\Exception $e) { $escolas = collect(); }
-            }
-        @endphp
-        <!-- Bootstrap -->
-        <link href="{{asset('css/bootstrap.min.css')}}" rel="stylesheet">
-        <!-- Font Awesome -->
-        <link rel="stylesheet" href="{{asset('font-awesome/css/font-awesome.min.css')}}">
-        <!--CSS Personalizado para o Painel-->
-        <link rel="stylesheet" href="{{asset('css/painel.css')}}">
-        <!-- CSS - Para fazer Reset nos Paineis-->
-        <link rel="stylesheet" href="{{asset('css/reset.css')}}">       
-        <!-- favicon-->
-        <link rel="stylesheet" href="{{asset('imgs/favicon.png')}}">     
-        <!-- Jquery Local-->
-        <script src="{{asset('css/jquery-3.0.0.js')}}" ></script> 
-        <button type="button" value="Imprimir" onclick="window.print()" class="botao btn-imprimir" style="margin: 15px;"> Imprimir</button>
-        <div class="imprimir_conteudo">
-            <table class="timbre">
-            <tr>
-                <td>
-                    <img src="{{asset('imgs/logoempresa_transparente.png')}}" width="160" height="160"><br>
-                    @forelse($escolas as $escola)
-                    {{ $escola->Rua ?? '' }} , {{ $escola->Numero ?? '' }}<br>
-                    {{ $escola->Bairro ?? '' }} - CEP:{{ $escola->CEP ?? '' }}<br>
-                    {{ $escola->Cidade ?? '' }} - {{ $escola->Estado ?? '' }}<br>
-                    Tel: {{ $escola->Fone1 ?? '' }} / {{ $escola->Fone2 ?? '' }}<br>
-                    E-mail:{{ $escola->EmailColegio ?? '' }}<br>
-                    CNPJ: {{ $escola->CNPJ ?? '' }}<br>
-                    INEP:{{ $escola->NumeroInep ?? '' }}
-                </td>
-            </tr>         
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ $titulo ?? 'Resultados - 1º Semestre' }}</title>
+    <x-estilo-impressao arquivo="resultado" />
+</head>
+<body>
+
+    @php
+        if (!isset($escolas) || empty($escolas) || !isset($escolas->first()->Rua)) {
+            try { $escolas = \App\Models\modelCoordenacao\tb_escola::informacaoEscolar(); } catch (\Exception $e) { $escolas = collect(); }
+        }
+    @endphp
+
+    <div class="no-print-bar no-print">
+        <button type="button" onclick="window.print()" class="btn-imprimir">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+            Imprimir Resultados
+        </button>
+    </div>
+
+    <div class="report-card">
+        <div class="school-header">
+            <img src="{{ \App\Support\LogoColegio::src() }}" class="school-logo" alt="Logo Escola">
+            @forelse($escolas as $escola)
+                <div class="school-info">
+                    {{ $escola->Rua ?? '' }} , {{ $escola->Numero ?? '' }} - {{ $escola->Bairro ?? '' }} - CEP: {{ $escola->CEP ?? '' }}<br>
+                    {{ $escola->Cidade ?? '' }} - {{ $escola->Estado ?? '' }} | Tel: {{ $escola->Fone1 ?? '' }} / {{ $escola->Fone2 ?? '' }}<br>
+                    E-mail: {{ $escola->EmailColegio ?? '' }} | CNPJ: {{ $escola->CNPJ ?? '' }} - INEP: {{ $escola->NumeroInep ?? '' }}
+                </div>
             @empty
+                <div class="school-info">COLÉGIO MARUGE</div>
             @endforelse
-        </table>
-        <div class="resultado-titulo"> {{ $titulo ?? '' }} - {{ $turma->AnoLetivo ?? '' }}<br>
-            TURMA - {{ $turma->NomeTurma ?? '' }} 
-        </div>  
-        <!-- Armazenando os nomes do professores correspondentes a sua disciplina -->
+        </div>
+
+        <div class="resultado-header">
+            <h1 class="resultado-title">{{ $titulo ?? 'RESULTADOS - 1º SEMESTRE' }} - {{ $turma->AnoLetivo ?? '' }}</h1>
+            <p class="resultado-subtitle">TURMA - {{ $turma->NomeTurma ?? '' }}</p>
+        </div>
+
         @forelse($professores as $professor)
-        @if (isset ($professor->NomeFuncionario))
-        <div class="row" align="center">
-            <div class="col-lg-12">
-                <div class="panel panel-default">
-                    <div class="panel-heading ">
-                        <strong> {{ $professor->NomeDisciplina }}:</strong> &nbsp;&nbsp;{{ $professor->NomeFuncionario }} 
+            @if(isset($professor->NomeFuncionario))
+                <div class="subject-panel">
+                    <div class="subject-panel-header">
+                        <strong>{{ $professor->NomeDisciplina }}:</strong> &nbsp; {{ $professor->NomeFuncionario }}
                     </div>
-                    <!-- /.panel-heading -->
-                    <div class="panel-body">
-                        <div class="table-responsive">
-                            <table class="table table-striped table-hover fonteResultado">
-                                <tbody>
-                                <thead>
-                                    <tr>
-                                        <th>RA</th>
-                                        <th>NOME ALUNO</th>
-                                        <th>1º BIMESTRE</th>
-                                        <th>2º BIMESTRE</th>
-                                        <th>MÉDIA 1º SEMESTRE</th>
-                                        <th>SITUAÇÃO</th>
-                                    </tr>
-                                </thead>
-                                @forelse($professor->alunos ?? [] as $aluno)
+                    <table class="resultado-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 70px;">RA</th>
+                                <th class="aluno-nome">NOME ALUNO</th>
+                                <th style="width: 100px;">1º BIMESTRE</th>
+                                <th style="width: 100px;">2º BIMESTRE</th>
+                                <th style="width: 130px;">MÉDIA 1º SEMESTRE</th>
+                                <th style="width: 120px;">SITUAÇÃO</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse($professor->alunos ?? [] as $aluno)
                                 <tr>
                                     <td>{{ $aluno->RA }}</td>
-                                    <td>{{ $aluno->NomeAluno }}</td>
+                                    <td class="aluno-nome">{{ $aluno->NomeAluno }}</td>
                                     <td>{{ $aluno->Nota_1Bimestre }}</td>
                                     <td>{{ $aluno->Nota_2Bimestre }}</td>
-                                    <td>{{ $aluno->Media1Semestre }}</td>
+                                    <td><strong>{{ $aluno->Media1Semestre }}</strong></td>
                                     <td>
                                         @if($aluno->Media1Semestre >= 7)
-                                            <span class="label label-success">APROVADO</span>
+                                            <span class="badge-aprovado">APROVADO</span>
                                         @else
-                                            <span class="label label-danger">RECUPERAÇÃO</span>
+                                            <span class="badge-recuperacao">RECUPERAÇÃO</span>
                                         @endif
                                     </td>
                                 </tr>
-                                @empty
-                                <tr><td colspan="6" class="text-center">Nenhum aluno encontrado</td></tr>
-                                @endforelse
-                                </tbody>
-                            </table>
-                        </div>
-                        <!-- /.table-responsive -->
-                    </div>
-                    <!-- /.panel-body -->
+                            @empty
+                                <tr>
+                                    <td colspan="6" style="padding: 12px; color: #64748b;">Nenhum aluno encontrado para esta disciplina.</td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
                 </div>
-                <!-- /.panel -->
-            </div>
-            <!-- /.row -->
-        </div>
-        @else
-        @endif
+            @endif
         @empty
+            <div style="text-align: center; padding: 20px; color: #64748b;">Nenhuma disciplina ou professor cadastrado para esta turma.</div>
         @endforelse
-        <!-- / Armazenando os nomes do professores correspondentes a sua disciplina -->
-        </div>
-    </body>
+    </div>
+
+</body>
 </html>

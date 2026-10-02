@@ -33,7 +33,7 @@
                 </div>
 
                 <!-- Dropdown Flutuante -->
-                <div id="dropdown-menu-turma-declaracoes-pesq" class="hidden absolute top-full left-0 right-0 mt-1 bg-white border border-[#e3e8e6] rounded-xl shadow-xl z-50 p-2 flex flex-col gap-2 overflow-hidden" style="max-height: 240px;">
+                <div id="dropdown-menu-turma-declaracoes-pesq" class="dropdown-menu-flutuante hidden absolute top-full left-0 right-0 mt-1 bg-white border border-[#e3e8e6] rounded-xl shadow-xl z-50 p-2 flex flex-col gap-2 overflow-hidden" >
                     <!-- Campo de Busca -->
                     <div class="relative shrink-0">
                         <input type="text" onkeyup="filterDropdownOptions('search-turma-declaracoes-pesq', 'option-turma-declaracoes-pesq')" id="search-turma-declaracoes-pesq" placeholder="Pesquisar..." class="w-full pl-3 pr-9 py-1.5 bg-[#f8faf9] border border-[#e3e8e6] rounded-lg text-xs focus:outline-none focus:border-[#008a4b]">
@@ -41,7 +41,7 @@
                     </div>
 
                     <!-- Lista de Opções com Rolagem -->
-                    <div class="custom-scroll flex flex-col gap-0.5 pr-1" style="max-height: 180px; overflow-y: auto;">
+                    <div class="dropdown-lista-opcoes custom-scroll flex flex-col gap-0.5 pr-1" >
                         <div onclick="selectSingleOption('', 'Todas as Turmas', 'idTurmas', 'label-turma-declaracoes-pesq', 'dropdown-menu-turma-declaracoes-pesq', 'chevron-turma-declaracoes-pesq', true)"
                              class="option-turma-declaracoes-pesq flex items-center p-2 hover:bg-[#ecfdf5] rounded-lg transition-colors cursor-pointer text-xs text-[#0a241e]">
                             <span class="option-title font-medium">Todas as Turmas</span>

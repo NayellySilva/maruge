@@ -219,24 +219,4 @@
 </div>
 @endif
 
-<style>
-@media (max-width: 991px) {
-    .perfil-flex-wrap {
-        flex-direction: column !important;
-    }
-    .perfil-flex-wrap > div {
-        max-width: 100% !important;
-        flex: 1 1 100% !important;
-    }
-}
-@media print {
-    .print\:hidden, nav, sidebar, header, .sidebar, #sidebar {
-        display: none !important;
-    }
-    body {
-        background: white !important;
-        color: black !important;
-    }
-}
-</style>
 @endsection

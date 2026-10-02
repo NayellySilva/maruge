@@ -51,8 +51,8 @@
                                                 <i data-lucide="chevron-down" class="w-4 h-4"></i>
                                             </div>
                                         </div>
-                                        <div id="dropdown-menu-datavenc" class="hidden absolute top-full left-0 right-0 mt-1 bg-white border border-[#e3e8e6] rounded-xl shadow-xl z-50 p-2 flex flex-col gap-2 overflow-hidden" style="max-height: 240px;">
-                                            <div class="custom-scroll flex flex-col gap-0.5 pr-1" style="max-height: 180px; overflow-y: auto;">
+                                        <div id="dropdown-menu-datavenc" class="dropdown-menu-flutuante hidden absolute top-full left-0 right-0 mt-1 bg-white border border-[#e3e8e6] rounded-xl shadow-xl z-50 p-2 flex flex-col gap-2 overflow-hidden" >
+                                            <div class="dropdown-lista-opcoes custom-scroll flex flex-col gap-0.5 pr-1" >
                                                 <div onclick="selectSingleOption('', 'Dia...', 'Data_venc', 'label-datavenc', 'dropdown-menu-datavenc', 'chevron-datavenc', false)"
                                                      class="option-datavenc flex items-center p-2 hover:bg-[#ecfdf5] rounded-lg transition-colors cursor-pointer text-xs text-[#0a241e]">
                                                     <span class="option-title font-medium text-[#95aba5]">Selecione...</span>
@@ -130,8 +130,8 @@
                                                 <i data-lucide="chevron-down" class="w-4 h-4"></i>
                                             </div>
                                         </div>
-                                        <div id="dropdown-menu-parcelas" class="hidden absolute top-full left-0 right-0 mt-1 bg-white border border-[#e3e8e6] rounded-xl shadow-xl z-50 p-2 flex flex-col gap-2 overflow-hidden" style="max-height: 240px;">
-                                            <div class="custom-scroll flex flex-col gap-0.5 pr-1" style="max-height: 180px; overflow-y: auto;">
+                                        <div id="dropdown-menu-parcelas" class="dropdown-menu-flutuante hidden absolute top-full left-0 right-0 mt-1 bg-white border border-[#e3e8e6] rounded-xl shadow-xl z-50 p-2 flex flex-col gap-2 overflow-hidden" >
+                                            <div class="dropdown-lista-opcoes custom-scroll flex flex-col gap-0.5 pr-1" >
                                                 <div onclick="selectSingleOption('', 'Parcelas...', 'quantidade_parcelas', 'label-parcelas', 'dropdown-menu-parcelas', 'chevron-parcelas', false)"
                                                      class="option-parcelas flex items-center p-2 hover:bg-[#ecfdf5] rounded-lg transition-colors cursor-pointer text-xs text-[#0a241e]">
                                                     <span class="option-title font-medium text-[#95aba5]">Selecione...</span>

@@ -17,35 +17,6 @@
     }
 @endphp
 
-<!-- Estilos para Caixa de Diálogo de Impressão -->
-<style>
-    @media print {
-        @page {
-            size: A4 portrait;
-            margin: 10mm;
-        }
-        body * {
-            visibility: hidden !important;
-        }
-        #printable-report-area, #printable-report-area * {
-            visibility: visible !important;
-        }
-        #printable-report-area {
-            position: absolute !important;
-            left: 0 !important;
-            top: 0 !important;
-            width: 100% !important;
-            padding: 0 !important;
-            margin: 0 !important;
-            background: white !important;
-            color: black !important;
-        }
-        .print-hidden {
-            display: none !important;
-        }
-    }
-</style>
-
 <div class="flex flex-col gap-6 print-hidden">
 
     <!-- Localização (Breadcrumb) -->
@@ -103,7 +74,7 @@
                     </div>
 
                     <!-- Dropdown Flutuante -->
-                    <div id="dropdown-menu-turma-relatorio-pre" class="hidden absolute top-full left-0 right-0 mt-1 bg-white border border-[#e3e8e6] rounded-xl shadow-xl z-50 p-2 flex flex-col gap-2 overflow-hidden" style="max-height: 240px;">
+                    <div id="dropdown-menu-turma-relatorio-pre" class="dropdown-menu-flutuante hidden absolute top-full left-0 right-0 mt-1 bg-white border border-[#e3e8e6] rounded-xl shadow-xl z-50 p-2 flex flex-col gap-2 overflow-hidden" >
                         <!-- Campo de Busca -->
                         <div class="relative shrink-0">
                             <input type="text" onkeyup="filterDropdownOptions('search-turma-relatorio-pre', 'option-turma-relatorio-pre')" id="search-turma-relatorio-pre" placeholder="Pesquisar..." class="w-full pl-3 pr-9 py-1.5 bg-[#f8faf9] border border-[#e3e8e6] rounded-lg text-xs focus:outline-none focus:border-[#008a4b]">
@@ -111,7 +82,7 @@
                         </div>
 
                         <!-- Lista de Opções com Rolagem -->
-                        <div class="custom-scroll flex flex-col gap-0.5 pr-1" style="max-height: 180px; overflow-y: auto;">
+                        <div class="dropdown-lista-opcoes custom-scroll flex flex-col gap-0.5 pr-1" >
                             <div onclick="selectSingleOption('', 'Todas as Turmas', 'idTurmas', 'label-turma-relatorio-pre', 'dropdown-menu-turma-relatorio-pre', 'chevron-turma-relatorio-pre', true)"
                                  class="option-turma-relatorio-pre flex items-center p-2 hover:bg-[#ecfdf5] rounded-lg transition-colors cursor-pointer text-xs text-[#0a241e]">
                                 <span class="option-title font-medium">Todas as Turmas</span>
@@ -177,10 +148,10 @@
 </div>
 
 <!-- Área de Impressão Exclusiva (Formatada no modelo de referência) -->
-<div id="printable-report-area" class="hidden print:block">
+<div id="printable-report-area" class="impressao-retrato hidden print:block">
     <!-- Moldura de Cabeçalho da Escola com Borda Dupla -->
     <div style="border: 3px double #333; padding: 15px 20px; text-align: center; margin-bottom: 20px; width: 92%; margin-left: auto; margin-right: auto; box-sizing: border-box;">
-        <img src="{{ asset('imgs/logoempresa_transparente.png') }}" width="130" style="display: block; margin: 0 auto 10px auto;">
+        <img src="{{ \App\Support\LogoColegio::src() }}" class="logo-colegio-sm block mx-auto mb-2.5">
         @forelse($escolas as $escola)
             <div style="font-weight: bold; font-size: 13px; text-transform: uppercase; line-height: 1.4; color: #111;">
                 {{ $escola->Rua }} , {{ $escola->Numero }}<br>

@@ -3,7 +3,7 @@
         <title> </title>
     </header>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <style media="print">        .botao {            display: none;        }    </style>
+    <x-estilo-impressao />
     <button type="button"  value="Imprimir" onClick="window.print()" class="botao btn-imprimir"> Imprimir</button>
     <body >
         <!-- CSS compilada e minificada on-line do bootstrap-->

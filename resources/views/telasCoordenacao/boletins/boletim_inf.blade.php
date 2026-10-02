@@ -1,215 +1,152 @@
-<html>
-    <head>
-        <title>{{$titulo}}</title>
-        <style media="print">
-            .botao {
-                display: none;
-            }
-        </style>
-        <!-- CSS Personalizado para o Painel -->
-        <link rel="stylesheet" href="{{asset('css/painel.css')}}">
-        <!-- CSS para Reset de Estilos -->
-        <link rel="stylesheet" href="{{asset('css/reset.css')}}">
-    </head>
-    <body>
-        <!-- Botão de impressão (ocultado automaticamente no modo de impressão) -->
-        <button type="button" value="Imprimir" onClick="window.print()" class="botao btn-imprimir"> Imprimir</button>
-        <table class="timbre">
-            <tr>
-                <td>
-                    <img src="{{url('imgs/logoempresa_transparente.png')}}" width="160" height="160" ><br>
-                    @forelse($escolas as $escola)
-                    {{$escola->Rua}} , {{$escola->Numero}}<br>
-                    {{$escola->Bairro}} - CEP:{{$escola->CEP}}<br>
-                    {{$escola->Cidade}} - {{$escola->Estado}}<br>
-                    Tel: {{$escola->Fone1}} / {{$escola->Fone2}}<br>
-                    E-mail:{{$escola->EmailColegio}}<br>
-                    CNPJ: {{$escola->CNPJ}} -  INEP:{{$escola->NumeroInep}}
-                </td>
-            </tr>         
-        </table>
-        
-        
-        <table width="330" border="1" class="legenda">
-  <tr>
-    <td><b>SIGLAS</b></td>
-    <td><b>DESCRIÇÃO</b></td>
-    <td><b>NOTA</b></td>
-  </tr>
-  <tr>
-    <td><CENTER><b>E</b></CENTER></td>
-    <td>EXCELENTE </td>
-    <td><CENTER>10</td>
-  </tr>
-  <tr>
-    <td><CENTER><b>O</b></CENTER></td>
-    <td>ÓTIMO </td>
-    <td><CENTER>9</td>
-  </tr>
-  <tr>
-    <td><b><center>B</center></b></td>
-    <td>BOM</td>
-    <td><CENTER>8</td>
-  </tr>
-  <tr>
-    <td><b><center>S</center></b></td>
-    <td>SATISFATÓRIO </td>
-    <td><CENTER>7</td>
-  </tr>
-</table>
-               
-        <div class="titulo-boletim">BOLETIM ESCOLAR <br>
-            INFANTIL  <br>
-   
-        </div>
-        <div class="inf_aluno_boletim">
-            <p><strong>Nº MAC: </strong> {{ $aluno->NumeroMac ?? $matricula->RA }} <strong>Ano:</strong> @foreach($anoletivo as $anoletivo)
-                {{$anoletivo->AnoLetivo}}
-                @endforeach </p> 
-            <p> <strong>Aluno(a):</strong>{{ $aluno->NomeAluno}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <strong>Turma: </strong> {{$turma->NomeTurma}}</p> 
-            <p> <strong>Filiação:</strong>{{ $Pais->NomePai ?? '-'}}&nbsp;/ {{ $Pais->NomeMae ?? '-'}}</p> 
-        </div>      
-   
-        
-    <center>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ $titulo ?? 'Boletim Escolar - Educação Infantil' }}</title>
+    <x-estilo-impressao arquivo="boletim_inf" />
+</head>
+<body>
 
-        <table class="table-striped boletim" border="1"  style="font-size: 14px"  >
+    <!-- Botao de Impressao (Apenas na Tela) -->
+    <div class="no-print-bar no-print">
+        <button type="button" onclick="window.print()" class="btn-imprimir">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+            Imprimir Boletim
+        </button>
+    </div>
+
+    <div class="report-card">
+        <!-- Timbre da Escola -->
+        <div class="school-header">
+            <img src="{{ \App\Support\LogoColegio::src() }}" class="school-logo" alt="Logo Escola">
+            @forelse($escolas as $escola)
+                <div class="school-info">
+                    {{ $escola->Rua }} , {{ $escola->Numero }} - {{ $escola->Bairro }} - CEP: {{ $escola->CEP }}<br>
+                    {{ $escola->Cidade }} - {{ $escola->Estado }} | Tel: {{ $escola->Fone1 }} / {{ $escola->Fone2 }}<br>
+                    E-mail: {{ $escola->EmailColegio }} | CNPJ: {{ $escola->CNPJ }} - INEP: {{ $escola->NumeroInep }}
+                </div>
+            @empty
+                <div class="school-info">COLÉGIO MARUGE</div>
+            @endforelse
+        </div>
+
+        <!-- Titulo do Boletim -->
+        <div class="boletim-header">
+            <h1 class="boletim-title">BOLETIM ESCOLAR</h1>
+            <p class="boletim-subtitle">EDUCAÇÃO INFANTIL</p>
+        </div>
+
+        <!-- Informacoes do Aluno -->
+        <div class="student-info-grid">
+            <div class="student-info-item"><span>Aluno(a):</span> <strong>{{ $aluno->NomeAluno }}</strong></div>
+            <div class="student-info-item"><span>Nº MAC / RA:</span> <strong>{{ $aluno->NumeroMac ?? $matricula->RA ?? '-' }}</strong></div>
+            <div class="student-info-item"><span>Turma:</span> <strong>{{ $turma->NomeTurma }}</strong></div>
+            <div class="student-info-item">
+                <span>Ano Letivo:</span> 
+                <strong>
+                    @foreach($anoletivo as $ano)
+                        {{ $ano->AnoLetivo }}
+                    @endforeach
+                </strong>
+            </div>
+            <div class="student-info-item" style="grid-column: span 2;">
+                <span>Filiação:</span> <strong>{{ $Pais->NomePai ?? '-' }} / {{ $Pais->NomeMae ?? '-' }}</strong>
+            </div>
+        </div>
+
+        <!-- Legenda de Conceitos -->
+        <div class="legenda-box">
+            <span><strong>E:</strong> EXCELENTE (10)</span>
+            <span><strong>O:</strong> ÓTIMO (9)</span>
+            <span><strong>B:</strong> BOM (8)</span>
+            <span><strong>S:</strong> SATISFATÓRIO (7)</span>
+        </div>
+
+        <!-- Tabela de Notas/Conceitos -->
+        <table class="boletim-table">
             <thead>
                 <tr>
-                    <th>CÓD</th>
-                    <th>CAM. EXPERIÊNCIAS</th>
-                    <th>1º BIM</th>
-            <th>2º BIM</th>
-            <th>3º BIM</th>
-            <th>4º BIM</th>
-            <th>MÉDIA</th>
-            <th>RESULTADO</th>
-            </thead>
-            </tr>
-            <!-- Recebendo valores na vareavel disciplinas e passando para disciplina -->
-            @foreach($disciplinas as $key => $disciplina )
-            <center>
-                <tr>
-                    <td width="50" height="17" style="align-items: center" > {{$disciplina->tb_disciplinas_idDisciplinas}} </td>
-                    <td width="130">{{$disciplina->NomeDisciplina}}</td>
-                    <!-- Buscando notas do aluno diacordo com sua  dsiciplina -->
-                    @php
-                    $notasDoAluno = \App\Models\modelCoordenacao\tb_notas::busca_notas_do_aluno($aluno->idAluno, $disciplina->tb_disciplinas_idDisciplinas);
-                    @endphp
-                    <!-- INICIO DO FOREACH DA NOTA DA DISCILPLINA QUE TA LISTANDO-->
-                    @forelse($notasDoAluno as $nota)
-                    <!-- VERIFICA SE EXISTE NOTA NA DISCIPLINA QUE ESTA DENTRO DO LAÇO CORRENTE -->
-                    @if (isset ($nota->AB1))   
-            <!--CAMPOS DE DA TABELA DA  AB1-->
-            @if (($nota->AB1) == 0)
-                <td><center><div>-</div></center></td> 
-                @elseif (($nota->AB1) < 8)
-                <td><center><div class="  notaAzulBoletim" >S</div></center></td> 
-                @elseif (($nota->AB1) < 9)
-                <td><center><div class="  notaAzulBoletim" >B</div></center></td> 
-                @elseif (($nota->AB1) < 10)
-                <td><center><div class="  notaAzulBoletim" >O</div></center></td> 
-                @else
-                <td><center><div class="  notaAzulBoletim" >E</div></center></td>     
-            @endif
-            <!-- / CAMPOS DE DA TABELA DA  AB1--> 
-            <!--CAMPOS DE DA TABELA DA  AB2-->
-            @if (($nota->AB2) == 0)
-                <td><center><div>-</div></center></td> 
-                @elseif (($nota->AB2) < 8)
-                <td><center><div class="  notaAzulBoletim" >S</div></center></td> 
-                @elseif (($nota->AB2) < 9)
-                <td><center><div class="  notaAzulBoletim" >B</div></center></td> 
-                @elseif (($nota->AB2) < 10)
-                <td><center><div class="  notaAzulBoletim" >O</div></center></td> 
-                @else
-                <td><center><div class="  notaAzulBoletim" >E</div></center></td>     
-            @endif
-            <!-- / CAMPOS DE DA TABELA DA  AB2--> 
-            <!--CAMPOS DE DA TABELA DA  AB3-->
-            @if (($nota->AB3) == 0)
-                <td><center><div>-</div></center></td> 
-                @elseif (($nota->AB3) < 8)
-                <td><center><div class="  notaAzulBoletim" >S</div></center></td> 
-                @elseif (($nota->AB3) < 9)
-                <td><center><div class="  notaAzulBoletim" >B</div></center></td> 
-                @elseif (($nota->AB3) < 10)
-                <td><center><div class="  notaAzulBoletim" >O</div></center></td> 
-                @else
-                <td><center><div class="  notaAzulBoletim" >E</div></center></td>     
-            @endif
-            <!-- / CAMPOS DE DA TABELA DA  AB3--> 
-            <!--CAMPOS DE DA TABELA DA  AB4-->
-            @if (($nota->AB4) == 0)
-                <td><center><div>-</div></center></td> 
-                @elseif (($nota->AB4) < 8)
-                <td><center><div class="  notaAzulBoletim" >S</div></center></td> 
-                @elseif (($nota->AB4) < 9)
-                <td><center><div class="  notaAzulBoletim" >B</div></center></td> 
-                @elseif (($nota->AB4) < 10)
-                <td><center><div class="  notaAzulBoletim" >O</div></center></td> 
-                @else
-                <td><center><div class="  notaAzulBoletim" >E</div></center></td>     
-            @endif
-            <!-- / CAMPOS DE DA TABELA DA  AB4--> 
-            <!-- FAZENDO A MEDIAS -->
-                @php 
-                $media = ($nota->AB1+$nota->AB2+$nota->AB3+$nota->AB4)/4; 
-                @endphp
-            <!--CAMPOS DE DA TABELA MEDIA-->
-            @if (($media) == 0)
-                <td><center><div>-</div></center></td> 
-                @elseif (($media) < 8)
-                <td><center><div class="  notaAzulBoletim" >S</div></center></td> 
-                @elseif (($media) < 9)
-                <td><center><div class="  notaAzulBoletim" >B</div></center></td> 
-                @elseif (($media) < 10)
-                <td><center><div class="  notaAzulBoletim" >O</div></center></td> 
-                @else
-                <td><center><div class="  notaAzulBoletim" >E</div></center></td>     
-            @endif
-            <!-- / CAMPOS DE DA TABELA MEDIA--> 
-            <!--CAMPOS DE DA TABELA RESULTADO-->
-            @if (($media) < 6)
-                <td><center><div class="  notaVermelhaBoletim" >REPROVADO</div></center></td> 
-                @else
-                <td><center><div class="  notaAzulBoletim" >APROVADO</div></center></td>     
-            @endif
-            <!-- / CAMPOS DE DA TABELA RESULTADO-->    
+                    <th style="width: 45px;">CÓD</th>
+                    <th class="text-left">CAMPOS DE EXPERIÊNCIAS</th>
+                    <th style="width: 65px;">1º BIM</th>
+                    <th style="width: 65px;">2º BIM</th>
+                    <th style="width: 65px;">3º BIM</th>
+                    <th style="width: 65px;">4º BIM</th>
+                    <th style="width: 65px;">MÉDIA</th>
+                    <th style="width: 100px;">RESULTADO</th>
                 </tr>
-                @endif
-                <!-- VERIFICA SE EXISTE NOTA NA DISCIPLINA QUE ESTA DENTRO DO LAÇO CORRENTE -->
-                <!-- SE NÃO TIVE VALORES DENTRO DO FORELSE DO LAÇO CORRENTE -->
-                @empty
-                <!-- QUANDO NÃO EXISTE NOTA ELE MOSTRA CAMPSO COM TRAÇOS -->
-                <td><center><div >-</div></center></td> 
-                <td><center><div >-</div></center></td> 
-                <td><center><div >-</div></center></td> 
-                <td><center><div >-</div></center></td> 
-                <td><center><div >-</div></center></td> 
-                <td><center><div >-</div></center></td> 
-                @endforelse 
-                <!-- FIM DO FOREACHO QUE LISTA A DISCIPLINA-->
+            </thead>
+            <tbody>
+                @foreach($disciplinas as $disciplina)
+                    @php
+                        $notasDoAluno = \App\Models\modelCoordenacao\tb_notas::busca_notas_do_aluno($aluno->idAluno, $disciplina->tb_disciplinas_idDisciplinas);
+                    @endphp
+                    @forelse($notasDoAluno as $nota)
+                        @if(isset($nota->AB1))
+                            @php
+                                $c1 = $nota->AB1 == 0 ? '-' : ($nota->AB1 < 8 ? 'S' : ($nota->AB1 < 9 ? 'B' : ($nota->AB1 < 10 ? 'O' : 'E')));
+                                $c2 = $nota->AB2 == 0 ? '-' : ($nota->AB2 < 8 ? 'S' : ($nota->AB2 < 9 ? 'B' : ($nota->AB2 < 10 ? 'O' : 'E')));
+                                $c3 = $nota->AB3 == 0 ? '-' : ($nota->AB3 < 8 ? 'S' : ($nota->AB3 < 9 ? 'B' : ($nota->AB3 < 10 ? 'O' : 'E')));
+                                $c4 = $nota->AB4 == 0 ? '-' : ($nota->AB4 < 8 ? 'S' : ($nota->AB4 < 9 ? 'B' : ($nota->AB4 < 10 ? 'O' : 'E')));
+                                $mediaVal = ($nota->AB1 + $nota->AB2 + $nota->AB3 + $nota->AB4) / 4;
+                                $cm = $mediaVal == 0 ? '-' : ($mediaVal < 8 ? 'S' : ($mediaVal < 9 ? 'B' : ($mediaVal < 10 ? 'O' : 'E')));
+                            @endphp
+                            <tr>
+                                <td>{{ $disciplina->tb_disciplinas_idDisciplinas }}</td>
+                                <td class="disc-name">{{ $disciplina->NomeDisciplina }}</td>
+                                <td><span class="conceito-badge">{{ $c1 }}</span></td>
+                                <td><span class="conceito-badge">{{ $c2 }}</span></td>
+                                <td><span class="conceito-badge">{{ $c3 }}</span></td>
+                                <td><span class="conceito-badge">{{ $c4 }}</span></td>
+                                <td><span class="conceito-badge">{{ $cm }}</span></td>
+                                <td>
+                                    @if($mediaVal < 6)
+                                        <span class="resultado-reprovado">REPROVADO</span>
+                                    @else
+                                        <span class="resultado-aprovado">APROVADO</span>
+                                    @endif
+                                </td>
+                            </tr>
+                        @endif
+                    @empty
+                        <tr>
+                            <td>{{ $disciplina->tb_disciplinas_idDisciplinas }}</td>
+                            <td class="disc-name">{{ $disciplina->NomeDisciplina }}</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>-</td>
+                        </tr>
+                    @endforelse
                 @endforeach
-                
-                
+            </tbody>
         </table>
-    </center>
-            <br>
-                <b>CAMPOS DE EXPERIÊNCIAS:</b> <br>
-                <b>CG</b> - Corpo, Gestos e Movimentos <br>
-                <b>EF</b> - Escuta, Fala, Pensamento e Imaginação <br>
-                <b>EO</b> - O Eu, O Outro e O Nós <br>
-                <b>ET</b> - Espaços, Tempos, Quantidades, Relações e Transformações <br>
-                <b>TS</b> - Traços, Sons, Cores e Formas <br>
-                    
-    <div class="inf_aluno_boletim margemAssinatura">
-        <p class="inf_aluno_boletim"><strong>Professor(a):_______________________________________&nbsp;&nbsp;&nbsp;Responsável:______________________________________</strong></p>
-        <p class="inf_aluno_boletim"><strong>Obs:____________________________________________________________________________________________________________________</strong></p>
-        <p class="inf_aluno_boletim"><strong>________________________________________________________________________________________________________________________</strong></p>
-        <p class="inf_aluno_boletim"><strong>________________________________________________________________________________________________________________________</strong></p>
+
+        <!-- Legenda de Campos de Experiencia -->
+        <div class="campos-exp-box">
+            <strong>Legenda dos Campos de Experiências:</strong><br>
+            <strong>CG</strong> - Corpo, Gestos e Movimentos | 
+            <strong>EF</strong> - Escuta, Fala, Pensamento e Imaginação | 
+            <strong>EO</strong> - O Eu, O Outro e O Nós | 
+            <strong>ET</strong> - Espaços, Tempos, Quantidades, Relações e Transformações | 
+            <strong>TS</strong> - Traços, Sons, Cores e Formas
+        </div>
+
+        <!-- Assinaturas e Observacao -->
+        <div class="signatures-container">
+            <div class="signatures-row">
+                <div class="signature-line">Professor(a)</div>
+                <div class="signature-line">Responsável</div>
+            </div>
+            <div class="obs-lines">
+                <div><strong>Obs:</strong></div>
+                <div class="obs-line-item"></div>
+                <div class="obs-line-item"></div>
+            </div>
+        </div>
     </div>
-    @empty
-    @endforelse
+
 </body>
 </html>

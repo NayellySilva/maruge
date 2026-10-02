@@ -20,11 +20,7 @@
                 $mes = date('d / m / y');
             }
         @endphp
-        <style media="print">
-            .botao {
-                display: none;
-            }
-        </style>
+        <x-estilo-impressao />
         <!-- Bootstrap -->
         <link href="{{asset('css/bootstrap.min.css')}}" rel="stylesheet">
         <!--CSS Personalizado para o Painel-->
@@ -36,7 +32,7 @@
         <table class="timbre-gabarito">
             <tr>
                 <td>
-                    <img src="{{asset('imgs/logoempresa_transparente.png')}}" width="150" height="150"><br>
+                    <img src="{{ \App\Support\LogoColegio::src() }}" class="logo-colegio"><br>
                 </td>
                 <td>
                     @foreach($escolas as $escola)

@@ -20,10 +20,6 @@
         <!-- Jquery Local-->
         <script src="{{asset('css/jquery-3.0.0.js')}}" ></script> 
 
-        <style>
-            .break { page-break-before: always; }
-        </style>
-
         <button type="button"  value="Imprimir" id="imprimir_conteudo"  class="botao btn-imprimir"> Imprimir</button>
      
   
@@ -35,7 +31,7 @@
             <table class="timbre-sem-borda">
                 <tr>
                     <td>
-                        <img src="{{url('imgs/logoempresa_transparente.png')}}" width="160" height="160" ><br>
+                        <img src="{{ \App\Support\LogoColegio::src() }}" class="logo-colegio"><br>
                         @forelse($escolas as $escola)
                         {{$escola->Rua}} , {{$escola->Numero}}<br>
                         {{$escola->Bairro}} - CEP:{{$escola->CEP}}<br>
@@ -267,38 +263,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Formulário de Assinaturas</title>
-    <style>
-        .linha-assinaturas {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 40px;
-        }
-        
-        .linha-testemunhas {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 10px;
-        }
-        
-        .linha-cpf {
-            display: flex;
-            justify-content: space-between;
-        }
-        
-        .campo-assinatura {
-            flex: 1;
-            text-align: center;
-            margin: 0 20px;
-        }
-        
-        .campo-assinatura div {
-            border-bottom: 1px solid #000;
-            padding-bottom: 5px;
-            margin-bottom: 5px;
-            min-height: 25px;
-        }
-    </style>
-</head>
+    </head>
 <body>
     <div class="table-responsive tabela-recibo">
         <br><br>

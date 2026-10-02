@@ -1,112 +1,85 @@
-<html>
-    <header>   
-        <title>{{$titulo}}</title>
-    </header>
-    <body>
-        <style media="print">
-            .botao {
-                display: none;
-            }
-        </style>
-        <!-- Bootstrap -->
-        <link href="{{asset('css/bootstrap.min.css')}}" rel="stylesheet">
-        <!--CSS Personalizado para o Painel-->
-        <link rel="stylesheet" href="{{asset('css/painel.css')}}">
-        <!-- CSS - Para fazer Reset nos Paineis-->
-        <link rel="stylesheet" href="{{asset('css/reset.css')}}">   
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ $titulo ?? 'Mapa de Notas - 2º Bimestre (Fundamental II)' }}</title>
+    <x-estilo-impressao arquivo="mapa" />
+</head>
+<body>
 
-        <button type="button"  value="Imprimir" onClick="window.print()" class="botao btn-imprimir"> Imprimir</button>
+    <div class="no-print-bar no-print">
+        <button type="button" onclick="window.print()" class="btn-imprimir">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+            Imprimir Mapa
+        </button>
+    </div>
 
-        <table class="timbre-horizontal">
-            <tr>
-                <td>
-                    <img src="{{asset('imgs/logoempresa_transparente.png')}}" width="160" height="160" ><br>
-                </td>
-                <td>
-                    @forelse($escolas as $escola)
-                    {{$escola->Rua}} , {{$escola->Numero}}<br>
-                    {{$escola->Bairro}} - CEP:{{$escola->CEP}}<br>
-                    {{$escola->Cidade}} - {{$escola->Estado}}<br>
-                    Tel: {{$escola->Fone1}} / {{$escola->Fone2}}<br>
-                    E-mail:{{$escola->EmailColegio}}<br>
-                    CNPJ: {{$escola->CNPJ}}<br>
-                    INEP:{{$escola->NumeroInep}}
-                </td>
-            </tr>         
+    <div class="report-card">
+        <div class="school-header">
+            <img src="{{ \App\Support\LogoColegio::src() }}" class="school-logo" alt="Logo Escola">
+            @forelse($escolas as $escola)
+                <div class="school-info">
+                    {{ $escola->Rua }} , {{ $escola->Numero }} - {{ $escola->Bairro }} - CEP: {{ $escola->CEP }}<br>
+                    {{ $escola->Cidade }} - {{ $escola->Estado }} | Tel: {{ $escola->Fone1 }} / {{ $escola->Fone2 }}<br>
+                    E-mail: {{ $escola->EmailColegio }} | CNPJ: {{ $escola->CNPJ }} - INEP: {{ $escola->NumeroInep }}
+                </div>
+            @empty
+                <div class="school-info">COLÉGIO MARUGE</div>
+            @endforelse
+        </div>
+
+        <div class="mapa-header">
+            <h1 class="mapa-title">MAPAS DE NOTAS - 2º BIMESTRE - {{ $turma->AnoLetivo }}</h1>
+            <p class="mapa-subtitle">TURMA - {{ $turma->NomeTurma }}</p>
+        </div>
+
+        <table class="mapa-table">
+            <thead>
+                <tr>
+                    <th style="width: 70px;">RA</th>
+                    <th style="width: 80px;">SITUAÇÃO</th>
+                    <th class="text-left" style="min-width: 200px;">ALUNO</th>
+                    @foreach($disciplinas as $disciplina)
+                        <th>{{ mb_strtoupper(mb_substr($disciplina->NomeDisciplina, 0, 4)) }}</th>
+                    @endforeach
+                </tr>
+            </thead>
+            <tbody>
+                @forelse($Alunos as $Aluno)
+                    <tr>
+                        <td>{{ $Aluno->RA }}</td>
+                        <td>{{ $Aluno->SituacaoAluno }}</td>
+                        <td class="aluno-nome">{{ $Aluno->NomeAluno }}</td>
+                        @foreach($disciplinas as $disciplina)
+                            @php
+                                $notasDoAluno = \App\Models\modelCoordenacao\tb_notas::busca_notas_do_aluno($Aluno->idAluno, $disciplina->tb_disciplinas_idDisciplinas);
+                            @endphp
+                            @forelse($notasDoAluno as $nota)
+                                @if(isset($nota->AB2))
+                                    @php
+                                        $mediaBim = (($nota->AB2 ?? 0) + ($nota->AM2 ?? 0)) / 2;
+                                    @endphp
+                                    @if($mediaBim == 0)
+                                        <td><span class="valor-x">X</span></td>
+                                    @elseif($mediaBim < 7)
+                                        <td><span class="nota-vermelha">{{ number_format($mediaBim, 1) }}</span></td>
+                                    @else
+                                        <td><span class="nota-azul">{{ number_format($mediaBim, 1) }}</span></td>
+                                    @endif
+                                @endif
+                            @empty
+                                <td><span class="valor-x">X</span></td>
+                            @endforelse
+                        @endforeach
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="{{ 3 + count($disciplinas) }}">Nenhum aluno encontrado nesta turma.</td>
+                    </tr>
+                @endforelse
+            </tbody>
         </table>
-        @empty
-        @endforelse
-        <div class="mapa-titulo"> MAPAS DE NOTAS - 2º BIMESTRE - {{$turma->AnoLetivo}}</div>
-        <div class="mapa-titulo-turma"> TURMA - {{$turma->NomeTurma}}</div>
-        <hr class="linha">   
-        <table class="table-striped table-bordered mapa" >    
+    </div>
 
-            
-            
- 
-
-<thead  >
-    <tr>        
-        <th width="80"><center>RA</center></th>
-        <th width="80"><center>Situação</center></th>
-        <th >ALUNO</th>                 
-        <!-- DISCIPLINAS -->
-        @foreach($disciplinas as $key => $disciplina )
-        <th >  {{substr ($disciplina->NomeDisciplina ,0,4 )}}</th>
-        @endforeach
-    </tr>
-</thead> 
-
-
-
-
-
-
-
-
-
-<!-- Listando todos os alunos da turma -->
-@forelse($Alunos as $Aluno)      
-    <tr>
-    <td><center>{{$Aluno->RA}}</center></td>
-           <td><center>{{$Aluno->SituacaoAluno}}</center></td>
-    <td width=330>{{$Aluno->NomeAluno}}</td>
-    <!-- pecorrendo a lista da disciplinas existente da turma e para consulta se existe nota-->
-        @foreach($disciplinas as $key => $disciplina )
-        <!-- Buscando a nota referente a disciplina -->
-                    @php
-                    $notasDoAluno = \App\Models\modelCoordenacao\tb_notas::busca_notas_do_aluno($Aluno->idAluno, $disciplina->tb_disciplinas_idDisciplinas);
-                    @endphp
-        <!-- Declarando as notas e criando um laço pra elas -->            
-        @forelse($notasDoAluno as $nota)
-                    <!-- Verifiva se existe noda de AB2 da X disciplina -->
-                    @if (isset ($nota->AB2))
-            <!-- Fazendo media bimestral -->
-            @php 
-            $nota->AB2 = ($nota->AB2+$nota->AM2)/2; 
-            @endphp
-            <!-- / Fazendo media bimestral -->
-                                <!-- imprimindo a nota -->
-                                @if (($nota->AB2) == 0)
-                                    <td class="Mapa_valorX"><center>X</center></td>
-                                @elseif (($nota->AB2) < 7)
-                                <td><center><div class="Mapa_notaVermelha">{{number_format($nota->AB2 ,1)}}</div></center></td> 
-                                @else
-                                <td><center><div class="Mapa_notaAzul">{{number_format($nota->AB2 ,1)}}</div></center></td> 
-                                <!-- / imprimindo a nota -->
-                                @endif    
-                    <!-- / Verifiva se existe noda de AB2 da X disciplina -->
-                    @endif
-                    <!-- / Declarando as notas e criando um laço pra elas (quando não existir nota)-->    
-                    @empty
-                    <td class="Mapa_valorX"><center>X</center></td>
-                    @endforelse
-    <!-- / pecorrendo a lista da disciplinas existente da turma e para consulta se existe nota-->
-        @endforeach
-    </tr>
-<!-- / Listando todos os alunos da turma -->
-@empty
-@endforelse
-</table>
 </body>
 </html>

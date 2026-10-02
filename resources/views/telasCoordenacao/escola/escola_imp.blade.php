@@ -10,11 +10,7 @@
 <html>
     <head>
         <title>Relatório Geral da Escola</title>
-        <style media="print">
-            .botao {
-                display: none;
-            }
-        </style>
+        <x-estilo-impressao />
         <!-- CSS Personalizado para o Painel -->
         <link rel="stylesheet" href="{{asset('css/painel.css')}}">
         <!-- CSS para Reset de Estilos -->
@@ -27,7 +23,7 @@
             <tr>
                 <td>
                     <center>
-                        <img src="{{asset('imgs/logoempresa_transparente.png')}}" width="160" height="160" ><br>
+                        <img src="{{ \App\Support\LogoColegio::src() }}" class="logo-colegio"><br>
                         {{$endereco->Rua ?? ''}} , {{$endereco->Numero ?? ''}}<br>
                         {{$endereco->Bairro ?? ''}} - CEP:{{$endereco->CEP ?? ''}}<br>
                         {{$endereco->Cidade ?? ''}} - {{$endereco->Estado ?? ''}}<br>

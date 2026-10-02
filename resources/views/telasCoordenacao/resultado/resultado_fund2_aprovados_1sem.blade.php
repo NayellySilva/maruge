@@ -1,138 +1,90 @@
-<html>
-    <header>   
-        <title>{{$titulo}}</title>
-        <style media="print">
-        .botao { display: none !important; }
-    </style>
-</header>
-    <body>
-@php
-    if (!isset($escolas) || empty($escolas) || !isset($escolas->first()->Rua)) {
-        try { $escolas = \App\Models\modelCoordenacao\tb_escola::informacaoEscolar(); } catch (\Exception $e) { $escolas = collect(); }
-    }
-@endphp
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ $titulo ?? 'Resultados - 1º Semestre (Fundamental II)' }}</title>
+    <x-estilo-impressao arquivo="resultado" />
+</head>
+<body>
 
-        <!-- CSS compilada e minificada on-line do bootstrap-->
-        <link href="{{url('https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css')}}" rel="stylesheet">
-        <!-- Bootstrap -->
-        <link href="{{asset('css/bootstrap.min.css')}}" rel="stylesheet">
-        <!-- Font Awesome -->
-        <link rel="stylesheet" href="{{asset('font-awesome/css/font-awesome.min.css')}}">
-        <!--CSS Personalizado para o Painel-->
-        <link rel="stylesheet" href="{{asset('css/painel.css')}}">
-        <!-- CSS - Para fazer Reset nos Paineis-->
-        <link rel="stylesheet" href="{{asset('css/reset.css')}}">       
-        <!-- favicon-->
-        <link rel="stylesheet" href="{{asset('imgs/favicon.png')}}">     
-        <!-- Jquery Local-->
-        <script src="{{asset('css/jquery-3.0.0.js')}}" ></script> 
-        <button type="button"  value="Imprimir" id="imprimir_conteudo"  onclick="window.print()" class="botao btn-imprimir"> Imprimir</button>
-        <div class="imprimir_conteudo">
-        <table class="timbre">
-            <tr>
-                <td>
-                    <img src="{{url('imgs/logoempresa_transparente.png')}}" width="160" height="160" ><br>
-                    @forelse($escolas as $escola)
-                    {{{ $escola->Rua ?? '' }}} , {{{ $escola->Numero ?? '' }}}<br>
-                    {{{ $escola->Bairro ?? '' }}} - CEP:{{{ $escola->CEP ?? '' }}}<br>
-                    {{{ $escola->Cidade ?? '' }}} - {{{ $escola->Estado ?? '' }}}<br>
-                    Tel: {{{ $escola->Fone1 ?? '' }}} / {{{ $escola->Fone2 ?? '' }}}<br>
-                    E-mail:{{{ $escola->EmailColegio ?? '' }}}<br>
-                    CNPJ: {{{ $escola->CNPJ ?? '' }}}<br>
-                    INEP:{{{ $escola->NumeroInep ?? '' }}}
-                </td>
-            </tr>         
-            @empty
-            @endforelse
-        </table>
-        <div class="resultado-titulo"> {{$titulo}} - {{$turma->AnoLetivo}}<br>
-            TURMA - {{$turma->NomeTurma}} 
-        </div>  
-        <!-- Armazenando os nomes do professores correspondentes a sua disciplina -->
-        @forelse($professores as $professor)
-        @if (isset ($professor->NomeFuncionario))
-        <div class="row" aling="center">
-            <div class="col-lg-12">
-                <div class="panel panel-default">
-                    <div class="panel-heading ">
-                        <strong> {{$professor->NomeDisciplina}}:</strong> &nbsp;&nbsp;{{$professor->NomeFuncionario}} 
-                    </div>
-                    <!-- /.panel-heading -->
-                    <div class="panel-body">
-                        <div class="table-responsive">
-                            <table class="table table-striped table-hover fonteResultado">
-                                <tbody>
-                                <thead>
-                                    <tr>
-                                        <th>RA</th>
-                                        <th>ALUNO</th>
-                                        <th><center>1º BIM</center></th>
-                                <th><center>2º BIM</center></th>
-                                <th><center>MÉDIA</center></th>
-                                </tr>
-                                </thead>
-                                <!-- Listando todos os alunos da turma -->
-                                @forelse($Alunos as $Aluno)
-                                <!-- Buscando a nota do aluno para verifica calcular a media -->
-                                @php
-                                $notasDoAluno = \App\Models\modelCoordenacao\tb_notas::busca_notas_do_aluno($Aluno->idAluno, $professor->idDisciplinas);
-                                @endphp
-                                <!-- / Buscando a nota do aluno para verifica calcular a media -->
-                                <!-- Laço de notas relacionada ao aluno -->
-                                @forelse($notasDoAluno as $nota)
-                                <!--Fazendo Média -->
-                                @php 
-                                $nota->AB1 = ($nota->AB1+$nota->AM1)/2; 
-                                $nota->AB2 = ($nota->AB2+$nota->AM2)/2;
+    @php
+        if (!isset($escolas) || empty($escolas) || !isset($escolas->first()->Rua)) {
+            try { $escolas = \App\Models\modelCoordenacao\tb_escola::informacaoEscolar(); } catch (\Exception $e) { $escolas = collect(); }
+        }
+    @endphp
 
-                                $media = ($nota->AB1+$nota->AB2)/2; 
-                                @endphp
-                                <!-- / Fazendo Média -->
-                                <!-- Se a media for menror que 7 ele ta em recuperação -->
-                                @if($media>=7)
-                                <tr>
-                                    <td>{{$Aluno->RA}}</td>
-                                    <td>{{$Aluno->NomeAluno}}</td>
-                                    <!-- cor da nota AB1-->
-                                    @if($nota->AB1 < 7)
-                                    <td><center><div class=" notaVermelha" >{{number_format($nota->AB1 ,1)}}</div></center></td> 
-                                @else
-                                <td><center><div class=" notaAzul" >{{number_format($nota->AB1 ,1)}}</div></center></td> 
-                                @endif
-                                <!-- /Cor da nota AB1 -->
-                                <!-- cor da nota AB2-->
-                                @if($nota->AB2 < 7)
-                                <td><center><div class=" notaVermelha" >{{number_format($nota->AB2 ,1)}}</div></center></td> 
-                                @else
-                                <td><center><div class=" notaAzul" >{{number_format($nota->AB2 ,1)}}</div></center></td> 
-                                @endif
-                                <!-- /Cor da nota AB2 -->
-                                <td><center><div class=" notaAzul" >{{number_format($media ,1)}}</div></center></td> 
-                                @else
-                                @endif
-                                <!-- /Se a media for menror que 7 ele ta em recuperação -->
-                                <!-- / Laço de notas relacionada ao aluno -->
-                                @empty
-                                @endforelse
-                                <!-- / Listando todos os alunos da turma -->
-                                @empty
-                                @endforelse
-                                </tbody>
-                            </table>
-                        </div>
-                        <!-- /.table-responsive -->
-                    </div>
-                    <!-- /.panel-body -->
+    <div class="no-print-bar no-print">
+        <button type="button" onclick="window.print()" class="btn-imprimir">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+            Imprimir Resultados
+        </button>
+    </div>
+
+    <div class="report-card">
+        <div class="school-header">
+            <img src="{{ \App\Support\LogoColegio::src() }}" class="school-logo" alt="Logo Escola">
+            @forelse($escolas as $escola)
+                <div class="school-info">
+                    {{ $escola->Rua ?? '' }} , {{ $escola->Numero ?? '' }} - {{ $escola->Bairro ?? '' }} - CEP: {{ $escola->CEP ?? '' }}<br>
+                    {{ $escola->Cidade ?? '' }} - {{ $escola->Estado ?? '' }} | Tel: {{ $escola->Fone1 ?? '' }} / {{ $escola->Fone2 ?? '' }}<br>
+                    E-mail: {{ $escola->EmailColegio ?? '' }} | CNPJ: {{ $escola->CNPJ ?? '' }} - INEP: {{ $escola->NumeroInep ?? '' }}
                 </div>
-                <!-- /.panel -->
-            </div>
-            <!-- /.row -->
+            @empty
+                <div class="school-info">COLÉGIO MARUGE</div>
+            @endforelse
         </div>
-        @else
-        @endif
+
+        <div class="resultado-header">
+            <h1 class="resultado-title">{{ $titulo ?? 'RESULTADOS - 1º SEMESTRE' }} - {{ $turma->AnoLetivo ?? '' }}</h1>
+            <p class="resultado-subtitle">TURMA - {{ $turma->NomeTurma ?? '' }}</p>
+        </div>
+
+        @forelse($professores as $professor)
+            @if(isset($professor->NomeFuncionario))
+                <div class="subject-panel">
+                    <div class="subject-panel-header">
+                        <strong>{{ $professor->NomeDisciplina }}:</strong> &nbsp; {{ $professor->NomeFuncionario }}
+                    </div>
+                    <table class="resultado-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 70px;">RA</th>
+                                <th class="aluno-nome">NOME ALUNO</th>
+                                <th style="width: 100px;">1º BIMESTRE</th>
+                                <th style="width: 100px;">2º BIMESTRE</th>
+                                <th style="width: 130px;">MÉDIA 1º SEMESTRE</th>
+                                <th style="width: 120px;">SITUAÇÃO</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse($professor->alunos ?? [] as $aluno)
+                                <tr>
+                                    <td>{{ $aluno->RA }}</td>
+                                    <td class="aluno-nome">{{ $aluno->NomeAluno }}</td>
+                                    <td>{{ $aluno->Nota_1Bimestre }}</td>
+                                    <td>{{ $aluno->Nota_2Bimestre }}</td>
+                                    <td><strong>{{ $aluno->Media1Semestre }}</strong></td>
+                                    <td>
+                                        @if($aluno->Media1Semestre >= 7)
+                                            <span class="badge-aprovado">APROVADO</span>
+                                        @else
+                                            <span class="badge-recuperacao">RECUPERAÇÃO</span>
+                                        @endif
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="6" style="padding: 12px; color: #64748b;">Nenhum aluno encontrado para esta disciplina.</td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            @endif
         @empty
+            <div style="text-align: center; padding: 20px; color: #64748b;">Nenhuma disciplina ou professor cadastrado para esta turma.</div>
         @endforelse
-        <!-- / Armazenando os nomes do professores correspondentes a sua disciplina -->
-        </div>
-    </body>
+    </div>
+
+</body>
 </html>

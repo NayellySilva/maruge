@@ -58,15 +58,14 @@
             </form>
         </div>
 
-        <!-- Menu Dropdown de Filtro Situação (Padrão: Ativos) -->
-        <div class="w-full sm:w-64">
-            <form method="GET" action="{{ url('/coordenacao/turma_inf') }}" class="w-full">
+        <!-- Filtrar por Situação (Padrão: Ativos) -->
+        <div class="w-full sm:w-56">
+            <form method="GET" action="{{ url('/coordenacao/funcionario_inf') }}" class="w-full">
                 @if(request()->input('pesquisar'))
                     <input type="hidden" name="pesquisar" value="{{ request()->input('pesquisar') }}">
                 @endif
-
-                <div class="relative" id="dropdown-container-situacao">
-                    <input type="hidden" id="SituacaoTurma" name="SituacaoTurma" value="{{ $currentSituacao }}">
+                <div class="relative" id="dropdown-container-situacao-funcionario">
+                    <input type="hidden" id="situacao" name="situacao" value="{{ $currentSituacao }}">
 
                     @php
                         $labelSituacaoMap = [
@@ -78,28 +77,28 @@
                     @endphp
 
                     <!-- Trigger Box -->
-                    <div onclick="toggleMultiDropdown('dropdown-menu-situacao', 'chevron-situacao')" 
+                    <div onclick="toggleMultiDropdown('dropdown-menu-situacao-funcionario', 'chevron-situacao-funcionario')" 
                          class="w-full flex items-center justify-between bg-white border border-[#e3e8e6] hover:border-[#008a4b]/50 rounded-xl px-4 py-2.5 transition-all cursor-pointer shadow-2xs h-11">
-                        <span id="label-situacao" class="text-sm font-semibold truncate text-[#0a241e]">
+                        <span id="label-situacao-funcionario" class="text-sm font-semibold truncate text-[#0a241e]">
                             Situação: {{ $labelSituacaoTexto }}
                         </span>
-                        <div id="chevron-situacao" class="text-[#95aba5] transition-transform duration-200 shrink-0 ml-2">
+                        <div id="chevron-situacao-funcionario" class="text-[#95aba5] transition-transform duration-200 shrink-0 ml-2">
                             <i data-lucide="chevron-down" class="w-4 h-4"></i>
                         </div>
                     </div>
 
                     <!-- Dropdown Flutuante -->
-                    <div id="dropdown-menu-situacao" class="hidden absolute top-full left-0 right-0 mt-1 bg-white border border-[#e3e8e6] rounded-xl shadow-xl z-50 p-1.5 flex flex-col gap-0.5">
-                        <div onclick="selectSingleOption('ATIVO', 'Situação: Ativo', 'SituacaoTurma', 'label-situacao', 'dropdown-menu-situacao', 'chevron-situacao', true)"
-                             class="option-situacao flex items-center p-2 hover:bg-[#ecfdf5] rounded-lg transition-colors cursor-pointer text-xs text-[#0a241e] font-medium">
+                    <div id="dropdown-menu-situacao-funcionario" class="hidden absolute top-full left-0 right-0 mt-1 bg-white border border-[#e3e8e6] rounded-xl shadow-xl z-50 p-1.5 flex flex-col gap-0.5">
+                        <div onclick="selectSingleOption('ATIVO', 'Situação: Ativo', 'situacao', 'label-situacao-funcionario', 'dropdown-menu-situacao-funcionario', 'chevron-situacao-funcionario', true)"
+                             class="flex items-center p-2 hover:bg-[#ecfdf5] rounded-lg transition-colors cursor-pointer text-xs text-[#0a241e] font-medium">
                             <span>Ativo (Padrão)</span>
                         </div>
-                        <div onclick="selectSingleOption('INATIVO', 'Situação: Inativo', 'SituacaoTurma', 'label-situacao', 'dropdown-menu-situacao', 'chevron-situacao', true)"
-                             class="option-situacao flex items-center p-2 hover:bg-[#ecfdf5] rounded-lg transition-colors cursor-pointer text-xs text-[#0a241e] font-medium">
+                        <div onclick="selectSingleOption('INATIVO', 'Situação: Inativo', 'situacao', 'label-situacao-funcionario', 'dropdown-menu-situacao-funcionario', 'chevron-situacao-funcionario', true)"
+                             class="flex items-center p-2 hover:bg-[#ecfdf5] rounded-lg transition-colors cursor-pointer text-xs text-[#0a241e] font-medium">
                             <span>Inativo</span>
                         </div>
-                        <div onclick="selectSingleOption('TODOS', 'Situação: Todos', 'SituacaoTurma', 'label-situacao', 'dropdown-menu-situacao', 'chevron-situacao', true)"
-                             class="option-situacao flex items-center p-2 hover:bg-[#ecfdf5] rounded-lg transition-colors cursor-pointer text-xs text-[#0a241e] font-medium">
+                        <div onclick="selectSingleOption('TODOS', 'Situação: Todos', 'situacao', 'label-situacao-funcionario', 'dropdown-menu-situacao-funcionario', 'chevron-situacao-funcionario', true)"
+                             class="flex items-center p-2 hover:bg-[#ecfdf5] rounded-lg transition-colors cursor-pointer text-xs text-[#0a241e] font-medium">
                             <span>Todos</span>
                         </div>
                     </div>

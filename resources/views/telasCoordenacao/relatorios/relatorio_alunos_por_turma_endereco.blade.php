@@ -18,35 +18,6 @@
     }
 @endphp
 
-<!-- Estilos para Caixa de Diálogo de Impressão -->
-<style>
-    @media print {
-        @page {
-            size: A4 landscape;
-            margin: 8mm;
-        }
-        body * {
-            visibility: hidden !important;
-        }
-        #printable-report-area, #printable-report-area * {
-            visibility: visible !important;
-        }
-        #printable-report-area {
-            position: absolute !important;
-            left: 0 !important;
-            top: 0 !important;
-            width: 100% !important;
-            padding: 0 !important;
-            margin: 0 !important;
-            background: white !important;
-            color: black !important;
-        }
-        .print-hidden {
-            display: none !important;
-        }
-    }
-</style>
-
 <div class="flex flex-col gap-6 print-hidden">
 
     <!-- Localização (Breadcrumb) -->
@@ -123,7 +94,7 @@
 <div id="printable-report-area" class="hidden print:block">
     <!-- Moldura de Cabeçalho da Escola com Borda Dupla -->
     <div style="border: 3px double #333; padding: 12px 18px; text-align: center; margin-bottom: 18px; width: 94%; margin-left: auto; margin-right: auto; box-sizing: border-box;">
-        <img src="{{ asset('imgs/logoempresa_transparente.png') }}" width="120" style="display: block; margin: 0 auto 8px auto;">
+        <img src="{{ \App\Support\LogoColegio::src() }}" class="logo-colegio-sm block mx-auto mb-2">
         @forelse($escolas as $escola)
             <div style="font-weight: bold; font-size: 12px; text-transform: uppercase; line-height: 1.4; color: #111;">
                 {{ $escola->Rua ?? '' }} , {{ $escola->Numero ?? '' }}<br>

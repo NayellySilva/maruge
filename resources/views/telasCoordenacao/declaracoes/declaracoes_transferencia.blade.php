@@ -2,11 +2,7 @@
 <html>
     <head>
         <title>{{$titulo}}</title>
-        <style media="print">
-            .botao {
-                display: none;
-            }
-        </style>
+        <x-estilo-impressao />
         <!-- CSS Personalizado para o Painel -->
         <link rel="stylesheet" href="{{asset('css/painel.css')}}">
         <!-- CSS para Reset de Estilos -->
@@ -21,7 +17,7 @@
             <table class="timbre">
                 <tr>
                     <td>
-                        <img src="{{url('imgs/logoempresa_transparente.png')}}" width="160" height="160"><br>
+                        <img src="{{ \App\Support\LogoColegio::src() }}" class="logo-colegio"><br>
                         <!-- Percorrendo os dados da escola cadastrada -->
                         @forelse($escolas as $escola)
                             {{$escola->Rua}} , {{$escola->Numero}}<br>

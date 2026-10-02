@@ -111,7 +111,7 @@
                 </div>
 
                 <!-- Dropdown Flutuante -->
-                <div id="dropdown-menu-turma-cad-aluno" class="hidden absolute top-full left-0 right-0 mt-1 bg-white border border-[#e3e8e6] rounded-xl shadow-xl z-50 p-2 flex flex-col gap-2 overflow-hidden" style="max-height: 240px;">
+                <div id="dropdown-menu-turma-cad-aluno" class="dropdown-menu-flutuante hidden absolute top-full left-0 right-0 mt-1 bg-white border border-[#e3e8e6] rounded-xl shadow-xl z-50 p-2 flex flex-col gap-2 overflow-hidden" >
                     <!-- Campo de Busca -->
                     <div class="relative shrink-0">
                         <input type="text" onkeyup="filterDropdownOptions('search-turma-cad-aluno', 'option-turma-cad-aluno')" id="search-turma-cad-aluno" placeholder="Pesquisar..." class="w-full pl-3 pr-9 py-1.5 bg-[#f8faf9] border border-[#e3e8e6] rounded-lg text-xs focus:outline-none focus:border-[#008a4b]">
@@ -119,17 +119,26 @@
                     </div>
 
                     <!-- Lista de Opções com Rolagem -->
-                    <div class="custom-scroll flex flex-col gap-0.5 pr-1" style="max-height: 180px; overflow-y: auto;">
-                        <div onclick="selectSingleOption('', 'Selecione a turma...', 'tb_turmas_idTurmas', 'label-turma-cad-aluno', 'dropdown-menu-turma-cad-aluno', 'chevron-turma-cad-aluno', false)"
-                             class="option-turma-cad-aluno flex items-center p-2 hover:bg-[#ecfdf5] rounded-lg transition-colors cursor-pointer text-xs text-[#0a241e]">
-                            <span class="option-title font-medium text-[#95aba5]">Nenhuma turma</span>
-                        </div>
-                        @foreach($turmas as $t)
-                            <div onclick="selectSingleOption('{{ $t->idTurmas }}', '{{ $t->NomeTurma }}', 'tb_turmas_idTurmas', 'label-turma-cad-aluno', 'dropdown-menu-turma-cad-aluno', 'chevron-turma-cad-aluno', false)"
-                                 class="option-turma-cad-aluno flex items-center p-2 hover:bg-[#ecfdf5] rounded-lg transition-colors cursor-pointer text-xs text-[#0a241e]">
-                                <span class="option-title font-medium">{{ $t->NomeTurma }}</span>
+                    <div class="dropdown-lista-opcoes custom-scroll flex flex-col gap-0.5 pr-1" >
+                        @if($turmas->isEmpty())
+                            {{-- Aviso quando não há turmas ativas cadastradas no sistema --}}
+                            <div class="flex flex-col items-center justify-center p-4 gap-2 text-center">
+                                <i data-lucide="alert-triangle" class="w-5 h-5 text-amber-500"></i>
+                                <span class="text-xs text-amber-600 font-medium">Nenhuma turma ativa encontrada.</span>
+                                <a href="{{ url('/coordenacao/turma/turma_cad') }}" class="text-xs text-[#008a4b] underline hover:text-[#00703c]">Cadastrar turma</a>
                             </div>
-                        @endforeach
+                        @else
+                            <div onclick="selectSingleOption('', 'Selecione a turma...', 'tb_turmas_idTurmas', 'label-turma-cad-aluno', 'dropdown-menu-turma-cad-aluno', 'chevron-turma-cad-aluno', false)"
+                                 class="option-turma-cad-aluno flex items-center p-2 hover:bg-[#ecfdf5] rounded-lg transition-colors cursor-pointer text-xs text-[#0a241e]">
+                                <span class="option-title font-medium text-[#95aba5]">Nenhuma turma</span>
+                            </div>
+                            @foreach($turmas as $t)
+                                <div onclick="selectSingleOption('{{ $t->idTurmas }}', '{{ $t->NomeTurma }}', 'tb_turmas_idTurmas', 'label-turma-cad-aluno', 'dropdown-menu-turma-cad-aluno', 'chevron-turma-cad-aluno', false)"
+                                     class="option-turma-cad-aluno flex items-center p-2 hover:bg-[#ecfdf5] rounded-lg transition-colors cursor-pointer text-xs text-[#0a241e]">
+                                    <span class="option-title font-medium">{{ $t->NomeTurma }}</span>
+                                </div>
+                            @endforeach
+                        @endif
                     </div>
                 </div>
             </div>
@@ -358,12 +367,12 @@
                         <i data-lucide="chevron-down" class="w-4 h-4"></i>
                     </div>
                 </div>
-                <div id="dropdown-menu-estadocartorio" class="hidden absolute top-full left-0 right-0 mt-1 bg-white border border-[#e3e8e6] rounded-xl shadow-xl z-50 p-2 flex flex-col gap-2 overflow-hidden" style="max-height: 240px;">
+                <div id="dropdown-menu-estadocartorio" class="dropdown-menu-flutuante hidden absolute top-full left-0 right-0 mt-1 bg-white border border-[#e3e8e6] rounded-xl shadow-xl z-50 p-2 flex flex-col gap-2 overflow-hidden" >
                     <div class="relative shrink-0">
                         <input type="text" onkeyup="filterDropdownOptions('search-estadocartorio', 'option-estadocartorio')" id="search-estadocartorio" placeholder="Pesquisar UF..." class="w-full pl-3 pr-9 py-1.5 bg-[#f8faf9] border border-[#e3e8e6] rounded-lg text-xs focus:outline-none focus:border-[#008a4b]">
                         <i data-lucide="search" class="w-3.5 h-3.5 text-[#95aba5] absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none"></i>
                     </div>
-                    <div class="custom-scroll flex flex-col gap-0.5 pr-1" style="max-height: 180px; overflow-y: auto;">
+                    <div class="dropdown-lista-opcoes custom-scroll flex flex-col gap-0.5 pr-1" >
                         <div onclick="selectSingleOption('', 'Selecione o estado...', 'EstadoCartorio', 'label-estadocartorio', 'dropdown-menu-estadocartorio', 'chevron-estadocartorio', false); loadCitiesForEstadoCartorio('');"
                              class="option-estadocartorio flex items-center p-2 hover:bg-[#ecfdf5] rounded-lg transition-colors cursor-pointer text-xs text-[#0a241e]">
                             <span class="option-title font-medium text-[#95aba5]">Selecione o estado...</span>
@@ -396,12 +405,12 @@
                         <i data-lucide="chevron-down" class="w-4 h-4"></i>
                     </div>
                 </div>
-                <div id="dropdown-menu-cidadecartorio" class="hidden absolute top-full left-0 right-0 mt-1 bg-white border border-[#e3e8e6] rounded-xl shadow-xl z-50 p-2 flex flex-col gap-2 overflow-hidden" style="max-height: 240px;">
+                <div id="dropdown-menu-cidadecartorio" class="dropdown-menu-flutuante hidden absolute top-full left-0 right-0 mt-1 bg-white border border-[#e3e8e6] rounded-xl shadow-xl z-50 p-2 flex flex-col gap-2 overflow-hidden" >
                     <div class="relative shrink-0">
                         <input type="text" onkeyup="filterDropdownOptions('search-cidadecartorio', 'option-cidadecartorio')" id="search-cidadecartorio" placeholder="Pesquisar cidade..." class="w-full pl-3 pr-9 py-1.5 bg-[#f8faf9] border border-[#e3e8e6] rounded-lg text-xs focus:outline-none focus:border-[#008a4b]">
                         <i data-lucide="search" class="w-3.5 h-3.5 text-[#95aba5] absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none"></i>
                     </div>
-                    <div id="custom-cidadescartorio-list" class="custom-scroll flex flex-col gap-0.5 pr-1" style="max-height: 180px; overflow-y: auto;">
+                    <div id="custom-cidadescartorio-list" class="dropdown-lista-opcoes custom-scroll flex flex-col gap-0.5 pr-1" >
                         <div class="p-2 text-xs text-[#95aba5]">Selecione um estado primeiro</div>
                     </div>
                 </div>

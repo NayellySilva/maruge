@@ -3,11 +3,7 @@
         <title>{{$titulo}}</title>
     </header>
     <body>
-        <style media="print">
-            .botao {
-                display: none;
-            }
-        </style>
+        <x-estilo-impressao />
         <!-- Bootstrap -->
         <link href="{{asset('css/bootstrap.min.css')}}" rel="stylesheet">
         <!--CSS Personalizado para o Painel-->
@@ -20,7 +16,7 @@
         <table class="timbre-horizontal">
             <tr>
                 <td>
-                    <img src="{{asset('imgs/logoempresa_transparente.png')}}" width="160" height="160" ><br>
+                    <img src="{{ \App\Support\LogoColegio::src() }}" class="logo-colegio"><br>
                 </td>
                 <td>
                     @forelse($escolas as $escola)

@@ -1,248 +1,244 @@
-<html>
-    <head>
-        <title>{{$titulo}}</title>
-        <style media="print">
-            .botao {
-                display: none;
-            }
-        </style>
-        <!-- CSS Personalizado para o Painel -->
-        <link rel="stylesheet" href="{{asset('css/painel.css')}}">
-        <!-- CSS para Reset de Estilos -->
-        <link rel="stylesheet" href="{{asset('css/reset.css')}}">
-    </head>
-    <body>
-        <!-- Botão de impressão (ocultado automaticamente no modo de impressão) -->
-        <button type="button" value="Imprimir" onClick="window.print()" class="botao btn-imprimir"> Imprimir</button>
-        <table class="timbre">
-            <tr>
-                <td>
-                    <img src="{{url('imgs/logoempresa_transparente.png')}}" width="160" height="160" ><br>
-                    @forelse($escolas as $escola)
-                    {{$escola->Rua}} , {{$escola->Numero}}<br>
-                    {{$escola->Bairro}} - CEP:{{$escola->CEP}}<br>
-                    {{$escola->Cidade}} - {{$escola->Estado}}<br>
-                    Tel: {{$escola->Fone1}} / {{$escola->Fone2}}<br>
-                    E-mail:{{$escola->EmailColegio}}<br>
-                    CNPJ: {{$escola->CNPJ}} -  INEP:{{$escola->NumeroInep}}
-                </td>
-            </tr>         
-        </table>
-        <div class="titulo-boletim">BOLETIM ESCOLAR <br>
-            FUNDAMENTAL II  <br><strong>
-                @foreach($anoletivo as $anoletivo)
-                {{$anoletivo->AnoLetivo}}
-                @endforeach
-            </strong>
-        </div>
-        <div class="inf_aluno_boletim">
-            <p><strong>Nº MAC: </strong> {{ $aluno->NumeroMac ?? $matricula->RA }}</p> 
-            <p> <strong>Aluno(a):</strong>{{ $aluno->NomeAluno}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <strong>Turma: </strong> {{$turma->NomeTurma}}</p> 
-            <p> <strong>Filiação:</strong>{{ $Pais->NomePai ?? '-'}}&nbsp;/ {{ $Pais->NomeMae ?? '-'}}</p> 
-        </div>      
-    <center class="titulo-boletim"><strong>BOLETIM</strong></center>
-    <center>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ $titulo ?? 'Boletim Escolar - Fundamental II' }}</title>
+    <x-estilo-impressao arquivo="boletim" />
+</head>
+<body>
 
-        <table class="table-striped boletim" border="1"  >
+    <!-- Botao de Impressao (Apenas na Tela) -->
+    <div class="no-print-bar no-print">
+        <button type="button" onclick="window.print()" class="btn-imprimir">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+            Imprimir Boletim
+        </button>
+    </div>
+
+    <div class="report-card">
+        <!-- Timbre da Escola -->
+        <div class="school-header">
+            <img src="{{ \App\Support\LogoColegio::src() }}" class="school-logo" alt="Logo Escola">
+            @forelse($escolas as $escola)
+                <div class="school-info">
+                    {{ $escola->Rua }} , {{ $escola->Numero }} - {{ $escola->Bairro }} - CEP: {{ $escola->CEP }}<br>
+                    {{ $escola->Cidade }} - {{ $escola->Estado }} | Tel: {{ $escola->Fone1 }} / {{ $escola->Fone2 }}<br>
+                    E-mail: {{ $escola->EmailColegio }} | CNPJ: {{ $escola->CNPJ }} - INEP: {{ $escola->NumeroInep }}
+                </div>
+            @empty
+                <div class="school-info">COLÉGIO MARUGE</div>
+            @endforelse
+        </div>
+
+        <!-- Titulo do Boletim -->
+        <div class="boletim-header">
+            <h1 class="boletim-title">BOLETIM ESCOLAR</h1>
+            <p class="boletim-subtitle">FUNDAMENTAL II</p>
+        </div>
+
+        <!-- Informacoes do Aluno -->
+        <div class="student-info-grid">
+            <div class="student-info-item"><span>Aluno(a):</span> <strong>{{ $aluno->NomeAluno }}</strong></div>
+            <div class="student-info-item"><span>Nº MAC / RA:</span> <strong>{{ $aluno->NumeroMac ?? $matricula->RA ?? '-' }}</strong></div>
+            <div class="student-info-item"><span>Turma:</span> <strong>{{ $turma->NomeTurma }}</strong></div>
+            <div class="student-info-item">
+                <span>Ano Letivo:</span> 
+                <strong>
+                    @foreach($anoletivo as $ano)
+                        {{ $ano->AnoLetivo }}
+                    @endforeach
+                </strong>
+            </div>
+            <div class="student-info-item" style="grid-column: span 2;">
+                <span>Filiação:</span> <strong>{{ $Pais->NomePai ?? '-' }} / {{ $Pais->NomeMae ?? '-' }}</strong>
+            </div>
+        </div>
+
+        <!-- Tabela de Notas -->
+        <table class="boletim-table">
             <thead>
                 <tr>
-                    <th width="50">CÓD.</th>
-                    <th>DISCIPLINAS</th>
-                    <th width="80"><center>1º BIM</center></th>
-            <th width="80"><center>2º BIM</center></td>
-            <th width="80"><center>REC.P</center></th>
-            <th width="80"><center>3º BIM</center></th>
-            <th width="80"><center>4º BIM</center></th>
-            <th width="80"><center>REC.F</center></th>
-            <th><center>MÉDIA</center></th>
-            <th><center>RESULTADO</center></th>
-            </thead>
-            </tr>
-            <!-- Recebendo valores na vareavel disciplinas e passando para disciplina -->
-            @foreach($disciplinas as $key => $disciplina )
-            <center>
-                <tr>
-                    <td width="50" height="17"> {{$disciplina->tb_disciplinas_idDisciplinas}} </td>
-                    <td width="150">{{$disciplina->NomeDisciplina}}</td>
-                    <!-- Buscando notas do aluno diacordo com sua  dsiciplina -->
-                    @php
-                    $notasDoAluno = \App\Models\modelCoordenacao\tb_notas::busca_notas_do_aluno($aluno->idAluno, $disciplina->tb_disciplinas_idDisciplinas);
-                    @endphp
-                    <!-- INICIO DO FOREACH DA NOTA DA DISCILPLINA QUE TA LISTANDO-->
-                    @forelse($notasDoAluno as $nota)
-                    <!-- VERIFICA SE EXISTE NOTA NA DISCIPLINA QUE ESTA DENTRO DO LAÇO CORRENTE -->
-                    @if (isset ($nota->AB1))
-                    @php 
-                    $nb1 = ($nota->AB1+$nota->AM1)/2; 
-                    if (isset($nota->RB1) && $nota->RB1 > 0 && $nota->RB1 > $nb1) { $nb1 = $nota->RB1; }
-                    $nb2 = ($nota->AB2+$nota->AM2)/2; 
-                    if (isset($nota->RB2) && $nota->RB2 > 0 && $nota->RB2 > $nb2) { $nb2 = $nota->RB2; }
-                    $nb3 = ($nota->AB3+$nota->AM3)/2; 
-                    if (isset($nota->RB3) && $nota->RB3 > 0 && $nota->RB3 > $nb3) { $nb3 = $nota->RB3; }
-                    $nb4 = ($nota->AB4+$nota->AM4)/2; 
-                    if (isset($nota->RB4) && $nota->RB4 > 0 && $nota->RB4 > $nb4) { $nb4 = $nota->RB4; }
-
-                    $nota->AB1 = $nb1; 
-                    $nota->AB2 = $nb2; 
-                    $nota->AB3 = $nb3; 
-                    $nota->AB4 = $nb4; 
-                    @endphp
-                    <!--CAMPOS DE DA TABELA DA  AB1-->
-                    @if (($nota->AB1) == 0)
-                    <td><center><div>-</div></center></td> 
-                @elseif (($nota->AB1) < 7)
-                <td><center><div class=" notaVermelha" >{{number_format($nota->AB1 ,1)}}</div></center></td> 
-                @else
-                <td><center><div class="  notaAzul" >{{number_format($nota->AB1 ,1)}}</div></center></td> 
-                @endif
-                <!-- / CAMPOS DE DA TABELA DA  AB1--> 
-                <!--CAMPOS DE DA TABELA DA  AB2-->
-                @if (($nota->AB2) == 0)
-                <td><center><div>-</div></center></td> 
-                @elseif (($nota->AB2) < 7)
-                <td><center><div class=" notaVermelha" >{{number_format($nota->AB2 ,1)}}</div></center></td> 
-                @else
-                <td><center><div class="  notaAzul" >{{number_format($nota->AB2 ,1)}}</div></center></td> 
-                @endif
-                <!-- / CAMPOS DE DA TABELA DA  AB2--> 
-                <!--CAMPOS DE DA TABELA DE RECUPERAÇÃO PARCIAL-->
-                @if(($nota->RP) == 0)       
-                <td><center><div>-</div></center></td>   
-                @elseif(($nota->RP) < 7)
-                <td><center><div class="  notaVermelha">{{number_format($nota->RP ,1)}}</div></center></td> 
-                @else
-                <td><center><div class="  notaAzul">{{number_format($nota->RP ,1)}}</div></center></td> 
-                @endif
-                <!-- / CAMPOS DE DA TABELA DE RECUPERAÇÃO PARCIAL-->                                  
-                <!--CAMPOS DE DA TABELA DA  AB3-->
-                @if (($nota->AB3) == 0)
-                <td><center><div>-</div></center></td> 
-                @elseif (($nota->AB3) < 7)
-                <td><center><div class=" notaVermelha" >{{number_format($nota->AB3 ,1)}}</div></center></td> 
-                @else
-                <td><center><div class="  notaAzul" >{{number_format($nota->AB3 ,1)}}</div></center></td> 
-                @endif
-                <!-- / CAMPOS DE DA TABELA DA  AB4--> 
-                <!--CAMPOS DE DA TABELA DA  AB4-->
-                @if (($nota->AB4) == 0)
-                <td><center><div>-</div></center></td> 
-                @elseif (($nota->AB4) < 7)
-                <td><center><div class=" notaVermelha" >{{number_format($nota->AB4 ,1)}}</div></center></td> 
-                @else
-                <td><center><div class="  notaAzul" >{{number_format($nota->AB4 ,1)}}</div></center></td> 
-                @endif
-                <!-- / CAMPOS DE DA TABELA DA  AB4-->
-                <!--CAMPOS DE DA TABELA DE RECUPERAÇÃO FINAL-->
-                @if(($nota->RF) == 0)       
-                <td><center><div>-</div></center></td>   
-                @elseif(($nota->RF) < 7)
-                <td><center><div class="  notaVermelha">{{number_format($nota->RF ,1)}}</div></center></td> 
-                @else
-                <td><center><div class="  notaAzul">{{number_format($nota->RF ,1)}}</div></center></td> 
-                @endif
-                <!-- / CAMPOS DE DA TABELA DE RECUPERAÇÃO FINAL-->  
-                <!--CAMPOS DE DA TABELA DE MEDIA E RESULTADO -->
-                <!-- FAZENDO A MEDIAS -->
-                @php 
-                $mediaN = ($nota->AB1+$nota->AB2+$nota->AB3+$nota->AB4)/4; 
-                $media1e2B = ($nota->AB1+$nota->AB2)/2; 
-                $mediaRP1e2B = ($nota->RP * 2)/4; 
-                $mediaRP = (($nota->RP * 2)+$nota->AB3+$nota->AB4)/4; 
-                @endphp
-
-                <!-- FAZENDO A MEDIA NORMAL SEM RECUPERAÇÕES -->
-                @if(($nota->RP)== 0 && ($nota->RF)== 0) 
-                @if(($mediaN) < 7)
-                <td><center><div class="  notaVermelha">{{number_format($mediaN ,1)}}</div></center></td> 
-                <td><center><div class="  notaVermelha">RECUPERAÇÃO</div></center></td> 
-                @else
-                <td><center><div class="  notaAzul">{{number_format($mediaN ,1)}}</div></center></td> 
-                <td><center><div class="  notaAzul">APROVADO</div></center></td> 
-                @endif
-                <!-- / FAZENDO A MEDIA NORMAL SEM RECUPERAÇÕES -->
-                <!-- FAZENDO A MEDIA COM NORA DE RECUPERAÇÃO PARCIAL -->
-                @elseif(($nota->RP)!= 0 && ($nota->RF)== 0)
-                <!--  ignorando a nota Recuperação parcial   -->
-                @if (($media1e2B > $mediaRP1e2B))
-                @if(($mediaN) < 7)
-                <td><center><div class="  notaVermelha">{{number_format($mediaN ,1)}}</div></center></td> 
-                <td><center><div class="  notaVermelha">RECUPERAÇÃO - FINAL</div></center></td> 
-                @else
-                <td><center><div class="  notaAzul">{{number_format($mediaN ,1)}}</div></center></td> 
-                <td><center><div class="  notaAzul">APROVADO.REC</div></center></td> 
-                @endif
-                @else
-                @if(($mediaRP) < 7)
-                <td><center><div class="  notaVermelha">{{number_format($mediaRP ,1)}}</div></center></td> 
-                <td><center><div class="  notaVermelha">RECUPERAÇÃO - FINAL</div></center></td> 
-                @else
-                <td><center><div class="  notaAzul">{{number_format($mediaRP ,1)}}</div></center></td> 
-                <td><center><div class="  notaAzul">APROVADO.REC</div></center></td> 
-                @endif
-                @endif
-
-
-
-                <!-- COMENTANDO O CODIGO ANTIGO QUE PREVALECE A RECUPERAÇÃO MESMO A NOTA DA RECUPERAÇÃO SENDO MENOR -->
-                <!--
-                @if(($mediaRP) < 7)
-                               <td><center><div class="  notaVermelha">{{number_format($mediaRP ,1)}}</div></center></td> 
-                               <td><center><div class="  notaVermelha">RECUPERAÇÃO - FINAL</div></center></td> 
-                               @else
-                               <td><center><div class="  notaAzul">{{number_format($mediaRP ,1)}}</div></center></td> 
-                               <td><center><div class="  notaAzul">APROVADO.REC</div></center></td> 
-                               @endif
-                
-                -->
-
-
-
-
-
-
-                <!-- / FAZENDO A MEDIA COM NORA DE RECUPERAÇÃO PARCIAL -->                                                       
-                @elseif(($nota->RF)!= 0)
-                @if(($nota->RF) < 7)
-                <td><center><div class="  notaVermelha">{{number_format($nota->RF ,1)}}</div></center></td> 
-                <td><center><div class="  notaVermelha">REPROVADO</div></center></td> 
-                @else
-                <td><center><div class="  notaAzul">{{number_format($nota->RF ,1)}}</div></center></td> 
-                <td><center><div class="  notaAzul">APROVADO.REC</div></center></td> 
-                @endif                                                 
-                @endif
-                <!-- / CAMPOS DE DA TABELA DE MEDIA E RESULTADO-->                                                 
+                    <th style="width: 40px;">CÓD</th>
+                    <th style="width: 140px;" class="text-left">DISCIPLINA</th>
+                    <th style="width: 50px;">1º BIM</th>
+                    <th style="width: 50px;">REC.1</th>
+                    <th style="width: 50px;">2º BIM</th>
+                    <th style="width: 50px;">REC.2</th>
+                    <th style="width: 50px;">REC.P</th>
+                    <th style="width: 50px;">3º BIM</th>
+                    <th style="width: 50px;">REC.3</th>
+                    <th style="width: 50px;">4º BIM</th>
+                    <th style="width: 50px;">REC.4</th>
+                    <th style="width: 50px;">REC.F</th>
+                    <th style="width: 55px;">MÉDIA</th>
+                    <th style="width: 90px;">RESULTADO</th>
                 </tr>
-                @endif
-                <!-- VERIFICA SE EXISTE NOTA NA DISCIPLINA QUE ESTA DENTRO DO LAÇO CORRENTE -->
-                <!-- SE NÃO TIVE VALORES DENTRO DO FORELSE DO LAÇO CORRENTE -->
-                @empty
-                <!-- QUANDO NÃO EXISTE NOTA ELE MOSTRA CAMPSO COM TRAÇOS -->
-                <td><center><div >-</div></center></td> 
-                <td><center><div >-</div></center></td> 
-                <td><center><div >-</div></center></td> 
-                <td><center><div >-</div></center></td> 
-                <td><center><div >-</div></center></td> 
-                <td><center><div >-</div></center></td> 
-                <td><center><div >-</div></center></td> 
-                <td><center><div >-</div></center></td> 
-                @endforelse 
-                <!-- FIM DO FOREACHO QUE LISTA A DISCIPLINA-->
+            </thead>
+            <tbody>
+                @foreach($disciplinas as $disciplina)
+                    @php
+                        $notasDoAluno = \App\Models\modelCoordenacao\tb_notas::busca_notas_do_aluno($aluno->idAluno, $disciplina->tb_disciplinas_idDisciplinas);
+                    @endphp
+                    @forelse($notasDoAluno as $nota)
+                        @if(isset($nota->AB1))
+                            @php
+                                $base1 = (($nota->AB1 ?? 0) + ($nota->AM1 ?? 0)) / 2; 
+                                $rb1_orig = $nota->RB1 ?? 0;
+                                $nb1 = ($rb1_orig > 0 && $rb1_orig > $base1) ? $rb1_orig : $base1;
+
+                                $base2 = (($nota->AB2 ?? 0) + ($nota->AM2 ?? 0)) / 2; 
+                                $rb2_orig = $nota->RB2 ?? 0;
+                                $nb2 = ($rb2_orig > 0 && $rb2_orig > $base2) ? $rb2_orig : $base2;
+
+                                $base3 = (($nota->AB3 ?? 0) + ($nota->AM3 ?? 0)) / 2; 
+                                $rb3_orig = $nota->RB3 ?? 0;
+                                $nb3 = ($rb3_orig > 0 && $rb3_orig > $base3) ? $rb3_orig : $base3;
+
+                                $base4 = (($nota->AB4 ?? 0) + ($nota->AM4 ?? 0)) / 2; 
+                                $rb4_orig = $nota->RB4 ?? 0;
+                                $nb4 = ($rb4_orig > 0 && $rb4_orig > $base4) ? $rb4_orig : $base4;
+
+                                $mediaN = ($nb1 + $nb2 + $nb3 + $nb4) / 4; 
+                                $media1e2B = ($nb1 + $nb2) / 2; 
+                                $mediaRP1e2B = ($nota->RP * 2) / 4; 
+                                $mediaRP = (($nota->RP * 2) + $nb3 + $nb4) / 4; 
+                            @endphp
+                            <tr>
+                                <td>{{ $disciplina->tb_disciplinas_idDisciplinas }}</td>
+                                <td class="disc-name">{{ $disciplina->NomeDisciplina }}</td>
+                                
+                                <!-- 1º BIM -->
+                                <td>
+                                    @if($base1 == 0) -
+                                    @elseif($base1 < 7) <span class="nota-vermelha">{{ number_format($base1, 1) }}</span>
+                                    @else <span class="nota-azul">{{ number_format($base1, 1) }}</span> @endif
+                                </td>
+
+                                <!-- REC.1 -->
+                                <td>
+                                    @if($rb1_orig == 0) -
+                                    @elseif($rb1_orig < 7) <span class="nota-vermelha">{{ number_format($rb1_orig, 1) }}</span>
+                                    @else <span class="nota-azul">{{ number_format($rb1_orig, 1) }}</span> @endif
+                                </td>
+
+                                <!-- 2º BIM -->
+                                <td>
+                                    @if($base2 == 0) -
+                                    @elseif($base2 < 7) <span class="nota-vermelha">{{ number_format($base2, 1) }}</span>
+                                    @else <span class="nota-azul">{{ number_format($base2, 1) }}</span> @endif
+                                </td>
+
+                                <!-- REC.2 -->
+                                <td>
+                                    @if($rb2_orig == 0) -
+                                    @elseif($rb2_orig < 7) <span class="nota-vermelha">{{ number_format($rb2_orig, 1) }}</span>
+                                    @else <span class="nota-azul">{{ number_format($rb2_orig, 1) }}</span> @endif
+                                </td>
+
+                                <!-- RP -->
+                                <td>
+                                    @if(($nota->RP) == 0) -
+                                    @elseif(($nota->RP) < 7) <span class="nota-vermelha">{{ number_format($nota->RP, 1) }}</span>
+                                    @else <span class="nota-azul">{{ number_format($nota->RP, 1) }}</span> @endif
+                                </td>
+
+                                <!-- 3º BIM -->
+                                <td>
+                                    @if($base3 == 0) -
+                                    @elseif($base3 < 7) <span class="nota-vermelha">{{ number_format($base3, 1) }}</span>
+                                    @else <span class="nota-azul">{{ number_format($base3, 1) }}</span> @endif
+                                </td>
+
+                                <!-- REC.3 -->
+                                <td>
+                                    @if($rb3_orig == 0) -
+                                    @elseif($rb3_orig < 7) <span class="nota-vermelha">{{ number_format($rb3_orig, 1) }}</span>
+                                    @else <span class="nota-azul">{{ number_format($rb3_orig, 1) }}</span> @endif
+                                </td>
+
+                                <!-- 4º BIM -->
+                                <td>
+                                    @if($base4 == 0) -
+                                    @elseif($base4 < 7) <span class="nota-vermelha">{{ number_format($base4, 1) }}</span>
+                                    @else <span class="nota-azul">{{ number_format($base4, 1) }}</span> @endif
+                                </td>
+
+                                <!-- REC.4 -->
+                                <td>
+                                    @if($rb4_orig == 0) -
+                                    @elseif($rb4_orig < 7) <span class="nota-vermelha">{{ number_format($rb4_orig, 1) }}</span>
+                                    @else <span class="nota-azul">{{ number_format($rb4_orig, 1) }}</span> @endif
+                                </td>
+
+                                <!-- RF -->
+                                <td>
+                                    @if(($nota->RF) == 0) -
+                                    @elseif(($nota->RF) < 7) <span class="nota-vermelha">{{ number_format($nota->RF, 1) }}</span>
+                                    @else <span class="nota-azul">{{ number_format($nota->RF, 1) }}</span> @endif
+                                </td>
+
+                                <!-- MEDIA E RESULTADO -->
+                                @if(($nota->RP) == 0 && ($nota->RF) == 0)
+                                    @if($mediaN < 7)
+                                        <td><span class="nota-vermelha">{{ number_format($mediaN, 1) }}</span></td>
+                                        <td><span class="resultado-recuperacao">RECUPERAÇÃO</span></td>
+                                    @else
+                                        <td><span class="nota-azul">{{ number_format($mediaN, 1) }}</span></td>
+                                        <td><span class="resultado-aprovado">APROVADO</span></td>
+                                    @endif
+                                @elseif(($nota->RP) != 0 && ($nota->RF) == 0)
+                                    @if($media1e2B > $mediaRP1e2B)
+                                        @if($mediaN < 7)
+                                            <td><span class="nota-vermelha">{{ number_format($mediaN, 1) }}</span></td>
+                                            <td><span class="resultado-recuperacao">RECUPERAÇÃO FINAL</span></td>
+                                        @else
+                                            <td><span class="nota-azul">{{ number_format($mediaN, 1) }}</span></td>
+                                            <td><span class="resultado-aprovado">APROVADO (REC)</span></td>
+                                        @endif
+                                    @else
+                                        @if($mediaRP < 7)
+                                            <td><span class="nota-vermelha">{{ number_format($mediaRP, 1) }}</span></td>
+                                            <td><span class="resultado-recuperacao">RECUPERAÇÃO FINAL</span></td>
+                                        @else
+                                            <td><span class="nota-azul">{{ number_format($mediaRP, 1) }}</span></td>
+                                            <td><span class="resultado-aprovado">APROVADO (REC)</span></td>
+                                        @endif
+                                    @endif
+                                @elseif(($nota->RF) != 0)
+                                    @if(($nota->RF) < 7)
+                                        <td><span class="nota-vermelha">{{ number_format($nota->RF, 1) }}</span></td>
+                                        <td><span class="resultado-recuperacao">REPROVADO</span></td>
+                                    @else
+                                        <td><span class="nota-azul">{{ number_format($nota->RF, 1) }}</span></td>
+                                        <td><span class="resultado-aprovado">APROVADO (REC)</span></td>
+                                    @endif
+                                @endif
+                            </tr>
+                        @endif
+                    @empty
+                        <tr>
+                            <td>{{ $disciplina->tb_disciplinas_idDisciplinas }}</td>
+                            <td class="disc-name">{{ $disciplina->NomeDisciplina }}</td>
+                            <td colspan="12">-</td>
+                        </tr>
+                    @endforelse
                 @endforeach
+            </tbody>
         </table>
 
-
-    </center>
-
-
-
-
-    <div class="inf_aluno_boletim margemAssinatura">
-        <p class="inf_aluno_boletim"><strong>Professor(a):_______________________________________&nbsp;&nbsp;&nbsp;Responsável:______________________________________</strong></p>
-        <p class="inf_aluno_boletim"><strong>Obs:____________________________________________________________________________________________________________________</strong></p>
-        <p class="inf_aluno_boletim"><strong>________________________________________________________________________________________________________________________</strong></p>
-        <p class="inf_aluno_boletim"><strong>________________________________________________________________________________________________________________________</strong></p>
+        <!-- Assinaturas -->
+        <div class="signatures-container">
+            <div class="signatures-row">
+                <div class="signature-line">Professor(a)</div>
+                <div class="signature-line">Responsável</div>
+            </div>
+            <div class="obs-lines">
+                <div style="font-weight: 700; margin-bottom: 2px;">Observações:</div>
+                <div class="obs-line-item"></div>
+                <div class="obs-line-item"></div>
+            </div>
+        </div>
     </div>
-    @empty
-    @endforelse
+
 </body>
 </html>

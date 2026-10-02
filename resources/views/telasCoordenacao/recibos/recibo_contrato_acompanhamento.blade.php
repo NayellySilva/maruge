@@ -20,10 +20,6 @@
         <!-- Jquery Local-->
         <script src="{{asset('css/jquery-3.0.0.js')}}" ></script> 
 
-        <style>
-            .break { page-break-before: always; }
-        </style>
-
         <button type="button"  value="Imprimir" id="imprimir_conteudo"  class="botao btn-imprimir"> Imprimir</button>
      
   
@@ -35,7 +31,7 @@
             <table class="timbre-sem-borda">
                 <tr>
                     <td>
-                        <img src="{{url('imgs/logoempresa_transparente.png')}}" width="160" height="160" ><br>
+                        <img src="{{ \App\Support\LogoColegio::src() }}" class="logo-colegio"><br>
                         @forelse($escolas as $escola)
                         {{$escola->Rua}} , {{$escola->Numero}}<br>
                         {{$escola->Bairro}} - CEP:{{$escola->CEP}}<br>

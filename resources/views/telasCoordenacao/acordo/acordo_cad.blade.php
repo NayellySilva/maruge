@@ -3,20 +3,36 @@
 @section('content')
 
 @php
-    // Busca paginada dos alunos cadastrados com suas turmas
+    // Filtros vindos da própria tela (GET): ?pesquisar=...&idTurmas=...
+    $pesquisar = trim((string) request()->input('pesquisar', ''));
+    $idTurmaFiltro = request()->input('idTurmas');
+    $somenteAtivos = false; // carnê: só alunos ativos | acordo: inclui ex-alunos com débito
+
     try {
-        $Alunos = \DB::table('tb_alunos')
-            ->leftJoin('tb_turmas', 'tb_alunos.tb_turmas_idTurmas', '=', 'tb_turmas.idTurmas')
-            ->select('tb_alunos.*', 'tb_turmas.NomeTurma')
-            ->orderBy('NomeAluno')
-            ->paginate(15);
+        $Alunos = \DB::table('tb_aluno')
+            ->leftJoin('tb_matriculas', 'tb_matriculas.idMatriculas', '=', 'tb_aluno.tb_matriculas_idMatriculas')
+            ->leftJoin('tb_turmas', 'tb_turmas.idTurmas', '=', 'tb_aluno.tb_turmas_idTurmas')
+            ->select('tb_aluno.idAluno', 'tb_aluno.NomeAluno', 'tb_aluno.NumeroMac', 'tb_matriculas.RA', 'tb_matriculas.SituacaoAluno', 'tb_turmas.NomeTurma')
+            ->when($somenteAtivos, fn ($q) => $q->whereIn('tb_matriculas.SituacaoAluno', ['ATIVO', 'MATRICULADO']))
+            ->when($idTurmaFiltro, fn ($q) => $q->where('tb_aluno.tb_turmas_idTurmas', $idTurmaFiltro))
+            ->when($pesquisar !== '', function ($q) use ($pesquisar) {
+                $like = '%' . $pesquisar . '%';
+                $q->where(function ($w) use ($like) {
+                    $w->where('tb_aluno.NomeAluno', 'LIKE', $like)
+                      ->orWhere('tb_matriculas.RA', 'LIKE', $like)
+                      ->orWhere('tb_aluno.NumeroMac', 'LIKE', $like);
+                });
+            })
+            ->orderBy('tb_aluno.NomeAluno')
+            ->paginate(15)
+            ->appends(request()->query());
     } catch (\Exception $e) {
         $Alunos = new \Illuminate\Pagination\LengthAwarePaginator([], 0, 15);
     }
 
-    // Listagem de turmas para o filtro
+    // Turmas ativas para o filtro
     try {
-        $turmas = \DB::table('tb_turmas')->orderBy('NomeTurma')->get();
+        $turmas = \App\Models\modelCoordenacao\tb_turma::turmasAtivas();
     } catch (\Exception $e) {
         $turmas = collect();
     }
@@ -43,10 +59,12 @@
     <div class="flex flex-col sm:flex-row gap-4 items-center">
         <!-- Barra de Pesquisa por Aluno -->
         <div class="w-full sm:w-80">
-            <form method="POST" action="{{ url('/coordenacao/acordo_pesq') }}" class="w-full">
-                @csrf
+            <form method="GET" action="{{ url()->current() }}" class="w-full">
+                @if(request()->input('idTurmas'))
+                    <input type="hidden" name="idTurmas" value="{{ request()->input('idTurmas') }}">
+                @endif
                 <div class="flex items-center bg-white border border-[#e3e8e6] rounded-xl px-4 py-2.5 transition-all">
-                    <input type="text" name="pesquisar" placeholder="Pesquisar Aluno" class="w-full bg-transparent text-sm focus:outline-none">
+                    <input type="text" name="pesquisar" placeholder="Pesquisar por aluno, RA ou MAC" value="{{ request()->input('pesquisar') }}" class="w-full bg-transparent text-sm focus:outline-none">
                     <button type="submit" class="text-[#5c706b] hover:text-[#008a4b] ml-2">
                         <i data-lucide="search" class="w-4 h-4"></i>
                     </button>
@@ -57,6 +75,9 @@
         <!-- Filtrar por Turma -->
         <div class="w-full sm:w-64">
             <form method="GET" action="{{ url()->current() }}" class="w-full">
+                @if(request()->input('pesquisar'))
+                    <input type="hidden" name="pesquisar" value="{{ request()->input('pesquisar') }}">
+                @endif
                 <div class="relative" id="dropdown-container-turma-acordo">
                     <input type="hidden" id="idTurmas" name="idTurmas" value="{{ request()->input('idTurmas', '') }}">
 
@@ -76,7 +97,7 @@
                     </div>
 
                     <!-- Dropdown Flutuante -->
-                    <div id="dropdown-menu-turma-acordo" class="hidden absolute top-full left-0 right-0 mt-1 bg-white border border-[#e3e8e6] rounded-xl shadow-xl z-50 p-2 flex flex-col gap-2 overflow-hidden" style="max-height: 240px;">
+                    <div id="dropdown-menu-turma-acordo" class="dropdown-menu-flutuante hidden absolute top-full left-0 right-0 mt-1 bg-white border border-[#e3e8e6] rounded-xl shadow-xl z-50 p-2 flex flex-col gap-2 overflow-hidden" >
                         <!-- Campo de Busca -->
                         <div class="relative shrink-0">
                             <input type="text" onkeyup="filterDropdownOptions('search-turma-acordo', 'option-turma-acordo')" id="search-turma-acordo" placeholder="Pesquisar..." class="w-full pl-3 pr-9 py-1.5 bg-[#f8faf9] border border-[#e3e8e6] rounded-lg text-xs focus:outline-none focus:border-[#008a4b]">
@@ -84,7 +105,7 @@
                         </div>
 
                         <!-- Lista de Opções com Rolagem -->
-                        <div class="custom-scroll flex flex-col gap-0.5 pr-1" style="max-height: 180px; overflow-y: auto;">
+                        <div class="dropdown-lista-opcoes custom-scroll flex flex-col gap-0.5 pr-1" >
                             <div onclick="selectSingleOption('', 'Todas as Turmas', 'idTurmas', 'label-turma-acordo', 'dropdown-menu-turma-acordo', 'chevron-turma-acordo', true)"
                                  class="option-turma-acordo flex items-center p-2 hover:bg-[#ecfdf5] rounded-lg transition-colors cursor-pointer text-xs text-[#0a241e]">
                                 <span class="option-title font-medium">Todas as Turmas</span>

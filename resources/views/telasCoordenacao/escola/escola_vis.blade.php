@@ -49,7 +49,7 @@
     <div class="bg-white border border-[#e3e8e6] rounded-2xl p-8 shadow-2xs flex flex-col items-center justify-center text-center gap-6">
         <!-- Logotipo da Escola -->
         <div class="w-32 h-32 rounded-2xl bg-[#f8faf9] p-3 border border-[#e3e8e6] flex items-center justify-center">
-            <img src="{{ asset('imgs/logoempresa_transparente.png') }}" alt="Logo Escola" class="max-h-full max-w-full object-contain">
+            <img src="{{ \App\Support\LogoColegio::src() }}" alt="Logo Escola" class="max-h-full max-w-full object-contain">
         </div>
 
         <div class="flex flex-col gap-2">

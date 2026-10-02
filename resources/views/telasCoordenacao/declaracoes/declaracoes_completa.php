@@ -9,96 +9,7 @@
 <link rel="stylesheet" href="{{ asset('css/painel.css') }}">
 <link rel="stylesheet" href="{{ asset('css/reset.css') }}">
 
-<style>
-    body {
-        font-family: 'Times New Roman', serif;
-        font-size: 12pt;
-        margin: 0;
-        padding: 0;
-        background: #fff;
-    }
-    .timbre {
-        width: 100%;
-        max-width: 95%;
-        table-layout: fixed;
-        word-break: break-word;
-    }
-    .timbre td {
-        vertical-align: center;
-        padding: 10px 20px;
-        text-align: center;
-        font-size: 11pt;
-        line-height: 1.3;
-        word-break: break-word;
-    }
-    .timbre img {
-        display: inline-block;
-        margin-bottom: 0px;
-    }
-    .titulo-declaracao {
-        text-align: center;
-        font-size: 24pt;
-        font-weight: bold;
-        margin: 20px 0;
-        text-transform: uppercase;
-    }
-    .caixa {
-        border: 2px solid #000;
-        padding: 4px 8px;
-        margin-bottom: 20px;
-        border-radius: 10px;
-    }
-    .caixa p {
-        margin: 4px 0;
-    }
-    .opcao {
-        margin-right: 20px;
-    }
-    .dados-aluno table {
-        width: 100%;
-        border-collapse: collapse;
-    }
-    .dados-aluno th,
-    .dados-aluno td {
-        border: 1px solid #000;
-        padding: 8px;
-    }
-    .linha-obs {
-        height: 22px;
-        border-bottom: 1px solid #000;
-        margin-bottom: 8px;
-    }
-    .footer {
-        text-align: center;
-        margin-top: 25px;
-        font-size: 10pt;
-    }
-    .btn-imprimir {
-        margin: 10px;
-    }
-    @media print {
-        body * {
-            visibility: hidden !important;
-        }
-        .imprimir_conteudo, .imprimir_conteudo * {
-            visibility: visible !important;
-        }
-        .imprimir_conteudo {
-            position: absolute;
-            left: 0;
-            top: 0;
-            width: 100%;
-            background: #fff;
-            z-index: 9999;
-            box-sizing: border-box;
-            padding: 0;
-            margin: 0;
-        }
-        .btn-imprimir {
-            display: none !important;
-        }
-    }
-</style>
+<x-estilo-impressao arquivo="declaracao" />
 
 <button type="button" id="imprimir_conteudo" class="btn btn-imprimir">Imprimir</button>
 
@@ -108,7 +19,7 @@
     <table class="timbre">
         <tr>
             <td style="width: 300px;">
-                <img src="{{ url('imgs/logoempresa_transparente.png') }}" width="200" height="200" alt="Logo da Empresa">
+                <img src="{{ \App\Support\LogoColegio::src() }}" class="logo-colegio-lg" alt="Logo da Empresa">
             </td>
             <td>
                 @forelse($escolas as $escola)

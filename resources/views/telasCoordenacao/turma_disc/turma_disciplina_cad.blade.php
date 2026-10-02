@@ -1,25 +1,9 @@
 @extends('layouts.app')
 
 @section('content')
-<style>
-    .custom-scroll::-webkit-scrollbar {
-        width: 6px;
-    }
-    .custom-scroll::-webkit-scrollbar-track {
-        background: #f8faf9;
-        border-radius: 8px;
-    }
-    .custom-scroll::-webkit-scrollbar-thumb {
-        background: #008a4b;
-        border-radius: 8px;
-    }
-    .custom-scroll::-webkit-scrollbar-thumb:hover {
-        background: #00703c;
-    }
-</style>
 @php
     try {
-        $turmas = \DB::table('tb_turmas')->orderBy('NomeTurma')->get();
+        $turmas = \DB::table('tb_turmas')->orderBy('NomeTurma')->whereIn('SituacaoTurma', ['ATIVO', 'ATIVA'])->get();
     } catch (\Exception $e) {
         $turmas = collect();
     }

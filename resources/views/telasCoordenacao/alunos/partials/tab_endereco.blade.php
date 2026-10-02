@@ -64,12 +64,12 @@
                         <i data-lucide="chevron-down" class="w-4 h-4"></i>
                     </div>
                 </div>
-                <div id="dropdown-menu-estado" class="hidden absolute top-full left-0 right-0 mt-1 bg-white border border-[#e3e8e6] rounded-xl shadow-xl z-50 p-2 flex flex-col gap-2 overflow-hidden" style="max-height: 240px;">
+                <div id="dropdown-menu-estado" class="dropdown-menu-flutuante hidden absolute top-full left-0 right-0 mt-1 bg-white border border-[#e3e8e6] rounded-xl shadow-xl z-50 p-2 flex flex-col gap-2 overflow-hidden" >
                     <div class="relative shrink-0">
                         <input type="text" onkeyup="filterDropdownOptions('search-estado', 'option-estado')" id="search-estado" placeholder="Pesquisar UF..." class="w-full pl-3 pr-9 py-1.5 bg-[#f8faf9] border border-[#e3e8e6] rounded-lg text-xs focus:outline-none focus:border-[#008a4b]">
                         <i data-lucide="search" class="w-3.5 h-3.5 text-[#95aba5] absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none"></i>
                     </div>
-                    <div class="custom-scroll flex flex-col gap-0.5 pr-1" style="max-height: 180px; overflow-y: auto;">
+                    <div class="dropdown-lista-opcoes custom-scroll flex flex-col gap-0.5 pr-1" >
                         <div onclick="selectSingleOption('', 'Selecione o estado...', 'Estado', 'label-estado', 'dropdown-menu-estado', 'chevron-estado', false); loadCitiesForCustomEstado('');"
                              class="option-estado flex items-center p-2 hover:bg-[#ecfdf5] rounded-lg transition-colors cursor-pointer text-xs text-[#0a241e]">
                             <span class="option-title font-medium text-[#95aba5]">Selecione o estado...</span>
@@ -102,12 +102,12 @@
                         <i data-lucide="chevron-down" class="w-4 h-4"></i>
                     </div>
                 </div>
-                <div id="dropdown-menu-cidade" class="hidden absolute top-full left-0 right-0 mt-1 bg-white border border-[#e3e8e6] rounded-xl shadow-xl z-50 p-2 flex flex-col gap-2 overflow-hidden" style="max-height: 240px;">
+                <div id="dropdown-menu-cidade" class="dropdown-menu-flutuante hidden absolute top-full left-0 right-0 mt-1 bg-white border border-[#e3e8e6] rounded-xl shadow-xl z-50 p-2 flex flex-col gap-2 overflow-hidden" >
                     <div class="relative shrink-0">
                         <input type="text" onkeyup="filterDropdownOptions('search-cidade', 'option-cidade')" id="search-cidade" placeholder="Pesquisar cidade..." class="w-full pl-3 pr-9 py-1.5 bg-[#f8faf9] border border-[#e3e8e6] rounded-lg text-xs focus:outline-none focus:border-[#008a4b]">
                         <i data-lucide="search" class="w-3.5 h-3.5 text-[#95aba5] absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none"></i>
                     </div>
-                    <div id="custom-cidades-list" class="custom-scroll flex flex-col gap-0.5 pr-1" style="max-height: 180px; overflow-y: auto;">
+                    <div id="custom-cidades-list" class="dropdown-lista-opcoes custom-scroll flex flex-col gap-0.5 pr-1" >
                         <div class="p-2 text-xs text-[#95aba5]">Selecione um estado primeiro</div>
                     </div>
                 </div>

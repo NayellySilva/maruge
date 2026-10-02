@@ -52,12 +52,12 @@
                                                                 <i data-lucide="chevron-down" class="w-4 h-4"></i>
                                                             </div>
                                                         </div>
-                                                        <div id="dropdown-menu-fin-turma" class="hidden absolute top-full left-0 right-0 mt-1 bg-white border border-[#e3e8e6] rounded-xl shadow-xl z-50 p-2 flex flex-col gap-2 overflow-hidden" style="max-height: 240px;">
+                                                        <div id="dropdown-menu-fin-turma" class="dropdown-menu-flutuante hidden absolute top-full left-0 right-0 mt-1 bg-white border border-[#e3e8e6] rounded-xl shadow-xl z-50 p-2 flex flex-col gap-2 overflow-hidden" >
                                                             <div class="relative shrink-0">
                                                                 <input type="text" onkeyup="filterDropdownOptions('search-fin-turma', 'option-fin-turma')" id="search-fin-turma" placeholder="Pesquisar..." class="w-full pl-3 pr-9 py-1.5 bg-[#f8faf9] border border-[#e3e8e6] rounded-lg text-xs focus:outline-none focus:border-[#008a4b]">
                                                                 <i data-lucide="search" class="w-3.5 h-3.5 text-[#95aba5] absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none"></i>
                                                             </div>
-                                                            <div class="custom-scroll flex flex-col gap-0.5 pr-1" style="max-height: 180px; overflow-y: auto;">
+                                                            <div class="dropdown-lista-opcoes custom-scroll flex flex-col gap-0.5 pr-1" >
                                                                 <div onclick="selectSingleOption('', 'Selecione...', 'idTurmas', 'label-fin-turma', 'dropdown-menu-fin-turma', 'chevron-fin-turma', false)"
                                                                      class="option-fin-turma flex items-center p-2 hover:bg-[#ecfdf5] rounded-lg transition-colors cursor-pointer text-xs text-[#0a241e]">
                                                                     <span class="option-title font-medium text-[#95aba5]">Todas as Turmas</span>
@@ -93,8 +93,8 @@
                                                                 <i data-lucide="chevron-down" class="w-4 h-4"></i>
                                                             </div>
                                                         </div>
-                                                        <div id="dropdown-menu-fin-mes" class="hidden absolute top-full left-0 right-0 mt-1 bg-white border border-[#e3e8e6] rounded-xl shadow-xl z-50 p-2 flex flex-col gap-2 overflow-hidden" style="max-height: 240px;">
-                                                            <div class="custom-scroll flex flex-col gap-0.5 pr-1" style="max-height: 180px; overflow-y: auto;">
+                                                        <div id="dropdown-menu-fin-mes" class="dropdown-menu-flutuante hidden absolute top-full left-0 right-0 mt-1 bg-white border border-[#e3e8e6] rounded-xl shadow-xl z-50 p-2 flex flex-col gap-2 overflow-hidden" >
+                                                            <div class="dropdown-lista-opcoes custom-scroll flex flex-col gap-0.5 pr-1" >
                                                                 <div onclick="selectSingleOption('', 'Selecione o mês...', 'Meses', 'label-fin-mes', 'dropdown-menu-fin-mes', 'chevron-fin-mes', false)"
                                                                      class="option-fin-mes flex items-center p-2 hover:bg-[#ecfdf5] rounded-lg transition-colors cursor-pointer text-xs text-[#0a241e]">
                                                                     <span class="option-title font-medium text-[#95aba5]">Selecione o mês...</span>
@@ -129,8 +129,8 @@
                                                                 <i data-lucide="chevron-down" class="w-4 h-4"></i>
                                                             </div>
                                                         </div>
-                                                        <div id="dropdown-menu-fin-sit" class="hidden absolute top-full left-0 right-0 mt-1 bg-white border border-[#e3e8e6] rounded-xl shadow-xl z-50 p-2 flex flex-col gap-2 overflow-hidden" style="max-height: 240px;">
-                                                            <div class="custom-scroll flex flex-col gap-0.5 pr-1" style="max-height: 180px; overflow-y: auto;">
+                                                        <div id="dropdown-menu-fin-sit" class="dropdown-menu-flutuante hidden absolute top-full left-0 right-0 mt-1 bg-white border border-[#e3e8e6] rounded-xl shadow-xl z-50 p-2 flex flex-col gap-2 overflow-hidden" >
+                                                            <div class="dropdown-lista-opcoes custom-scroll flex flex-col gap-0.5 pr-1" >
                                                                 <div onclick="selectSingleOption('', 'Selecione a situação...', 'status_pagamento', 'label-fin-sit', 'dropdown-menu-fin-sit', 'chevron-fin-sit', false)"
                                                                      class="option-fin-sit flex items-center p-2 hover:bg-[#ecfdf5] rounded-lg transition-colors cursor-pointer text-xs text-[#0a241e]">
                                                                     <span class="option-title font-medium text-[#95aba5]">Selecione...</span>
@@ -367,7 +367,7 @@
                                                <table class="timbre">
                                                     <tr>
                                                         <td>
-                                                            <img src="{{asset('imgs/logoempresa_transparente.png')}}" width="160" height="160" ><br>
+                                                            <img src="{{ \App\Support\LogoColegio::src() }}" class="logo-colegio"><br>
                                                             @forelse($escolas as $escola)
                                                             {{$escola->Rua}} , {{$escola->Numero}}<br>
                                                             {{$escola->Bairro}} - CEP:{{$escola->CEP}}<br>

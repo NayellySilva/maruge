@@ -3,51 +3,35 @@
 @section('content')
 
 @php
+    $formatDate = function($data) {
+        if (empty($data)) return '-';
+        $data = trim($data);
+        if (preg_match('/^(\d{2})\/(\d{2})\/(\d{4})$/', $data)) {
+            return $data;
+        }
+        if (preg_match('/^(\d{4})-(\d{2})-(\d{2})/', $data, $m)) {
+            return "{$m[3]}/{$m[2]}/{$m[1]}";
+        }
+        $ts = strtotime(str_replace('/', '-', $data));
+        return $ts ? date('d/m/Y', $ts) : $data;
+    };
+
     if (!isset($escolas)) {
         try { $escolas = \App\Models\modelCoordenacao\tb_escola::informacaoEscolar(); } catch (\Exception $e) { $escolas = collect(); }
     }
     if (!isset($alunos) && !isset($Alunos)) {
         try {
-            $alunos = \App\Models\modelCoordenacao\tb_aluno::alunoMatriculados();
+            $alunos = \App\Models\modelCoordenacao\tb_aluno::alunoMatriculados(request('idTurmas'), request('pesquisar'));
         } catch (\Exception $e) { $alunos = collect(); }
         $Alunos = $alunos;
     } else {
         $alunos = $alunos ?? $Alunos;
         $Alunos = $alunos;
     }
-    if (!isset($turmas)) {
-        try { $turmas = \DB::table('tb_turmas')->orderBy('NomeTurma')->get(); } catch (\Exception $e) { $turmas = collect(); }
+    if (!isset($turmas) || $turmas->isEmpty()) {
+        try { $turmas = \App\Models\modelCoordenacao\tb_turma::turmasAtivas(); } catch (\Exception $e) { $turmas = collect(); }
     }
 @endphp
-
-<!-- Estilos para Caixa de Diálogo de Impressão -->
-<style>
-    @media print {
-        @page {
-            size: A4 landscape;
-            margin: 8mm;
-        }
-        body * {
-            visibility: hidden !important;
-        }
-        #printable-report-area, #printable-report-area * {
-            visibility: visible !important;
-        }
-        #printable-report-area {
-            position: absolute !important;
-            left: 0 !important;
-            top: 0 !important;
-            width: 100% !important;
-            padding: 0 !important;
-            margin: 0 !important;
-            background: white !important;
-            color: black !important;
-        }
-        .print-hidden {
-            display: none !important;
-        }
-    }
-</style>
 
 <div class="flex flex-col gap-6 print-hidden">
 
@@ -106,7 +90,7 @@
                     </div>
 
                     <!-- Dropdown Flutuante -->
-                    <div id="dropdown-menu-turma-relatorio-matriculados" class="hidden absolute top-full left-0 right-0 mt-1 bg-white border border-[#e3e8e6] rounded-xl shadow-xl z-50 p-2 flex flex-col gap-2 overflow-hidden" style="max-height: 240px;">
+                    <div id="dropdown-menu-turma-relatorio-matriculados" class="dropdown-menu-flutuante hidden absolute top-full left-0 right-0 mt-1 bg-white border border-[#e3e8e6] rounded-xl shadow-xl z-50 p-2 flex flex-col gap-2 overflow-hidden" >
                         <!-- Campo de Busca -->
                         <div class="relative shrink-0">
                             <input type="text" onkeyup="filterDropdownOptions('search-turma-relatorio-matriculados', 'option-turma-relatorio-matriculados')" id="search-turma-relatorio-matriculados" placeholder="Pesquisar..." class="w-full pl-3 pr-9 py-1.5 bg-[#f8faf9] border border-[#e3e8e6] rounded-lg text-xs focus:outline-none focus:border-[#008a4b]">
@@ -114,7 +98,7 @@
                         </div>
 
                         <!-- Lista de Opções com Rolagem -->
-                        <div class="custom-scroll flex flex-col gap-0.5 pr-1" style="max-height: 180px; overflow-y: auto;">
+                        <div class="dropdown-lista-opcoes custom-scroll flex flex-col gap-0.5 pr-1" >
                             <div onclick="selectSingleOption('', 'Todas as Turmas', 'idTurmas', 'label-turma-relatorio-matriculados', 'dropdown-menu-turma-relatorio-matriculados', 'chevron-turma-relatorio-matriculados', true)"
                                  class="option-turma-relatorio-matriculados flex items-center p-2 hover:bg-[#ecfdf5] rounded-lg transition-colors cursor-pointer text-xs text-[#0a241e]">
                                 <span class="option-title font-medium">Todas as Turmas</span>
@@ -161,7 +145,7 @@
                             <td class="px-3 py-3 text-center text-xs text-[#5c706b] font-mono">{{ $index + 1 }}</td>
                             <td class="px-3 py-3 text-xs text-[#5c706b] font-mono">{{ $aluno->NumeroMac ?? $aluno->RA ?? '-' }}</td>
                             <td class="px-3 py-3 text-xs font-bold text-[#0a241e] uppercase">{{ $aluno->NomeAluno }}</td>
-                            <td class="px-3 py-3 text-center text-xs text-[#5c706b]">{{ $aluno->DataNascimento ? date('d/m/Y', strtotime($aluno->DataNascimento)) : '-' }}</td>
+                            <td class="px-3 py-3 text-center text-xs text-[#5c706b]">{{ $formatDate($aluno->DataNascimento) }}</td>
                             <td class="px-3 py-3 text-xs text-[#0a241e] uppercase">{{ $aluno->NomeMae ?? '-' }}</td>
                             <td class="px-3 py-3 text-center text-xs text-[#5c706b]">{{ $aluno->FoneMae1 ?? '-' }}</td>
                             <td class="px-3 py-3 text-xs text-[#0a241e] uppercase">{{ $aluno->NomePai ?? '-' }}</td>
@@ -185,7 +169,7 @@
 <div id="printable-report-area" class="hidden print:block">
     <!-- Moldura de Cabeçalho da Escola com Borda Dupla -->
     <div style="border: 3px double #333; padding: 12px 18px; text-align: center; margin-bottom: 18px; width: 94%; margin-left: auto; margin-right: auto; box-sizing: border-box;">
-        <img src="{{ asset('imgs/logoempresa_transparente.png') }}" width="120" style="display: block; margin: 0 auto 8px auto;">
+        <img src="{{ \App\Support\LogoColegio::src() }}" class="logo-colegio-sm block mx-auto mb-2">
         @forelse($escolas as $escola)
             <div style="font-weight: bold; font-size: 12px; text-transform: uppercase; line-height: 1.4; color: #111;">
                 {{ $escola->Rua }} , {{ $escola->Numero }}<br>
@@ -232,7 +216,7 @@
                     <td style="padding: 5px 3px; text-align: center;">{{ $index + 1 }}</td>
                     <td style="padding: 5px 4px; font-family: monospace;">{{ $aluno->NumeroMac ?? $aluno->RA ?? '-' }}</td>
                     <td style="padding: 5px 4px; font-weight: bold; text-transform: uppercase;">{{ $aluno->NomeAluno }}</td>
-                    <td style="padding: 5px 4px; text-align: center;">{{ $aluno->DataNascimento ? date('d/m/Y', strtotime($aluno->DataNascimento)) : '-' }}</td>
+                    <td style="padding: 5px 4px; text-align: center;">{{ $formatDate($aluno->DataNascimento) }}</td>
                     <td style="padding: 5px 4px; text-transform: uppercase;">{{ $aluno->NomeMae ?? '-' }}</td>
                     <td style="padding: 5px 4px; text-align: center;">{{ $aluno->FoneMae1 ?? '-' }}</td>
                     <td style="padding: 5px 4px; text-transform: uppercase;">{{ $aluno->NomePai ?? '-' }}</td>
