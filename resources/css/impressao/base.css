@@ -1,0 +1,28 @@
+/*
+ * Base de TODOS os documentos impressos
+ * Incluído nas views com <x-estilo-impressao arquivo="..." /> (CSS embutido,
+ * funciona no navegador e no PDF gerado pelo dompdf). Não precisa de npm run build.
+ */
+
+/* Botões "Imprimir/Voltar" não saem no papel */
+@media print {
+    .botao,
+    .no-print,
+    .no-print-bar {
+        display: none !important;
+    }
+}
+
+/* Logo do colégio nos cabeçalhos (mantém a proporção da imagem) */
+.logo-colegio {
+    max-width: 160px;
+    max-height: 160px;
+}
+.logo-colegio-sm { max-width: 120px; max-height: 120px; }
+.logo-colegio-lg { max-width: 200px; max-height: 200px; }
+
+/* Quebra de página */
+.break,
+.quebra-pagina {
+    page-break-before: always;
+}

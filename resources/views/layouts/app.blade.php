@@ -11,24 +11,10 @@
     <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
     <!-- Estilos e Scripts (Vite) -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-    <style>
-        .custom-scroll::-webkit-scrollbar {
-            width: 6px;
-        }
-        .custom-scroll::-webkit-scrollbar-track {
-            background: #f8faf9;
-            border-radius: 8px;
-        }
-        .custom-scroll::-webkit-scrollbar-thumb {
-            background: #008a4b;
-            border-radius: 8px;
-        }
-        .custom-scroll::-webkit-scrollbar-thumb:hover {
-            background: #00703c;
-        }
-    </style>
-</head>
+    </head>
 <body>
     <div class="dashboard-layout">
         <!-- Cabeçalho Mobile (Visível em telas menores) -->

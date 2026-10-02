@@ -1,5 +1,13 @@
 @import 'tailwindcss';
 
+/* CSS específico de telas — cada módulo tem seu arquivo em resources/css/telas/.
+   Regra do projeto: nada de <style> dentro das views. */
+@import './telas/alunos.css';
+@import './telas/funcionarios.css';
+@import './telas/relatorios.css';
+@import './telas/recibos.css';
+@import './telas/componentes.css';
+
 /* Regras Globais de Rolagem (Scrollbar Customizada) */
 .custom-scroll::-webkit-scrollbar {
     width: 6px !important;

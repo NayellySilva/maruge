@@ -1,0 +1,39 @@
+/* =========================================================================
+   Recibos e contratos (telas dentro do layout)
+   ========================================================================= */
+
+/* Quebra de página entre as vias */
+.break {
+    page-break-before: always;
+}
+
+/* --- Contrato (recibos/recibo_contrato): linhas de assinatura --- */
+.linha-assinaturas {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 40px;
+}
+
+.linha-testemunhas {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.linha-cpf {
+    display: flex;
+    justify-content: space-between;
+}
+
+.campo-assinatura {
+    flex: 1;
+    text-align: center;
+    margin: 0 20px;
+}
+
+.campo-assinatura div {
+    border-bottom: 1px solid #000;
+    padding-bottom: 5px;
+    margin-bottom: 5px;
+    min-height: 25px;
+}

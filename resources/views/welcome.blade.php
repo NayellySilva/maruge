@@ -20,7 +20,7 @@
             <div>
                 <h1 class="text-3xl font-semibold text-[#0a241e]">Bem-vinda, {{ $nomeUsuario }}</h1>
             </div>
-            <a href="{{ route('coordenacao.pagina', ['pasta' => 'alunos', 'pagina' => 'aluno_cad']) }}" class="bg-[#008a4b] hover:bg-[#00703c] text-white font-medium px-6 py-2.5 rounded-full flex items-center gap-2 transition-all shadow-sm cursor-pointer">
+            <a href="{{ url('/coordenacao/aluno_cad') }}" class="bg-[#008a4b] hover:bg-[#00703c] text-white font-medium px-6 py-2.5 rounded-full flex items-center gap-2 transition-all shadow-sm cursor-pointer">
                 <i data-lucide="plus" class="w-5 h-5"></i>
                 <span>Nova Matrícula</span>
             </a>
