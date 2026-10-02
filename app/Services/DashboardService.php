@@ -175,39 +175,38 @@ class DashboardService
             }
         }
 
-        // 2. Docentes e Funcionários
-        if (\Illuminate\Support\Facades\Schema::hasColumn('tb_funcionarios', 'DataNascimento')) {
-            $funcionarios = DB::table('tb_funcionarios')
-                ->whereNotNull('DataNascimento')
+        // 2. Docentes e Funcionários (ativos)
+        $queryFuncionarios = $this->funcionariosAtivosQuery();
+        $funcionarios = $queryFuncionarios
+            ? $queryFuncionarios->whereNotNull('DataNascimento')
                 ->where('DataNascimento', '!=', '')
-                ->where('NomeFuncionario', 'not like', '%(SAIU)%')
-                ->where('NomeFuncionario', 'not like', '%(INATIVO)%')
                 ->select('NomeFuncionario', 'DataNascimento', 'Funcao')
-                ->get();
+                ->get()
+            : collect();
 
-            foreach ($funcionarios as $f) {
-                $parsed = $this->parseBirthDayAndMonth($f->DataNascimento);
-                if ($parsed && $parsed['month'] === $targetMonth) {
-                    $rawName = mb_convert_encoding(trim($f->NomeFuncionario ?? ''), 'UTF-8', 'UTF-8, ISO-8859-1, Windows-1252');
-                    $name = mb_convert_case($rawName, MB_CASE_TITLE, "UTF-8");
-                    $parts = array_values(array_filter(explode(' ', $name)));
+        foreach ($funcionarios as $f) {
+            $parsed = $this->parseBirthDayAndMonth($f->DataNascimento);
+            if ($parsed && $parsed['month'] === $targetMonth) {
+                $rawName = mb_convert_encoding(trim($f->NomeFuncionario ?? ''), 'UTF-8', 'UTF-8, ISO-8859-1, Windows-1252');
+                $name = mb_convert_case($rawName, MB_CASE_TITLE, "UTF-8");
+                $parts = array_values(array_filter(explode(' ', $name)));
 
-                    $initial1 = isset($parts[0]) ? mb_substr($parts[0], 0, 1, 'UTF-8') : '';
-                    $initial2 = isset($parts[1]) ? mb_substr($parts[1], 0, 1, 'UTF-8') : '';
-                    $initials = mb_strtoupper($initial1 . $initial2, 'UTF-8');
+                $initial1 = isset($parts[0]) ? mb_substr($parts[0], 0, 1, 'UTF-8') : '';
+                $initial2 = isset($parts[1]) ? mb_substr($parts[1], 0, 1, 'UTF-8') : '';
+                $initials = mb_strtoupper($initial1 . $initial2, 'UTF-8');
 
-                    $funcao = mb_convert_case(trim($f->Funcao ?? 'Docente'), MB_CASE_TITLE, "UTF-8");
+                $rawFuncao = mb_convert_encoding(trim($f->Funcao ?? '') ?: 'Funcionário', 'UTF-8', 'UTF-8, ISO-8859-1, Windows-1252');
+                $funcao = mb_convert_case($rawFuncao, MB_CASE_TITLE, "UTF-8");
 
-                    $aniversariantes[] = [
-                        'name' => $name,
-                        'day' => $parsed['day'],
-                        'month' => $parsed['month'],
-                        'role' => $funcao,
-                        'avatar' => $initials ?: 'PR',
-                        'color' => 'bg-[#ffb300]/15 text-[#b45309]', // Destaque âmbar/dourado para professores
-                        'tipo' => 'docente',
-                    ];
-                }
+                $aniversariantes[] = [
+                    'name' => $name,
+                    'day' => $parsed['day'],
+                    'month' => $parsed['month'],
+                    'role' => $funcao,
+                    'avatar' => $initials ?: 'FU',
+                    'color' => 'bg-[#ffb300]/15 text-[#b45309]', // Destaque âmbar/dourado para funcionários
+                    'tipo' => 'docente',
+                ];
             }
         }
 
@@ -217,7 +216,54 @@ class DashboardService
     }
 
     /**
-     * Utilitário para parse seguro de datas de nascimento (YYYY-MM-DD ou DD/MM/YYYY).
+     * Query base dos funcionários ativos, ou null se a tabela/coluna de
+     * nascimento ainda não existir (migration não executada).
+     */
+    protected function funcionariosAtivosQuery()
+    {
+        if (!Schema::hasTable('tb_funcionarios') || !Schema::hasColumn('tb_funcionarios', 'DataNascimento')) {
+            return null;
+        }
+
+        $query = DB::table('tb_funcionarios')
+            ->where('NomeFuncionario', 'not like', '%(SAIU)%')
+            ->where('NomeFuncionario', 'not like', '%(INATIVO)%');
+
+        if (Schema::hasColumn('tb_funcionarios', 'Situacao')) {
+            $query->where(function ($q) {
+                $q->whereNull('Situacao')
+                  ->orWhere('Situacao', '')
+                  ->orWhereNotIn('Situacao', ['INATIVO', 'INATIVA', '[INATIVO]']);
+            });
+        }
+
+        return $query;
+    }
+
+    /**
+     * Situação do cadastro de nascimento dos funcionários, para o aviso do card.
+     * Retorna ['coluna' => bool, 'sem_data' => int].
+     */
+    public function getFuncionariosSemDataNascimento(): array
+    {
+        $query = $this->funcionariosAtivosQuery();
+        if ($query === null) {
+            return ['coluna' => false, 'sem_data' => 0];
+        }
+
+        $semData = 0;
+        foreach ($query->select('DataNascimento')->get() as $f) {
+            if (!$this->parseBirthDayAndMonth($f->DataNascimento)) {
+                $semData++;
+            }
+        }
+
+        return ['coluna' => true, 'sem_data' => $semData];
+    }
+
+    /**
+     * Utilitário para parse seguro de datas de nascimento.
+     * Aceita YYYY-MM-DD (com ou sem hora), DD/MM/YYYY, DD-MM-YYYY, DD.MM.YYYY e ano com 2 dígitos.
      */
     protected function parseBirthDayAndMonth(?string $dateStr): ?array
     {
@@ -226,10 +272,10 @@ class DashboardService
         $day = null;
         $month = null;
 
-        if (preg_match('/^(\d{4})-(\d{2})-(\d{2})/', $d, $m)) {
+        if (preg_match('/^(\d{4})[-\/.](\d{1,2})[-\/.](\d{1,2})/', $d, $m)) {
             $month = (int)$m[2] - 1;
             $day = (int)$m[3];
-        } elseif (preg_match('/^(\d{2})\/(\d{2})\/\d{4}/', $d, $m)) {
+        } elseif (preg_match('/^(\d{1,2})[-\/.](\d{1,2})[-\/.](\d{2}|\d{4})\b/', $d, $m)) {
             $day = (int)$m[1];
             $month = (int)$m[2] - 1;
         }

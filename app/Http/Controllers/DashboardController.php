@@ -39,6 +39,12 @@ class DashboardController extends Controller
         $targetMonth = (int)$request->query('month', (int)date('n') - 1);
         $aniversariantes = $this->dashboardService->getBirthdaysByMonth($targetMonth);
 
-        return response()->json($aniversariantes, 200, [], JSON_INVALID_UTF8_SUBSTITUTE);
+        // Informa ao card quantos funcionários ativos ainda estão sem data de nascimento
+        $pendencias = $this->dashboardService->getFuncionariosSemDataNascimento();
+
+        return response()->json($aniversariantes, 200, [
+            'X-Funcionarios-Coluna-Nascimento' => $pendencias['coluna'] ? '1' : '0',
+            'X-Funcionarios-Sem-Data' => (string) $pendencias['sem_data'],
+        ], JSON_INVALID_UTF8_SUBSTITUTE);
     }
 }
