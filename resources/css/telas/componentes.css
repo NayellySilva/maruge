@@ -1,0 +1,12 @@
+/* =========================================================================
+   Classes reutilizáveis que substituem style="" repetidos nas views
+   ========================================================================= */
+
+/* Logo do colégio nos cabeçalhos de documentos exibidos dentro do layout */
+.logo-colegio { max-width: 160px; max-height: 160px; }
+.logo-colegio-sm { max-width: 120px; max-height: 120px; }
+.logo-colegio-lg { max-width: 200px; max-height: 200px; }
+
+/* Dropdowns customizados (turma, situação etc.) */
+.dropdown-menu-flutuante { max-height: 240px; }
+.dropdown-lista-opcoes { max-height: 180px; overflow-y: auto; }

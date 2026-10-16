@@ -1,6 +1,8 @@
 <?php
 
 use App\Models\User;
+use App\Models\modelLogin\modelLoginPrincipal;
+use App\Models\modelLogin\modelLoginAluno;
 
 return [
 
@@ -42,6 +44,18 @@ return [
             'driver' => 'session',
             'provider' => 'users',
         ],
+
+        // Guardas legadas do Maruge (definidas originalmente em app/Providers/auth.php,
+        // mas nunca migradas para cá — por isso loginPrincipal/loginAluno quebravam com
+        // "Auth guard is not defined"). Preservadas conforme lógica original.
+        'guardLogin' => [
+            'driver' => 'session',
+            'provider' => 'tb_usuario',
+        ],
+        'guardLoginAluno' => [
+            'driver' => 'session',
+            'provider' => 'tb_matriculas',
+        ],
     ],
 
     /*
@@ -71,6 +85,16 @@ return [
         //     'driver' => 'database',
         //     'table' => 'users',
         // ],
+
+        // Providers legados do Maruge (ver nota em 'guards' acima).
+        'tb_usuario' => [
+            'driver' => 'eloquent',
+            'model' => modelLoginPrincipal::class,
+        ],
+        'tb_matriculas' => [
+            'driver' => 'eloquent',
+            'model' => modelLoginAluno::class,
+        ],
     ],
 
     /*

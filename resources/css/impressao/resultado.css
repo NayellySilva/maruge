@@ -1,0 +1,29 @@
+/*
+ * Estilos para Resultados Acadêmicos
+ * Movido de resultado_fund2_aprovados_1sem.blade.php
+ */
+@page { size: A4 portrait; margin: 10mm; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Segoe UI', Arial, sans-serif; font-size: 11px; color: #0f172a; background: #f8fafc; padding: 20px; }
+@media print {
+    body { background: white; padding: 0; }
+    .no-print { display: none !important; }
+    .report-card { box-shadow: none !important; border: none !important; padding: 0 !important; margin: 0 !important; width: 100% !important; }
+}
+.no-print-bar { max-width: 900px; margin: 0 auto 16px auto; display: flex; justify-content: flex-end; }
+.btn-imprimir { background-color: #008a4b; color: white; border: none; padding: 9px 20px; font-size: 13px; font-weight: 600; border-radius: 9999px; cursor: pointer; box-shadow: 0 2px 6px rgba(0,0,0,0.1); display: inline-flex; align-items: center; gap: 8px; }
+.report-card { max-width: 900px; margin: 0 auto; background: white; padding: 24px; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+.school-header { border: 3px double #334155; padding: 12px 16px; text-align: center; margin-bottom: 16px; border-radius: 6px; }
+.school-logo { height: 55px; width: auto; margin: 0 auto 6px auto; display: block; }
+.school-info { font-size: 10.5px; font-weight: 600; text-transform: uppercase; line-height: 1.4; color: #334155; }
+.resultado-header { text-align: center; margin-bottom: 20px; }
+.resultado-title { font-size: 15px; font-weight: 800; text-transform: uppercase; color: #008a4b; }
+.resultado-subtitle { font-size: 12px; font-weight: 700; color: #475569; margin-top: 2px; }
+.subject-panel { border: 1px solid #cbd5e1; border-radius: 8px; margin-bottom: 16px; overflow: hidden; background: white; }
+.subject-panel-header { background-color: #f1f5f9; padding: 8px 14px; font-size: 11.5px; font-weight: 700; color: #1e293b; border-bottom: 1px solid #cbd5e1; }
+table.resultado-table { width: 100%; border-collapse: collapse; font-size: 10.5px; }
+table.resultado-table th { background-color: #f8fafc; color: #475569; font-weight: 700; text-transform: uppercase; padding: 7px 10px; border-bottom: 1px solid #e2e8f0; text-align: center; font-size: 10px; }
+table.resultado-table td { padding: 7px 10px; border-bottom: 1px solid #f1f5f9; text-align: center; color: #0f172a; }
+table.resultado-table td.aluno-nome { text-align: left; font-weight: 600; }
+.badge-aprovado { background-color: #dcfce7; color: #15803d; padding: 3px 8px; border-radius: 4px; font-weight: 700; font-size: 10px; display: inline-block; }
+.badge-recuperacao { background-color: #fee2e2; color: #b91c1c; padding: 3px 8px; border-radius: 4px; font-weight: 700; font-size: 10px; display: inline-block; }

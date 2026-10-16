@@ -1,0 +1,144 @@
+@extends('layouts.app')
+
+@section('content')
+
+@php
+    $Alunos = $Alunos ?? new \Illuminate\Pagination\LengthAwarePaginator([], 0, 15);
+    $turmas = $turmas ?? collect();
+@endphp
+
+<div class="flex flex-col gap-6">
+
+    <!-- Breadcrumb -->
+    <div class="text-sm text-[#5c706b]">
+        <a href="{{ url('/coordenacao') }}" class="hover:text-[#008a4b] transition-colors">Secretaria</a>
+        <span class="mx-2">/</span>
+        <span class="font-semibold text-[#0a241e]">Histórico</span>
+    </div>
+
+    <!-- Cabeçalho -->
+    <div class="flex justify-between items-center">
+        <div class="flex flex-col gap-1">
+            <h1 class="text-3xl font-semibold text-[#0a241e]">Histórico</h1>
+            <p class="text-sm text-[#5c706b]">Alunos cadastrados: ({{ $Alunos->total() }})</p>
+        </div>
+    </div>
+
+    <!-- Filtros -->
+    <div class="flex flex-col sm:flex-row gap-4 items-center">
+        <!-- Barra de Pesquisa -->
+        <div class="w-full sm:w-80">
+            <form method="POST" action="{{ url('/coordenacao/historico_pesq') }}" class="w-full">
+                @csrf
+                <div class="flex items-center bg-white border border-[#e3e8e6] rounded-xl px-4 py-2.5 transition-all">
+                    <input type="text" name="pesquisar" placeholder="Pesquisar Aluno" class="w-full bg-transparent text-sm focus:outline-none">
+                    <button type="submit" class="text-[#5c706b] hover:text-[#008a4b] ml-2">
+                        <i data-lucide="search" class="w-4 h-4"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Filtrar por Turma -->
+        <div class="w-full sm:w-64">
+            <form method="GET" action="{{ url()->current() }}" class="w-full">
+                <div class="relative" id="dropdown-container-turma-historico">
+                    <input type="hidden" id="idTurmas" name="idTurmas" value="{{ request()->input('idTurmas', '') }}">
+
+                    @php
+                        $selectedTurmaHist = $turmas->firstWhere('idTurmas', request()->input('idTurmas'));
+                    @endphp
+
+                    <!-- Trigger Box -->
+                    <div onclick="toggleMultiDropdown('dropdown-menu-turma-historico', 'chevron-turma-historico')" 
+                         class="w-full flex items-center justify-between bg-white border border-[#e3e8e6] hover:border-[#008a4b]/50 rounded-xl px-4 py-2.5 transition-all cursor-pointer shadow-2xs h-11">
+                        <span id="label-turma-historico" class="text-sm font-medium truncate {{ $selectedTurmaHist ? 'text-[#0a241e]' : 'text-[#95aba5]' }}">
+                            {{ $selectedTurmaHist ? $selectedTurmaHist->NomeTurma : 'Filtrar por Turma' }}
+                        </span>
+                        <div id="chevron-turma-historico" class="text-[#95aba5] transition-transform duration-200 shrink-0 ml-2">
+                            <i data-lucide="chevron-down" class="w-4 h-4"></i>
+                        </div>
+                    </div>
+
+                    <!-- Dropdown Flutuante -->
+                    <div id="dropdown-menu-turma-historico" class="dropdown-menu-flutuante hidden absolute top-full left-0 right-0 mt-1 bg-white border border-[#e3e8e6] rounded-xl shadow-xl z-50 p-2 flex flex-col gap-2 overflow-hidden" >
+                        <!-- Campo de Busca -->
+                        <div class="relative shrink-0">
+                            <input type="text" onkeyup="filterDropdownOptions('search-turma-historico', 'option-turma-historico')" id="search-turma-historico" placeholder="Pesquisar..." class="w-full pl-3 pr-9 py-1.5 bg-[#f8faf9] border border-[#e3e8e6] rounded-lg text-xs focus:outline-none focus:border-[#008a4b]">
+                            <i data-lucide="search" class="w-3.5 h-3.5 text-[#95aba5] absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none"></i>
+                        </div>
+
+                        <!-- Lista de Opções com Rolagem -->
+                        <div class="dropdown-lista-opcoes custom-scroll flex flex-col gap-0.5 pr-1" >
+                            <div onclick="selectSingleOption('', 'Todas as Turmas', 'idTurmas', 'label-turma-historico', 'dropdown-menu-turma-historico', 'chevron-turma-historico', true)"
+                                 class="option-turma-historico flex items-center p-2 hover:bg-[#ecfdf5] rounded-lg transition-colors cursor-pointer text-xs text-[#0a241e]">
+                                <span class="option-title font-medium">Todas as Turmas</span>
+                            </div>
+                            @foreach($turmas as $t)
+                                <div onclick="selectSingleOption('{{ $t->idTurmas }}', '{{ $t->NomeTurma }}', 'idTurmas', 'label-turma-historico', 'dropdown-menu-turma-historico', 'chevron-turma-historico', true)"
+                                     class="option-turma-historico flex items-center p-2 hover:bg-[#ecfdf5] rounded-lg transition-colors cursor-pointer text-xs text-[#0a241e]">
+                                    <span class="option-title font-medium">{{ $t->NomeTurma }}</span>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Tabela -->
+    <div class="bg-white border border-[#e3e8e6] rounded-2xl overflow-hidden shadow-2xs">
+        <div class="overflow-x-auto">
+            <table class="w-full border-collapse">
+                <thead>
+                    <tr class="bg-[#f8faf9] border-b border-[#e3e8e6]">
+                        <th class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-[#5c706b]">Nome do Aluno</th>
+                        <th class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-[#5c706b]">Nº MAC</th>
+                        <th class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-[#5c706b]">Turma</th>
+                        <th class="px-6 py-4 text-center text-xs font-semibold uppercase tracking-wider text-[#5c706b]">Ações</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-[#e3e8e6]">
+                    @forelse($Alunos as $Aluno)
+                        <tr class="hover:bg-[#f8faf9]/50 transition-colors">
+                            <td class="px-6 py-4 text-sm font-semibold text-[#0a241e]">{{ $Aluno->NomeAluno }}</td>
+                            <td class="px-6 py-4 text-sm text-[#5c706b]">{{ $Aluno->NumeroMac ?? $Aluno->RA ?? '-' }}</td>
+                            <td class="px-6 py-4 text-sm text-[#0a241e]">{{ $Aluno->NomeTurma ?? '-' }}</td>
+                            <td class="px-6 py-4 text-sm text-center">
+                                <a href="{{ url('/coordenacao/historico/' . $Aluno->idAluno) }}"
+                                   target="_blank"
+                                   class="inline-flex items-center justify-center p-2 rounded-lg text-[#5c706b] hover:text-[#008a4b] hover:bg-[#ecfdf5] transition-all"
+                                   title="Ver Histórico">
+                                    <i data-lucide="printer" class="w-4 h-4"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="4" class="px-6 py-12 text-center">
+                                <div class="flex flex-col items-center gap-3">
+                                    <div class="w-16 h-16 rounded-full bg-[#f8faf9] flex items-center justify-center text-[#95aba5]">
+                                        <i data-lucide="users" class="w-8 h-8"></i>
+                                    </div>
+                                    <p class="text-sm text-[#0a241e] font-medium">Nenhum aluno encontrado</p>
+                                    <p class="text-xs text-[#5c706b]">Cadastre alunos ou ajuste os filtros de busca</p>
+                                </div>
+                            </td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Paginação -->
+    @if($Alunos->hasPages())
+        <div class="flex justify-center mt-2">
+            {{ $Alunos->links() }}
+        </div>
+    @endif
+
+</div>
+
+@endsection

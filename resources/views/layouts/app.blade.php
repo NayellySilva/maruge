@@ -11,7 +11,10 @@
     <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
     <!-- Estilos e Scripts (Vite) -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-</head>
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    </head>
 <body>
     <div class="dashboard-layout">
         <!-- Cabeçalho Mobile (Visível em telas menores) -->
@@ -53,51 +56,6 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-            // Atualiza os estados ativos do menu lateral
-            function updateSidebarActiveStates() {
-                const currentUrl = window.location.href.split('?')[0].replace(/\/$/, '');
-                
-                // Remove as classes ativas antigas
-                document.querySelectorAll('.sidebar-link, .submenu-link').forEach(el => {
-                    el.classList.remove('active');
-                    el.classList.remove('active-parent');
-                });
-                document.querySelectorAll('.sidebar-item').forEach(el => {
-                    el.classList.remove('expanded');
-                });
-
-                // Percorre todos os links para achar o correspondente
-                let activeLink = null;
-                document.querySelectorAll('.sidebar-menu a').forEach(link => {
-                    const href = link.getAttribute('href');
-                    if (href && href !== '#' && !href.startsWith('javascript:')) {
-                        const linkUrl = link.href.split('?')[0].replace(/\/$/, '');
-                        if (currentUrl === linkUrl) {
-                            activeLink = link;
-                        }
-                    }
-                });
-
-                if (activeLink) {
-                    activeLink.classList.add('active');
-                    
-                    // Se for um link de submenu, expande e destaca o pai com a classe active-parent (sem fundo verde)
-                    const submenu = activeLink.closest('.submenu');
-                    if (submenu) {
-                        const parentItem = activeLink.closest('.sidebar-item');
-                        if (parentItem) {
-                            parentItem.classList.add('expanded');
-                            const parentLink = parentItem.querySelector('.sidebar-link');
-                            if (parentLink) {
-                                parentLink.classList.add('active-parent');
-                            }
-                        }
-                    }
-                }
-            }
-
-            // Roda ao carregar a página inicialmente
-            updateSidebarActiveStates();
 
             // Histórico de navegação (botão Voltar/Avançar do navegador)
             window.addEventListener('popstate', () => {
@@ -120,7 +78,163 @@
                 }
             });
 
+            function isModalPage(urlStr) {
+                return (urlStr.includes('disciplina_cad') && !urlStr.includes('turma_disciplina_cad')) || 
+                       (urlStr.includes('disciplina_editar') && !urlStr.includes('turma_disciplina_editar'));
+            }
+
+            function getBackgroundPageUrl(urlStr) {
+                if (isModalPage(urlStr)) {
+                    return window.location.origin + '/coordenacao/disciplinas/disciplina_inf';
+                }
+                return null;
+            }
+
+            function initPageScripts(newContent) {
+                // Atualiza os estados do sidebar
+                if (typeof updateSidebarActiveStates === 'function') {
+                    updateSidebarActiveStates();
+                }
+                if (typeof loadSidebarState === 'function') {
+                    loadSidebarState();
+                }
+
+                // Executa scripts presentes na página carregada
+                if (newContent) {
+                    const scripts = newContent.querySelectorAll('script');
+                    scripts.forEach(script => {
+                        const newScript = document.createElement('script');
+                        if (script.src) {
+                            newScript.src = script.src;
+                        } else {
+                            newScript.textContent = script.textContent;
+                        }
+                        document.body.appendChild(newScript);
+                        newScript.remove();
+                    });
+                }
+
+                // Recria ícones Lucide
+                if (window.lucide) {
+                    window.lucide.createIcons();
+                }
+
+                // Inicializa Máscaras Universais e busca por CEP (ViaCEP API)
+                if (window.initAlunoMasks) {
+                    window.initAlunoMasks();
+                }
+            }
+
+            function openModalFromUrl(url, pushState = true) {
+                fetch(url)
+                    .then(response => {
+                        if (!response.ok) throw new Error('Page load failed');
+                        return response.text();
+                    })
+                    .then(html => {
+                        const parser = new DOMParser();
+                        const doc = parser.parseFromString(html, 'text/html');
+
+                        // Encontra o container do modal no HTML retornado
+                        const modalOverlay = doc.querySelector('.fixed.inset-0.z-50');
+                        if (modalOverlay) {
+                            // Remove o modal atual se houver
+                            const existingModal = document.getElementById('app-modal-container');
+                            if (existingModal) {
+                                existingModal.remove();
+                            }
+
+                            // Cria e anexa o novo container do modal
+                            const modalContainer = document.createElement('div');
+                            modalContainer.id = 'app-modal-container';
+                            modalContainer.appendChild(modalOverlay);
+                            document.body.appendChild(modalContainer);
+
+                            // Atualiza os ícones dentro do modal
+                            if (window.lucide) {
+                                window.lucide.createIcons();
+                            }
+
+                            // Inicializa Máscaras Universais e busca por CEP (ViaCEP API)
+                            if (window.initAlunoMasks) {
+                                window.initAlunoMasks();
+                            }
+
+                            // Atualiza o histórico do navegador
+                            if (pushState) {
+                                history.pushState(null, '', url);
+                            }
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Modal load error, loading normally:', error);
+                        window.location.href = url;
+                    });
+            }
+
+            function loadBackgroundThenModal(bgUrl, modalUrl, pushState = true) {
+                const mainContent = document.querySelector('.main-content');
+                if (mainContent) {
+                    mainContent.style.opacity = '0.5';
+                    mainContent.style.transition = 'opacity 0.15s ease';
+                }
+
+                fetch(bgUrl)
+                    .then(response => {
+                        if (!response.ok) throw new Error('Page load failed');
+                        return response.text();
+                    })
+                    .then(html => {
+                        const parser = new DOMParser();
+                        const doc = parser.parseFromString(html, 'text/html');
+
+                        // Atualiza o título
+                        document.title = doc.title;
+
+                        // Atualiza o conteúdo principal
+                        const newContent = doc.querySelector('.main-content');
+                        if (mainContent && newContent) {
+                            mainContent.innerHTML = newContent.innerHTML;
+                            mainContent.style.opacity = '1';
+                        }
+
+                        // Inicializa scripts e ícones do background
+                        initPageScripts(newContent);
+
+                        // Abre o modal por cima
+                        openModalFromUrl(modalUrl, pushState);
+                    })
+                    .catch(error => {
+                        console.error('Background load error, loading normally:', error);
+                        window.location.href = modalUrl;
+                    });
+            }
+
             function loadPage(url, pushState = true) {
+                // Fechar qualquer modal ativo ao navegar para uma página comum
+                if (!isModalPage(url)) {
+                    const modalContainer = document.getElementById('app-modal-container');
+                    if (modalContainer) {
+                        modalContainer.remove();
+                    }
+                }
+
+                // Se a URL solicitada for de um modal
+                if (isModalPage(url)) {
+                    const bgUrl = getBackgroundPageUrl(url);
+                    const currentBgUrl = getBackgroundPageUrl(window.location.href);
+
+                    // Se já estivermos na página de fundo correta carregada no DOM
+                    if (currentBgUrl === bgUrl && document.querySelector('.main-content').innerHTML.trim() !== '') {
+                        openModalFromUrl(url, pushState);
+                    } else {
+                        // Caso contrário, carrega a página de listagem primeiro, depois o modal por cima
+                        loadBackgroundThenModal(bgUrl, url, pushState);
+                    }
+                    return;
+                }
+
+                // Navegação SPA normal
                 const mainContent = document.querySelector('.main-content');
                 if (mainContent) {
                     mainContent.style.opacity = '0.5';
@@ -144,40 +258,215 @@
                         if (mainContent && newContent) {
                             mainContent.innerHTML = newContent.innerHTML;
                             mainContent.style.opacity = '1';
-                        }
 
-                        // Atualiza o histórico
-                        if (pushState) {
-                            history.pushState(null, '', url);
-                        }
+                            // Atualiza o histórico apenas quando o conteúdo for alterado com sucesso
+                            if (pushState) {
+                                history.pushState(null, '', url);
+                            }
 
-                        // Atualiza os estados do sidebar
-                        updateSidebarActiveStates();
-
-                        // Executa scripts presentes na página carregada
-                        if (newContent) {
-                            const scripts = newContent.querySelectorAll('script');
-                            scripts.forEach(script => {
-                                const newScript = document.createElement('script');
-                                if (script.src) {
-                                    newScript.src = script.src;
-                                } else {
-                                    newScript.textContent = script.textContent;
-                                }
-                                document.body.appendChild(newScript);
-                                newScript.remove();
-                            });
-                        }
-
-                        // Recria ícones Lucide
-                        if (window.lucide) {
-                            window.lucide.createIcons();
+                            initPageScripts(newContent);
+                        } else {
+                            // Se a página de destino não utiliza a estrutura .main-content (ex: relatórios e fichas de impressão),
+                            // realiza a navegação completa tradicional do navegador sem prender a tela anterior
+                            if (mainContent) mainContent.style.opacity = '1';
+                            window.location.href = url;
                         }
                     })
                     .catch(error => {
                         console.error('SPA load error, navigating normally:', error);
                         window.location.href = url;
                     });
+            }
+
+            // Ao carregar a página inicialmente, verifica se ela é uma tela de modal.
+            const initialUrl = window.location.href;
+            if (isModalPage(initialUrl)) {
+                const mainContent = document.querySelector('.main-content');
+                if (mainContent) {
+                    const modalHtml = mainContent.innerHTML;
+                    const bgUrl = getBackgroundPageUrl(initialUrl);
+
+                    mainContent.innerHTML = '';
+                    mainContent.style.opacity = '0.5';
+
+                    fetch(bgUrl)
+                        .then(response => response.text())
+                        .then(html => {
+                            const parser = new DOMParser();
+                            const doc = parser.parseFromString(html, 'text/html');
+                            const bgContent = doc.querySelector('.main-content');
+                            if (bgContent) {
+                                mainContent.innerHTML = bgContent.innerHTML;
+                                mainContent.style.opacity = '1';
+                                initPageScripts(bgContent);
+                            }
+
+                            // Injeta o modal
+                            const parser2 = new DOMParser();
+                            const doc2 = parser2.parseFromString(modalHtml, 'text/html');
+                            const modalOverlay = doc2.querySelector('.fixed.inset-0.z-50');
+
+                            if (modalOverlay) {
+                                const modalContainer = document.createElement('div');
+                                modalContainer.id = 'app-modal-container';
+                                modalContainer.appendChild(modalOverlay);
+                                document.body.appendChild(modalContainer);
+
+                                if (window.lucide) {
+                                    window.lucide.createIcons();
+                                }
+                            }
+                        });
+                }
+            }
+        });
+    </script>
+
+    <!-- Submissão automática para os formulários legados de pesquisa -->
+    <script>
+        (function () {
+            let searchTimer;
+
+            document.addEventListener('input', function (event) {
+                // Views legadas continuam funcionando, mas agora pesquisam sem exigir Enter.
+                const input = event.target.closest('input[name="pesquisar"]');
+                if (!input || input.type === 'hidden' || input.hasAttribute('data-live-search-input')) return;
+
+                const form = input.form;
+                if (!form) return;
+
+                window.clearTimeout(searchTimer);
+                searchTimer = window.setTimeout(function () {
+                    if (input.value.trim() === '' && form.method.toUpperCase() === 'POST') return;
+                    form.requestSubmit ? form.requestSubmit() : form.submit();
+                }, 350);
+            });
+        }());
+    </script>
+
+    <!-- Máscaras Universais (CPF, CNPJ, Telefone, CEP, ViaCEP e IBGE) -->
+    <script src="{{ asset('js/alunos/aluno_masks.js') }}"></script>
+
+    <!-- Funções Globais para os Dropdowns Customizados Maruge -->
+    <script>
+        window.toggleMarugeDropdown = function(menuId, chevronId) {
+            const menu = document.getElementById(menuId);
+            const chevron = document.getElementById(chevronId);
+            if (!menu) return;
+
+            const isHidden = menu.classList.contains('hidden');
+
+            // Fecha outros dropdowns abertos
+            document.querySelectorAll('[id^="dropdown-menu-"]').forEach(m => {
+                if (m.id !== menuId) m.classList.add('hidden');
+            });
+            document.querySelectorAll('[id^="chevron-"]').forEach(c => {
+                if (c.id !== chevronId) c.classList.remove('rotate-180');
+            });
+
+            if (isHidden) {
+                menu.classList.remove('hidden');
+                if (chevron) chevron.classList.add('rotate-180');
+                const searchInput = menu.querySelector('input[type="text"]');
+                if (searchInput) setTimeout(() => searchInput.focus(), 50);
+            } else {
+                menu.classList.add('hidden');
+                if (chevron) chevron.classList.remove('rotate-180');
+            }
+        };
+
+        window.filterMarugeDropdownOptions = function(inputId, optionClass) {
+            const searchInput = document.getElementById(inputId);
+            if (!searchInput) return;
+            const query = searchInput.value.toLowerCase().trim();
+            const options = document.querySelectorAll('.' + optionClass);
+
+            options.forEach(opt => {
+                const title = opt.querySelector('.option-title');
+                if (!title) return;
+                const text = title.textContent.toLowerCase();
+                opt.style.display = text.includes(query) ? 'flex' : 'none';
+            });
+        };
+
+        window.selectMarugeOption = function(value, labelText, hiddenInputId, labelId, menuId, chevronId, autoSubmit) {
+            const input = document.getElementById(hiddenInputId);
+            if (input) {
+                input.value = value;
+            }
+            const labelEl = document.getElementById(labelId);
+            if (labelEl) {
+                labelEl.textContent = labelText;
+                if (value !== '') {
+                    labelEl.classList.remove('text-[#95aba5]');
+                    labelEl.classList.add('text-[#0a241e]', 'font-semibold');
+                } else {
+                    labelEl.classList.add('text-[#95aba5]');
+                    labelEl.classList.remove('text-[#0a241e]', 'font-semibold');
+                }
+            }
+
+            const menu = document.getElementById(menuId);
+            if (menu) menu.classList.add('hidden');
+            const chevron = document.getElementById(chevronId);
+            if (chevron) chevron.classList.remove('rotate-180');
+
+            if (autoSubmit && input && input.form) {
+                input.form.submit();
+            }
+        };
+
+        // Aliases para compatibilidade de chamadas existentes nas views
+        window.checkFuncaoSenhaVisibility = window.checkFuncaoSenhaVisibility || function() {};
+        window.checkFuncaoSenhaVisibilityForm = window.checkFuncaoSenhaVisibilityForm || function() {};
+
+        window.toggleMultiDropdown = window.toggleMarugeDropdown;
+        window.filterDropdownOptions = window.filterMarugeDropdownOptions;
+        window.selectSingleOption = function(val, text, inputId, labelId, menuId, chevronId, autoSubmit) {
+            window.selectMarugeOption(val, text, inputId, labelId, menuId, chevronId, autoSubmit);
+        };
+
+        window.checkAllInDropdown = function(checkboxClass, check, labelId, defaultText) {
+            const checkboxes = document.querySelectorAll('.' + checkboxClass);
+            checkboxes.forEach(cb => {
+                cb.checked = check;
+            });
+            window.updateDropdownLabel(checkboxClass, labelId, defaultText);
+        };
+
+        window.updateDropdownLabel = function(checkboxClass, labelId, defaultText) {
+            const checkboxes = document.querySelectorAll('.' + checkboxClass + ':checked');
+            const labelEl = document.getElementById(labelId);
+            if (!labelEl) return;
+
+            if (checkboxes.length === 0) {
+                labelEl.textContent = defaultText;
+                labelEl.classList.add('text-[#95aba5]');
+                labelEl.classList.remove('text-[#0a241e]', 'font-semibold');
+            } else if (checkboxes.length === 1) {
+                const name = checkboxes[0].getAttribute('data-name') || checkboxes[0].parentElement.textContent.trim();
+                labelEl.textContent = name;
+                labelEl.classList.remove('text-[#95aba5]');
+                labelEl.classList.add('text-[#0a241e]', 'font-semibold');
+            } else {
+                labelEl.textContent = `${checkboxes.length} selecionados`;
+                labelEl.classList.remove('text-[#95aba5]');
+                labelEl.classList.add('text-[#0a241e]', 'font-semibold');
+            }
+        };
+
+        // Fechar dropdowns com clique fora ou tecla Escape
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('[id^="container-"]') && !e.target.closest('[id^="dropdown-container-"]')) {
+                document.querySelectorAll('[id^="dropdown-menu-"]').forEach(m => m.classList.add('hidden'));
+                document.querySelectorAll('[id^="chevron-"]').forEach(c => c.classList.remove('rotate-180'));
+            }
+        });
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                document.querySelectorAll('[id^="dropdown-menu-"]').forEach(m => m.classList.add('hidden'));
+                document.querySelectorAll('[id^="chevron-"]').forEach(c => c.classList.remove('rotate-180'));
             }
         });
     </script>
