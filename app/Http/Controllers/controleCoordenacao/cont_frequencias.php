@@ -238,9 +238,10 @@ class cont_frequencias extends Controller {
 
     public function frequencia_edfisica ($idTurmas){
         $escolas = tb_escola::informacaoEscolar();
-        setlocale(LC_ALL, 'pt_BR', 'pt_BR.utf-8', 'pt_BR.utf-8', 'portuguese');
         date_default_timezone_set('America/Sao_Paulo');
-        $dia = strftime(' %B de %Y', strtotime('today'));   
+        $mesesNomes = ['01'=>'Janeiro','02'=>'Fevereiro','03'=>'Março','04'=>'Abril','05'=>'Maio','06'=>'Junho','07'=>'Julho','08'=>'Agosto','09'=>'Setembro','10'=>'Outubro','11'=>'Novembro','12'=>'Dezembro'];
+        $mesAtual = date('m');
+        $dia = ' ' . $mesesNomes[$mesAtual] . ' de ' . date('Y');
         $mes = date('m /y');
         $titulo = 'Frequencia Ed.Física';
         $turma = $this->tb_turma->find($idTurmas);
@@ -252,9 +253,10 @@ class cont_frequencias extends Controller {
 
     public function frequencia_entrega ($idTurmas){
         $escolas = tb_escola::informacaoEscolar();
-        setlocale(LC_ALL, 'pt_BR', 'pt_BR.utf-8', 'pt_BR.utf-8', 'portuguese');
         date_default_timezone_set('America/Sao_Paulo');
-        $dia = strftime('%B de %Y', strtotime('today'));
+        $mesesNomes = ['01'=>'Janeiro','02'=>'Fevereiro','03'=>'Março','04'=>'Abril','05'=>'Maio','06'=>'Junho','07'=>'Julho','08'=>'Agosto','09'=>'Setembro','10'=>'Outubro','11'=>'Novembro','12'=>'Dezembro'];
+        $mesAtual = date('m');
+        $dia = $mesesNomes[$mesAtual] . ' de ' . date('Y');
         $mes = date('m /y');
         $titulo = 'Frequencia Entrega';
         $turma = $this->tb_turma->find($idTurmas);
@@ -263,5 +265,4 @@ class cont_frequencias extends Controller {
         $alunos = $Alunos;
         return view('telasCoordenacao.frequencia.frequencia_entrega', compact('titulo','dia','mes','escolas','turma','Alunos','alunos'));
     }   
-//FIM DA CLASSE CONTROLE DA TURMA 
 }

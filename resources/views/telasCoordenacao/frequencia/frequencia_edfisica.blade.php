@@ -1,21 +1,27 @@
 <html>
-    <head>
+    <header>   
         <title>{{$titulo}}</title>
-        <x-estilo-impressao />
-        <!-- CSS Personalizado para o Painel -->
-        <link rel="stylesheet" href="{{asset('css/painel.css')}}">
-        <!-- CSS para Reset de Estilos -->
-        <link rel="stylesheet" href="{{asset('css/reset.css')}}">
-    </head>
+    </header>
     <body>
-        <!-- Botão de impressão (ocultado automaticamente no modo de impressão) -->
-        <button type="button" value="Imprimir" onClick="window.print()" class="botao btn-imprimir"> Imprimir</button>
+        <style media="print">
+            .botao {
+                display: none;
+            }
+        </style>
+        <!-- Bootstrap -->
+        <link href="{{asset('css/bootstrap.min.css')}}" rel="stylesheet">
+        <!--CSS Personalizado para o Painel-->
+        <link rel="stylesheet" href="{{asset('css/painel.css')}}">
+        <!-- CSS - Para fazer Reset nos Paineis-->
+        <link rel="stylesheet" href="{{asset('css/reset.css')}}">   
+
+        <button type="button"  value="Imprimir" onClick="window.print()" class="botao btn-imprimir"> Imprimir</button>
 
 
         <table class="timbre-horizontal">
             <tr>
                 <td>
-                    <img src="{{ \App\Support\LogoColegio::src() }}" class="logo-colegio"><br>
+                    <img src="{{asset('imgs/logoempresa_transparente.png')}}" width="160" height="160" ><br>
                 </td>
                 <td>
                     @forelse($escolas as $escola)

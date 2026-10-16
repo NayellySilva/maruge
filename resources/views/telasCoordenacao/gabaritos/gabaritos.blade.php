@@ -70,10 +70,6 @@
                             <i data-lucide="chevron-down" class="w-4 h-4"></i>
                         </div>
                     </div>
-                        <div id="chevron-sit-gabaritos" class="text-[#95aba5] transition-transform duration-200 shrink-0 ml-2">
-                            <i data-lucide="chevron-down" class="w-4 h-4"></i>
-                        </div>
-                    </div>
 
                     <!-- Dropdown Flutuante -->
                     <div id="dropdown-menu-sit-gabaritos" class="hidden absolute top-full left-0 right-0 mt-1 bg-white border border-[#e3e8e6] rounded-xl shadow-xl z-50 p-1.5 flex flex-col gap-0.5">

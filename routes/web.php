@@ -154,8 +154,8 @@ Route::prefix('coordenacao')->group(function () {
     Route::get('/escola_editar/{id}', [cont_escola::class, 'editar'])->whereNumber('id');
     Route::post('/escola_editar/{id}', [cont_escola::class, 'editando'])->whereNumber('id');
     Route::get('/escola_perfil/{id}', [cont_escola::class, 'perfil'])->whereNumber('id');
-    Route::get('/escola_impressao/{id}', function ($id) {
-        $escolas = \App\Models\modelCoordenacao\tb_escola::find($id) ?? \App\Models\modelCoordenacao\tb_escola::first();
+    Route::get('/escola_impressao/{id?}', function ($id = null) {
+        $escolas = ($id ? \App\Models\modelCoordenacao\tb_escola::find($id) : null) ?? \App\Models\modelCoordenacao\tb_escola::first();
         $endereco = $escolas ? \App\Models\modelCoordenacao\tb_endereco::find($escolas->tb_endereco_idEndereco) : null;
 
         return view('telasCoordenacao.escola.escola_imp', [
@@ -169,7 +169,7 @@ Route::prefix('coordenacao')->group(function () {
             'quantFuncionariosCadastrados' => \App\Models\modelCoordenacao\tb_funcionario::funcionarioCadastrados()->count(),
             'quantUsuarioCadastrados' => \App\Models\modelCoordenacao\tb_usuario::listagemUsuarios()->count(),
         ]);
-    })->whereNumber('id');
+    });
 
     // -------------------------------------------------------------------------
     // Notas
@@ -420,7 +420,10 @@ Route::prefix('coordenacao')->group(function () {
             compact('aluno', 'matricula', 'turma', 'Pais', 'escolas', 'anoletivo', 'disciplinas', 'titulo'));
     })->where('id', '[0-9]+');
 
+    Route::get('/declaracoes', [cont_declaracoes::class, 'index']);
     Route::get('/declaracoes/declaracoes', [cont_declaracoes::class, 'index']);
+    Route::get('/carne_cad', function() { return view('telasCoordenacao.carne.carne_cad'); });
+    Route::get('/acordo_cad', function() { return view('telasCoordenacao.acordo.acordo_cad'); });
     Route::post('/declaracoes_pesq', [cont_declaracoes::class, 'declaracao_pesq']);                    // NOVA
     Route::match(['get', 'post'], '/declaracao_filtro', [cont_declaracoes::class, 'declaracao_filtro']); // NOVA
     // Impressão: cursando, transferencia, apto, quitacao, inapto, completa
@@ -521,6 +524,7 @@ Route::prefix('coordenacao')->group(function () {
     Route::get('/frequencia/frequencia_virtual/{id}', [cont_frequencias::class, 'frequencia_virtual']);
     Route::get('/frequencia/frequencia_mensal/{id}', [cont_frequencias::class, 'frequencia_mensal']);
     Route::get('/frequencia/frequencia_edfisica/{id}', [cont_frequencias::class, 'frequencia_edfisica']);
+    Route::get('/frequencia/frequencia_entrega/{id}', [cont_frequencias::class, 'frequencia_entrega']);
     Route::get('/declaracoes/cursando/{id}', [cont_declaracoes::class, 'cursando']);
     Route::get('/declaracoes/apto/{id}', [cont_declaracoes::class, 'apto']);
     Route::get('/declaracoes/transferencia/{id}', [cont_declaracoes::class, 'transferencia']);

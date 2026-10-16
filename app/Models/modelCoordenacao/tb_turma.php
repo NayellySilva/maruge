@@ -217,7 +217,7 @@ class tb_turma extends Model {
                 ->join('tb_notas_2016', 'tb_turmas_idTurmas', '=', 'tb_turmas.idTurmas')
                 ->where('tb_notas_2016.tb_aluno_idAluno', $idAluno)
                 ->select('tb_turmas.idTurmas', 'AnoLetivo','NomeTurma')
-                ->groupBy('tb_turmas.NomeTurma')
+                ->groupBy('tb_turmas.idTurmas', 'AnoLetivo', 'tb_turmas.NomeTurma')
                         ->get();
     }
     //Metodo que busca a turma do aluno em 2017

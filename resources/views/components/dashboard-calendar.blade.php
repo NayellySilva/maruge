@@ -12,41 +12,19 @@
         </div>
     </div>
 
-    <!-- Calendário funcional de 2 meses -->
+    <!-- Calendário funcional de 1 mês -->
     <div class="rounded-2xl border border-gray-200 bg-white/90 p-6 shadow-sm">
-        <!-- Grid principal de dois meses -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 relative">
-            <!-- Divisor vertical para telas md e maiores -->
-            <div class="hidden md:block absolute left-1/2 top-0 bottom-0 border-r border-[#e3e8e6] transform -translate-x-1/2"></div>
-            
-            <!-- Mês 1 (Esquerda) -->
-            <div class="flex flex-col">
-                <div class="flex justify-center mb-6 h-8 items-center">
-                    <span id="calendar-month-left-label" class="tracking-wide">
-                        <!-- Preenchido por JS -->
-                    </span>
-                </div>
-                <div class="grid grid-cols-7 text-center text-[11px] font-semibold uppercase tracking-[0.2em] text-gray-400 mb-4">
-                    <span>Seg</span><span>Ter</span><span>Qua</span><span>Qui</span><span>Sex</span><span>Sab</span><span>Dom</span>
-                </div>
-                <div id="calendar-grid-left" class="grid grid-cols-7 gap-y-2 gap-x-1 text-center">
+        <div class="flex flex-col">
+            <div class="flex justify-center mb-6 h-8 items-center">
+                <span id="calendar-month-label" class="tracking-wide">
                     <!-- Preenchido por JS -->
-                </div>
+                </span>
             </div>
-            
-            <!-- Mês 2 (Direita) -->
-            <div class="flex flex-col">
-                <div class="flex justify-center mb-6 h-8 items-center">
-                    <span id="calendar-month-right-label" class="tracking-wide">
-                        <!-- Preenchido por JS -->
-                    </span>
-                </div>
-                <div class="grid grid-cols-7 text-center text-[11px] font-semibold uppercase tracking-[0.2em] text-gray-400 mb-4">
-                    <span>Seg</span><span>Ter</span><span>Qua</span><span>Qui</span><span>Sex</span><span>Sab</span><span>Dom</span>
-                </div>
-                <div id="calendar-grid-right" class="grid grid-cols-7 gap-y-2 gap-x-1 text-center">
-                    <!-- Preenchido por JS -->
-                </div>
+            <div class="grid grid-cols-7 text-center text-[11px] font-semibold uppercase tracking-[0.2em] text-gray-400 mb-4">
+                <span>Seg</span><span>Ter</span><span>Qua</span><span>Qui</span><span>Sex</span><span>Sab</span><span>Dom</span>
+            </div>
+            <div id="calendar-grid" class="grid grid-cols-7 gap-y-2 gap-x-1 text-center">
+                <!-- Preenchido por JS -->
             </div>
         </div>
         
@@ -166,15 +144,13 @@
         }
 
         function initCalendar() {
-            const gridLeft = document.getElementById('calendar-grid-left');
-            const gridRight = document.getElementById('calendar-grid-right');
-            const labelLeft = document.getElementById('calendar-month-left-label');
-            const labelRight = document.getElementById('calendar-month-right-label');
+            const grid = document.getElementById('calendar-grid');
+            const label = document.getElementById('calendar-month-label');
             const prevButton = document.getElementById('calendar-prev');
             const nextButton = document.getElementById('calendar-next');
             const todayButton = document.getElementById('calendar-today');
 
-            if (!gridLeft || !gridRight || !labelLeft || !labelRight || !prevButton || !nextButton || !todayButton) {
+            if (!grid || !label || !prevButton || !nextButton || !todayButton) {
                 return;
             }
 
@@ -183,7 +159,7 @@
                 "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"
             ];
 
-            function renderMonth(year, month, gridElement, isLeft) {
+            function renderMonth(year, month, gridElement) {
                 const firstDay = (new Date(year, month, 1).getDay() + 6) % 7; // Segunda é 0, Domingo é 6
                 const today = new Date();
                 
@@ -287,54 +263,33 @@
             }
 
             async function renderCalendar() {
-                const monthLeft = calendarView.getMonth();
-                const yearLeft = calendarView.getFullYear();
-
-                const dateRight = new Date(yearLeft, monthLeft + 1, 1);
-                const monthRight = dateRight.getMonth();
-                const yearRight = dateRight.getFullYear();
-
-                labelLeft.textContent = `${monthNames[monthLeft]} ${yearLeft}`;
-                labelRight.textContent = `${monthNames[monthRight]} ${yearRight}`;
+                const month = calendarView.getMonth();
+                const year = calendarView.getFullYear();
 
                 const today = new Date();
-                const currentMonth = today.getMonth();
-                const currentYear = today.getFullYear();
+                const isCurrentMonth = (month === today.getMonth() && year === today.getFullYear());
 
-                const isLeftCurrent = (monthLeft === currentMonth && yearLeft === currentYear);
-                const isRightCurrent = (monthRight === currentMonth && yearRight === currentYear);
-
-                if (isLeftCurrent) {
-                    labelLeft.className = "bg-[#09492f] text-white px-5 py-1.5 rounded-full text-xs font-bold tracking-wide";
-                    labelRight.className = "text-[#09492f] text-sm font-bold tracking-wide py-1.5";
-                } else if (isRightCurrent) {
-                    labelRight.className = "bg-[#09492f] text-white px-5 py-1.5 rounded-full text-xs font-bold tracking-wide";
-                    labelLeft.className = "text-[#09492f] text-sm font-bold tracking-wide py-1.5";
+                if (isCurrentMonth) {
+                    label.className = "bg-[#09492f] text-white px-5 py-1.5 rounded-full text-xs font-bold tracking-wide";
                 } else {
-                    labelLeft.className = "text-[#09492f] text-sm font-bold tracking-wide py-1.5";
-                    labelRight.className = "text-[#09492f] text-sm font-bold tracking-wide py-1.5";
+                    label.className = "text-[#09492f] text-sm font-bold tracking-wide py-1.5";
                 }
+
+                label.textContent = `${monthNames[month]} ${year}`;
 
                 // Disparar evento para outros componentes saberem qual é o mês ativo
                 const monthEvent = new CustomEvent('calendar-month-changed', {
-                    detail: { month: monthLeft, year: yearLeft }
+                    detail: { month: month, year: year }
                 });
                 window.dispatchEvent(monthEvent);
 
-                gridLeft.classList.add('opacity-50', 'transition-opacity', 'duration-200');
-                gridRight.classList.add('opacity-50', 'transition-opacity', 'duration-200');
+                grid.classList.add('opacity-50', 'transition-opacity', 'duration-200');
 
-                const yearsToFetch = [yearLeft];
-                if (yearRight !== yearLeft) {
-                    yearsToFetch.push(yearRight);
-                }
-                await Promise.all(yearsToFetch.map(year => fetchHolidays(year)));
+                await fetchHolidays(year);
 
-                gridLeft.classList.remove('opacity-50');
-                gridRight.classList.remove('opacity-50');
+                grid.classList.remove('opacity-50');
 
-                renderMonth(yearLeft, monthLeft, gridLeft, true);
-                renderMonth(yearRight, monthRight, gridRight, false);
+                renderMonth(year, month, grid);
 
                 if (window.lucide) window.lucide.createIcons();
             }
@@ -406,8 +361,7 @@
                 openEventModal(dateStr, holiday);
             }
 
-            gridLeft.addEventListener('click', handleGridClick);
-            gridRight.addEventListener('click', handleGridClick);
+            grid.addEventListener('click', handleGridClick);
 
             renderCalendarFn = renderCalendar;
             renderCalendar();

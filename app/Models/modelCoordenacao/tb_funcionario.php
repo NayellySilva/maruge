@@ -131,7 +131,7 @@ class tb_funcionario extends Model {
                         ->join('tb_turmas', 'tb_turmas.idTurmas', '=', 'tb_turmas_disciplinas.tb_turmas_idTurmas')
                         ->join('tb_funcionarios', 'tb_funcionarios.idFuncionarios', '=', 'tb_turmas_disciplinas.tb_funcionarios_idFuncionarios')
                         ->select('tb_funcionarios.NomeFuncionario', 'tb_turmas.NomeTurma','tb_turmas.idTurmas')
-                        ->groupby('NomeTurma')
+                        ->groupby('tb_turmas.NomeTurma', 'tb_turmas.idTurmas', 'tb_funcionarios.NomeFuncionario')
                         ->get();
     }
 
