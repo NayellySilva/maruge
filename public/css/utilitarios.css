@@ -1,0 +1,115 @@
+/* Utilitários CSS extraídos de estilos inline das views Blade (repetidos 5+ vezes) */
+
+/* Visibilidade */
+.oculto,
+.display-none {
+    display: none;
+}
+
+/* Larguras */
+.largura-50 {
+    width: 50px;
+}
+
+.largura-65 {
+    width: 65px;
+}
+
+.largura-70 {
+    width: 70px;
+}
+
+.largura-80 {
+    width: 80px;
+}
+
+.largura-100 {
+    width: 100px;
+}
+
+.largura-min-200 {
+    min-width: 200px;
+}
+
+/* Grid & Flex Layout */
+.col-span-2 {
+    grid-column: span 2;
+}
+
+.flex-gap-10 {
+    display: flex;
+    gap: 10px;
+}
+
+.linha-flex-fim {
+    display: flex;
+    flex-direction: row;
+    gap: 16px;
+    width: 100%;
+    align-items: flex-end;
+}
+
+.flex-base-50 {
+    flex: 1 1 50%;
+    min-width: 0;
+}
+
+/* Colunas de Formulário Flex */
+.col-form-15 {
+    flex: 1 1 15%;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.col-form-20 {
+    flex: 1 1 20%;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.col-form-25 {
+    flex: 1 1 25%;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.col-form-40 {
+    flex: 2 1 40%;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+/* Bordas */
+.borda-inferior-suave {
+    border-bottom: 1px solid #e2e8f0;
+}
+
+/* Células de Tabela / Padding Utilitário */
+.celula-centro {
+    padding: 5px 4px;
+    text-align: center;
+}
+
+.celula-maiuscula {
+    padding: 5px 4px;
+    text-transform: uppercase;
+}
+
+.celula-mono {
+    padding: 5px 4px;
+    font-family: monospace;
+}
+
+.celula-cabecalho {
+    padding: 5px 4px;
+    font-weight: bold;
+    text-transform: uppercase;
+}
