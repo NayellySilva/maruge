@@ -27,161 +27,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ $titulo ?? 'Declaração Geral de Escolaridade / Situação' }}</title>
     <x-estilo-impressao arquivo="declaracao" />
-    <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-        body {
-            font-family: 'Times New Roman', Times, serif;
-            color: #111827;
-            background-color: #f3f4f6;
-            padding: 24px;
-            font-size: 11.5pt;
-            line-height: 1.5;
-        }
-        .no-print-bar {
-            max-width: 820px;
-            margin: 0 auto 20px auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: #ffffff;
-            padding: 12px 20px;
-            border-radius: 10px;
-            border: 1px solid #e5e7eb;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-        }
-        .btn-acao {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 8px 18px;
-            border-radius: 8px;
-            font-size: 13px;
-            font-weight: 600;
-            cursor: pointer;
-            text-decoration: none;
-            transition: all 0.2s ease;
-            border: none;
-        }
-        .btn-imprimir {
-            background-color: #008a4b;
-            color: #ffffff;
-        }
-        .btn-imprimir:hover {
-            background-color: #00703c;
-        }
-        .btn-fechar {
-            background-color: #f3f4f6;
-            color: #374151;
-        }
-        .btn-fechar:hover {
-            background-color: #e5e7eb;
-        }
-        .folha-declaracao {
-            max-width: 820px;
-            margin: 0 auto;
-            background: #ffffff;
-            padding: 35px 50px;
-            border-radius: 8px;
-            border: 1px solid #e5e7eb;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.06);
-        }
-        .cabecalho-timbre {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            border-bottom: 2px solid #000;
-            padding-bottom: 12px;
-            margin-bottom: 20px;
-        }
-        .timbre-logo {
-            max-width: 110px;
-            max-height: 95px;
-            object-fit: contain;
-            flex-shrink: 0;
-        }
-        .timbre-texto {
-            flex-grow: 1;
-            text-align: center;
-            font-size: 10pt;
-            line-height: 1.35;
-            color: #000;
-        }
-        .timbre-nome-escola {
-            font-size: 14pt;
-            font-weight: bold;
-            margin-bottom: 3px;
-            text-transform: uppercase;
-        }
-        .titulo-doc {
-            text-align: center;
-            font-size: 18pt;
-            font-weight: bold;
-            letter-spacing: 3px;
-            margin: 15px 0 20px 0;
-            text-transform: uppercase;
-        }
-        .texto-intro {
-            font-size: 12pt;
-            line-height: 1.6;
-            margin-bottom: 14px;
-            text-align: justify;
-        }
-        .caixa {
-            border: 1.5px solid #000;
-            padding: 8px 12px;
-            margin-bottom: 12px;
-            border-radius: 6px;
-            font-size: 11pt;
-            line-height: 1.5;
-        }
-        .subtitulo-campo {
-            font-weight: bold;
-            font-size: 11pt;
-            margin: 10px 0 4px 0;
-        }
-        .opcao {
-            margin-right: 18px;
-            display: inline-block;
-        }
-        .linha-obs {
-            height: 20px;
-            border-bottom: 1px solid #000;
-            margin-bottom: 6px;
-        }
-        .data-emissao {
-            text-align: center;
-            margin-top: 18px;
-            font-size: 11pt;
-        }
-        .nota-rodape {
-            text-align: center;
-            font-size: 9pt;
-            color: #444;
-            margin-top: 6px;
-            font-style: italic;
-        }
-        @media print {
-            body {
-                background: #ffffff;
-                padding: 0;
-            }
-            .no-print-bar {
-                display: none !important;
-            }
-            .folha-declaracao {
-                box-shadow: none;
-                border: none;
-                padding: 10px 25px;
-                max-width: 100%;
-            }
-        }
-    </style>
-    <link rel="stylesheet" href="{{asset('css/utilitarios.css')}}">
+    <link rel="stylesheet" href="{{ asset('css/utilitarios.css') }}">
 </head>
 <body>
 
@@ -293,14 +139,14 @@
             {{ $escola->Cidade ?? ($endereco->Cidade ?? 'Sede Escolar') }}, {{ $diaFormatado }}.
         </div>
 
-        <div style="display: flex; justify-content: space-around; margin-top: 35px;">
-            <div style="text-align: center; width: 260px;">
-                <div style="border-top: 1px solid #000; margin-bottom: 4px;"></div>
-                <div style="font-size: 10.5pt; font-weight: bold;">Secretaria Escolar</div>
+        <div class="area-assinaturas">
+            <div class="bloco-assinatura">
+                <div class="linha-assinatura"></div>
+                <div class="cargo-assinatura">Secretaria Escolar</div>
             </div>
-            <div style="text-align: center; width: 260px;">
-                <div style="border-top: 1px solid #000; margin-bottom: 4px;"></div>
-                <div style="font-size: 10.5pt; font-weight: bold;">Direção Geral / Carimbo</div>
+            <div class="bloco-assinatura">
+                <div class="linha-assinatura"></div>
+                <div class="cargo-assinatura">Direção Geral / Carimbo</div>
             </div>
         </div>
 
