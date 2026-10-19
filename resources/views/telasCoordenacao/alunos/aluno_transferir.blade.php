@@ -68,7 +68,7 @@
 
                 <div style="display: flex; flex-direction: row; gap: 20px; width: 100%;" class="flex-row-aluno">
                     <!-- Nome do Aluno (50%) -->
-                    <div style="flex: 1 1 50%; min-width: 0;" class="flex flex-col gap-1.5">
+                    <div class="flex flex-col gap-1.5 flex-base-50">
                         <label class="text-xs font-semibold text-[#0a241e]">Nome do Aluno:</label>
                         <input type="hidden" name="NomeAluno" value="{{ $aluno->NomeAluno }}">
                         <div style="display: flex; align-items: center; gap: 14px;" class="bg-[#f8faf9] border border-[#e3e8e6] rounded-xl px-4 py-2.5 h-12">
@@ -78,7 +78,7 @@
                     </div>
 
                     <!-- Turma Atual (50%) -->
-                    <div style="flex: 1 1 50%; min-width: 0;" class="flex flex-col gap-1.5">
+                    <div class="flex flex-col gap-1.5 flex-base-50">
                         <label class="text-xs font-semibold text-[#0a241e]">Turma Atual:</label>
                         <input type="hidden" name="Ultima_Turma" value="{{ $aluno->NomeTurma ?? old('Ultima_Turma') }}">
                         <div style="display: flex; align-items: center; gap: 14px;" class="bg-[#f8faf9] border border-[#e3e8e6] rounded-xl px-4 py-2.5 h-12">
@@ -102,7 +102,7 @@
                 <div style="display: flex; flex-direction: row; gap: 20px; width: 100%;" class="flex-row-transf-1">
                     
                     <!-- 1. Tipo de Transferência (Dropdown Customizado) -->
-                    <div style="flex: 1 1 50%; min-width: 0;" class="flex flex-col gap-1.5">
+                    <div class="flex flex-col gap-1.5 flex-base-50">
                         <label class="text-xs font-semibold text-[#0a241e]">Tipo de Transferência:</label>
                         <div class="relative" id="dropdown-container-tipo-transf">
                             @php
@@ -140,7 +140,7 @@
                     </div>
 
                     <!-- 2. Transferir para a Turma (Troca Interna) -->
-                    <div style="flex: 1 1 50%; min-width: 0;" class="flex flex-col gap-1.5">
+                    <div class="flex flex-col gap-1.5 flex-base-50">
                         <label class="text-xs font-semibold text-[#0a241e]">Transferir para a Turma:</label>
                         <div class="relative" id="dropdown-container-turma-dest">
                             @php
@@ -189,7 +189,7 @@
                 <div style="display: flex; flex-direction: row; gap: 20px; width: 100%;" class="flex-row-transf-2">
                     
                     <!-- Situação do Aluno (50%) -->
-                    <div style="flex: 1 1 50%; min-width: 0;" class="flex flex-col gap-1.5">
+                    <div class="flex flex-col gap-1.5 flex-base-50">
                         <label class="text-xs font-semibold text-[#0a241e]">Situação de Matrícula:</label>
                         <div class="relative" id="dropdown-container-situacao-transf">
                             @php
@@ -224,7 +224,7 @@
                     </div>
 
                     <!-- Data de Saída (50%) -->
-                    <div style="flex: 1 1 50%; min-width: 0;" class="flex flex-col gap-1.5">
+                    <div class="flex flex-col gap-1.5 flex-base-50">
                         <label for="DataSaida" class="text-xs font-semibold text-[#0a241e]">Data de Saída / Transferência:</label>
                         <div style="display: flex; align-items: center; gap: 14px;" class="bg-[#f8faf9] border border-[#e3e8e6] rounded-xl px-4 py-2.5 h-12 focus-within:border-[#008a4b] focus-within:ring-2 focus-within:ring-[#008a4b]/10 transition-all">
                             <i data-lucide="calendar" style="margin-right: 8px;" class="w-4.5 h-4.5 text-[#008a4b] shrink-0"></i>

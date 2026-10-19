@@ -191,13 +191,13 @@
         </thead>
         <tbody>
             @foreach($listaAlunos as $index => $aluno)
-                <tr style="border-bottom: 1px solid #e2e8f0;">
+                <tr class="borda-inferior-suave">
                     <td style="padding: 5px 3px; text-align: center;">{{ $index + 1 }}</td>
-                    <td style="padding: 5px 4px; font-family: monospace;">{{ $aluno->RA ?? '#' . ($aluno->idReservas ?? $aluno->idAluno) }}</td>
-                    <td style="padding: 5px 4px; font-weight: bold; text-transform: uppercase;">{{ $aluno->NomeAluno }}</td>
-                    <td style="padding: 5px 4px; text-align: center;">{{ $aluno->data_reserva ? date('d/m/Y', strtotime($aluno->data_reserva)) : '-' }}</td>
+                    <td class="celula-mono">{{ $aluno->RA ?? '#' . ($aluno->idReservas ?? $aluno->idAluno) }}</td>
+                    <td class="celula-cabecalho">{{ $aluno->NomeAluno }}</td>
+                    <td class="celula-centro">{{ $aluno->data_reserva ? date('d/m/Y', strtotime($aluno->data_reserva)) : '-' }}</td>
                     <td style="padding: 5px 4px; text-align: center; font-weight: bold;">{{ $aluno->NomeTurma ?? '-' }}</td>
-                    <td style="padding: 5px 4px; text-align: center;">PRÉ-MATRICULADO</td>
+                    <td class="celula-centro">PRÉ-MATRICULADO</td>
                 </tr>
             @endforeach
         </tbody>

@@ -1,7 +1,10 @@
 /* Utilitários CSS extraídos de estilos inline das views Blade (repetidos 5+ vezes) */
 
 /* Visibilidade */
-.oculto,
+.oculto {
+    display: none;
+}
+
 .display-none {
     display: none;
 }
@@ -112,4 +115,8 @@
     padding: 5px 4px;
     font-weight: bold;
     text-transform: uppercase;
+}
+
+.oculto {
+    display: none;
 }

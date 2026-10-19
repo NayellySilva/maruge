@@ -43,14 +43,14 @@
         </div>
 
         <!-- Alertas e Preloader (Requeridos pelo JS do painel) -->
-        <div class="preloader text-sm text-[#008a4b] font-medium mb-4" style="display: none">
+        <div class="preloader text-sm text-[#008a4b] font-medium mb-4 oculto">
             <span class="inline-flex items-center gap-2">
                 <span class="w-4 h-4 rounded-full border-2 border-[#008a4b] border-t-transparent animate-spin"></span>
                 Enviando os dados...
             </span>
         </div>  
-        <div class="alert alert-success msg-exito bg-emerald-50 border border-emerald-200 text-emerald-700 p-4 rounded-xl mb-6 text-sm" role="alert" style="display: none"></div>
-        <div class="alert alert-warning msg-erro bg-amber-50 border border-amber-200 text-amber-700 p-4 rounded-xl mb-6 text-sm" role="alert" style="display: none"></div> 
+        <div class="alert alert-success msg-exito bg-emerald-50 border border-emerald-200 text-emerald-700 p-4 rounded-xl mb-6 text-sm oculto" role="alert"></div>
+        <div class="alert alert-warning msg-erro bg-amber-50 border border-amber-200 text-amber-700 p-4 rounded-xl mb-6 text-sm oculto" role="alert"></div> 
 
         <!-- Alert de Erros de Validação -->
         @if((isset($errors) ? count($errors) : 0) > 0)

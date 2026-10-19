@@ -181,7 +181,7 @@
 </div> <!--Fim do caminho-din-->
 
 <!-- Modais de Cadastro (Receita, Categoria, Despesa) -->
-<div id="modal_receita" class="modal fade" role="dialog" tabindex="-1" aria-hidden="true" style="display:none">
+<div id="modal_receita" class="modal fade oculto" role="dialog" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content rounded-2xl p-6 bg-white shadow-xl">
             <div class="modal-header border-b border-[#e3e8e6] pb-3 flex justify-between items-center">
@@ -213,7 +213,7 @@
     </div>
 </div>
 
-<div id="modal_categoria" class="modal fade" role="dialog" tabindex="-1" aria-hidden="true" style="display:none">
+<div id="modal_categoria" class="modal fade oculto" role="dialog" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content rounded-2xl p-6 bg-white shadow-xl">
             <div class="modal-header border-b border-[#e3e8e6] pb-3 flex justify-between items-center">
@@ -237,7 +237,7 @@
     </div>
 </div>
 
-<div id="modal_despesa" class="modal fade" role="dialog" tabindex="-1" aria-hidden="true" style="display:none">
+<div id="modal_despesa" class="modal fade oculto" role="dialog" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content rounded-2xl p-6 bg-white shadow-xl">
             <div class="modal-header border-b border-[#e3e8e6] pb-3 flex justify-between items-center">

@@ -195,12 +195,12 @@
         </thead>
         <tbody>
             @foreach($alunos as $aluno)
-                <tr style="border-bottom: 1px solid #e2e8f0;">
-                    <td style="padding: 5px 4px; font-family: monospace;">{{ $aluno->NumeroMac ?? $aluno->RA ?? '-' }}</td>
-                    <td style="padding: 5px 4px; font-weight: bold; text-transform: uppercase;">{{ $aluno->NomeAluno }}</td>
+                <tr class="borda-inferior-suave">
+                    <td class="celula-mono">{{ $aluno->NumeroMac ?? $aluno->RA ?? '-' }}</td>
+                    <td class="celula-cabecalho">{{ $aluno->NomeAluno }}</td>
                     <td style="padding: 5px 4px; text-align: center; font-family: monospace;">{{ $aluno->Saida ?? '0000-00-00' }}</td>
-                    <td style="padding: 5px 4px; text-align: center;">{{ $aluno->FoneMae1 ?? '-' }}</td>
-                    <td style="padding: 5px 4px; text-align: center;">{{ $aluno->FonePai1 ?? '-' }}</td>
+                    <td class="celula-centro">{{ $aluno->FoneMae1 ?? '-' }}</td>
+                    <td class="celula-centro">{{ $aluno->FonePai1 ?? '-' }}</td>
                     <td style="padding: 5px 4px; text-align: center; font-weight: bold; text-transform: uppercase;">{{ $aluno->Ultima_Turma ?? $aluno->NomeTurma ?? '-' }}</td>
                     <td style="padding: 5px 4px; text-align: center; font-weight: bold; text-transform: uppercase;">
                         {{ $aluno->SituacaoAluno ?? ($aluno->Saida ? 'TRANSFERIDO' : 'EVADIDO') }}

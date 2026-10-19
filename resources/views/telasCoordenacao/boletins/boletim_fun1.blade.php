@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>{{ $titulo ?? 'Boletim Escolar - Fundamental I' }}</title>
     <x-estilo-impressao arquivo="boletim" />
+    <link rel="stylesheet" href="{{asset('css/utilitarios.css')}}">
 </head>
 <body>
 
@@ -49,7 +50,7 @@
                     @endforeach
                 </strong>
             </div>
-            <div class="student-info-item" style="grid-column: span 2;">
+            <div class="student-info-item col-span-2">
                 <span>Filiação:</span> <strong>{{ $Pais->NomePai ?? '-' }} / {{ $Pais->NomeMae ?? '-' }}</strong>
             </div>
         </div>
@@ -60,16 +61,16 @@
                 <tr>
                     <th style="width: 40px;">CÓD</th>
                     <th style="width: 140px;" class="text-left">DISCIPLINA</th>
-                    <th style="width: 50px;">1º BIM</th>
-                    <th style="width: 50px;">REC.1</th>
-                    <th style="width: 50px;">2º BIM</th>
-                    <th style="width: 50px;">REC.2</th>
-                    <th style="width: 50px;">REC.P</th>
-                    <th style="width: 50px;">3º BIM</th>
-                    <th style="width: 50px;">REC.3</th>
-                    <th style="width: 50px;">4º BIM</th>
-                    <th style="width: 50px;">REC.4</th>
-                    <th style="width: 50px;">REC.F</th>
+                    <th class="largura-50">1º BIM</th>
+                    <th class="largura-50">REC.1</th>
+                    <th class="largura-50">2º BIM</th>
+                    <th class="largura-50">REC.2</th>
+                    <th class="largura-50">REC.P</th>
+                    <th class="largura-50">3º BIM</th>
+                    <th class="largura-50">REC.3</th>
+                    <th class="largura-50">4º BIM</th>
+                    <th class="largura-50">REC.4</th>
+                    <th class="largura-50">REC.F</th>
                     <th style="width: 55px;">MÉDIA</th>
                     <th style="width: 90px;">RESULTADO</th>
                 </tr>

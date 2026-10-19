@@ -181,13 +181,14 @@
             }
         }
     </style>
+    <link rel="stylesheet" href="{{asset('css/utilitarios.css')}}">
 </head>
 <body>
 
     <!-- Barra de Impressão -->
     <div class="no-print-bar">
         <span>Visualização do Documento — Declaração Geral / Histórico de Situação</span>
-        <div style="display: flex; gap: 10px;">
+        <div class="flex-gap-10">
             <button onclick="window.print()" class="btn-acao btn-imprimir">
                 Imprimir Declaração
             </button>

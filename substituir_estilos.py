@@ -32,15 +32,8 @@ def is_display_none(val):
 def is_blade_expr(val):
     return '{{' in val or '}}' in val or '@' in val or '{!!' in val or '!!}' in val
 
-# Regex to find HTML opening tags: e.g. <div ...> or <th ...>
-# We match from '<' followed by a tag name up to '>'
-# Making sure we do not match closing tags like </div>
 tag_regex = re.compile(r'(<[a-zA-Z0-9\-_:]+)([^>]*)(>)', re.DOTALL)
-
-# Regex to match style attribute within a tag's attribute string
 style_attr_regex = re.compile(r'\bstyle\s*=\s*(?:"([^"]*)"|\'([^\']*)\')', re.I)
-
-# Regex to match class attribute within a tag's attribute string
 class_attr_regex = re.compile(r'\bclass\s*=\s*(?:"([^"]*)"|\'([^\']*)\')', re.I)
 
 def process_tag(match, stats):
@@ -48,7 +41,6 @@ def process_tag(match, stats):
     attrs = match.group(2)
     tag_end = match.group(3)
 
-    # Check if this tag has a style attribute
     style_matches = list(style_attr_regex.finditer(attrs))
     if not style_matches:
         return match.group(0)
@@ -66,7 +58,6 @@ def process_tag(match, stats):
             target_class = STYLE_MAP[val]
             stats['trocas'] += 1
 
-            # Check if class attribute already exists in new_attrs
             cm = class_attr_regex.search(new_attrs)
             if cm:
                 existing_classes_raw = cm.group(1) if cm.group(1) is not None else cm.group(2)
@@ -77,33 +68,71 @@ def process_tag(match, stats):
                     class_list.append(target_class)
                 new_class_val = " ".join(class_list)
 
-                # Replace class attribute with updated classes
                 new_class_attr = f'class={class_quote}{new_class_val}{class_quote}'
                 new_attrs = new_attrs[:cm.start()] + new_class_attr + new_attrs[cm.end():]
 
-                # Now remove the style attribute (re-find it since indices may have shifted if class was before style)
-                # To be safe, re-search style attribute with exact value
-                escaped_val = re.escape(val)
-                style_remove_re = re.compile(r'\s*\bstyle\s*=\s*' + re.escape(sm.group(0)), re.I)
-                # If exact full match:
-                if sm.group(0) in new_attrs:
-                    # check leading space
-                    pattern_to_remove = re.compile(r'\s*\bstyle\s*=\s*' + re.escape(sm.group(0)[sm.group(0).index('=') + 1:].strip()))
-                    # simpler: remove sm.group(0) plus any leading whitespace
-                    pos = new_attrs.find(sm.group(0))
-                    if pos != -1:
-                        start_pos = pos
-                        while start_pos > 0 and new_attrs[start_pos - 1] in ' \t\r\n':
-                            start_pos -= 1
-                        new_attrs = new_attrs[:start_pos] + (' ' if start_pos > 0 and pos + len(sm.group(0)) < len(new_attrs) and new_attrs[pos + len(sm.group(0))] not in ' \t\r\n/>' else '') + new_attrs[pos + len(sm.group(0)):]
+                pos = new_attrs.find(sm.group(0))
+                if pos != -1:
+                    start_pos = pos
+                    while start_pos > 0 and new_attrs[start_pos - 1] in ' \t\r\n':
+                        start_pos -= 1
+                    new_attrs = new_attrs[:start_pos] + (' ' if start_pos > 0 and pos + len(sm.group(0)) < len(new_attrs) and new_attrs[pos + len(sm.group(0))] not in ' \t\r\n/>' else '') + new_attrs[pos + len(sm.group(0)):]
             else:
-                # No class attribute exists; replace style with class
                 new_class_attr = f'class={style_quote}{target_class}{style_quote}'
                 new_attrs = new_attrs[:sm.start()] + new_class_attr + new_attrs[sm.end():]
 
     return f"{tag_start}{new_attrs}{tag_end}"
 
-def process_file(filepath, apply_changes=False):
+def build_include_map(views_dir):
+    include_map = {}
+    for root, dirs, files in os.walk(views_dir):
+        for f in files:
+            if f.endswith('.blade.php'):
+                filepath = os.path.join(root, f)
+                with open(filepath, 'r', encoding='utf-8', errors='ignore') as fp:
+                    c = fp.read()
+                includes = re.findall(r"@include(?:If|When)?\s*\(\s*['\"]([^'\",\s]+)['\"]", c)
+                for inc in includes:
+                    target_rel = inc.strip().replace('.', os.sep) + '.blade.php'
+                    target_path = os.path.normpath(os.path.join(views_dir, target_rel))
+                    include_map.setdefault(target_path, []).append(os.path.normpath(filepath))
+    return include_map
+
+def check_css_loaded(filepath, views_dir, include_map, visited=None):
+    if visited is None:
+        visited = set()
+    norm_path = os.path.normpath(filepath)
+    if norm_path in visited:
+        return False
+    visited.add(norm_path)
+
+    try:
+        with open(norm_path, 'r', encoding='utf-8', errors='ignore') as fp:
+            content = fp.read()
+    except Exception:
+        return False
+
+    # Link direto
+    if 'utilitarios.css' in content:
+        return True
+
+    # Via layout do @extends
+    extends_matches = re.findall(r"@extends\s*\(\s*['\"]([^'\"]+)['\"]\s*\)", content)
+    for ext in extends_matches:
+        layout_rel = ext.strip().replace('.', os.sep) + '.blade.php'
+        layout_path = os.path.normpath(os.path.join(views_dir, layout_rel))
+        if os.path.exists(layout_path) and check_css_loaded(layout_path, views_dir, include_map, visited.copy()):
+            return True
+
+    # Via inclusão em view pai (@include)
+    if norm_path in include_map:
+        parents = include_map[norm_path]
+        if parents and all(check_css_loaded(p, views_dir, include_map, visited.copy()) for p in parents):
+            return True
+
+    return False
+
+def process_file(filepath, apply_changes=False, css_loaded=False):
     with open(filepath, 'r', encoding='utf-8', errors='ignore') as fp:
         content = fp.read()
 
@@ -111,21 +140,25 @@ def process_file(filepath, apply_changes=False):
     
     new_content = tag_regex.sub(lambda m: process_tag(m, stats), content)
 
-    if apply_changes and stats['trocas'] > 0 and new_content != content:
+    # Se algum arquivo com trocas não carregar, NÃO aplique nele
+    applied = False
+    if apply_changes and css_loaded and stats['trocas'] > 0 and new_content != content:
         with open(filepath, 'w', encoding='utf-8') as fp:
             fp.write(new_content)
+        applied = True
 
-    return stats, new_content != content
+    return stats, applied
 
 def main():
     parser = argparse.ArgumentParser(description="Substituir style inline por classes do utilitarios.css")
-    parser.add_argument('--dry-run', action='store_true', default=True, help="Executa sem modificar os arquivos")
+    parser.add_argument('--dry-run', action='store_true', default=False, help="Executa sem modificar os arquivos")
     parser.add_argument('--apply', action='store_true', help="Aplica as modificações de verdade")
     args = parser.parse_args()
 
     apply_changes = args.apply and not args.dry_run
 
     views_dir = r"c:\Users\nayel\maruge\resources\views"
+    include_map = build_include_map(views_dir)
     reports = []
 
     for root, dirs, files in os.walk(views_dir):
@@ -133,12 +166,16 @@ def main():
             if f.endswith('.blade.php'):
                 filepath = os.path.join(root, f)
                 rel_path = os.path.relpath(filepath, views_dir).replace('\\', '/')
-                stats, changed = process_file(filepath, apply_changes=apply_changes)
+                css_loaded = check_css_loaded(filepath, views_dir, include_map)
+                stats, applied = process_file(filepath, apply_changes=apply_changes, css_loaded=css_loaded)
                 if stats['trocas'] > 0 or stats['ignorados'] > 0:
                     reports.append({
                         'arquivo': rel_path,
                         'trocas': stats['trocas'],
-                        'ignorados': stats['ignorados']
+                        'ignorados': stats['ignorados'],
+                        'carrega_css': css_loaded,
+                        'carrega_css_str': 'sim' if css_loaded else 'não',
+                        'applied': applied
                     })
 
     # Sort: highest trocas first, then ignorados
@@ -146,19 +183,20 @@ def main():
 
     total_trocas = sum(r['trocas'] for r in reports)
     total_ignorados = sum(r['ignorados'] for r in reports)
-    files_with_trocas = sum(1 for r in reports if r['trocas'] > 0)
-    files_with_ignorados = sum(1 for r in reports if r['ignorados'] > 0)
+    files_with_trocas = [r for r in reports if r['trocas'] > 0]
+    files_not_loading = [r for r in files_with_trocas if not r['carrega_css']]
 
     mode_str = "APLICADO" if apply_changes else "DRY-RUN (Simulação)"
     print(f"=== RELATÓRIO DO SCRIPT: {mode_str} ===\n")
-    print(f"Total de arquivos com trocas: {files_with_trocas}")
+    print(f"Total de arquivos com trocas: {len(files_with_trocas)}")
     print(f"Total de substituições (trocas): {total_trocas}")
-    print(f"Total de estilos ignorados (display:none ou Blade): {total_ignorados}\n")
+    print(f"Total de estilos ignorados (display:none ou Blade): {total_ignorados}")
+    print(f"Arquivos com trocas que NÃO carregam utilitarios.css: {len(files_not_loading)}\n")
 
-    print("| Arquivo | Trocas | Ignorados |")
-    print("| :--- | :---: | :---: |")
+    print("| Arquivo | Trocas | Ignorados | Carrega utilitarios.css |")
+    print("| :--- | :---: | :---: | :---: |")
     for r in reports:
-        print(f"| `{r['arquivo']}` | {r['trocas']} | {r['ignorados']} |")
+        print(f"| `{r['arquivo']}` | {r['trocas']} | {r['ignorados']} | {r['carrega_css_str']} |")
 
 if __name__ == '__main__':
     main()

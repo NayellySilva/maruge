@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>{{ $titulo ?? 'Boletim Escolar - Educação Infantil' }}</title>
     <x-estilo-impressao arquivo="boletim_inf" />
+    <link rel="stylesheet" href="{{asset('css/utilitarios.css')}}">
 </head>
 <body>
 
@@ -49,7 +50,7 @@
                     @endforeach
                 </strong>
             </div>
-            <div class="student-info-item" style="grid-column: span 2;">
+            <div class="student-info-item col-span-2">
                 <span>Filiação:</span> <strong>{{ $Pais->NomePai ?? '-' }} / {{ $Pais->NomeMae ?? '-' }}</strong>
             </div>
         </div>
@@ -68,12 +69,12 @@
                 <tr>
                     <th style="width: 45px;">CÓD</th>
                     <th class="text-left">CAMPOS DE EXPERIÊNCIAS</th>
-                    <th style="width: 65px;">1º BIM</th>
-                    <th style="width: 65px;">2º BIM</th>
-                    <th style="width: 65px;">3º BIM</th>
-                    <th style="width: 65px;">4º BIM</th>
-                    <th style="width: 65px;">MÉDIA</th>
-                    <th style="width: 100px;">RESULTADO</th>
+                    <th class="largura-65">1º BIM</th>
+                    <th class="largura-65">2º BIM</th>
+                    <th class="largura-65">3º BIM</th>
+                    <th class="largura-65">4º BIM</th>
+                    <th class="largura-65">MÉDIA</th>
+                    <th class="largura-100">RESULTADO</th>
                 </tr>
             </thead>
             <tbody>

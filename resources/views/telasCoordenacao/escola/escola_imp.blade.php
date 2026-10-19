@@ -269,13 +269,14 @@
             }
         }
     </style>
+    <link rel="stylesheet" href="{{asset('css/utilitarios.css')}}">
 </head>
 <body>
 
     <!-- Barra Superior de Controle (Oculta na Impressão) -->
     <div class="no-print-bar">
         <span style="font-size: 13px; font-weight: 600; color: #4a5568;">Visualização de Impressão — Ficha Institucional</span>
-        <div style="display: flex; gap: 10px;">
+        <div class="flex-gap-10">
             <button onclick="window.print()" class="btn-acao btn-imprimir">
                 Imprimir Relatório
             </button>

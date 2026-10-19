@@ -5,9 +5,9 @@
 
 </div> 
 <div class="caminho-din">
-    <div class="preloader" style="display: none"> Enviando os dados...</div>  
-    <div class="alert alert-success msg-exito" role="alert" style="display: none"></div>
-    <div class="alert alert-warning msg-erro" role="alert" style="display: none"></div> 
+    <div class="preloader oculto"> Enviando os dados...</div>  
+    <div class="alert alert-success msg-exito oculto" role="alert"></div>
+    <div class="alert alert-warning msg-erro oculto" role="alert"></div> 
 
     <div class="formularios">    
         @if((isset($errors) ? count($errors) : 0)>0)
@@ -93,7 +93,7 @@
                     @php
                         $isDocOuCoordForm = in_array($selFuncaoForm, ['DOCENTE', 'COORDENADOR (A)', 'COORDENACÃO']);
                     @endphp
-                    <div class="col-md-2" id="container-senha-acesso-form" style="display: {{ $isDocOuCoordForm ? 'block' : 'none' }};">
+                    <div class="col-md-2 {{ $isDocOuCoordForm ? '' : 'oculto' }}" id="container-senha-acesso-form">
                         <div class="form-group">
                             <label for="password">Senha (8 dígitos):</label>
                             <input type="password" name="password" id="password_form" placeholder="Senha só números" maxlength="8" minlength="8" pattern="\d{8}" class="form-control">
@@ -207,9 +207,9 @@ window.checkFuncaoSenhaVisibilityForm = function(funcao) {
 
     const isDocCoord = (funcao === 'DOCENTE' || funcao === 'COORDENADOR (A)' || funcao === 'COORDENACÃO');
     if (isDocCoord) {
-        containerSenha.style.display = 'block';
+        containerSenha.classList.remove('oculto');
     } else {
-        containerSenha.style.display = 'none';
+        containerSenha.classList.add('oculto');
         if (inputPassword) {
             inputPassword.value = '';
         }

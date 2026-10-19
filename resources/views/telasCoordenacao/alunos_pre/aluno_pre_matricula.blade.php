@@ -4,9 +4,9 @@
     <h1 class="titulo-pagina">{{ $titulo ?? 'Reservar Vaga' }}</h1>
 </div> 
 <div class="caminho-din">
-    <div class="preloader" style="display: none"> Enviando os dados...</div>  
-    <div class="alert alert-success msg-exito" role="alert" style="display: none"></div>
-    <div class="alert alert-warning msg-erro" role="alert" style="display: none"></div> 
+    <div class="preloader oculto"> Enviando os dados...</div>  
+    <div class="alert alert-success msg-exito oculto" role="alert"></div>
+    <div class="alert alert-warning msg-erro oculto" role="alert"></div> 
     <div class="formularios">    
         @if((isset($errors) ? count($errors) : 0)>0)
         @foreach($errors->all() as $error)

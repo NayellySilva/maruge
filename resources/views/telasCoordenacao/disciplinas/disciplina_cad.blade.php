@@ -58,11 +58,11 @@
                 
                 <div class="px-6 py-6 flex flex-col gap-4">
                     <!-- Alertas e Preloader (Manipulados via Ajax no painel.blade.php) -->
-                    <div class="preloader bg-emerald-50 text-emerald-700 text-sm p-3 rounded-xl border border-emerald-100 text-center font-medium animate-pulse" style="display: none">
+                    <div class="preloader bg-emerald-50 text-emerald-700 text-sm p-3 rounded-xl border border-emerald-100 text-center font-medium animate-pulse oculto">
                         Enviando os dados...
                     </div>  
-                    <div class="alert alert-success msg-exito bg-emerald-50 text-emerald-700 text-sm p-3 rounded-xl border border-emerald-100 text-center font-medium" role="alert" style="display: none"></div>
-                    <div class="alert alert-warning msg-erro bg-red-50 text-red-700 text-sm p-3 rounded-xl border border-red-100 text-center font-medium" role="alert" style="display: none"></div> 
+                    <div class="alert alert-success msg-exito bg-emerald-50 text-emerald-700 text-sm p-3 rounded-xl border border-emerald-100 text-center font-medium oculto" role="alert"></div>
+                    <div class="alert alert-warning msg-erro bg-red-50 text-red-700 text-sm p-3 rounded-xl border border-red-100 text-center font-medium oculto" role="alert"></div> 
 
                     @if((isset($errors) ? count($errors) : 0) > 0)
                         <div class="bg-red-50 text-red-600 text-sm p-3 rounded-xl border border-red-100">
