@@ -4,27 +4,28 @@ namespace App\Http\Controllers\controleDocente;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Http\Requests\loginPrincipalRequest;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Validator;
 
 class navegacaoDocente extends Controller {
 
-    // Metodo que direciona a página de cadastrar(principal)
+    // Metodo que direciona a página principal do docente
     public function cadastrar() {
-        return view('telasDocente.cadastrar');
+        return redirect('/docente');
     }
+
     // Metodo que direciona a página de secretaria
     public function secretaria() {
-        return view('telasCoordenacao.secretaria');
+        return view('telasDocente.secretaria');
     }
+
     // Metodo que direciona a página de relatorios
     public function relatorios() {
-        return view('telasCoordenacao.relatorios.relatorios');
+        return view('telasDocente.relatorios.relatorios');
     }
-     //Metodo Para Direcionar o usuario para pagina de ajuda
+
+    // Metodo Para Direcionar o usuario para pagina de ajuda
     public function ajuda() {
-        $titulo = 'Ajuda';
-        return view('telasCoordenacao.ajuda', compact('titulo'));
+        $titulo = 'Central de Ajuda';
+        return view('telasDocente.ajuda', compact('titulo'));
     }
 }

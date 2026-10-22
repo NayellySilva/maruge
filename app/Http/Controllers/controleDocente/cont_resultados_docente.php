@@ -47,7 +47,7 @@ class cont_resultados_docente extends Controller {
             $idFuncionarios = $idFuncionarios['idFuncionarios'];
         }
         $turmas = tb_turma_docente::ListaTuramsdoProfessor($idFuncionarios); // Buscando as turmas do professor     
-        return view('telasCoordenacao.resultado.resultados', compact('turmas'));
+        return view('telasDocente.resultado.resultados', compact('turmas'));
     }
     //Metodo que faz o levantamento de todos os alunos de um determinada turma que estão em recuperação parcial
     public function resultado_parcial($idTurmas) {
@@ -61,11 +61,11 @@ class cont_resultados_docente extends Controller {
         $quantidade_disciplinas = tb_disciplina_docente::QuantidadeDisciplinasNaTurma($idTurmas);
         $professores = tb_turmas_disciplinas_docente::ProfessoreSuasDisciplinas($idTurmas);
         if ($quantidade_disciplinas <= 7) {
-            return view('telasCoordenacao.resultado.resultado_inf_parcial_final');
+            return view('telasDocente.resultado.resultado_inf_parcial_final');
         } else if ($quantidade_disciplinas <= 14) {
-            return view('telasCoordenacao.resultado.resultado_fund1_parcial', compact('titulo', 'escolas', 'turma', 'Alunos', 'disciplinas', 'professores'));
+            return view('telasDocente.resultado.resultado_fund1_parcial', compact('titulo', 'escolas', 'turma', 'Alunos', 'disciplinas', 'professores'));
         } else if ($quantidade_disciplinas > 14) {
-            return view('telasCoordenacao.resultado.resultado_fund2_parcial', compact('titulo', 'escolas', 'turma', 'Alunos', 'disciplinas', 'professores'));
+            return view('telasDocente.resultado.resultado_fund2_parcial', compact('titulo', 'escolas', 'turma', 'Alunos', 'disciplinas', 'professores'));
         }
     }
     //Metodo que faz o levantamento de todos os alunos de um determinada turma que estão em recuperação parcial
@@ -80,11 +80,11 @@ class cont_resultados_docente extends Controller {
         $quantidade_disciplinas = tb_disciplina_docente::QuantidadeDisciplinasNaTurma($idTurmas);
         $professores = tb_turmas_disciplinas_docente::ProfessoreSuasDisciplinas($idTurmas);
         if ($quantidade_disciplinas <= 7) {
-            return view('telasCoordenacao.resultado.resultado_inf_parcial_final');
+            return view('telasDocente.resultado.resultado_inf_parcial_final');
         } else if ($quantidade_disciplinas <= 14) {
-            return view('telasCoordenacao.resultado.resultado_fund1_final', compact('titulo', 'escolas', 'turma', 'Alunos', 'disciplinas', 'professores'));
+            return view('telasDocente.resultado.resultado_fund1_final', compact('titulo', 'escolas', 'turma', 'Alunos', 'disciplinas', 'professores'));
         } else if ($quantidade_disciplinas > 14) {
-            return view('telasCoordenacao.resultado.resultado_fund2_final', compact('titulo', 'escolas', 'turma', 'Alunos', 'disciplinas', 'professores'));
+            return view('telasDocente.resultado.resultado_fund2_final', compact('titulo', 'escolas', 'turma', 'Alunos', 'disciplinas', 'professores'));
         }
     }
     //Metodo que faz o levantamento de todos os alunos de um determinada turma que estão em recuperação parcial
@@ -99,11 +99,11 @@ class cont_resultados_docente extends Controller {
         $quantidade_disciplinas = tb_disciplina_docente::QuantidadeDisciplinasNaTurma($idTurmas);
         $professores = tb_turmas_disciplinas_docente::ProfessoreSuasDisciplinas($idTurmas);
         if ($quantidade_disciplinas <= 7) {
-            return view('telasCoordenacao.resultado.resultado_inf_aprovados_1sem', compact('titulo', 'escolas', 'turma', 'Alunos', 'disciplinas', 'professores'));
+            return view('telasDocente.resultado.resultado_inf_aprovados_1sem', compact('titulo', 'escolas', 'turma', 'Alunos', 'disciplinas', 'professores'));
         } else if ($quantidade_disciplinas <= 14) {
-            return view('telasCoordenacao.resultado.resultado_fund1_aprovados_1sem', compact('titulo', 'escolas', 'turma', 'Alunos', 'disciplinas', 'professores'));
+            return view('telasDocente.resultado.resultado_fund1_aprovados_1sem', compact('titulo', 'escolas', 'turma', 'Alunos', 'disciplinas', 'professores'));
         } else if ($quantidade_disciplinas > 14) {
-            return view('telasCoordenacao.resultado.resultado_fund2_aprovados_1sem', compact('titulo', 'escolas', 'turma', 'Alunos', 'disciplinas', 'professores'));
+            return view('telasDocente.resultado.resultado_fund2_aprovados_1sem', compact('titulo', 'escolas', 'turma', 'Alunos', 'disciplinas', 'professores'));
         }
     }
     //Metodo que faz o levantamento de todos os alunos de um determinada turma que estão em recuperação parcial
@@ -118,11 +118,11 @@ class cont_resultados_docente extends Controller {
         $quantidade_disciplinas = tb_disciplina_docente::QuantidadeDisciplinasNaTurma($idTurmas);
         $professores = tb_turmas_disciplinas_docente::ProfessoreSuasDisciplinas($idTurmas);
         if ($quantidade_disciplinas <= 7) {
-            return view('telasCoordenacao.resultado.resultado_inf_aprovados_2sem', compact('titulo', 'escolas', 'turma', 'Alunos', 'disciplinas', 'professores'));
+            return view('telasDocente.resultado.resultado_inf_aprovados_2sem', compact('titulo', 'escolas', 'turma', 'Alunos', 'disciplinas', 'professores'));
         } else if ($quantidade_disciplinas <= 14) {
-            return view('telasCoordenacao.resultado.resultado_fund1_aprovados_2sem', compact('titulo', 'escolas', 'turma', 'Alunos', 'disciplinas', 'professores'));
+            return view('telasDocente.resultado.resultado_fund1_aprovados_2sem', compact('titulo', 'escolas', 'turma', 'Alunos', 'disciplinas', 'professores'));
         } else if ($quantidade_disciplinas > 14) {
-            return view('telasCoordenacao.resultado.resultado_fund2_aprovados_2sem', compact('titulo', 'escolas', 'turma', 'Alunos', 'disciplinas', 'professores'));
+            return view('telasDocente.resultado.resultado_fund2_aprovados_2sem', compact('titulo', 'escolas', 'turma', 'Alunos', 'disciplinas', 'professores'));
         }
     }
 // Chava da class principal  

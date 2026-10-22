@@ -31,21 +31,20 @@ class loginPrincipal extends Controller {
 
     // Metodo que direciona ao painel do docente
     public function docenteIndex() {
-// Pegando o CPF do usuario e buscando seus dados
-        $CPFfuncionario = auth()->guard('guardLogin')->user()->CPFUsuario;
-// Criando um array de dados com Nome e id do funcionario
-        $nomedeusuario = tb_usuario::infUsuario($CPFfuncionario);
-// Atribuindo o id do funcionario na vareavel idFuncionario para assim buscar suas turmas        
-        foreach ($nomedeusuario as $idFuncionarios) {
-           $idFuncionarios = $idFuncionarios['idFuncionarios'];
+        $idFuncionarios = null;
+        if (auth()->guard('guardLogin')->check()) {
+            $CPFfuncionario = auth()->guard('guardLogin')->user()->CPFUsuario;
+            $nomedeusuario = tb_usuario::infUsuario($CPFfuncionario);
+            foreach ($nomedeusuario as $item) {
+                $idFuncionarios = $item->idFuncionarios ?? $item['idFuncionarios'] ?? null;
+            }
         }
-// Informações de quantidade de turmas e quantidade de disciplinas que o professor esta vinculados
-$quantTurmasDocente = \App\Models\modelDocente\tb_turma_docente::quantidadeDeTurmaDoProfessor($idFuncionarios)->count();
-$quantDisciplinaDocente = \App\Models\modelDocente\tb_disciplina_docente::quantidadeDeDisciplinasDoProfessor($idFuncionarios)->count();       
-$Alunos = \App\Models\modelDocente\tb_aluno_docente::AlunosdoProfessorTotal($idFuncionarios)->count();
 
+        $quantTurmasDocente = $idFuncionarios ? \App\Models\modelDocente\tb_turma_docente::quantidadeDeTurmaDoProfessor($idFuncionarios)->count() : 0;
+        $quantDisciplinaDocente = $idFuncionarios ? \App\Models\modelDocente\tb_disciplina_docente::quantidadeDeDisciplinasDoProfessor($idFuncionarios)->count() : 0;       
+        $Alunos = $idFuncionarios ? \App\Models\modelDocente\tb_aluno_docente::AlunosdoProfessorTotal($idFuncionarios)->count() : 0;
 
-return view('telasCoordenacao.index', compact('quantTurmasDocente','quantDisciplinaDocente','Alunos'));
+        return view('telasDocente.index', compact('quantTurmasDocente','quantDisciplinaDocente','Alunos'));
     }
 
     // Metodo que direciona para tela de login

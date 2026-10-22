@@ -11,12 +11,11 @@ use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 
-//INICIO DA CLASSE CONTROLE DA ESCOLA
 class cont_funcionario_docente extends Controller {
 
     private $request;
     private $validator;
-    private $tb_funcionario;
+    private $tb_funcionario_docente;
     private $tb_usuario_docente;
     private $tb_turma;
 
@@ -28,26 +27,25 @@ class cont_funcionario_docente extends Controller {
         $this->tb_turma = $tb_turma;
     }
 
-    // Metodo para vizualizar o perfil do funcionario via opção da parte superios que vem com id
-    public function perfil($idFuncionarios) {
-        $Funcionario = tb_funcionario_docente::perfilFuncionario($idFuncionarios);
-        $Turmas = tb_turma_docente::TurmasdoProfessor($idFuncionarios);
-        return view('telasCoordenacao.funcionarios.funcionario_perfil', compact('Funcionario', 'Turmas'));
+    // Metodo para visualizar o perfil do docente
+    public function perfil($idFuncionarios = null) {
+        if (empty($idFuncionarios)) {
+            if (auth()->guard('guardLogin')->check()) {
+                $CPFfuncionario = auth()->guard('guardLogin')->user()->CPFUsuario;
+                $nomedeusuario = tb_usuario_docente::infUsuario($CPFfuncionario);
+                foreach ($nomedeusuario as $item) {
+                    $idFuncionarios = $item->idFuncionarios ?? $item['idFuncionarios'] ?? null;
+                }
+            }
+        }
+
+        $Funcionario = $idFuncionarios ? tb_funcionario_docente::perfilFuncionario($idFuncionarios) : collect();
+        $Turmas = $idFuncionarios ? tb_turma_docente::TurmasdoProfessor($idFuncionarios) : collect();
+        return view('telasDocente.funcionarios.funcionario_perfil', compact('Funcionario', 'Turmas'));
     }
 
-// Metodo para vizualizar o perfil do funcionario via menu secretaria onde tem que busca o id.
+    // Metodo para visualizar o perfil via request
     public function perfil_request() {
-// Pegando o CPF do usuario e buscando seus dados
-        $CPFfuncionario = auth()->guard('guardLogin')->user()->CPFUsuario;
-// Criando um array de dados com Nome e id do funcionario
-        $nomedeusuario = tb_usuario_docente::infUsuario($CPFfuncionario);
-// Atribuindo o id do funcionario na vareavel idFuncionario para assim buscar suas turmas        
-        foreach ($nomedeusuario as $idFuncionarios) {
-            $idFuncionarios = $idFuncionarios['idFuncionarios'];
-        }
-        $Funcionario = tb_funcionario_docente::perfilFuncionario($idFuncionarios);
-        $Turmas = tb_turma_docente::TurmasdoProfessor($idFuncionarios);
-        return view('telasCoordenacao.funcionarios.funcionario_perfil', compact('Funcionario', 'Turmas'));
+        return $this->perfil();
     }
-//FIM DA CLASSE CONTROLE DA ESCOLA  
 }

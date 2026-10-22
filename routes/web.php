@@ -25,6 +25,14 @@ use App\Http\Controllers\controleCoordenacao\cont_resultados;
 use App\Http\Controllers\controleCoordenacao\cont_turma;
 use App\Http\Controllers\controleCoordenacao\cont_turma_disciplina;
 use App\Http\Controllers\controleCoordenacao\cont_usuario;
+use App\Http\Controllers\controleDocente\navegacaoDocente;
+use App\Http\Controllers\controleDocente\cont_declaracoes_docente;
+use App\Http\Controllers\controleDocente\cont_funcionario_docente;
+use App\Http\Controllers\controleDocente\cont_mapas_docente;
+use App\Http\Controllers\controleDocente\cont_notas_docente;
+use App\Http\Controllers\controleDocente\cont_relatorios_docente;
+use App\Http\Controllers\controleDocente\cont_resultados_docente;
+use App\Http\Controllers\controleDocente\cont_turma_docente;
 
 // =============================================================================
 // 1. PAINEL E APIs DO PAINEL
@@ -542,3 +550,139 @@ Route::prefix('coordenacao')->group(function () {
     })->where(['pasta' => '[A-Za-z0-9_]+', 'pagina' => '[A-Za-z0-9_]+'])
       ->name('coordenacao.pagina');
 });
+
+// =============================================================================
+// 4. DOCENTE (todas as URIs começam com /docente)
+// =============================================================================
+Route::prefix('docente')->group(function () {
+
+    Route::get('/', [loginPrincipal::class, 'docenteIndex'])->name('docente.index');
+
+    // Central de ajuda
+    Route::get('/ajuda', [navegacaoDocente::class, 'ajuda']);
+    Route::get('/ajuda/ajuda', [navegacaoDocente::class, 'ajuda']);
+
+    // Secretaria
+    Route::get('/secretaria', [navegacaoDocente::class, 'secretaria']);
+    Route::get('/funcionario_perfil/{id?}', [cont_funcionario_docente::class, 'perfil']);
+
+    // Declarações
+    Route::get('/declaracoes', [cont_declaracoes_docente::class, 'index']);
+    Route::get('/declaracoes_funcionario', [cont_declaracoes_docente::class, 'index']);
+
+    // Lançamento de Notas
+    Route::get('/notas', [cont_notas_docente::class, 'index']);
+    Route::get('/notas/notas', [cont_notas_docente::class, 'index']);
+    Route::match(['get', 'post'], '/notas_pesq', [cont_notas_docente::class, 'notas_pesq']);
+    Route::match(['get', 'post'], '/notas_filtro', [cont_notas_docente::class, 'notas_filtro']);
+
+    // Lançamento por aluno e bimestre (1bim, 2bim, 3bim, 4bim, rec)
+    Route::get('/lancamentos_notas_{bim}/{id}', function ($bim, $id) {
+        $bimsValidos = ['1bim', '2bim', '3bim', '4bim', 'rec'];
+        abort_if(!in_array($bim, $bimsValidos), 404);
+
+        try {
+            $aluno = \DB::table('tb_aluno')->where('idAluno', $id)->first();
+        } catch (\Exception $e) { $aluno = null; }
+        abort_if(!$aluno, 404);
+
+        try {
+            $matricula = \DB::table('tb_matriculas')->where('idMatriculas', $aluno->tb_matriculas_idMatriculas ?? 0)->first();
+        } catch (\Exception $e) { $matricula = null; }
+
+        try {
+            $turma = \DB::table('tb_turmas')->where('idTurmas', $aluno->tb_turmas_idTurmas ?? 0)->first();
+        } catch (\Exception $e) { $turma = null; }
+
+        // Pegar disciplinas vinculadas ao professor para esta turma
+        $disciplinas = collect();
+        try {
+            if (auth()->guard('guardLogin')->check()) {
+                $cpf = auth()->guard('guardLogin')->user()->CPFUsuario;
+                $userDoc = \App\Models\modelDocente\tb_usuario_docente::infUsuario($cpf)->first();
+                $idFunc = $userDoc->idFuncionarios ?? null;
+                if ($idFunc && $turma) {
+                    $disciplinas = \App\Models\modelDocente\tb_disciplina_docente::disciplinaTurmadoProfessor($turma->idTurmas, $idFunc);
+                }
+            }
+        } catch (\Exception $e) {}
+
+        if ($disciplinas->isEmpty() && $turma) {
+            try {
+                $disciplinas = \DB::table('tb_turmas_disciplinas')
+                    ->leftJoin('tb_disciplinas', 'tb_turmas_disciplinas.tb_disciplinas_idDisciplinas', '=', 'tb_disciplinas.idDisciplinas')
+                    ->where('tb_turmas_disciplinas.tb_turmas_idTurmas', $turma->idTurmas)
+                    ->select('tb_turmas_disciplinas.*', 'tb_disciplinas.NomeDisciplina')
+                    ->get();
+            } catch (\Exception $e) { $disciplinas = collect(); }
+        }
+
+        $titulo = 'Lançamento de Notas — ' . ($aluno->NomeAluno ?? 'Aluno');
+
+        if ($bim === 'rec') {
+            $nivel = 'fund1';
+        } else {
+            $nivelCode = \App\Http\Controllers\controleCoordenacao\cont_relatorios::determinarNivelTurma($turma->NomeTurma ?? '');
+            $nivel = ($nivelCode === 'fun1') ? 'fund1' : (($nivelCode === 'fun2') ? 'fund2' : 'inf');
+        }
+
+        $bimestre = $bim;
+        return view('telasDocente.notas.lancamento', compact('aluno', 'matricula', 'turma', 'disciplinas', 'titulo', 'bimestre', 'nivel'));
+    })->where(['id' => '[0-9]+', 'bim' => '1bim|2bim|3bim|4bim|rec']);
+
+    Route::get('/notas_rp_rf/{id}', function($id) {
+        return redirect("/docente/lancamentos_notas_rec/{$id}");
+    });
+
+    foreach (['inf', 'fun1', 'fun2'] as $nivel) {
+        foreach ([1, 2, 3, 4] as $bim) {
+            Route::post("/salva_nota_{$bim}bim_{$nivel}", [cont_notas_docente::class, "salva_nota_{$bim}bim_{$nivel}"]);
+        }
+    }
+    Route::post('/salva_nota_rp_rf', [cont_notas_docente::class, 'salva_nota_rp_rf']);
+    Route::post('/editarNota', [cont_notas_docente::class, 'editarNota']);
+
+    // Relatórios
+    Route::get('/relatorios', [navegacaoDocente::class, 'relatorios']);
+    Route::get('/relatorio_alunos_turmas', [cont_relatorios_docente::class, 'listagem_turmas']);
+    Route::get('/relatorio_alunos_turmas/{id}', [cont_relatorios_docente::class, 'alunosPorTurma']);
+    Route::get('/relatorio_alunos_por_turma/{id}', [cont_relatorios_docente::class, 'alunosPorTurma']);
+    Route::match(['get', 'post'], '/relatorio_pesquisar_turmas', [cont_relatorios_docente::class, 'listagem_turmas']);
+    Route::match(['get', 'post'], '/relatorio_alunos_turmas_pesq', [cont_relatorios_docente::class, 'listagem_turmas']);
+
+    // Mapas de notas
+    Route::get('/mapas_notas', [cont_mapas_docente::class, 'index']);
+    Route::match(['get', 'post'], '/mapas_pesq', [cont_mapas_docente::class, 'index']);
+    Route::match(['get', 'post'], '/mapas_filtro', [cont_mapas_docente::class, 'index']);
+    Route::get('/mapa_1bim/{id}', [cont_mapas_docente::class, 'bimestre_1']);
+    Route::get('/mapa_2bim/{id}', [cont_mapas_docente::class, 'bimestre_2']);
+    Route::get('/mapa_3bim/{id}', [cont_mapas_docente::class, 'bimestre_3']);
+    Route::get('/mapa_4bim/{id}', [cont_mapas_docente::class, 'bimestre_4']);
+    Route::get('/mapa_global/{id}', [cont_mapas_docente::class, 'mapa_global']);
+
+    // Resultados
+    Route::get('/resultados', [cont_resultados_docente::class, 'index']);
+    Route::match(['get', 'post'], '/resultados_pesq', [cont_resultados_docente::class, 'index']);
+    Route::match(['get', 'post'], '/resultados_filtro', [cont_resultados_docente::class, 'index']);
+    Route::get('/resultados_parcial/{id}', [cont_resultados_docente::class, 'resultado_parcial']);
+    Route::get('/resultados_final/{id}', [cont_resultados_docente::class, 'resultado_final']);
+    Route::get('/resultados_aprovados_1semestre/{id}', [cont_resultados_docente::class, 'aprovados_1semestre']);
+    Route::get('/resultados_aprovados_2semestre/{id}', [cont_resultados_docente::class, 'aprovados_2semestre']);
+
+    // Fallback dinâmico para páginas do docente
+    Route::get('/{pasta}/{pagina}', function ($pasta, $pagina) {
+        $viewName = "telasDocente.{$pasta}.{$pagina}";
+        if (view()->exists($viewName)) {
+            return view($viewName);
+        }
+        $viewFlat = "telasDocente.{$pagina}";
+        if (view()->exists($viewFlat)) {
+            return view($viewFlat);
+        }
+
+        $title = ucwords(str_replace(['_', '-'], ' ', $pagina));
+        return view('telasCoordenacao.construcao', compact('title'));
+    })->where(['pasta' => '[A-Za-z0-9_]+', 'pagina' => '[A-Za-z0-9_]+'])
+      ->name('docente.pagina');
+});
+

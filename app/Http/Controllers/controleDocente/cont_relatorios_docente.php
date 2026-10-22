@@ -48,7 +48,7 @@ class cont_relatorios_docente extends Controller {
             $idFuncionarios = $idFuncionarios['idFuncionarios'];
         }
         $turmas = tb_turma_docente::ListaTuramsdoProfessor($idFuncionarios); // Buscando as turmas do professor     
-        return view('telasCoordenacao.relatorios.relatorio_alunos_turmas', compact('turmas'));
+        return view('telasDocente.relatorios.relatorio_alunos_turmas', compact('turmas'));
     }
 //Metodo que gerar um relatório em pdf cos alunos transferidos ou desistente (INATIVOS)
     public function alunosPorTurma($idturmas) {
@@ -57,7 +57,7 @@ class cont_relatorios_docente extends Controller {
         $alunos = tb_aluno_docente::alunosPorTurma($idturmas);
         $turma = $this->tb_turma->find($idturmas);
         $titulo = 'Alunos Por Turma';
-        return view('telasCoordenacao.relatorios.relatorio_alunos_por_turma', compact('titulo', 'escolas', 'turma', 'alunos'));
+        return view('telasDocente.relatorios.relatorio_alunos_por_turma', compact('titulo', 'escolas', 'turma', 'alunos'));
     }
 // Chava da class principal  
 }

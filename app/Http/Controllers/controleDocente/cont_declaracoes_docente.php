@@ -26,24 +26,22 @@ class cont_declaracoes_docente extends Controller {
         $this->tb_escola = $tb_escola;
     }
 
-//Metodo Para Direcionar ao cadastro de um novo aluno
+// Metodo para emitir declaracao funcional do docente
     public function index() {
-// Pegando o CPF do usuario e buscando seus dados
-$CPFfuncionario = auth()->guard('guardLogin')->user()->CPFUsuario;
-// Criando um array de dados com Nome e id do funcionario
-        $nomedeusuario = tb_usuario::infUsuario($CPFfuncionario);
-// Atribuindo o id do funcionario na vareavel idFuncionario para assim buscar suas turmas        
-        foreach ($nomedeusuario as $idFuncionarios) {
-           $idFuncionarios = $idFuncionarios['idFuncionarios'];
-        }   
-        // Buscando o dia mes e ano 
-        setlocale(LC_ALL, 'pt_BR', 'pt_BR.utf-8', 'pt_BR.utf-8', 'portuguese');
-        date_default_timezone_set('America/Sao_Paulo');
-        $dia = strftime('%d de %B de %Y', strtotime('today'));
+        $idFuncionarios = null;
+        if (auth()->guard('guardLogin')->check()) {
+            $CPFfuncionario = auth()->guard('guardLogin')->user()->CPFUsuario;
+            $nomedeusuario = tb_usuario::infUsuario($CPFfuncionario);
+            foreach ($nomedeusuario as $item) {
+                $idFuncionarios = $item->idFuncionarios ?? $item['idFuncionarios'] ?? null;
+            }
+        }
+        $meses = [1 => 'Janeiro', 2 => 'Fevereiro', 3 => 'Março', 4 => 'Abril', 5 => 'Maio', 6 => 'Junho', 7 => 'Julho', 8 => 'Agosto', 9 => 'Setembro', 10 => 'Outubro', 11 => 'Novembro', 12 => 'Dezembro'];
+        $dia = date('d') . ' de ' . ($meses[(int)date('n')] ?? '') . ' de ' . date('Y');
         $titulo = 'Declaração do Funcionário';
-        $Funcionario = tb_funcionario::declaracaoFuncionario($idFuncionarios);
+        $Funcionario = $idFuncionarios ? tb_funcionario::declaracaoFuncionario($idFuncionarios) : collect();
         $escolas = tb_escola::informacaoEscolar();
-        return view('telasDocente.declaracoes_funcionario', compact('Funcionario', 'dia', 'titulo','escolas'));
+        return view('telasDocente.declaracoes.declaracoes_funcionario', compact('Funcionario', 'dia', 'titulo','escolas'));
     }
 
     

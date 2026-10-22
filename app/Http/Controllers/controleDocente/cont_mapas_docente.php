@@ -47,7 +47,7 @@ class cont_mapas_docente extends Controller {
             $idFuncionarios = $idFuncionarios['idFuncionarios'];
         }
         $turmas = tb_turma_docente::ListaTuramsdoProfessor($idFuncionarios); // Buscando as turmas do professor     
-        return view('telasCoordenacao.mapa.mapas_notas', compact('turmas'));
+        return view('telasDocente.mapa.mapas_notas', compact('turmas'));
     }
     
     
@@ -63,7 +63,7 @@ class cont_mapas_docente extends Controller {
             $idFuncionarios = $idFuncionarios['idFuncionarios'];
         }
         $turmas = tb_turma_docente::ListaTuramsdoProfessor($idFuncionarios); // Buscando as turmas do professor     
-        return view('telasCoordenacao.mapa.mapas_notas', compact('turmas'));
+        return view('telasDocente.mapa.mapas_notas', compact('turmas'));
     }
  
 
@@ -79,11 +79,11 @@ class cont_mapas_docente extends Controller {
        $disciplinas = tb_turmas_disciplinas_docente::disciplinaTurma($idTurmas);
        $quantidade_disciplinas = tb_disciplina_docente::QuantidadeDisciplinasNaTurma($idTurmas);
        if ($quantidade_disciplinas <= 7) {
-        return view('telasCoordenacao.mapa.mapa_inf_1bim', compact('titulo','escolas','turma','Alunos','disciplinas'));
+        return view('telasDocente.mapa.mapa_inf_1bim', compact('titulo','escolas','turma','Alunos','disciplinas'));
         } else if ($quantidade_disciplinas <= 14) {
-        return view('telasCoordenacao.mapa.mapa_fund1_1bim', compact('titulo','escolas','turma','Alunos','disciplinas'));
+        return view('telasDocente.mapa.mapa_fund1_1bim', compact('titulo','escolas','turma','Alunos','disciplinas'));
         } else if ($quantidade_disciplinas > 14) {
-        return view('telasCoordenacao.mapa.mapa_fund2_1bim', compact('titulo','escolas','turma','Alunos','disciplinas'));
+        return view('telasDocente.mapa.mapa_fund2_1bim', compact('titulo','escolas','turma','Alunos','disciplinas'));
         }   
        }
             
@@ -98,11 +98,11 @@ class cont_mapas_docente extends Controller {
        $disciplinas = tb_turmas_disciplinas_docente::disciplinaTurma($idTurmas);
        $quantidade_disciplinas = tb_disciplina_docente::QuantidadeDisciplinasNaTurma($idTurmas);
        if ($quantidade_disciplinas <= 7) {
-        return view('telasCoordenacao.mapa.mapa_inf_2bim', compact('titulo','escolas','turma','Alunos','disciplinas'));
+        return view('telasDocente.mapa.mapa_inf_2bim', compact('titulo','escolas','turma','Alunos','disciplinas'));
         } else if ($quantidade_disciplinas <= 14) {
-        return view('telasCoordenacao.mapa.mapa_fund1_2bim', compact('titulo','escolas','turma','Alunos','disciplinas'));
+        return view('telasDocente.mapa.mapa_fund1_2bim', compact('titulo','escolas','turma','Alunos','disciplinas'));
         } else if ($quantidade_disciplinas > 14) {
-        return view('telasCoordenacao.mapa.mapa_fund2_2bim', compact('titulo','escolas','turma','Alunos','disciplinas'));
+        return view('telasDocente.mapa.mapa_fund2_2bim', compact('titulo','escolas','turma','Alunos','disciplinas'));
         }   
        }  
     //Metodo do terceiro bismestre que direciona o aluno para a view apropriada 
@@ -116,11 +116,11 @@ class cont_mapas_docente extends Controller {
        $disciplinas = tb_turmas_disciplinas_docente::disciplinaTurma($idTurmas);
        $quantidade_disciplinas = tb_disciplina_docente::QuantidadeDisciplinasNaTurma($idTurmas);
        if ($quantidade_disciplinas <= 7) {
-        return view('telasCoordenacao.mapa.mapa_inf_3bim', compact('titulo','escolas','turma','Alunos','disciplinas'));
+        return view('telasDocente.mapa.mapa_inf_3bim', compact('titulo','escolas','turma','Alunos','disciplinas'));
         } else if ($quantidade_disciplinas <= 14) {
-        return view('telasCoordenacao.mapa.mapa_fund1_3bim', compact('titulo','escolas','turma','Alunos','disciplinas'));
+        return view('telasDocente.mapa.mapa_fund1_3bim', compact('titulo','escolas','turma','Alunos','disciplinas'));
         } else if ($quantidade_disciplinas > 14) {
-        return view('telasCoordenacao.mapa.mapa_fund2_3bim', compact('titulo','escolas','turma','Alunos','disciplinas'));
+        return view('telasDocente.mapa.mapa_fund2_3bim', compact('titulo','escolas','turma','Alunos','disciplinas'));
         }   
        }  
     //Metodo do quarto bismestre que direciona o aluno para a view apropriada 
@@ -134,11 +134,11 @@ class cont_mapas_docente extends Controller {
        $disciplinas = tb_turmas_disciplinas_docente::disciplinaTurma($idTurmas);
        $quantidade_disciplinas = tb_disciplina_docente::QuantidadeDisciplinasNaTurma($idTurmas);
         if ($quantidade_disciplinas <= 7) {
-        return view('telasCoordenacao.mapa.mapa_inf_4bim', compact('titulo','escolas','turma','Alunos','disciplinas'));
+        return view('telasDocente.mapa.mapa_inf_4bim', compact('titulo','escolas','turma','Alunos','disciplinas'));
         } else if ($quantidade_disciplinas <= 14) {
-        return view('telasCoordenacao.mapa.mapa_fund1_4bim', compact('titulo','escolas','turma','Alunos','disciplinas'));
+        return view('telasDocente.mapa.mapa_fund1_4bim', compact('titulo','escolas','turma','Alunos','disciplinas'));
         } else if ($quantidade_disciplinas > 14) {
-        return view('telasCoordenacao.mapa.mapa_fund2_4bim', compact('titulo','escolas','turma','Alunos','disciplinas'));
+        return view('telasDocente.mapa.mapa_fund2_4bim', compact('titulo','escolas','turma','Alunos','disciplinas'));
         }   
        }  
     //Metodo do mapa global que direciona o aluno para a view apropriada 
@@ -152,11 +152,11 @@ class cont_mapas_docente extends Controller {
        $disciplinas = tb_turmas_disciplinas_docente::disciplinaTurma($idTurmas);
        $quantidade_disciplinas = tb_disciplina_docente::QuantidadeDisciplinasNaTurma($idTurmas);
         if ($quantidade_disciplinas <= 7) {
-        return view('telasCoordenacao.mapa.mapa_inf_global', compact('titulo','escolas','turma','Alunos','disciplinas'));
+        return view('telasDocente.mapa.mapa_inf_global', compact('titulo','escolas','turma','Alunos','disciplinas'));
         } else if ($quantidade_disciplinas <= 14) {
-        return view('telasCoordenacao.mapa.mapa_fund1_global', compact('titulo','escolas','turma','Alunos','disciplinas'));
+        return view('telasDocente.mapa.mapa_fund1_global', compact('titulo','escolas','turma','Alunos','disciplinas'));
         } else if ($quantidade_disciplinas > 14) {
-        return view('telasCoordenacao.mapa.mapa_fund2_global', compact('titulo','escolas','turma','Alunos','disciplinas'));
+        return view('telasDocente.mapa.mapa_fund2_global', compact('titulo','escolas','turma','Alunos','disciplinas'));
         }   
        } 
        

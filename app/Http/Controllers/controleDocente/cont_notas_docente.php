@@ -40,153 +40,69 @@ class cont_notas_docente extends Controller {
 
 //Metodo que lista os alunos  
     public function index() {
-// Pegando o CPF do usuario e buscando seus dados
-        $CPFfuncionario = auth()->guard('guardLogin')->user()->CPFUsuario;
-// Criando um array de dados com Nome e id do funcionario
-        $nomedeusuario = tb_usuario_docente::infUsuario($CPFfuncionario);
-// Atribuindo o id do funcionario na vareavel idFuncionario para assim buscar suas turmas        
-        foreach ($nomedeusuario as $idFuncionarios) {
-            $idFuncionarios = $idFuncionarios['idFuncionarios'];
+        $idFuncionarios = null;
+        if (auth()->guard('guardLogin')->check()) {
+            $CPFfuncionario = auth()->guard('guardLogin')->user()->CPFUsuario;
+            $nomedeusuario = tb_usuario_docente::infUsuario($CPFfuncionario);
+            foreach ($nomedeusuario as $item) {
+                $idFuncionarios = $item->idFuncionarios ?? $item['idFuncionarios'] ?? null;
+            }
         }
-        $Alunos = tb_aluno_docente::AlunosdoProfessor($idFuncionarios); // Buscando os alunos do professor   
-        $turmas = tb_turma_docente::TurmasdoProfessor($idFuncionarios); // Buscando as turmas do professor
-        return view('telasCoordenacao.notas.notas', compact('Alunos', 'turmas'));
+        $Alunos = $idFuncionarios ? tb_aluno_docente::AlunosdoProfessor($idFuncionarios) : collect();
+        $turmas = $idFuncionarios ? tb_turma_docente::TurmasdoProfessor($idFuncionarios) : collect();
+        return view('telasDocente.notas.notas', compact('Alunos', 'turmas'));
     }
 
     //Metodo pesquisar aluno por filtro de turma
     public function notas_filtro() {
         $idTurma = $this->request->get('idTurmas');
-        // Pegando o CPF do usuario e buscando seus dados
-        $CPFfuncionario = auth()->guard('guardLogin')->user()->CPFUsuario;
-// Criando um array de dados com Nome e id do funcionario
-        $nomedeusuario = tb_usuario_docente::infUsuario($CPFfuncionario);
-// Atribuindo o id do funcionario na vareavel idFuncionario para assim buscar suas turmas        
-        foreach ($nomedeusuario as $idFuncionarios) {
-            $idFuncionarios = $idFuncionarios['idFuncionarios'];
+        $idFuncionarios = null;
+        if (auth()->guard('guardLogin')->check()) {
+            $CPFfuncionario = auth()->guard('guardLogin')->user()->CPFUsuario;
+            $nomedeusuario = tb_usuario_docente::infUsuario($CPFfuncionario);
+            foreach ($nomedeusuario as $item) {
+                $idFuncionarios = $item->idFuncionarios ?? $item['idFuncionarios'] ?? null;
+            }
         }
-        $turmas = tb_turma_docente::TurmasdoProfessor($idFuncionarios); // Buscando as turmas do professor
-        if ($idTurma == null) {
-            
+        $turmas = $idFuncionarios ? tb_turma_docente::TurmasdoProfessor($idFuncionarios) : collect();
+        if (empty($idTurma)) {
+            $Alunos = $idFuncionarios ? tb_aluno_docente::AlunosdoProfessor($idFuncionarios) : collect();
+        } else {
+            $Alunos = tb_aluno_docente::filtroporTurma($idTurma);
         }
-        $Alunos = tb_aluno_docente::filtroporTurma($idTurma);
-        return view('telasCoordenacao.notas.notas', compact('Alunos', 'turmas'));
+        return view('telasDocente.notas.notas', compact('Alunos', 'turmas'));
     }
 
-//Metodo pesquisar aluno por palavra chave
+    //Metodo pesquisar aluno por palavra chave
     public function notas_pesq() {
-        $idTurma = $this->request->get('idTurmas');
-        // Pegando o CPF do usuario e buscando seus dados
-        $CPFfuncionario = auth()->guard('guardLogin')->user()->CPFUsuario;
-// Criando um array de dados com Nome e id do funcionario
-        $nomedeusuario = tb_usuario_docente::infUsuario($CPFfuncionario);
-// Atribuindo o id do funcionario na vareavel idFuncionario para assim buscar suas turmas        
-        foreach ($nomedeusuario as $idFuncionarios) {
-            $idFuncionarios = $idFuncionarios['idFuncionarios'];
+        $idFuncionarios = null;
+        if (auth()->guard('guardLogin')->check()) {
+            $CPFfuncionario = auth()->guard('guardLogin')->user()->CPFUsuario;
+            $nomedeusuario = tb_usuario_docente::infUsuario($CPFfuncionario);
+            foreach ($nomedeusuario as $item) {
+                $idFuncionarios = $item->idFuncionarios ?? $item['idFuncionarios'] ?? null;
+            }
         }
-        $turmas = tb_turma_docente::TurmasdoProfessor($idFuncionarios); // Buscando as turmas do professor
+        $turmas = $idFuncionarios ? tb_turma_docente::TurmasdoProfessor($idFuncionarios) : collect();
         $palavrachave = $this->request->get('pesquisar');
-        $Alunos = tb_aluno_docente::pesquisar($palavrachave, $idFuncionarios);
-        return view('telasCoordenacao.notas.notas_pesq', compact('Alunos', 'turmas'));
+        $Alunos = $idFuncionarios ? tb_aluno_docente::pesquisar($palavrachave, $idFuncionarios) : collect();
+        return view('telasDocente.notas.notas_pesq', compact('Alunos', 'turmas'));
     }
 
-    //Metodo do primeiro bismestre que direciona o aluno para a view apropriada 
     public function bimestre_1($idAluno) {
-        $aluno = $this->tb_aluno->find($idAluno);
-        $matricula = $aluno->matriculaAluno;
-        $turma = $aluno->turmaAluno;
-        $idTurmas = $turma['idTurmas'];
-// Pegando o CPF do usuario e buscando seus dados
-        $CPFfuncionario = auth()->guard('guardLogin')->user()->CPFUsuario;
-// Criando um array de dados com Nome e id do funcionario
-        $nomedeusuario = tb_usuario_docente::infUsuario($CPFfuncionario);
-// Atribuindo o id do funcionario na vareavel idFuncionario para assim buscar suas turmas        
-        foreach ($nomedeusuario as $idFuncionarios) {
-            $idFuncionarios = $idFuncionarios['idFuncionarios'];
-        }
-        $disciplinas = tb_disciplina_docente::disciplinaTurmadoProfessor($idTurmas, $idFuncionarios);
-        $quantidade_disciplinas = tb_disciplina_docente::QuantidadeDisciplinasNaTurma($idTurmas);
-        if ($quantidade_disciplinas <= 7) {
-            return view('telasCoordenacao.notas.notas_inf_1bim', compact('turma', 'aluno', 'matricula', 'disciplinas'));
-        } else if ($quantidade_disciplinas <= 14) {
-            return view('telasCoordenacao.notas.notas_fund1_1bim', compact('turma', 'aluno', 'matricula', 'disciplinas'));
-        } else if ($quantidade_disciplinas > 14) {
-            return view('telasCoordenacao.notas.notas_fund2_1bim', compact('turma', 'aluno', 'matricula', 'disciplinas'));
-        }
+        return redirect("/docente/lancamentos_notas_1bim/{$idAluno}");
     }
 
-    //Metodo do primeiro bismestre que direciona o aluno para a view apropriada 
     public function bimestre_2($idAluno) {
-        $aluno = $this->tb_aluno->find($idAluno);
-        $matricula = $aluno->matriculaAluno;
-        $turma = $aluno->turmaAluno;
-        $idTurmas = $turma['idTurmas'];
-// Pegando o CPF do usuario e buscando seus dados
-        $CPFfuncionario = auth()->guard('guardLogin')->user()->CPFUsuario;
-// Criando um array de dados com Nome e id do funcionario
-        $nomedeusuario = tb_usuario_docente::infUsuario($CPFfuncionario);
-// Atribuindo o id do funcionario na vareavel idFuncionario para assim buscar suas turmas        
-        foreach ($nomedeusuario as $idFuncionarios) {
-            $idFuncionarios = $idFuncionarios['idFuncionarios'];
-        }
-        $disciplinas = tb_disciplina_docente::disciplinaTurmadoProfessor($idTurmas, $idFuncionarios);
-        $quantidade_disciplinas = tb_disciplina_docente::QuantidadeDisciplinasNaTurma($idTurmas);
-        if ($quantidade_disciplinas <= 7) {
-            return view('telasCoordenacao.notas.notas_inf_2bim', compact('turma', 'aluno', 'matricula', 'disciplinas'));
-        } else if ($quantidade_disciplinas <= 14) {
-            return view('telasCoordenacao.notas.notas_fund1_2bim', compact('turma', 'aluno', 'matricula', 'disciplinas'));
-        } else if ($quantidade_disciplinas > 14) {
-            return view('telasCoordenacao.notas.notas_fund2_2bim', compact('turma', 'aluno', 'matricula', 'disciplinas'));
-        }
+        return redirect("/docente/lancamentos_notas_2bim/{$idAluno}");
     }
 
-    //Metodo do primeiro bismestre que direciona o aluno para a view apropriada 
     public function bimestre_3($idAluno) {
-        $aluno = $this->tb_aluno->find($idAluno);
-        $matricula = $aluno->matriculaAluno;
-        $turma = $aluno->turmaAluno;
-        $idTurmas = $turma['idTurmas'];
-// Pegando o CPF do usuario e buscando seus dados
-        $CPFfuncionario = auth()->guard('guardLogin')->user()->CPFUsuario;
-// Criando um array de dados com Nome e id do funcionario
-        $nomedeusuario = tb_usuario_docente::infUsuario($CPFfuncionario);
-// Atribuindo o id do funcionario na vareavel idFuncionario para assim buscar suas turmas        
-        foreach ($nomedeusuario as $idFuncionarios) {
-            $idFuncionarios = $idFuncionarios['idFuncionarios'];
-        }
-        $disciplinas = tb_disciplina_docente::disciplinaTurmadoProfessor($idTurmas, $idFuncionarios);
-        $quantidade_disciplinas = tb_disciplina_docente::QuantidadeDisciplinasNaTurma($idTurmas);
-        if ($quantidade_disciplinas <= 7) {
-            return view('telasCoordenacao.notas.notas_inf_3bim', compact('turma', 'aluno', 'matricula', 'disciplinas'));
-        } else if ($quantidade_disciplinas <= 14) {
-            return view('telasCoordenacao.notas.notas_fund1_3bim', compact('turma', 'aluno', 'matricula', 'disciplinas'));
-        } else if ($quantidade_disciplinas > 14) {
-            return view('telasCoordenacao.notas.notas_fund2_3bim', compact('turma', 'aluno', 'matricula', 'disciplinas'));
-        }
+        return redirect("/docente/lancamentos_notas_3bim/{$idAluno}");
     }
 
-    //Metodo do primeiro bismestre que direciona o aluno para a view apropriada 
     public function bimestre_4($idAluno) {
-        $aluno = $this->tb_aluno->find($idAluno);
-        $matricula = $aluno->matriculaAluno;
-        $turma = $aluno->turmaAluno;
-        $idTurmas = $turma['idTurmas'];
-// Pegando o CPF do usuario e buscando seus dados
-        $CPFfuncionario = auth()->guard('guardLogin')->user()->CPFUsuario;
-// Criando um array de dados com Nome e id do funcionario
-        $nomedeusuario = tb_usuario_docente::infUsuario($CPFfuncionario);
-// Atribuindo o id do funcionario na vareavel idFuncionario para assim buscar suas turmas        
-        foreach ($nomedeusuario as $idFuncionarios) {
-            $idFuncionarios = $idFuncionarios['idFuncionarios'];
-        }
-        $disciplinas = tb_disciplina_docente::disciplinaTurmadoProfessor($idTurmas, $idFuncionarios);
-        $quantidade_disciplinas = tb_disciplina_docente::QuantidadeDisciplinasNaTurma($idTurmas);
-        if ($quantidade_disciplinas <= 7) {
-            return view('telasCoordenacao.notas.notas_inf_4bim', compact('turma', 'aluno', 'matricula', 'disciplinas'));
-        } else if ($quantidade_disciplinas <= 14) {
-            return view('telasCoordenacao.notas.notas_fund1_4bim', compact('turma', 'aluno', 'matricula', 'disciplinas'));
-        } else if ($quantidade_disciplinas > 14) {
-            return view('telasCoordenacao.notas.notas_fund2_4bim', compact('turma', 'aluno', 'matricula', 'disciplinas'));
-        }
+        return redirect("/docente/lancamentos_notas_4bim/{$idAluno}");
     }
 
     /**
@@ -373,8 +289,7 @@ class cont_notas_docente extends Controller {
         foreach ($nomedeusuario as $idFuncionarios) {
             $idFuncionarios = $idFuncionarios['idFuncionarios'];
         }
-        $disciplinas = tb_disciplina_docente::disciplinaTurmadoProfessor($idTurmas, $idFuncionarios);
-        return view('telasCoordenacao.notas.notas_rp_rf', compact('turma', 'aluno', 'matricula', 'disciplinas'));
+        return redirect("/docente/lancamentos_notas_rec/{$idAluno}");
     }
 
     // Salvar nota DE RECUPERAÇÃO PARCIAL E FINAL 

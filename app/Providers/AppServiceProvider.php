@@ -13,7 +13,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
+        \Illuminate\Support\Facades\View::addNamespace('telasDocente', resource_path('views/telasDocente'));
+        \Illuminate\Support\Facades\View::addNamespace('telasDocentes', resource_path('views/telasDocente'));
     }
 
     /**
