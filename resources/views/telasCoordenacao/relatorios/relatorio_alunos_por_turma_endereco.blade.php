@@ -137,16 +137,16 @@
         </thead>
         <tbody>
             @foreach($alunos as $index => $aluno)
-                <tr style="border-bottom: 1px solid #e2e8f0;">
+                <tr class="borda-inferior-suave">
                     <td style="padding: 5px 3px; text-align: center;">{{ $index + 1 }}</td>
-                    <td style="padding: 5px 4px; font-family: monospace;">{{ $aluno->NumeroMac ?? $aluno->RA ?? '-' }}</td>
-                    <td style="padding: 5px 4px; font-weight: bold; text-transform: uppercase;">{{ $aluno->NomeAluno }}</td>
-                    <td style="padding: 5px 4px; font-family: monospace;">{{ $aluno->Email ?? '-' }}</td>
-                    <td style="padding: 5px 4px; text-transform: uppercase;">{{ $aluno->Rua ?? '-' }}</td>
-                    <td style="padding: 5px 4px; text-align: center;">{{ $aluno->Numero ?? '-' }}</td>
-                    <td style="padding: 5px 4px; text-transform: uppercase;">{{ $aluno->Bairro ?? '-' }}</td>
-                    <td style="padding: 5px 4px; text-transform: uppercase;">{{ $aluno->Referencia ?? '-' }}</td>
-                    <td style="padding: 5px 4px; text-align: center;">{{ $aluno->Fone1 ?? '-' }}</td>
+                    <td class="celula-mono">{{ $aluno->NumeroMac ?? $aluno->RA ?? '-' }}</td>
+                    <td class="celula-cabecalho">{{ $aluno->NomeAluno }}</td>
+                    <td class="celula-mono">{{ $aluno->Email ?? '-' }}</td>
+                    <td class="celula-maiuscula">{{ $aluno->Rua ?? '-' }}</td>
+                    <td class="celula-centro">{{ $aluno->Numero ?? '-' }}</td>
+                    <td class="celula-maiuscula">{{ $aluno->Bairro ?? '-' }}</td>
+                    <td class="celula-maiuscula">{{ $aluno->Referencia ?? '-' }}</td>
+                    <td class="celula-centro">{{ $aluno->Fone1 ?? '-' }}</td>
                 </tr>
             @endforeach
         </tbody>

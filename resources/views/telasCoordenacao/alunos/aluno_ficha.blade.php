@@ -54,7 +54,7 @@
     </div>
     
     <div class="info-grid" style="grid-template-columns: repeat(4, 1fr);">
-        <div class="info-item" style="grid-column: span 2;">
+        <div class="info-item col-span-2">
             <span>Nome do Aluno(a):</span>
             <strong>{{ $aluno->NomeAluno }}</strong>
         </div>
@@ -92,12 +92,12 @@
             <span>CPF Aluno:</span>
             <strong>{{ $aluno->CPFAluno ?? '-' }}</strong>
         </div>
-        <div class="info-item" style="grid-column: span 2;">
+        <div class="info-item col-span-2">
             <span>Cartório:</span>
             <strong>{{ $aluno->NomeCartorio ?? '-' }}</strong>
         </div>
 
-        <div class="info-item" style="grid-column: span 2;">
+        <div class="info-item col-span-2">
             <span>Certidão de Nascimento Nº:</span>
             <strong>{{ $aluno->NumeroRGNovo ?? '-' }}</strong>
         </div>
@@ -158,7 +158,7 @@
 
     <div class="info-grid" style="grid-template-columns: repeat(4, 1fr);">
         <!-- Filiação 1 -->
-        <div class="info-item" style="grid-column: span 2;">
+        <div class="info-item col-span-2">
             <span>Filiação 1 (Pai/Mãe):</span>
             <strong>{{ $pais->NomePai ?? '-' }}</strong>
         </div>
@@ -241,7 +241,7 @@
     </div>
 
     <div class="info-grid" style="grid-template-columns: repeat(4, 1fr);">
-        <div class="info-item" style="grid-column: span 2;">
+        <div class="info-item col-span-2">
             <span>Logradouro / Rua:</span>
             <strong>{{ $endereco->Rua ?? '-' }}</strong>
         </div>

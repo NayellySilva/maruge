@@ -15,7 +15,9 @@
         <!--CSS Personalizado para o Painel-->
         <link rel="stylesheet" href="{{asset('css/painel.css')}}">
         <!-- CSS - Para fazer Reset nos Paineis-->
-        <link rel="stylesheet" href="{{asset('css/reset.css')}}">       
+        <link rel="stylesheet" href="{{asset('css/reset.css')}}">
+        <!-- Utilitarios -->
+        <link rel="stylesheet" href="{{asset('css/utilitarios.css')}}">       
         <!-- favicon-->
         <link rel="stylesheet" href="{{asset('imgs/favicon.png')}}">     
         <!-- Jquery Local-->
@@ -127,8 +129,8 @@ $(function () {
     jQuery(document).on("submit", "form.formularios, form.form-Nu", function (e) {
         e.preventDefault();
         e.stopPropagation();
-        jQuery(".msg-erro").hide();
-        jQuery(".msg-exito").hide();
+        jQuery(".msg-erro").addClass('oculto');
+        jQuery(".msg-exito").addClass('oculto');
         var formObj = jQuery(this);
         var dadosForm = formObj.serialize();
         var targetUrl = formObj.attr("send") || formObj.attr("action");
@@ -148,25 +150,25 @@ $(function () {
             var dataStr = String(data).trim();
 
             if (dataStr == "1" || dataStr == "11") {
-                jQuery(".msg-exito").html("Cadastro realizado com sucesso!").show();
+                jQuery(".msg-exito").html("Cadastro realizado com sucesso!").removeClass('oculto');
                 setTimeout(function() {
                     location.reload();
                 }, 1500);
             } else if (dataStr == "escolaExistente") {
-                jQuery(".msg-erro").html("Desculpe, já existe uma escola cadastrada!").show();
+                jQuery(".msg-erro").html("Desculpe, já existe uma escola cadastrada!").removeClass('oculto');
             } else if (dataStr == "DesciplinaNaoinformada") {
-                jQuery(".msg-erro").html("Nenhuma disciplina informada!").show();
+                jQuery(".msg-erro").html("Nenhuma disciplina informada!").removeClass('oculto');
             } else if (dataStr == "alunojacadastrado") {
-                jQuery(".msg-erro").html("Desculpe, Aluno já cadastrado!").show();
+                jQuery(".msg-erro").html("Desculpe, Aluno já cadastrado!").removeClass('oculto');
             } else {
-                jQuery(".msg-exito").html("Operação realizada com sucesso!").show();
+                jQuery(".msg-exito").html("Operação realizada com sucesso!").removeClass('oculto');
                 setTimeout(function() {
                     location.reload();
                 }, 1500);
             }
         }).fail(function() {
             if (typeof Fimpreloader === 'function') Fimpreloader();
-            jQuery(".msg-erro").html("Erro ao processar o formulário.").show();
+            jQuery(".msg-erro").html("Erro ao processar o formulário.").removeClass('oculto');
         });
 
         return false;
@@ -174,110 +176,110 @@ $(function () {
                 /*Codição se ja existir uma escola cadastrada*/
             } else if (data == "escolaExistente") {
                 jQuery(".msg-erro").html("Desculpa já existe uma escola cadastrada !");
-                jQuery(".msg-erro").show();
-                setTimeout("jQuery('msg-erro').hide();location.reload();", 2500);
+                jQuery(".msg-erro").removeClass('oculto');
+                setTimeout("jQuery('.msg-erro').addClass('oculto');location.reload();", 2500);
                 /*Codição quando atualização da escola for realizada*/
             } else if (data == "EscolaAtualizada") {
                 jQuery(".msg-exito").html("Escola atualizada com sucesso!");
-                jQuery(".msg-exito").show();
-                setTimeout("jQuery('msg-exito').hide();location.href ='/coordenacao/escola_inf';", 2500);
+                jQuery(".msg-exito").removeClass('oculto');
+                setTimeout("jQuery('.msg-exito').addClass('oculto');location.href ='/coordenacao/escola_inf';", 2500);
             }
             /*Codição quando é criado um carnê novo com sucesso*/
             else if (data == "carnecadastrado") {
                 jQuery(".msg-exito").html("Carnêr cadastrado com sucesso!");
-                jQuery(".msg-exito").show();
-                setTimeout("jQuery('msg-exito').hide();location.href ='/coordenacao/recibos';", 2500);
+                jQuery(".msg-exito").removeClass('oculto');
+                setTimeout("jQuery('.msg-exito').addClass('oculto');location.href ='/coordenacao/recibos';", 2500);
 
             }
             /*Codição quando é criado um ACOORDO novo com sucesso*/
             else if (data == "acordocadastrado") {
                 jQuery(".msg-exito").html("Acordo cadastrado com sucesso!");
-                jQuery(".msg-exito").show();
-                setTimeout("jQuery('msg-erro').hide();location.reload();", 4000);
+                jQuery(".msg-exito").removeClass('oculto');
+                setTimeout("jQuery('.msg-erro').addClass('oculto');location.reload();", 4000);
 
             }
             /*Codição QUE MOSTRA QUE JÁ EXISTE UM CARNER*/
             else if (data == "carnerjaexistente") {
                 jQuery(".msg-erro").html("Já existe um carnêr referente a este mês!");
-                jQuery(".msg-erro").show();
-                setTimeout("jQuery('msg-erro').hide();location.reload();", 4000);
+                jQuery(".msg-erro").removeClass('oculto');
+                setTimeout("jQuery('.msg-erro').addClass('oculto');location.reload();", 4000);
             }
             /*Codição que avisa QUE JA TEM ACORDO FEITO*/
             else if (data == "acordojaexistente") {
                 jQuery(".msg-erro").html("Já existe um acordo referente a este aluno!");
-                jQuery(".msg-erro").show();
-                setTimeout("jQuery('msg-erro').hide();location.reload();", 4000);
+                jQuery(".msg-erro").removeClass('oculto');
+                setTimeout("jQuery('.msg-erro').addClass('oculto');location.reload();", 4000);
             }
            /*Codição quando atualização do aluno for realizada*/
             else if (data == "AlunoAtualizado") {
                 jQuery(".msg-exito").html("Aluno atualizado com sucesso!");
-                jQuery(".msg-exito").show();
-                setTimeout("jQuery('msg-exito').hide();location.href ='/coordenacao/aluno_inf';", 2500);
+                jQuery(".msg-exito").removeClass('oculto');
+                setTimeout("jQuery('.msg-exito').addClass('oculto');location.href ='/coordenacao/aluno_inf';", 2500);
             }
             /*Codição quando atualização do aluno for realizada*/
             else if (data == "AlunoTransferido") {
                 jQuery(".msg-exito").html("Aluno transferido com sucesso!");
-                jQuery(".msg-exito").show();
-                setTimeout("jQuery('msg-exito').hide();location.href ='/coordenacao/aluno_inf';", 2500);
+                jQuery(".msg-exito").removeClass('oculto');
+                setTimeout("jQuery('.msg-exito').addClass('oculto');location.href ='/coordenacao/aluno_inf';", 2500);
             }
             /*Codição se não informar o nome da disciplina*/
             else if (data == "DesciplinaNaoinformada") {
-                jQuery(".msg-erro").html("Nenhuma disciplina informada!");
-                jQuery(".msg-erro").show();
-                setTimeout("jQuery('msg-erro').hide();location.href ='/coordenacao/disciplina_cad';", 2000);
+                jQuery(".msg-erro").html("Nenhuma disciplina informada!").removeClass('oculto');
+                jQuery(".msg-erro").removeClass('oculto');
+                setTimeout("jQuery('.msg-erro').addClass('oculto');location.href ='/coordenacao/disciplina_cad';", 2000);
                 /*Codição se não informar o nome da disciplina para update*/
             }
             /*Aluno Já existente*/
             else if (data == "alunojacadastrado") {
                 jQuery(".msg-erro").html("Desculpe, Aluno já cadastrado");
-                jQuery(".msg-erro").show();
-                setTimeout("jQuery('msg-erro').hide();location.href ='/coordenacao/aluno_cad';", 2000);
+                jQuery(".msg-erro").removeClass('oculto');
+                setTimeout("jQuery('.msg-erro').addClass('oculto');location.href ='/coordenacao/aluno_cad';", 2000);
             /*Aula Já Cadastrada*/
             } else if (data == "aulajacadastrada") {
                 jQuery(".msg-erro").html("Desculpe, Aula já cadastrado !");
-                jQuery(".msg-erro").show();
-                setTimeout("jQuery('msg-erro').hide();location.reload();", 2000);
+                jQuery(".msg-erro").removeClass('oculto');
+                setTimeout("jQuery('.msg-erro').addClass('oculto');location.reload();", 2000);
             } 
             /*Não foi informada uma nova disciplina*/
             else if (data == "novaDesciplinaNaoinformada") {
-                jQuery(".msg-erro").html("Nenhuma disciplina informada!");
-                jQuery(".msg-erro").show();
-                setTimeout("jQuery('msg-erro').hide();location.reload();", 2000);
+                jQuery(".msg-erro").html("Nenhuma disciplina informada!").removeClass('oculto');
+                jQuery(".msg-erro").removeClass('oculto');
+                setTimeout("jQuery('.msg-erro').addClass('oculto');location.reload();", 2000);
                 
                 
 
             } else if (data == "LancheAtualizado") {
                 jQuery(".msg-erro").html("Lanche Atualizado com Sucesso!");
-                jQuery(".msg-erro").show();
-                setTimeout("jQuery('msg-erro').hide();location.href ='/coordenacao/lanche_inf';", 2000);
+                jQuery(".msg-erro").removeClass('oculto');
+                setTimeout("jQuery('.msg-erro').addClass('oculto');location.href ='/coordenacao/lanche_inf';", 2000);
 
             } else if (data == "jaexistereserva") {
                 jQuery(".msg-erro").html("Desculpe, já existe uma pré-matrícula pra esse aluno.");
-                jQuery(".msg-erro").show();
-                setTimeout("jQuery('msg-erro').hide();location.href ='/coordenacao/aluno_pre_matricula_lista';", 2000);
+                jQuery(".msg-erro").removeClass('oculto');
+                setTimeout("jQuery('.msg-erro').addClass('oculto');location.href ='/coordenacao/aluno_pre_matricula_lista';", 2000);
 
             } /*Codição se o update da disciplina for realizada com sucesso*/
             else if (data == "disciplinaatualizada") {
                 jQuery(".msg-exito").html("Disciplina atualizada com sucesso !");
-                jQuery(".msg-exito").show();
-                setTimeout("jQuery('msg-exito').hide();location.href ='/coordenacao/disciplina_inf';", 2000);
+                jQuery(".msg-exito").removeClass('oculto');
+                setTimeout("jQuery('.msg-exito').addClass('oculto');location.href ='/coordenacao/disciplina_inf';", 2000);
                 /*Codição se não informar 2 campos ao mesmo tempo*/
             } else if (data == "2campos") {
                 jQuery(".msg-erro").html("Não é possivel digitar e selecionar disciplinas, por favor digite ou selecione a disciplina!");
-                jQuery(".msg-erro").show();
-                setTimeout("jQuery('msg-erro').hide();location.reload();", 2500);
+                jQuery(".msg-erro").removeClass('oculto');
+                setTimeout("jQuery('.msg-erro').addClass('oculto');location.reload();", 2500);
                 // Turma atualizada com sucesso
             } else if (data == "turmaatualizada") {
                 jQuery(".msg-exito").html("Turma atualizada com sucesso !");
-                jQuery(".msg-exito").show();
-                setTimeout("jQuery('msg-exito').hide();location.href ='/coordenacao/turma_inf';", 2000);
+                jQuery(".msg-exito").removeClass('oculto');
+                setTimeout("jQuery('.msg-exito').addClass('oculto');location.href ='/coordenacao/turma_inf';", 2000);
             
     
     
     } else if (data == "Aulaatualizada") {
                 jQuery(".msg-exito").html("Aula atualizada com sucesso !");
-                jQuery(".msg-exito").show();
-                setTimeout("jQuery('msg-exito').hide();location.href ='/coordenacao/aulas_inf';", 2000);
+                jQuery(".msg-exito").removeClass('oculto');
+                setTimeout("jQuery('.msg-exito').addClass('oculto');location.href ='/coordenacao/aulas_inf';", 2000);
 
 
 
@@ -288,8 +290,8 @@ $(function () {
             else if (data == "notalancada") {
                 $(this).attr('href');
                 jQuery(".msg-exito").html("Nota cadastrada com sucesso !");
-                jQuery(".msg-exito").show();
-                setTimeout("jQuery('msg-exito').hide();location.reload($(this).attr('href'))", 1000);
+                jQuery(".msg-exito").removeClass('oculto');
+                setTimeout("jQuery('.msg-exito').addClass('oculto');location.reload($(this).attr('href'))", 1000);
             } else if (data == "notaNaoInformada") {
 
 
@@ -298,8 +300,8 @@ $(function () {
             else if (data == "2via") {
                 $(this).attr('href');
                 jQuery(".msg-exito").html("2º Via impressa   com sucesso !");
-                jQuery(".msg-exito").show();
-                setTimeout("jQuery('msg-exito').hide();location.reload($(this).attr('href'))", 1000);
+                jQuery(".msg-exito").removeClass('oculto');
+                setTimeout("jQuery('.msg-exito').addClass('oculto');location.reload($(this).attr('href'))", 1000);
 
 
             } else if (data == "notaNaoInformada") {
@@ -310,8 +312,8 @@ $(function () {
             else if (data == "pagamento") {
                 $(this).attr('href');
                 jQuery(".msg-exito").html("Pagamento Recebido com Sucesso");
-                jQuery(".msg-exito").show();
-                setTimeout("jQuery('msg-exito').hide();location.reload($(this).attr('href'))", 1000);
+                jQuery(".msg-exito").removeClass('oculto');
+                setTimeout("jQuery('.msg-exito').addClass('oculto');location.reload($(this).attr('href'))", 1000);
               //  window.open("/coordenacao/recibo_mensalidade/}}","","height=400,width=400,left=40,top=40");
               } 
             
@@ -321,64 +323,64 @@ $(function () {
             /*codifo de barras ou RA não informado*/
             else if (data == "codNaoinformado") {
                 jQuery(".msg-erro").html("Código de Barras ou RA não informado!");
-                jQuery(".msg-erro").show();
-                setTimeout("jQuery('msg-erro').hide();location.href ='/coordenacao/financeiro_receber';", 2000);
+                jQuery(".msg-erro").removeClass('oculto');
+                setTimeout("jQuery('.msg-erro').addClass('oculto');location.href ='/coordenacao/financeiro_receber';", 2000);
                 /*Codição se não informar o nome da disciplina para update*/
             } 
             
             else if (data == "notaNaoInformada") {
                 jQuery(".msg-erro").html("Desculpa mas nenhuma nota foi informada !");
-                jQuery(".msg-erro").show();
-                setTimeout("jQuery('msg-erro').hide();location.reload();", 2500);
+                jQuery(".msg-erro").removeClass('oculto');
+                setTimeout("jQuery('.msg-erro').addClass('oculto');location.reload();", 2500);
 
             }
             // Nota não informada
 
             else if (data == "pagamentoErro") {
                 jQuery(".msg-erro").html("Desculpa mas nenhuma nota foi informada !");
-                jQuery(".msg-erro").show();
-                setTimeout("jQuery('msg-erro').hide();location.reload();", 2500);
+                jQuery(".msg-erro").removeClass('oculto');
+                setTimeout("jQuery('.msg-erro').addClass('oculto');location.reload();", 2500);
 
             }
             /*Codição funcionario atualizado com sucesso*/
             else if (data == "FuncionarioAtualizado") {
                 jQuery(".msg-exito").html("Funcionário atualizado com sucesso!");
-                jQuery(".msg-exito").show();
-                setTimeout("jQuery('msg-exito').hide();location.href ='/coordenacao/funcionario_inf';", 2000);
+                jQuery(".msg-exito").removeClass('oculto');
+                setTimeout("jQuery('.msg-exito').addClass('oculto');location.href ='/coordenacao/funcionario_inf';", 2000);
             }
             /*Codição frequencia com sucesso*/
             else if (data == "FrequenciaRealizada") {
                 $(this).attr('href');
                 jQuery(".msg-exito").html("Frequência feita com sucesso !");
-                jQuery(".msg-exito").show();
-                setTimeout("jQuery('msg-exito').hide();location.reload($(this).attr('href'))", 1000);
+                jQuery(".msg-exito").removeClass('oculto');
+                setTimeout("jQuery('.msg-exito').addClass('oculto');location.reload($(this).attr('href'))", 1000);
             }
             /*Codição para atualiza nota com sucesso*/
             else if (data == "notaAtualizada") {
                 jQuery(".msg-exito").html("A nota foi atualizada com sucesso !");
-                jQuery(".msg-exito").show();
-                setTimeout("jQuery('msg-exito').hide();location.reload($(this).attr('href'))", 1000);
+                jQuery(".msg-exito").removeClass('oculto');
+                setTimeout("jQuery('.msg-exito').addClass('oculto');location.reload($(this).attr('href'))", 1000);
             }
             /*Codição funcionario atualizado com sucesso*/
             else if (data == "UsuarioAtualizado") {
                 jQuery(".msg-exito").html("Usuário atualizado com sucesso!");
-                jQuery(".msg-exito").show();
-                setTimeout("jQuery('msg-exito').hide();location.href ='/coordenacao/usuario_inf';", 2000);
+                jQuery(".msg-exito").removeClass('oculto');
+                setTimeout("jQuery('.msg-exito').addClass('oculto');location.href ='/coordenacao/usuario_inf';", 2000);
             }
 
             /*Codição quando uma reserva for realizada*/
             else if (data == "ReservaAluno") {
                 jQuery(".msg-exito").html("Reseva foi realizada com sucesso !");
-                jQuery(".msg-exito").show();
-                setTimeout("jQuery('msg-exito').hide();location.href ='/coordenacao/aluno_pre_matricula_lista';", 2500);
+                jQuery(".msg-exito").removeClass('oculto');
+                setTimeout("jQuery('.msg-exito').addClass('oculto');location.href ='/coordenacao/aluno_pre_matricula_lista';", 2500);
             }
 
 
             /*Codição que da um retorno de algum erro espercifico ex: campos invalidos */
             else {
                 jQuery(".msg-erro").html(data);
-                jQuery(".msg-erro").show();
-                setTimeout("jQuery('msg-erro').hide();location.reload();", 79000);
+                jQuery(".msg-erro").removeClass('oculto');
+                setTimeout("jQuery('.msg-erro').addClass('oculto');location.reload();", 79000);
             }
             /*Metodo quando alguma operação for barrada por algum motivo da aplicação ex: não achar o banco de dados*/
         }).fail(function () {

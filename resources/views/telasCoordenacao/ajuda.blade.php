@@ -94,7 +94,7 @@
 </div> <!--Fim do caminho-din-->
 
 <!-- Modal Youtube -->
-<div class="modal fade" tabindex="-1" role="dialog" id="youtube" aria-labelledby="exampleModalLabel" style="display:none">
+<div class="modal fade oculto" tabindex="-1" role="dialog" id="youtube" aria-labelledby="exampleModalLabel">
   <div class="modal-dialog" role="document">
     <div class="modal-content rounded-2xl p-6 bg-white shadow-xl">
       <div class="modal-header border-b border-[#e3e8e6] pb-3 flex justify-between items-center">
@@ -114,7 +114,7 @@
 </div>
 
 <!-- Modal facebook -->
-<div class="modal fade" tabindex="-1" role="dialog" id="facebook" aria-labelledby="exampleModalLabel" style="display:none">
+<div class="modal fade oculto" tabindex="-1" role="dialog" id="facebook" aria-labelledby="exampleModalLabel">
   <div class="modal-dialog" role="document">
     <div class="modal-content rounded-2xl p-6 bg-white shadow-xl">
       <div class="modal-header border-b border-[#e3e8e6] pb-3 flex justify-between items-center">
@@ -134,7 +134,7 @@
 </div>
 
 <!-- Modal Sugestão -->
-<div class="modal fade" tabindex="-1" role="dialog" id="sugestoes" aria-labelledby="exampleModalLabel" style="display:none">
+<div class="modal fade oculto" tabindex="-1" role="dialog" id="sugestoes" aria-labelledby="exampleModalLabel">
   <div class="modal-dialog" role="document">
     <div class="modal-content rounded-2xl p-6 bg-white shadow-xl">
       <div class="modal-header border-b border-[#e3e8e6] pb-3 flex justify-between items-center">
@@ -154,7 +154,7 @@
 </div>
 
 <!-- Modal chat -->
-<div class="modal fade" tabindex="-1" role="dialog" id="chat" aria-labelledby="exampleModalLabel" style="display:none">
+<div class="modal fade oculto" tabindex="-1" role="dialog" id="chat" aria-labelledby="exampleModalLabel">
   <div class="modal-dialog" role="document">
     <div class="modal-content rounded-2xl p-6 bg-white shadow-xl">
       <div class="modal-header border-b border-[#e3e8e6] pb-3 flex justify-between items-center">
@@ -174,7 +174,7 @@
 </div>
 
 <!-- Modal Contatos -->
-<div class="modal fade" tabindex="-1" role="dialog" id="contatos" aria-labelledby="exampleModalLabel" style="display:none">
+<div class="modal fade oculto" tabindex="-1" role="dialog" id="contatos" aria-labelledby="exampleModalLabel">
   <div class="modal-dialog" role="document">
     <div class="modal-content rounded-2xl p-6 bg-white shadow-xl">
       <div class="modal-header border-b border-[#e3e8e6] pb-3 flex justify-between items-center">

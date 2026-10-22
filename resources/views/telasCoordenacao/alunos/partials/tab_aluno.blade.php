@@ -1,9 +1,9 @@
 <!-- TAB 1: DADOS DO ALUNO -->
 <div id="dados_aluno" class="tab-panel flex flex-col gap-6">
     <!-- Linha 1: Nome, Sexo, Data de Nascimento, Nº ID, Situação -->
-    <div style="display: flex; flex-direction: row; gap: 16px; width: 100%; align-items: flex-end;">
+    <div class="linha-flex-fim">
         <!-- Nome do Aluno -->
-        <div style="flex: 2 1 40%; min-width: 0; display: flex; flex-direction: column; gap: 6px;">
+        <div class="col-form-40">
             <label for="NomeAluno" class="text-sm font-medium text-[#0a241e]">Nome do Aluno:</label>
             <input type="text" name="NomeAluno" placeholder="Nome do Aluno" class="w-full bg-[#f8faf9] border border-[#e3e8e6] rounded-xl px-4 py-2.5 text-sm text-[#0a241e] focus:outline-none focus:border-gray-400 transition-all" value="{{ $aluno->NomeAluno ?? old('NomeAluno') }}" required>
         </div>
@@ -38,17 +38,17 @@
             </div>
         </div>
         <!-- Data de Nascimento -->
-        <div style="flex: 1 1 15%; min-width: 0; display: flex; flex-direction: column; gap: 6px;">
+        <div class="col-form-15">
             <label for="DataNascimento" class="text-sm font-medium text-[#0a241e]">Data de Nascimento:</label>
             <input type="date" name="DataNascimento" id="DataNascimento" class="w-full bg-[#f8faf9] border border-[#e3e8e6] rounded-xl px-4 py-2.5 text-sm text-[#0a241e] focus:outline-none focus:border-gray-400 transition-all" value="{{ $formatDate($aluno->DataNascimento ?? old('DataNascimento')) }}">
         </div>
         <!-- Nº ID -->
-        <div style="flex: 1 1 15%; min-width: 0; display: flex; flex-direction: column; gap: 6px;">
+        <div class="col-form-15">
             <label for="NumeroMac" class="text-sm font-medium text-[#0a241e]">Nº ID:</label>
             <input type="text" name="NumeroMac" placeholder="Número do Mac" id="numeroMac" class="w-full bg-[#f8faf9] border border-[#e3e8e6] rounded-xl px-4 py-2.5 text-sm text-[#0a241e] focus:outline-none focus:border-gray-400 transition-all" value="{{ $aluno->NumeroMac ?? old('NumeroMac') }}">
         </div>
         <!-- Situação -->
-        <div style="flex: 1 1 20%; min-width: 0; display: flex; flex-direction: column; gap: 6px;">
+        <div class="col-form-20">
             <input type="hidden" name="Nivel" value="ALUNO">
             <label for="SituacaoAluno" class="text-sm font-medium text-[#0a241e]">Situação:</label>
             <div class="relative" id="dropdown-container-situacao-aluno">
@@ -88,9 +88,9 @@
     </div>
 
     <!-- Linha 2: Turma, Aluno, Registro, Pasta, Foto -->
-    <div style="display: flex; flex-direction: row; gap: 16px; width: 100%; align-items: flex-end;">
+    <div class="linha-flex-fim">
         <!-- Turma -->
-        <div style="flex: 2 1 40%; min-width: 0; display: flex; flex-direction: column; gap: 6px;">
+        <div class="col-form-40">
             <label for="tb_turmas_idTurmas" class="text-sm font-medium text-[#0a241e]">Turma:</label>
             <div class="relative" id="dropdown-container-turma-cad-aluno">
                 <input type="hidden" id="tb_turmas_idTurmas" name="tb_turmas_idTurmas" value="{{ old('tb_turmas_idTurmas', $turma->idTurmas ?? '') }}">
@@ -144,7 +144,7 @@
             </div>
         </div>
         <!-- Aluno (Novato/Veterano) -->
-        <div style="flex: 1 1 15%; min-width: 0; display: flex; flex-direction: column; gap: 6px;">
+        <div class="col-form-15">
             <label for="AlunoNV" class="text-sm font-medium text-[#0a241e]">Aluno:</label>
             <div class="relative" id="dropdown-container-alunonv">
                 <input type="hidden" id="AlunoNV" name="AlunoNV" value="{{ old('AlunoNV', $matricula->AlunoNV ?? '') }}">
@@ -173,7 +173,7 @@
             </div>
         </div>
         <!-- Registro -->
-        <div style="flex: 1 1 15%; min-width: 0; display: flex; flex-direction: column; gap: 6px;">
+        <div class="col-form-15">
             <label for="Registro" class="text-sm font-medium text-[#0a241e]">Registro:</label>
             <div class="relative" id="dropdown-container-registro">
                 <input type="hidden" id="Registro" name="Registro" value="{{ old('Registro', $matricula->Registro ?? '') }}">
@@ -202,7 +202,7 @@
             </div>
         </div>
         <!-- Pasta -->
-        <div style="flex: 1 1 15%; min-width: 0; display: flex; flex-direction: column; gap: 6px;">
+        <div class="col-form-15">
             <label for="Pasta" class="text-sm font-medium text-[#0a241e]">Pasta:</label>
             <div class="relative" id="dropdown-container-pasta">
                 <input type="hidden" id="Pasta" name="Pasta" value="{{ old('Pasta', $matricula->Pasta ?? '') }}">
@@ -231,7 +231,7 @@
             </div>
         </div>
         <!-- Foto -->
-        <div style="flex: 1 1 15%; min-width: 0; display: flex; flex-direction: column; gap: 6px;">
+        <div class="col-form-15">
             <label for="Foto" class="text-sm font-medium text-[#0a241e]">Foto:</label>
             <div class="relative" id="dropdown-container-foto">
                 <input type="hidden" id="Foto" name="Foto" value="{{ old('Foto', $matricula->Foto ?? '') }}">
@@ -262,19 +262,19 @@
     </div>
 
     <!-- Linha 3: Nome Cartório, Data Emissão, Histórico, Declaração -->
-    <div style="display: flex; flex-direction: row; gap: 16px; width: 100%; align-items: flex-end;">
+    <div class="linha-flex-fim">
         <!-- Nome Cartório -->
-        <div style="flex: 2 1 40%; min-width: 0; display: flex; flex-direction: column; gap: 6px;">
+        <div class="col-form-40">
             <label for="NomeCartorio" class="text-sm font-medium text-[#0a241e]">Nome Cartório:</label>
             <input type="text" name="NomeCartorio" placeholder="Nome do Cartório" class="w-full bg-[#f8faf9] border border-[#e3e8e6] rounded-xl px-4 py-2.5 text-sm text-[#0a241e] focus:outline-none focus:border-gray-400 transition-all" value="{{ $aluno->NomeCartorio ?? old('NomeCartorio') }}">
         </div>
         <!-- Data de Emissão -->
-        <div style="flex: 1 1 20%; min-width: 0; display: flex; flex-direction: column; gap: 6px;">
+        <div class="col-form-20">
             <label for="DataEmissao" class="text-sm font-medium text-[#0a241e]">Data de Emissão:</label>
             <input type="date" id="DataEmissao" name="DataEmissao" class="w-full bg-[#f8faf9] border border-[#e3e8e6] rounded-xl px-4 py-2.5 text-sm text-[#0a241e] focus:outline-none focus:border-gray-400 transition-all" value="{{ $formatDate($aluno->DataEmissao ?? old('DataEmissao')) }}">
         </div>
         <!-- Histórico -->
-        <div style="flex: 1 1 20%; min-width: 0; display: flex; flex-direction: column; gap: 6px;">
+        <div class="col-form-20">
             <label for="Historico" class="text-sm font-medium text-[#0a241e]">Histórico:</label>
             <div class="relative" id="dropdown-container-historico">
                 <input type="hidden" id="Historico" name="Historico" value="{{ old('Historico', $matricula->Historico ?? '') }}">
@@ -303,7 +303,7 @@
             </div>
         </div>
         <!-- Declaração -->
-        <div style="flex: 1 1 20%; min-width: 0; display: flex; flex-direction: column; gap: 6px;">
+        <div class="col-form-20">
             <label for="Declaracao" class="text-sm font-medium text-[#0a241e]">Declaração:</label>
             <div class="relative" id="dropdown-container-declaracao">
                 <input type="hidden" id="Declaracao" name="Declaracao" value="{{ old('Declaracao', $matricula->Declaracao ?? '') }}">
@@ -334,7 +334,7 @@
     </div>
 
     <!-- Linha 4: Certidão Nova, Estado Cartório, Cidade Cartório -->
-    <div style="display: flex; flex-direction: row; gap: 16px; width: 100%; align-items: flex-end;">
+    <div class="linha-flex-fim">
         <!-- Número da matrícula (Registro Civil) -->
         <div style="flex: 2 1 50%; min-width: 0; display: flex; flex-direction: column; gap: 6px;">
             <label for="NumeroRGNovo" class="text-sm font-medium text-[#0a241e]">Número da matrícula (Registro Civil - Certidão Nova):</label>
@@ -473,7 +473,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 
     <!-- Linha 5: CPF Aluno, Acompanhamento -->
-    <div style="display: flex; flex-direction: row; gap: 16px; width: 100%; align-items: flex-end;">
+    <div class="linha-flex-fim">
         <!-- CPF Aluno -->
         <div style="flex: 1 1 50%; min-width: 0; display: flex; flex-direction: column; gap: 6px;">
             <label for="CPFAluno" class="text-sm font-medium text-[#0a241e]">CPF do Aluno:</label>

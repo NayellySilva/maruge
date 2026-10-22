@@ -36,9 +36,9 @@
         </div>
 
         <!-- Alertas e Preloader (Requeridos pelo JS do painel) -->
-        <div class="preloader" style="display: none"> Enviando os dados...</div>  
-        <div class="alert alert-success msg-exito bg-emerald-50 border border-emerald-200 text-emerald-700 p-4 rounded-xl mb-6 text-sm" role="alert" style="display: none"></div>
-        <div class="alert alert-warning msg-erro bg-amber-50 border border-amber-200 text-amber-700 p-4 rounded-xl mb-6 text-sm" role="alert" style="display: none"></div> 
+        <div class="preloader oculto"> Enviando os dados...</div>  
+        <div class="alert alert-success msg-exito bg-emerald-50 border border-emerald-200 text-emerald-700 p-4 rounded-xl mb-6 text-sm oculto" role="alert"></div>
+        <div class="alert alert-warning msg-erro bg-amber-50 border border-amber-200 text-amber-700 p-4 rounded-xl mb-6 text-sm oculto" role="alert"></div> 
 
         <!-- Alert de Erros de Validação -->
         @if((isset($errors) ? count($errors) : 0) > 0)
@@ -146,14 +146,14 @@
                 @php
                     $isDocOuCoord = in_array($selFuncao, ['DOCENTE', 'COORDENADOR (A)', 'COORDENACÃO']);
                 @endphp
-                <div id="container-senha-acesso" style="flex: 1 1 20%; min-width: 0; display: {{ $isDocOuCoord ? 'flex' : 'none' }}; flex-direction: column; gap: 6px;">
+                <div id="container-senha-acesso" class="col-form-20 {{ $isDocOuCoord ? '' : 'oculto' }}">
                     <label for="password" class="text-sm font-medium text-[#0a241e]">Senha de Acesso (8 dígitos):</label>
                     <input type="password" name="password" id="password" placeholder="Senha só números" maxlength="8" minlength="8" pattern="\d{8}" class="w-full bg-[#f8faf9] border border-[#e3e8e6] rounded-xl px-4 py-2.5 text-sm text-[#0a241e] focus:outline-none focus:border-gray-400 transition-all">
                 </div>
             </div>
 
             <!-- Segunda Linha: CEP, Endereço, Nº, Bairro -->
-            <div style="display: flex; flex-direction: row; gap: 16px; width: 100%; align-items: flex-end;">
+            <div class="linha-flex-fim">
                 <!-- CEP -->
                 <div style="flex: 1 1 18%; min-width: 0; display: flex; flex-direction: column; gap: 6px;">
                     <label for="CEP" class="text-sm font-medium text-[#0a241e]">CEP:</label>
@@ -165,7 +165,7 @@
                     <input type="text" name="Rua" id="Rua" placeholder="Rua / Avenida" class="w-full bg-[#f8faf9] border border-[#e3e8e6] rounded-xl px-4 py-2.5 text-sm text-[#0a241e] focus:outline-none focus:border-gray-400 transition-all" value="{{ $endereco->Rua ?? old('Rua') }}">
                 </div>
                 <!-- Número -->
-                <div style="flex: 1 1 15%; min-width: 0; display: flex; flex-direction: column; gap: 6px;">
+                <div class="col-form-15">
                     <label for="Numero" class="text-sm font-medium text-[#0a241e]">Nº:</label>
                     <input type="text" name="Numero" id="Numero" placeholder="Número" class="w-full bg-[#f8faf9] border border-[#e3e8e6] rounded-xl px-4 py-2.5 text-sm text-[#0a241e] focus:outline-none focus:border-gray-400 transition-all" value="{{ $endereco->Numero ?? old('Numero') }}">
                 </div>
@@ -177,7 +177,7 @@
             </div>
 
             <!-- Terceira Linha: Estado, Cidade, Fixo, Celular, E-mail -->
-            <div style="display: flex; flex-direction: row; gap: 16px; width: 100%; align-items: flex-end;">
+            <div class="linha-flex-fim">
                 <!-- Estado -->
                 <div style="flex: 1 1 18%; min-width: 0; display: flex; flex-direction: column; gap: 6px;">
                     <label for="Estado" class="text-sm font-medium text-[#0a241e]">Estado:</label>
@@ -221,7 +221,7 @@
                     </div>
                 </div>
                 <!-- Cidade -->
-                <div style="flex: 1 1 25%; min-width: 0; display: flex; flex-direction: column; gap: 6px;">
+                <div class="col-form-25">
                     <label for="Cidade" class="text-sm font-medium text-[#0a241e]">Cidade:</label>
                     <div class="relative" id="dropdown-container-cidade-func">
                         @php
@@ -270,14 +270,14 @@
             </div>
 
             <!-- Quarta Linha: Formação, Salário -->
-            <div style="display: flex; flex-direction: row; gap: 16px; width: 100%; align-items: flex-end;">
+            <div class="linha-flex-fim">
                 <!-- Formação -->
                 <div style="flex: 3 1 75%; min-width: 0; display: flex; flex-direction: column; gap: 6px;">
                     <label for="Formacao" class="text-sm font-medium text-[#0a241e]">Formação:</label>
                     <input type="text" name="Formacao" placeholder="Formação Acadêmica" class="w-full bg-[#f8faf9] border border-[#e3e8e6] rounded-xl px-4 py-2.5 text-sm text-[#0a241e] focus:outline-none focus:border-gray-400 transition-all" value="{{ $funcionario->Formacao ?? old('Formacao') }}">
                 </div>
                 <!-- Salário -->
-                <div style="flex: 1 1 25%; min-width: 0; display: flex; flex-direction: column; gap: 6px;">
+                <div class="col-form-25">
                     <label for="Salario" class="text-sm font-medium text-[#0a241e]">Salário:</label>
                     <input type="text" name="Salario" id="Salario" placeholder="R$ 0,00" class="w-full bg-[#f8faf9] border border-[#e3e8e6] rounded-xl px-4 py-2.5 text-sm text-[#0a241e] focus:outline-none focus:border-gray-400 transition-all" value="{{ $funcionario->Salario ?? old('Salario') }}">
                 </div>
@@ -348,9 +348,9 @@ window.checkFuncaoSenhaVisibility = function(funcao) {
 
     const isDocCoord = (funcao === 'DOCENTE' || funcao === 'COORDENADOR (A)' || funcao === 'COORDENACÃO');
     if (isDocCoord) {
-        containerSenha.style.display = 'flex';
+        containerSenha.classList.remove('oculto');
     } else {
-        containerSenha.style.display = 'none';
+        containerSenha.classList.add('oculto');
         if (inputPassword) {
             inputPassword.value = '';
         }

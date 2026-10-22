@@ -47,9 +47,9 @@
         </div>
 
         <!-- Alertas e Preloader (Requeridos pelo JS do painel) -->
-        <div class="preloader" style="display: none"> Enviando os dados...</div>  
-        <div class="alert alert-success msg-exito bg-emerald-50 border border-emerald-200 text-emerald-700 p-4 rounded-xl mb-6 text-sm" role="alert" style="display: none"></div>
-        <div class="alert alert-warning msg-erro bg-amber-50 border border-amber-200 text-amber-700 p-4 rounded-xl mb-6 text-sm" role="alert" style="display: none"></div> 
+        <div class="preloader oculto"> Enviando os dados...</div>  
+        <div class="alert alert-success msg-exito bg-emerald-50 border border-emerald-200 text-emerald-700 p-4 rounded-xl mb-6 text-sm oculto" role="alert"></div>
+        <div class="alert alert-warning msg-erro bg-amber-50 border border-amber-200 text-amber-700 p-4 rounded-xl mb-6 text-sm oculto" role="alert"></div> 
 
         <!-- Alert de Mensagens de Sessão -->
         @if(session('success'))
@@ -265,9 +265,9 @@
         options.forEach(opt => {
             const text = opt.querySelector('.option-title').textContent.toLowerCase();
             if (text.includes(query)) {
-                opt.style.display = 'flex';
+                opt.classList.remove('oculto');
             } else {
-                opt.style.display = 'none';
+                opt.classList.add('oculto');
             }
         });
     }
@@ -276,7 +276,7 @@
         const checkboxes = document.querySelectorAll('.' + checkboxClass);
         checkboxes.forEach(cb => {
             const parentLabel = cb.closest('label');
-            if (parentLabel && parentLabel.style.display !== 'none') {
+            if (parentLabel && !parentLabel.classList.contains('oculto')) {
                 cb.checked = state;
             }
         });

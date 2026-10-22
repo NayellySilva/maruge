@@ -1098,9 +1098,9 @@
             </div>
             <div class="modal-body"> 
                 <form class="alteraNota form formularios" action="/coordenacao/financeiro_baixar" method="POST" send="/coordenacao/financeiro_baixar">
-                    <div class="preloader" style="display: none"> Enviando os dados...</div>  
-                    <div class="alert alert-success msg-exito" role="alert" style="display: none"></div>
-                    <div class="alert alert-warning msg-erro" role="alert" style="display: none"></div> 
+                    <div class="preloader oculto"> Enviando os dados...</div>  
+                    <div class="alert alert-success msg-exito oculto" role="alert"></div>
+                    <div class="alert alert-warning msg-erro oculto" role="alert"></div> 
                     {!! csrf_field() !!}
                     <input type="hidden" name="NomeAluno"id="nomealuno">
                     <input type="hidden" name="NomeTurma" id="nometurma">
@@ -1233,9 +1233,9 @@
             </div>
             <div class="modal-body"> 
                 <form class="alteraNota form formularios" action="/coordenacao/financeiro_baixar_acordo" method="POST" send="/coordenacao/financeiro_baixar_acordo">
-                    <div class="preloader" style="display: none"> Enviando os dados...</div>  
-                    <div class="alert alert-success msg-exito" role="alert" style="display: none"></div>
-                    <div class="alert alert-warning msg-erro" role="alert" style="display: none"></div> 
+                    <div class="preloader oculto"> Enviando os dados...</div>  
+                    <div class="alert alert-success msg-exito oculto" role="alert"></div>
+                    <div class="alert alert-warning msg-erro oculto" role="alert"></div> 
                     {!! csrf_field() !!}
                     <input type="hidden" name="NomeAluno"id="nomealuno">
                     <input type="hidden" name="NomeTurma" id="nometurma">
@@ -1354,9 +1354,9 @@
             </div>
             <div class="modal-body"> 
                 <form class="alteraNota form formularios" action="/coordenacao/financeiro_comprovante" method="POST" send="/coordenacao/financeiro_comprovante">
-                    <div class="preloader" style="display: none"> Enviando os dados...</div>  
-                    <div class="alert alert-success msg-exito" role="alert" style="display: none"></div>
-                    <div class="alert alert-warning msg-erro" role="alert" style="display: none"></div> 
+                    <div class="preloader oculto"> Enviando os dados...</div>  
+                    <div class="alert alert-success msg-exito oculto" role="alert"></div>
+                    <div class="alert alert-warning msg-erro oculto" role="alert"></div> 
                     {!! csrf_field() !!}
                     <input type="hidden" name="NomeAluno"id="nomealuno">
                     <input type="hidden" name="NomeTurma" id="nometurma">
@@ -1461,9 +1461,9 @@
             </div>
             <div class="modal-body"> 
                 <form class="alteraNota form formularios" action="/coordenacao/financeiro_comprovante_acordo" method="POST" send="/coordenacao/financeiro_comprovante_acordo">
-                    <div class="preloader" style="display: none"> Enviando os dados...</div>  
-                    <div class="alert alert-success msg-exito" role="alert" style="display: none"></div>
-                    <div class="alert alert-warning msg-erro" role="alert" style="display: none"></div> 
+                    <div class="preloader oculto"> Enviando os dados...</div>  
+                    <div class="alert alert-success msg-exito oculto" role="alert"></div>
+                    <div class="alert alert-warning msg-erro oculto" role="alert"></div> 
                     {!! csrf_field() !!}
                     <input type="hidden" name="NomeAluno"id="nomealuno">
                     <input type="hidden" name="NomeTurma" id="nometurma">

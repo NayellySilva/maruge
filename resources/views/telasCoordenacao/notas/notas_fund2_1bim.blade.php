@@ -4,9 +4,9 @@
     <h1 class="titulo-pagina">{{ $titulo ?? 'Lançamento de Notas Fundamental II - 1º Bimestre' }}</h1>
 </div>  
 <div class="caminho-din">
-    <div class="preloader" style="display: none"> Enviando os dados...</div>  
-    <div class="alert alert-success msg-exito" role="alert" style="display: none"></div>
-    <div class="alert alert-warning msg-erro" role="alert" style="display: none"></div> 
+    <div class="preloader oculto"> Enviando os dados...</div>  
+    <div class="alert alert-success msg-exito oculto" role="alert"></div>
+    <div class="alert alert-warning msg-erro oculto" role="alert"></div> 
     <div class="formularios">    
         @if((isset($errors) ? count($errors) : 0)>0)
         @foreach($errors->all() as $error)
@@ -379,9 +379,9 @@
             </div>
             <div class="modal-body">
                 <form class="alteraNota form formularios" action="/coordenacao/editar_nota" method="POST" send="/coordenacao/editar_nota">
-                    <div class="preloader" style="display: none"> Enviando os dados...</div>  
-                    <div class="alert alert-success msg-exito" role="alert" style="display: none"></div>
-                    <div class="alert alert-warning msg-erro" role="alert" style="display: none"></div> 
+                    <div class="preloader oculto"> Enviando os dados...</div>  
+                    <div class="alert alert-success msg-exito oculto" role="alert"></div>
+                    <div class="alert alert-warning msg-erro oculto" role="alert"></div> 
                     {!! csrf_field() !!}
                     <input type="hidden" name="idNotas" id="idNotas" >
                     <input type="hidden" name="tb_usuario_idUsuario" id="tb_usuario_idUsuario">
@@ -414,9 +414,9 @@
             </div>
             <div class="modal-body">
                 <form class="alteraNota form formularios" action="/coordenacao/editar_nota" method="POST" send="/coordenacao/editar_nota">
-                    <div class="preloader" style="display: none"> Enviando os dados...</div>  
-                    <div class="alert alert-success msg-exito" role="alert" style="display: none"></div>
-                    <div class="alert alert-warning msg-erro" role="alert" style="display: none"></div> 
+                    <div class="preloader oculto"> Enviando os dados...</div>  
+                    <div class="alert alert-success msg-exito oculto" role="alert"></div>
+                    <div class="alert alert-warning msg-erro oculto" role="alert"></div> 
                     {!! csrf_field() !!}
                     <input type="hidden" name="idNotas" id="idNotas" >
                     <input type="hidden" name="tb_usuario_idUsuario" id="tb_usuario_idUsuario">
@@ -449,9 +449,9 @@
             </div>
             <div class="modal-body">
                 <form class="alteraNota form formularios" action="/coordenacao/editar_nota" method="POST" send="/coordenacao/editar_nota">
-                    <div class="preloader" style="display: none"> Enviando os dados...</div>  
-                    <div class="alert alert-success msg-exito" role="alert" style="display: none"></div>
-                    <div class="alert alert-warning msg-erro" role="alert" style="display: none"></div> 
+                    <div class="preloader oculto"> Enviando os dados...</div>  
+                    <div class="alert alert-success msg-exito oculto" role="alert"></div>
+                    <div class="alert alert-warning msg-erro oculto" role="alert"></div> 
                     {!! csrf_field() !!}
                     <input type="hidden" name="idNotas" id="idNotas" >
                     <input type="hidden" name="tb_usuario_idUsuario" id="tb_usuario_idUsuario">

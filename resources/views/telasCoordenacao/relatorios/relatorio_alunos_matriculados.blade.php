@@ -212,15 +212,15 @@
         </thead>
         <tbody>
             @foreach($alunos as $index => $aluno)
-                <tr style="border-bottom: 1px solid #e2e8f0;">
+                <tr class="borda-inferior-suave">
                     <td style="padding: 5px 3px; text-align: center;">{{ $index + 1 }}</td>
-                    <td style="padding: 5px 4px; font-family: monospace;">{{ $aluno->NumeroMac ?? $aluno->RA ?? '-' }}</td>
-                    <td style="padding: 5px 4px; font-weight: bold; text-transform: uppercase;">{{ $aluno->NomeAluno }}</td>
-                    <td style="padding: 5px 4px; text-align: center;">{{ $formatDate($aluno->DataNascimento) }}</td>
-                    <td style="padding: 5px 4px; text-transform: uppercase;">{{ $aluno->NomeMae ?? '-' }}</td>
-                    <td style="padding: 5px 4px; text-align: center;">{{ $aluno->FoneMae1 ?? '-' }}</td>
-                    <td style="padding: 5px 4px; text-transform: uppercase;">{{ $aluno->NomePai ?? '-' }}</td>
-                    <td style="padding: 5px 4px; text-align: center;">{{ $aluno->FonePai1 ?? '-' }}</td>
+                    <td class="celula-mono">{{ $aluno->NumeroMac ?? $aluno->RA ?? '-' }}</td>
+                    <td class="celula-cabecalho">{{ $aluno->NomeAluno }}</td>
+                    <td class="celula-centro">{{ $formatDate($aluno->DataNascimento) }}</td>
+                    <td class="celula-maiuscula">{{ $aluno->NomeMae ?? '-' }}</td>
+                    <td class="celula-centro">{{ $aluno->FoneMae1 ?? '-' }}</td>
+                    <td class="celula-maiuscula">{{ $aluno->NomePai ?? '-' }}</td>
+                    <td class="celula-centro">{{ $aluno->FonePai1 ?? '-' }}</td>
                     <td style="padding: 5px 4px; text-align: center; font-weight: bold;">{{ $aluno->NomeTurma ?? '-' }}</td>
                 </tr>
             @endforeach

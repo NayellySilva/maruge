@@ -1,24 +1,24 @@
 <!-- TAB 3: ENDEREÇO -->
 <div id="endereco" class="tab-panel hidden flex flex-col gap-6">
     <!-- Linha 1: Rua, Número, Fone Fixo, CEP -->
-    <div style="display: flex; flex-direction: row; gap: 16px; width: 100%; align-items: flex-end;">
+    <div class="linha-flex-fim">
         <!-- CEP -->
-        <div style="flex: 1 1 20%; min-width: 0; display: flex; flex-direction: column; gap: 6px;">
+        <div class="col-form-20">
             <label for="CEP" class="text-sm font-medium text-[#0a241e]">CEP:</label>
             <input type="text" name="CEP" placeholder="00000-000" id="CEP" class="w-full bg-[#f8faf9] border border-[#e3e8e6] rounded-xl px-4 py-2.5 text-sm text-[#0a241e] focus:outline-none focus:border-gray-400 transition-all mask-cep" value="{{ $endereco->CEP ?? old('CEP') }}">
         </div>
         <!-- Rua -->
-        <div style="flex: 2 1 40%; min-width: 0; display: flex; flex-direction: column; gap: 6px;">
+        <div class="col-form-40">
             <label for="Rua" class="text-sm font-medium text-[#0a241e]">Rua:</label>
             <input type="text" name="Rua" id="Rua" placeholder="Endereço Completo" class="w-full bg-[#f8faf9] border border-[#e3e8e6] rounded-xl px-4 py-2.5 text-sm text-[#0a241e] focus:outline-none focus:border-gray-400 transition-all" value="{{ $endereco->Rua ?? old('Rua') }}">
         </div>
         <!-- Número -->
-        <div style="flex: 1 1 15%; min-width: 0; display: flex; flex-direction: column; gap: 6px;">
+        <div class="col-form-15">
             <label for="Numero" class="text-sm font-medium text-[#0a241e]">Nº:</label>
             <input type="text" name="Numero" placeholder="Nº" class="w-full bg-[#f8faf9] border border-[#e3e8e6] rounded-xl px-4 py-2.5 text-sm text-[#0a241e] focus:outline-none focus:border-gray-400 transition-all" value="{{ $endereco->Numero ?? old('Numero') }}">
         </div>
         <!-- Fone Fixo -->
-        <div style="flex: 1 1 25%; min-width: 0; display: flex; flex-direction: column; gap: 6px;">
+        <div class="col-form-25">
             <label for="Fone1" class="text-sm font-medium text-[#0a241e]">Telefone Fixo:</label>
             <input type="text" name="Fone1" placeholder="(xx) xxxx-xxxx" id="tel-fixo" class="w-full bg-[#f8faf9] border border-[#e3e8e6] rounded-xl px-4 py-2.5 text-sm text-[#0a241e] focus:outline-none focus:border-gray-400 transition-all mask-phone" value="{{ $endereco->Fone1 ?? old('Fone1') }}">
         </div>
@@ -26,9 +26,9 @@
     </div>
 
     <!-- Linha 2: Bairro, Referência, Estado, Cidade -->
-    <div style="display: flex; flex-direction: row; gap: 16px; width: 100%; align-items: flex-end;">
+    <div class="linha-flex-fim">
         <!-- Bairro -->
-        <div style="flex: 1 1 25%; min-width: 0; display: flex; flex-direction: column; gap: 6px;">
+        <div class="col-form-25">
             <label for="Bairro" class="text-sm font-medium text-[#0a241e]">Bairro:</label>
             <input type="text" name="Bairro" id="Bairro" placeholder="Bairro" class="w-full bg-[#f8faf9] border border-[#e3e8e6] rounded-xl px-4 py-2.5 text-sm text-[#0a241e] focus:outline-none focus:border-gray-400 transition-all" value="{{ $endereco->Bairro ?? old('Bairro') }}">
         </div>

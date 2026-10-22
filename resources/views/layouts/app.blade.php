@@ -11,6 +11,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
     <!-- Estilos e Scripts (Vite) -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <!-- Estilos Utilitários -->
+    <link rel="stylesheet" href="{{ asset('css/utilitarios.css') }}">
     <!-- SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 

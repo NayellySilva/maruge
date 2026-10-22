@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>{{ $titulo ?? 'Resultados - 1º Semestre (Fundamental II)' }}</title>
     <x-estilo-impressao arquivo="resultado" />
+    <link rel="stylesheet" href="{{asset('css/utilitarios.css')}}">
 </head>
 <body>
 
@@ -48,10 +49,10 @@
                     <table class="resultado-table">
                         <thead>
                             <tr>
-                                <th style="width: 70px;">RA</th>
+                                <th class="largura-70">RA</th>
                                 <th class="aluno-nome">NOME ALUNO</th>
-                                <th style="width: 100px;">1º BIMESTRE</th>
-                                <th style="width: 100px;">2º BIMESTRE</th>
+                                <th class="largura-100">1º BIMESTRE</th>
+                                <th class="largura-100">2º BIMESTRE</th>
                                 <th style="width: 130px;">MÉDIA 1º SEMESTRE</th>
                                 <th style="width: 120px;">SITUAÇÃO</th>
                             </tr>

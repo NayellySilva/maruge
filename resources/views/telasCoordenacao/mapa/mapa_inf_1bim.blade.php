@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>{{ $titulo ?? 'Mapa de Notas - 1º Bimestre (Educação Infantil)' }}</title>
     <x-estilo-impressao arquivo="mapa" />
+    <link rel="stylesheet" href="{{asset('css/utilitarios.css')}}">
 </head>
 <body>
 
@@ -36,9 +37,9 @@
         <table class="mapa-table">
             <thead>
                 <tr>
-                    <th style="width: 70px;">RA</th>
-                    <th style="width: 80px;">SITUAÇÃO</th>
-                    <th class="text-left" style="min-width: 200px;">ALUNO</th>
+                    <th class="largura-70">RA</th>
+                    <th class="largura-80">SITUAÇÃO</th>
+                    <th class="text-left largura-min-200">ALUNO</th>
                     @foreach($disciplinas as $disciplina)
                         <th>{{ mb_strtoupper(mb_substr($disciplina->NomeDisciplina, 0, 4)) }}</th>
                     @endforeach
