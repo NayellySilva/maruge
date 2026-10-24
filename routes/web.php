@@ -584,6 +584,11 @@ Route::prefix('docente')->middleware(['auth:guardLogin', 'docente', 'semCache'])
     Route::get('/lancamentos_notas_{bim}/{id}', [cont_notas_docente::class, 'lancamento'])
         ->where(['id' => '[0-9]+', 'bim' => '1bim|2bim|3bim|4bim|rec']);
 
+    // Lançamento por turma inteira
+    Route::get('/lancar_turma/{idTurma}/{idDisciplina}/{bim}', [cont_notas_docente::class, 'lancarTurma'])
+        ->where(['idTurma' => '[0-9]+', 'idDisciplina' => '[0-9]+', 'bim' => '1bim|2bim|3bim|4bim']);
+    Route::post('/lancar_turma', [cont_notas_docente::class, 'salvarNotasTurma']);
+
     Route::get('/notas_rp_rf/{id}', function($id) {
         return redirect("/docente/lancamentos_notas_rec/{$id}");
     });

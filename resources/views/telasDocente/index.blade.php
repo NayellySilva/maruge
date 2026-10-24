@@ -127,9 +127,12 @@
                                 <!-- Disciplinas que o professor leciona nesta turma -->
                                 <div class="mt-2 flex flex-wrap gap-1.5">
                                     @forelse($t->disciplinas as $d)
-                                        <span class="text-xs bg-[#f8faf9] border border-[#e3e8e6] text-[#0a241e] px-2 py-0.5 rounded-md font-medium">
-                                            {{ $d->NomeDisciplina }}
-                                        </span>
+                                        <a href="{{ url('/docente/lancar_turma/' . $t->idTurmas . '/' . $d->tb_disciplinas_idDisciplinas . '/' . $bimestreAtual . 'bim') }}"
+                                           class="text-xs bg-[#f8faf9] hover:bg-[#ecfdf5] border border-[#e3e8e6] hover:border-[#008a4b] text-[#0a241e] hover:text-[#008a4b] px-2 py-0.5 rounded-md font-medium transition-colors inline-flex items-center gap-1"
+                                           title="Lançar notas de {{ $d->NomeDisciplina }} (Turma inteira)">
+                                            <span>{{ $d->NomeDisciplina }}</span>
+                                            <i data-lucide="edit-3" class="w-3 h-3 text-[#5c706b]"></i>
+                                        </a>
                                     @empty
                                         <span class="text-xs text-[#5c706b] italic">Sem disciplinas vinculadas</span>
                                     @endforelse
@@ -138,10 +141,17 @@
 
                             <!-- Acoes Rapidas da Turma -->
                             <div class="pt-3 border-t border-[#f0f4f2] flex flex-wrap items-center justify-between gap-2">
-                                <a href="{{ url('/docente/notas_filtro?idTurmas=' . $t->idTurmas) }}" class="inline-flex items-center gap-1.5 text-xs font-semibold text-[#008a4b] hover:text-[#00703c] transition-colors">
-                                    <i data-lucide="clipboard-pen" class="w-3.5 h-3.5"></i>
-                                    <span>Lançar Notas</span>
-                                </a>
+                                @if($t->disciplinas->count() === 1)
+                                    <a href="{{ url('/docente/lancar_turma/' . $t->idTurmas . '/' . $t->disciplinas->first()->tb_disciplinas_idDisciplinas . '/' . $bimestreAtual . 'bim') }}" class="inline-flex items-center gap-1.5 text-xs font-semibold text-[#008a4b] hover:text-[#00703c] transition-colors">
+                                        <i data-lucide="clipboard-pen" class="w-3.5 h-3.5"></i>
+                                        <span>Lançar por Turma</span>
+                                    </a>
+                                @else
+                                    <a href="{{ url('/docente/notas_filtro?idTurmas=' . $t->idTurmas) }}" class="inline-flex items-center gap-1.5 text-xs font-semibold text-[#008a4b] hover:text-[#00703c] transition-colors">
+                                        <i data-lucide="clipboard-pen" class="w-3.5 h-3.5"></i>
+                                        <span>Lançar Notas</span>
+                                    </a>
+                                @endif
                                 <div class="flex items-center gap-2">
                                     <a href="{{ url('/docente/mapa_' . $bimestreAtual . 'bim/' . $t->idTurmas) }}" target="_blank" class="text-xs text-[#5c706b] hover:text-[#0a241e] font-medium flex items-center gap-1 transition-colors" title="Mapa {{ $bimestreAtual }}º Bimestre">
                                         <i data-lucide="map" class="w-3.5 h-3.5"></i>
@@ -196,7 +206,7 @@
                                         <span class="text-xs font-semibold text-amber-700 bg-amber-50 px-2 py-0.5 rounded-md border border-amber-200">
                                             {{ $pend->pendentes }} {{ $pend->pendentes === 1 ? 'pendente' : 'pendentes' }}
                                         </span>
-                                        <a href="{{ url('/docente/notas_filtro?idTurmas=' . $pend->idTurma) }}" class="text-[#008a4b] hover:text-[#00703c] p-1" title="Lançar notas agora">
+                                        <a href="{{ url('/docente/lancar_turma/' . $pend->idTurma . '/' . $pend->idDisciplina . '/' . $bimestreAtual . 'bim') }}" class="text-[#008a4b] hover:text-[#00703c] p-1" title="Lançar notas agora">
                                             <i data-lucide="arrow-right" class="w-4 h-4"></i>
                                         </a>
                                     </div>

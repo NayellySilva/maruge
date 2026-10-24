@@ -310,4 +310,107 @@ class cont_notas_docente extends Controller {
             return 'erroAoAtualizarNota';
         }
     }
+
+    // Tela de lancamento de notas por turma inteira
+    public function lancarTurma($idTurma, $idDisciplina, $bim) {
+        $bimsValidos = ['1bim', '2bim', '3bim', '4bim'];
+        abort_if(!in_array($bim, $bimsValidos), 404);
+        abort_unless(ProfessorLogado::podeAcessarTurma($idTurma), 403);
+        abort_unless(ProfessorLogado::podeLancarDisciplina($idTurma, $idDisciplina), 403);
+
+        $turma = DB::table('tb_turmas')->where('idTurmas', $idTurma)->first();
+        abort_if(!$turma, 404);
+
+        $disciplina = DB::table('tb_disciplinas')->where('idDisciplinas', $idDisciplina)->first();
+        abort_if(!$disciplina, 404);
+
+        $nivel = $this->notaService->nivelDaTurma($turma->NomeTurma ?? '');
+        $bimestreNumero = (int) str_replace('bim', '', $bim);
+
+        $alunos = DB::table('tb_aluno')
+            ->join('tb_matriculas', 'tb_matriculas.idMatriculas', '=', 'tb_aluno.tb_matriculas_idMatriculas')
+            ->where('tb_aluno.tb_turmas_idTurmas', $idTurma)
+            ->whereIn('tb_aluno.SituacaoAluno', ['ATIVO', 'ATIVA'])
+            ->select('tb_aluno.idAluno', 'tb_aluno.NomeAluno', 'tb_matriculas.RA')
+            ->orderBy('tb_aluno.NomeAluno')
+            ->get();
+
+        $idsAlunos = $alunos->pluck('idAluno');
+        $notasExistentes = DB::table('tb_notas')
+            ->where('tb_turmas_idTurmas', $idTurma)
+            ->where('tb_disciplinas_idDisciplinas', $idDisciplina)
+            ->whereIn('tb_aluno_idAluno', $idsAlunos)
+            ->get()
+            ->keyBy('tb_aluno_idAluno');
+
+        return view('telasDocente.notas.lancar_turma', compact('turma', 'disciplina', 'bim', 'bimestreNumero', 'nivel', 'alunos', 'notasExistentes'));
+    }
+
+    // Salvar notas da turma inteira de uma vez
+    public function salvarNotasTurma(Request $request) {
+        $idTurma = $request->integer('idTurmas');
+        $idDisciplina = $request->integer('tb_disciplinas_idDisciplinas');
+        $bim = $request->input('bim');
+
+        $bimsValidos = ['1bim', '2bim', '3bim', '4bim'];
+        abort_if(!in_array($bim, $bimsValidos), 404);
+        abort_unless(ProfessorLogado::podeAcessarTurma($idTurma), 403);
+        abort_unless(ProfessorLogado::podeLancarDisciplina($idTurma, $idDisciplina), 403);
+
+        $turma = DB::table('tb_turmas')->where('idTurmas', $idTurma)->first();
+        abort_if(!$turma, 404);
+        $nivel = $this->notaService->nivelDaTurma($turma->NomeTurma ?? '');
+        $bimNumero = (int) str_replace('bim', '', $bim);
+
+        $alunos = (array) $request->input('tb_aluno_idAluno', []);
+        $ras = (array) $request->input('RA', []);
+        $abs = (array) $request->input("AB{$bimNumero}", []);
+        $ams = (array) $request->input("AM{$bimNumero}", []);
+        $rbs = (array) $request->input("RB{$bimNumero}", []);
+
+        $userId = auth()->guard('guardLogin')->id() ?? 1;
+
+        foreach ($alunos as $i => $idAluno) {
+            abort_unless(ProfessorLogado::podeAcessarAluno($idAluno), 403);
+
+            $ab = $this->notaService->normalizarNota($abs[$i] ?? null);
+            $am = ($nivel === 'fun2') ? $this->notaService->normalizarNota($ams[$i] ?? null) : null;
+            $rb = ($nivel !== 'inf') ? $this->notaService->normalizarNota($rbs[$i] ?? null) : null;
+
+            // Se for fundamental, verificar se a recuperacao e aplicavel
+            if ($nivel !== 'inf') {
+                $avaliacoes = array_values(array_filter([$am, $ab], fn($v) => $v !== null));
+                $mediaParcial = $this->notaService->calcularMediaParcial($avaliacoes);
+                if ($mediaParcial !== null && !$this->notaService->deveHabilitarRecuperacao($mediaParcial)) {
+                    $rb = null;
+                }
+            }
+
+            $campos = [
+                "AB{$bimNumero}" => $ab,
+                'tb_usuario_idUsuario' => $userId,
+            ];
+            if ($nivel === 'fun2') {
+                $campos["AM{$bimNumero}"] = $am;
+            }
+            if ($nivel !== 'inf') {
+                $campos["RB{$bimNumero}"] = $rb;
+            }
+
+            DB::table('tb_notas')->updateOrInsert(
+                [
+                    'tb_turmas_idTurmas' => $idTurma,
+                    'tb_disciplinas_idDisciplinas' => $idDisciplina,
+                    'tb_aluno_idAluno' => $idAluno,
+                ],
+                array_merge($campos, [
+                    'RA' => $ras[$i] ?? '',
+                    'updated_at' => now(),
+                ])
+            );
+        }
+
+        return redirect("/docente/lancar_turma/{$idTurma}/{$idDisciplina}/{$bim}")
+            ->with('status', 'Notas da turma salvas com sucesso!');
+    }
 }
