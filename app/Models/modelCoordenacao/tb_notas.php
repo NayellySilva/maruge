@@ -88,6 +88,9 @@ class tb_notas extends Model {
                         'tb_turmas_idTurmas' => $dadosForm["tb_turmas_idTurmas"][$i],
                         'RA' => $dadosForm["RA"][$i],
                         'tb_aluno_idAluno' => $dadosForm["tb_aluno_idAluno"][$i],
+                        // Defesa contra NOT NULL sem default (MySQL strict)
+                        'AM1' => 0, 'AM2' => 0, 'AM3' => 0, 'AM4' => 0,
+                        'AB2' => 0, 'AB3' => 0, 'AB4' => 0, 'RP' => 0, 'RF' => 0,
                     ];
                     $contador = tb_notas::select()// buscando disciplina/turma e aluno para verificar se é caso de salvar ou atualizar pois cada disciplina tem seus bimestres
                             ->select('tb_notas.*')
@@ -125,6 +128,9 @@ class tb_notas extends Model {
                         'tb_turmas_idTurmas' => $dadosForm["tb_turmas_idTurmas"][$i],
                         'RA' => $dadosForm["RA"][$i],
                         'tb_aluno_idAluno' => $dadosForm["tb_aluno_idAluno"][$i],
+                        // Defesa contra NOT NULL sem default (MySQL strict)
+                        'AM1' => 0, 'AM2' => 0, 'AM3' => 0, 'AM4' => 0,
+                        'AB1' => 0, 'AB3' => 0, 'AB4' => 0, 'RP' => 0, 'RF' => 0,
                     ];
                     $contador = tb_notas::select()// buscando disciplina/turma e aluno para verificar se é caso de salvar ou atualizar pois cada disciplina tem seus bimestres
                             ->select('tb_notas.*')
@@ -162,6 +168,9 @@ class tb_notas extends Model {
                         'tb_turmas_idTurmas' => $dadosForm["tb_turmas_idTurmas"][$i],
                         'RA' => $dadosForm["RA"][$i],
                         'tb_aluno_idAluno' => $dadosForm["tb_aluno_idAluno"][$i],
+                        // Defesa contra NOT NULL sem default (MySQL strict)
+                        'AM1' => 0, 'AM2' => 0, 'AM3' => 0, 'AM4' => 0,
+                        'AB1' => 0, 'AB2' => 0, 'AB4' => 0, 'RP' => 0, 'RF' => 0,
                     ];
                     $contador = tb_notas::select()// buscando disciplina/turma e aluno para verificar se é caso de salvar ou atualizar pois cada disciplina tem seus bimestres
                             ->select('tb_notas.*')
@@ -199,6 +208,9 @@ class tb_notas extends Model {
                         'tb_turmas_idTurmas' => $dadosForm["tb_turmas_idTurmas"][$i],
                         'RA' => $dadosForm["RA"][$i],
                         'tb_aluno_idAluno' => $dadosForm["tb_aluno_idAluno"][$i],
+                        // Defesa contra NOT NULL sem default (MySQL strict)
+                        'AM1' => 0, 'AM2' => 0, 'AM3' => 0, 'AM4' => 0,
+                        'AB1' => 0, 'AB2' => 0, 'AB3' => 0, 'RP' => 0, 'RF' => 0,
                     ];
                     $contador = tb_notas::select()// buscando disciplina/turma e aluno para verificar se é caso de salvar ou atualizar pois cada disciplina tem seus bimestres
                             ->select('tb_notas.*')
@@ -565,6 +577,9 @@ class tb_notas extends Model {
                         'tb_turmas_idTurmas' => $dadosForm["tb_turmas_idTurmas"][$i],
                         'RA' => $dadosForm["RA"][$i],
                         'tb_aluno_idAluno' => $dadosForm["tb_aluno_idAluno"][$i],
+                        // Defesa contra NOT NULL sem default (MySQL strict)
+                        'AM1' => 0, 'AM2' => 0, 'AM3' => 0, 'AM4' => 0,
+                        'AB1' => 0, 'AB2' => 0, 'AB3' => 0, 'AB4' => 0,
                     ];
                     $contador = tb_notas::select()// buscando disciplina/turma e aluno para verificar se é caso de salvar ou atualizar pois cada disciplina tem seus bimestres
                             ->select('tb_notas.*')

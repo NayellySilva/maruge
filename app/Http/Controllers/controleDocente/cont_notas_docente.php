@@ -386,6 +386,14 @@ class cont_notas_docente extends Controller {
                 }
             }
 
+            // Defesa extra: garantir que todos os campos NOT NULL tenham valor
+            // ao fazer INSERT (updateOrInsert emite INSERT quando não existe linha)
+            $defaults = [
+                'AM1' => 0, 'AM2' => 0, 'AM3' => 0, 'AM4' => 0,
+                'AB1' => 0, 'AB2' => 0, 'AB3' => 0, 'AB4' => 0,
+                'RP'  => 0, 'RF'  => 0,
+            ];
+
             $campos = [
                 "AB{$bimNumero}" => $ab,
                 'tb_usuario_idUsuario' => $userId,
@@ -403,8 +411,9 @@ class cont_notas_docente extends Controller {
                     'tb_disciplinas_idDisciplinas' => $idDisciplina,
                     'tb_aluno_idAluno' => $idAluno,
                 ],
-                array_merge($campos, [
-                    'RA' => $ras[$i] ?? '',
+                array_merge($defaults, $campos, [
+                    'RA'         => $ras[$i] ?? '',
+                    'created_at' => now(),
                     'updated_at' => now(),
                 ])
             );
