@@ -75,9 +75,12 @@ class tb_turmas_disciplinas extends Model {
                             'tb_funcionarios.NomeFuncionario as NomeFuncionario',
                             'tb_turmas_disciplinas.tb_turmas_idTurmas',
                             'tb_turmas_disciplinas.tb_disciplinas_idDisciplinas',
-                            'tb_turmas_disciplinas.tb_funcionarios_idFuncionarios'
+                            'tb_turmas_disciplinas.tb_disciplinas_idDisciplinas as idDisciplinas',
+                            'tb_turmas_disciplinas.tb_funcionarios_idFuncionarios',
+                            'tb_turmas_disciplinas.tb_funcionarios_idFuncionarios as idFuncionarios'
                         )
                         ->get();
+
     }
 
 // Metodo que lista os professores sua turma e suas disciplinas com metodo paginate (turma_disciplina_inf)    
