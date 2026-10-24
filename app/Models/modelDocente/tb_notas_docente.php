@@ -4,6 +4,9 @@ namespace App\Models\modelDocente;
 
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @deprecated Utilizar \App\Models\modelCoordenacao\tb_notas em conjunto com NotaBimestralService.
+ */
 class tb_notas_docente extends Model {
 
     protected $table = 'tb_notas';

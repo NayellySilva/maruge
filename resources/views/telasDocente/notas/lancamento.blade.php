@@ -60,6 +60,8 @@
                                 @if($isRecuperacao)
                                     <th class="px-5 py-4 text-center">Recuperação parcial</th>
                                     <th class="px-5 py-4 text-center">Resultado final</th>
+                                @elseif($nivel === 'inf')
+                                    <th class="px-5 py-4 text-center">{{ $bimestreNumero }}º bimestre</th>
                                 @else
                                     @if($mensalCampo)
                                         <th class="px-5 py-4 text-center">Avaliação mensal</th>
@@ -102,6 +104,10 @@
                                         <td class="px-5 py-3">
                                             <input type="number" name="RF[{{ $key }}]" value="{{ $rf > 0 ? $rf : '' }}" min="0" max="10" step="0.1" placeholder="0,0" class="w-28 mx-auto rounded-lg border border-[#d8e5df] px-3 py-2 text-center text-sm text-[#0a241e] outline-none focus:border-[#008a4b] focus:ring-2 focus:ring-[#008a4b]/10">
                                         </td>
+                                    @elseif($nivel === 'inf')
+                                        <td class="px-5 py-3">
+                                            <input type="number" name="{{ $notaCampo }}[{{ $key }}]" value="{{ $base > 0 ? $base : '' }}" min="0" max="10" step="0.1" placeholder="0,0" class="w-28 mx-auto rounded-lg border border-[#d8e5df] px-3 py-2 text-center text-sm text-[#0a241e] outline-none focus:border-[#008a4b] focus:ring-2 focus:ring-[#008a4b]/10">
+                                        </td>
                                     @else
                                         @if($mensalCampo)
                                             <td class="px-5 py-3">
@@ -126,7 +132,11 @@
             </div>
 
             <div class="flex flex-wrap items-center justify-between gap-3">
-                <p class="text-xs text-[#5c706b]">A recuperação só substitui a média quando for maior que a nota original.</p>
+                <p class="text-xs text-[#5c706b]">
+                    @if(!$isRecuperacao && $nivel !== 'inf')
+                        A recuperação só substitui a média quando for maior que a nota original.
+                    @endif
+                </p>
                 <div class="flex gap-3">
                     <a href="{{ url('/docente/notas/notas') }}" class="inline-flex items-center gap-2 rounded-lg border border-[#d8e5df] px-4 py-2.5 text-sm font-medium text-[#5c706b] hover:bg-white transition-colors">
                         <i data-lucide="arrow-left" class="h-4 w-4"></i> Voltar
@@ -140,7 +150,7 @@
     @endif
 </div>
 
-@if(!$isRecuperacao)
+@if(!$isRecuperacao && $nivel !== 'inf')
 <script>
     document.querySelectorAll('[data-note-form]').forEach(function (form) {
         form.querySelectorAll('tr').forEach(function (row) {

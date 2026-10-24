@@ -9,7 +9,8 @@ use App\Models\modelDocente\tb_aluno_docente;
 use App\Models\modelDocente\tb_disciplina_docente;
 use App\Models\modelDocente\tb_matricula_docente;
 use App\Models\modelDocente\tb_turmas_disciplinas_docente;
-use App\Models\modelDocente\tb_notas_docente;
+use App\Models\modelCoordenacao\tb_notas;
+use App\Services\NotaBimestralService;
 use App\Support\ProfessorLogado;
 
 use Illuminate\Http\Request;
@@ -27,14 +28,16 @@ class cont_notas_docente extends Controller {
     private $tb_aluno;
     private $tb_matricula;
     private $tb_notas;
+    private $notaService;
 
-    public function __construct(Request $dadosForm, tb_matricula_docente $tb_matricula, tb_aluno_docente $tb_aluno, tb_notas_docente $tb_notas, tb_turma_docente $tb_turma, Validator $validator) {
+    public function __construct(Request $dadosForm, tb_matricula_docente $tb_matricula, tb_aluno_docente $tb_aluno, tb_notas $tb_notas, tb_turma_docente $tb_turma, Validator $validator, NotaBimestralService $notaService) {
         $this->request = $dadosForm;
         $this->validator = $validator;
         $this->tb_turma = $tb_turma;
         $this->tb_aluno = $tb_aluno;
         $this->tb_matricula = $tb_matricula;
         $this->tb_notas = $tb_notas;
+        $this->notaService = $notaService;
     }
 
     // Metodo que lista os alunos
@@ -88,7 +91,7 @@ class cont_notas_docente extends Controller {
         if ($bim === 'rec') {
             $nivel = 'fund1';
         } else {
-            $nivelCode = \App\Http\Controllers\controleCoordenacao\cont_relatorios::determinarNivelTurma($turma->NomeTurma ?? '');
+            $nivelCode = $this->notaService->nivelDaTurma($turma->NomeTurma ?? '');
             $nivel = ($nivelCode === 'fun1') ? 'fund1' : (($nivelCode === 'fun2') ? 'fund2' : 'inf');
         }
 
@@ -133,7 +136,7 @@ class cont_notas_docente extends Controller {
             abort_unless($idTurma && $idDisc && ProfessorLogado::podeLancarDisciplina($idTurma, $idDisc), 403);
         }
 
-        // Forcar ID do usuario logado para evitar adulteracao
+        // Forcar ID do usuario logado para gravacao correta do autor
         $userId = auth()->guard('guardLogin')->id() ?? 1;
         if (isset($dadosForm['tb_usuario_idUsuario']) && is_array($dadosForm['tb_usuario_idUsuario'])) {
             foreach ($dadosForm['tb_usuario_idUsuario'] as $k => $v) {
@@ -148,52 +151,36 @@ class cont_notas_docente extends Controller {
      * ********************************************
      */
     public function salva_nota_1bim_inf() {
-        $dadosForm = $this->request->all();
-        $this->validarPermissaoLancamento($dadosForm);
-        $count = count($dadosForm["AB1"] ?? []);
-        for ($i = 0; $i < $count; $i++) {
-            if (!empty($dadosForm["AB1"][$i])) {
-                $salvandoNotas = tb_notas_docente::salva_nota_1bim_inf($dadosForm);
-                return $salvandoNotas;
-            }
-        }
-        return "notaNaoInformada";
+        return $this->salvarNotaInfantil(1);
     }
 
     public function salva_nota_2bim_inf() {
-        $dadosForm = $this->request->all();
-        $this->validarPermissaoLancamento($dadosForm);
-        $count = count($dadosForm["AB2"] ?? []);
-        for ($i = 0; $i < $count; $i++) {
-            if (!empty($dadosForm["AB2"][$i])) {
-                $salvandoNotas = tb_notas_docente::salva_nota_2bim_inf($dadosForm);
-                return $salvandoNotas;
-            }
-        }
-        return "notaNaoInformada";
+        return $this->salvarNotaInfantil(2);
     }
 
     public function salva_nota_3bim_inf() {
-        $dadosForm = $this->request->all();
-        $this->validarPermissaoLancamento($dadosForm);
-        $count = count($dadosForm["AB3"] ?? []);
-        for ($i = 0; $i < $count; $i++) {
-            if (!empty($dadosForm["AB3"][$i])) {
-                $salvandoNotas = tb_notas_docente::salva_nota_3bim_inf($dadosForm);
-                return $salvandoNotas;
-            }
-        }
-        return "notaNaoInformada";
+        return $this->salvarNotaInfantil(3);
     }
 
     public function salva_nota_4bim_inf() {
+        return $this->salvarNotaInfantil(4);
+    }
+
+    private function salvarNotaInfantil(int $bim) {
         $dadosForm = $this->request->all();
         $this->validarPermissaoLancamento($dadosForm);
-        $count = count($dadosForm["AB4"] ?? []);
+
+        $campo = 'AB' . $bim;
+        if (!empty($dadosForm[$campo]) && is_array($dadosForm[$campo])) {
+            foreach ($dadosForm[$campo] as $k => $v) {
+                $dadosForm[$campo][$k] = $this->notaService->normalizarNota($v);
+            }
+        }
+
+        $count = count($dadosForm[$campo] ?? []);
         for ($i = 0; $i < $count; $i++) {
-            if (!empty($dadosForm["AB4"][$i])) {
-                $salvandoNotas = tb_notas_docente::salva_nota_4bim_inf($dadosForm);
-                return $salvandoNotas;
+            if (!empty($dadosForm[$campo][$i])) {
+                return tb_notas::{"salva_nota_{$bim}bim_inf"}($dadosForm);
             }
         }
         return "notaNaoInformada";
@@ -205,52 +192,32 @@ class cont_notas_docente extends Controller {
      * ********************************************
      */
     public function salva_nota_1bim_fun1() {
-        $dadosForm = $this->request->all();
-        $this->validarPermissaoLancamento($dadosForm);
-        $count = count($dadosForm["AB1"] ?? []);
-        for ($i = 0; $i < $count; $i++) {
-            if (!empty($dadosForm["AB1"][$i])) {
-                $salvandoNotas = tb_notas_docente::salva_nota_1bim_fun1($dadosForm);
-                return $salvandoNotas;
-            }
-        }
-        return "notaNaoInformada";
+        return $this->salvarNotaFundamental1(1);
     }
 
     public function salva_nota_2bim_fun1() {
-        $dadosForm = $this->request->all();
-        $this->validarPermissaoLancamento($dadosForm);
-        $count = count($dadosForm["AB2"] ?? []);
-        for ($i = 0; $i < $count; $i++) {
-            if (!empty($dadosForm["AB2"][$i])) {
-                $salvandoNotas = tb_notas_docente::salva_nota_2bim_fun1($dadosForm);
-                return $salvandoNotas;
-            }
-        }
-        return "notaNaoInformada";
+        return $this->salvarNotaFundamental1(2);
     }
 
     public function salva_nota_3bim_fun1() {
-        $dadosForm = $this->request->all();
-        $this->validarPermissaoLancamento($dadosForm);
-        $count = count($dadosForm["AB3"] ?? []);
-        for ($i = 0; $i < $count; $i++) {
-            if (!empty($dadosForm["AB3"][$i])) {
-                $salvandoNotas = tb_notas_docente::salva_nota_3bim_fun1($dadosForm);
-                return $salvandoNotas;
-            }
-        }
-        return "notaNaoInformada";
+        return $this->salvarNotaFundamental1(3);
     }
 
     public function salva_nota_4bim_fun1() {
+        return $this->salvarNotaFundamental1(4);
+    }
+
+    private function salvarNotaFundamental1(int $bim) {
         $dadosForm = $this->request->all();
         $this->validarPermissaoLancamento($dadosForm);
-        $count = count($dadosForm["AB4"] ?? []);
+        $dadosForm = $this->notaService->normalizarFormularioBimestre($dadosForm, $bim);
+
+        $campo = 'AB' . $bim;
+        $campoRb = 'RB' . $bim;
+        $count = count($dadosForm[$campo] ?? []);
         for ($i = 0; $i < $count; $i++) {
-            if (!empty($dadosForm["AB4"][$i])) {
-                $salvandoNotas = tb_notas_docente::salva_nota_4bim_fun1($dadosForm);
-                return $salvandoNotas;
+            if (isset($dadosForm[$campo][$i]) || isset($dadosForm[$campoRb][$i])) {
+                return tb_notas::{"salva_nota_{$bim}bim_fun1"}($dadosForm);
             }
         }
         return "notaNaoInformada";
@@ -262,52 +229,32 @@ class cont_notas_docente extends Controller {
      * ********************************************
      */
     public function salva_nota_1bim_fun2() {
-        $dadosForm = $this->request->all();
-        $this->validarPermissaoLancamento($dadosForm);
-        $count = count($dadosForm["RA"] ?? []);
-        for ($i = 0; $i < $count; $i++) {
-            if (!empty($dadosForm["AM1"][$i]) || !empty($dadosForm["AB1"][$i])) {
-                $salvandoNotas = tb_notas_docente::salva_nota_1bim_fun2($dadosForm);
-                return $salvandoNotas;
-            }
-        }
-        return "notaNaoInformada";
+        return $this->salvarNotaFundamental2(1);
     }
 
     public function salva_nota_2bim_fun2() {
-        $dadosForm = $this->request->all();
-        $this->validarPermissaoLancamento($dadosForm);
-        $count = count($dadosForm["RA"] ?? []);
-        for ($i = 0; $i < $count; $i++) {
-            if (!empty($dadosForm["AM2"][$i]) || !empty($dadosForm["AB2"][$i])) {
-                $salvandoNotas = tb_notas_docente::salva_nota_2bim_fun2($dadosForm);
-                return $salvandoNotas;
-            }
-        }
-        return "notaNaoInformada";
+        return $this->salvarNotaFundamental2(2);
     }
 
     public function salva_nota_3bim_fun2() {
-        $dadosForm = $this->request->all();
-        $this->validarPermissaoLancamento($dadosForm);
-        $count = count($dadosForm["RA"] ?? []);
-        for ($i = 0; $i < $count; $i++) {
-            if (!empty($dadosForm["AM3"][$i]) || !empty($dadosForm["AB3"][$i])) {
-                $salvandoNotas = tb_notas_docente::salva_nota_3bim_fun2($dadosForm);
-                return $salvandoNotas;
-            }
-        }
-        return "notaNaoInformada";
+        return $this->salvarNotaFundamental2(3);
     }
 
     public function salva_nota_4bim_fun2() {
+        return $this->salvarNotaFundamental2(4);
+    }
+
+    private function salvarNotaFundamental2(int $bim) {
         $dadosForm = $this->request->all();
         $this->validarPermissaoLancamento($dadosForm);
+        $dadosForm = $this->notaService->normalizarFormularioBimestre($dadosForm, $bim);
+
+        $campoAm = 'AM' . $bim;
+        $campoAb = 'AB' . $bim;
         $count = count($dadosForm["RA"] ?? []);
         for ($i = 0; $i < $count; $i++) {
-            if (!empty($dadosForm["AM4"][$i]) || !empty($dadosForm["AB4"][$i])) {
-                $salvandoNotas = tb_notas_docente::salva_nota_4bim_fun2($dadosForm);
-                return $salvandoNotas;
+            if (!empty($dadosForm[$campoAm][$i]) || !empty($dadosForm[$campoAb][$i])) {
+                return tb_notas::{"salva_nota_{$bim}bim_fun2"}($dadosForm);
             }
         }
         return "notaNaoInformada";
@@ -323,11 +270,19 @@ class cont_notas_docente extends Controller {
     public function salva_nota_rp_rf() {
         $dadosForm = $this->request->all();
         $this->validarPermissaoLancamento($dadosForm);
+
+        foreach (['RP', 'RF'] as $campo) {
+            if (!empty($dadosForm[$campo]) && is_array($dadosForm[$campo])) {
+                foreach ($dadosForm[$campo] as $k => $v) {
+                    $dadosForm[$campo][$k] = $this->notaService->normalizarNota($v);
+                }
+            }
+        }
+
         $count = count($dadosForm["RA"] ?? []);
         for ($i = 0; $i < $count; $i++) {
             if (!empty($dadosForm["RP"][$i]) || !empty($dadosForm["RF"][$i])) {
-                $salvandoNotas = tb_notas_docente::salva_nota_rp_rf($dadosForm);
-                return $salvandoNotas;
+                return tb_notas::salva_nota_rp_rf($dadosForm);
             }
         }
         return "notaNaoInformada";
@@ -348,7 +303,7 @@ class cont_notas_docente extends Controller {
 
         $dadosForm['tb_usuario_idUsuario'] = auth()->guard('guardLogin')->id() ?? 1;
 
-        $updateNota = tb_notas_docente::editandoNotas($dadosForm);
+        $updateNota = tb_notas::editandoNotas($dadosForm);
         if ($updateNota) {
             return 'notaAtualizada';
         } else {
