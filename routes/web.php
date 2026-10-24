@@ -33,6 +33,7 @@ use App\Http\Controllers\controleDocente\cont_notas_docente;
 use App\Http\Controllers\controleDocente\cont_relatorios_docente;
 use App\Http\Controllers\controleDocente\cont_resultados_docente;
 use App\Http\Controllers\controleDocente\cont_turma_docente;
+use App\Http\Controllers\controleDocente\PainelDocenteController;
 
 // =============================================================================
 // 1. PAINEL E APIs DO PAINEL (protegidas para coordenação)
@@ -559,7 +560,7 @@ Route::prefix('coordenacao')->middleware(['auth:guardLogin', 'coordenacao', 'sem
 // =============================================================================
 Route::prefix('docente')->middleware(['auth:guardLogin', 'docente', 'semCache'])->group(function () {
 
-    Route::get('/', [loginPrincipal::class, 'docenteIndex'])->name('docente.index');
+    Route::get('/', [PainelDocenteController::class, 'index'])->name('docente.index');
 
     // Central de ajuda
     Route::get('/ajuda', [navegacaoDocente::class, 'ajuda']);

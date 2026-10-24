@@ -2,135 +2,270 @@
 
 @section('content')
 <div class="flex flex-col gap-8">
-    @php
-        $nomeDocente = 'Professor(a)';
-        if (auth()->guard('guardLogin')->check()) {
-            $cpf = auth()->guard('guardLogin')->user()->CPFUsuario;
-            $dadosFunc = \App\Models\modelCoordenacao\tb_usuario::infUsuario($cpf)->first();
-            if ($dadosFunc && !empty($dadosFunc->NomeFuncionario)) {
-                $partes = explode(' ', trim($dadosFunc->NomeFuncionario));
-                $nomeDocente = ucfirst(mb_strtolower($partes[0]));
-            }
-        }
-    @endphp
 
-    <!-- Cabeçalho Principal -->
+    <!-- Cabecalho Principal -->
     <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
-            <h1 class="text-3xl font-semibold text-[#0a241e]">Bem-vindo(a), {{ $nomeDocente }}</h1>
-            <p class="text-sm text-[#5c706b] mt-1">Acompanhe suas turmas, disciplinas e lançamento de notas</p>
+            <div class="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-[#008a4b]">
+                <i data-lucide="sparkles" class="w-4 h-4"></i>
+                <span>Painel do Docente · {{ $bimestreAtual }}º Bimestre</span>
+            </div>
+            <h1 class="text-2xl sm:text-3xl font-bold text-[#0a241e] mt-1">{{ $saudacao }}</h1>
+            <p class="text-sm text-[#5c706b] mt-1">Gerencie suas turmas, acompanhe pendências e lance notas com agilidade.</p>
         </div>
-        <div class="flex items-center gap-3">
-            <a href="{{ url('/docente/notas') }}" class="bg-[#008a4b] hover:bg-[#00703c] text-white font-medium px-6 py-2.5 rounded-full flex items-center gap-2 transition-all shadow-sm cursor-pointer">
-                <i data-lucide="clipboard-pen" class="w-5 h-5"></i>
+        <div class="flex flex-wrap items-center gap-3">
+            <a href="{{ url('/docente/notas') }}" class="inline-flex items-center gap-2 bg-[#008a4b] hover:bg-[#00703c] text-white text-sm font-semibold px-5 py-2.5 rounded-full transition-all shadow-xs">
+                <i data-lucide="clipboard-pen" class="w-4 h-4"></i>
                 <span>Lançar Notas</span>
             </a>
-            <a href="{{ url('/docente/mapas_notas') }}" class="bg-white hover:bg-[#f8faf9] text-[#0a241e] border border-[#e3e8e6] font-medium px-5 py-2.5 rounded-full flex items-center gap-2 transition-all shadow-2xs cursor-pointer">
-                <i data-lucide="map" class="w-5 h-5 text-[#5c706b]"></i>
-                <span>Mapas</span>
+            <a href="{{ url('/docente/mapas_notas') }}" class="inline-flex items-center gap-2 bg-white hover:bg-[#f8faf9] text-[#0a241e] border border-[#e3e8e6] text-sm font-semibold px-5 py-2.5 rounded-full transition-all shadow-2xs">
+                <i data-lucide="map" class="w-4 h-4 text-[#5c706b]"></i>
+                <span>Mapas de Notas</span>
             </a>
         </div>
     </div>
 
-    <!-- Grade de Cards de Métricas -->
-    <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
-        <div class="bg-white border border-[#e3e8e6] rounded-2xl p-6 shadow-2xs hover:shadow-xs transition-shadow">
-            <div class="flex items-center justify-between">
-                <div class="text-3xl font-bold text-[#008a4b]">{{ $Alunos ?? 0 }}</div>
-                <div class="w-12 h-12 rounded-xl bg-emerald-50 text-[#008a4b] flex items-center justify-center">
-                    <i data-lucide="graduation-cap" class="w-6 h-6"></i>
-                </div>
+    <!-- Cards de Resumo Metrico -->
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-5">
+        <div class="bg-white border border-[#e3e8e6] rounded-2xl p-6 shadow-2xs flex items-center justify-between">
+            <div>
+                <span class="text-xs font-semibold uppercase tracking-wider text-[#5c706b]">Minhas Turmas</span>
+                <div class="text-3xl font-bold text-[#0a241e] mt-1">{{ $totalTurmas }}</div>
+                <span class="text-xs text-[#5c706b] mt-0.5 inline-block">Turmas ativas vinculadas</span>
             </div>
-            <div class="text-sm font-semibold text-[#7fa398] mt-2">Total de Alunos</div>
-            <p class="text-xs text-[#5c706b] mt-1">Alunos vinculados às suas turmas</p>
-        </div>
-
-        <div class="bg-white border border-[#e3e8e6] rounded-2xl p-6 shadow-2xs hover:shadow-xs transition-shadow">
-            <div class="flex items-center justify-between">
-                <div class="text-3xl font-bold text-[#008a4b]">{{ $quantTurmasDocente ?? 0 }}</div>
-                <div class="w-12 h-12 rounded-xl bg-emerald-50 text-[#008a4b] flex items-center justify-center">
-                    <i data-lucide="layout-grid" class="w-6 h-6"></i>
-                </div>
+            <div class="w-12 h-12 rounded-xl bg-emerald-50 text-[#008a4b] flex items-center justify-center shrink-0">
+                <i data-lucide="layout-grid" class="w-6 h-6"></i>
             </div>
-            <div class="text-sm font-semibold text-[#7fa398] mt-2">Total de Turmas</div>
-            <p class="text-xs text-[#5c706b] mt-1">Turmas ativas sob sua regência</p>
         </div>
 
-        <div class="bg-white border border-[#e3e8e6] rounded-2xl p-6 shadow-2xs hover:shadow-xs transition-shadow">
-            <div class="flex items-center justify-between">
-                <div class="text-3xl font-bold text-[#008a4b]">{{ $quantDisciplinaDocente ?? 0 }}</div>
-                <div class="w-12 h-12 rounded-xl bg-emerald-50 text-[#008a4b] flex items-center justify-center">
-                    <i data-lucide="book-marked" class="w-6 h-6"></i>
-                </div>
+        <div class="bg-white border border-[#e3e8e6] rounded-2xl p-6 shadow-2xs flex items-center justify-between">
+            <div>
+                <span class="text-xs font-semibold uppercase tracking-wider text-[#5c706b]">Disciplinas</span>
+                <div class="text-3xl font-bold text-[#0a241e] mt-1">{{ $totalDisciplinas }}</div>
+                <span class="text-xs text-[#5c706b] mt-0.5 inline-block">Disciplinas distintas sob sua regência</span>
             </div>
-            <div class="text-sm font-semibold text-[#7fa398] mt-2">Total de Disciplinas</div>
-            <p class="text-xs text-[#5c706b] mt-1">Disciplinas atribuídas ao seu perfil</p>
-        </div>
-    </div>
-
-    <!-- Seção de Ações Rápidas & Calendário -->
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <!-- Coluna Esquerda: Calendário Escolar -->
-        <div class="lg:col-span-2 flex flex-col gap-6">
-            <x-dashboard-calendar />
+            <div class="w-12 h-12 rounded-xl bg-emerald-50 text-[#008a4b] flex items-center justify-center shrink-0">
+                <i data-lucide="book-marked" class="w-6 h-6"></i>
+            </div>
         </div>
 
-        <!-- Coluna Direita: Atalhos Rápidos Docente -->
-        <div class="flex flex-col gap-4">
-            <div class="bg-white border border-[#e3e8e6] rounded-2xl p-6 shadow-2xs flex flex-col gap-4">
-                <h3 class="text-lg font-semibold text-[#0a241e]">Acesso Rápido</h3>
-                
-                <a href="{{ url('/docente/notas') }}" class="flex items-center gap-3 p-3 rounded-xl border border-[#e3e8e6] hover:border-[#008a4b] hover:bg-[#f8faf9] transition-all group">
-                    <div class="w-10 h-10 rounded-lg bg-emerald-50 text-[#008a4b] flex items-center justify-center shrink-0">
-                        <i data-lucide="clipboard-pen" class="w-5 h-5"></i>
-                    </div>
-                    <div class="flex flex-col">
-                        <span class="text-sm font-semibold text-[#0a241e] group-hover:text-[#008a4b]">Lançar Notas</span>
-                        <span class="text-xs text-[#5c706b]">Lançamento por bimestre</span>
-                    </div>
-                </a>
-
-                <a href="{{ url('/docente/mapas_notas') }}" class="flex items-center gap-3 p-3 rounded-xl border border-[#e3e8e6] hover:border-[#008a4b] hover:bg-[#f8faf9] transition-all group">
-                    <div class="w-10 h-10 rounded-lg bg-emerald-50 text-[#008a4b] flex items-center justify-center shrink-0">
-                        <i data-lucide="map" class="w-5 h-5"></i>
-                    </div>
-                    <div class="flex flex-col">
-                        <span class="text-sm font-semibold text-[#0a241e] group-hover:text-[#008a4b]">Mapas de Notas</span>
-                        <span class="text-xs text-[#5c706b]">Impressão de mapas</span>
-                    </div>
-                </a>
-
-                <a href="{{ url('/docente/resultados') }}" class="flex items-center gap-3 p-3 rounded-xl border border-[#e3e8e6] hover:border-[#008a4b] hover:bg-[#f8faf9] transition-all group">
-                    <div class="w-10 h-10 rounded-lg bg-emerald-50 text-[#008a4b] flex items-center justify-center shrink-0">
-                        <i data-lucide="award" class="w-5 h-5"></i>
-                    </div>
-                    <div class="flex flex-col">
-                        <span class="text-sm font-semibold text-[#0a241e] group-hover:text-[#008a4b]">Resultados</span>
-                        <span class="text-xs text-[#5c706b]">Parcial e final</span>
-                    </div>
-                </a>
-
-                <a href="{{ url('/docente/declaracoes') }}" class="flex items-center gap-3 p-3 rounded-xl border border-[#e3e8e6] hover:border-[#008a4b] hover:bg-[#f8faf9] transition-all group">
-                    <div class="w-10 h-10 rounded-lg bg-emerald-50 text-[#008a4b] flex items-center justify-center shrink-0">
-                        <i data-lucide="file-check" class="w-5 h-5"></i>
-                    </div>
-                    <div class="flex flex-col">
-                        <span class="text-sm font-semibold text-[#0a241e] group-hover:text-[#008a4b]">Declaração Funcional</span>
-                        <span class="text-xs text-[#5c706b]">Emitir declaração</span>
-                    </div>
-                </a>
-
-                <a href="{{ url('/docente/funcionario_perfil') }}" class="flex items-center gap-3 p-3 rounded-xl border border-[#e3e8e6] hover:border-[#008a4b] hover:bg-[#f8faf9] transition-all group">
-                    <div class="w-10 h-10 rounded-lg bg-emerald-50 text-[#008a4b] flex items-center justify-center shrink-0">
-                        <i data-lucide="user-round" class="w-5 h-5"></i>
-                    </div>
-                    <div class="flex flex-col">
-                        <span class="text-sm font-semibold text-[#0a241e] group-hover:text-[#008a4b]">Meu Perfil</span>
-                        <span class="text-xs text-[#5c706b]">Dados e turmas</span>
-                    </div>
-                </a>
+        <div class="bg-white border border-[#e3e8e6] rounded-2xl p-6 shadow-2xs flex items-center justify-between">
+            <div>
+                <span class="text-xs font-semibold uppercase tracking-wider text-[#5c706b]">Total de Alunos</span>
+                <div class="text-3xl font-bold text-[#0a241e] mt-1">{{ $totalAlunos }}</div>
+                <span class="text-xs text-[#5c706b] mt-0.5 inline-block">Alunos ativos em suas turmas</span>
+            </div>
+            <div class="w-12 h-12 rounded-xl bg-emerald-50 text-[#008a4b] flex items-center justify-center shrink-0">
+                <i data-lucide="graduation-cap" class="w-6 h-6"></i>
             </div>
         </div>
     </div>
+
+    @if($turmas->isEmpty())
+        <!-- Alerta amigavel quando nao ha turmas vinculadas -->
+        <div class="bg-white border border-[#e3e8e6] rounded-2xl p-8 sm:p-12 text-center shadow-2xs flex flex-col items-center gap-4 max-w-2xl mx-auto">
+            <div class="w-16 h-16 rounded-full bg-amber-50 text-amber-600 flex items-center justify-center">
+                <i data-lucide="alert-circle" class="w-8 h-8"></i>
+            </div>
+            <h2 class="text-xl sm:text-2xl font-bold text-[#0a241e]">Nenhuma turma vinculada ao seu perfil</h2>
+            <p class="text-sm text-[#5c706b] max-w-md leading-relaxed">
+                Você ainda não possui turmas ou disciplinas atribuídas neste ano letivo. Entre em contato com a coordenação pedagógica para realizar a vinculação.
+            </p>
+            <div class="flex gap-3 mt-2">
+                <a href="{{ url('/docente/ajuda') }}" class="inline-flex items-center gap-2 rounded-lg border border-[#d8e5df] px-4 py-2 text-sm font-medium text-[#5c706b] hover:bg-[#f8faf9] transition-colors">
+                    <i data-lucide="help-circle" class="w-4 h-4"></i> Ajuda
+                </a>
+                <a href="{{ url('/docente/funcionario_perfil') }}" class="inline-flex items-center gap-2 rounded-lg bg-[#008a4b] hover:bg-[#00703c] text-white px-5 py-2 text-sm font-semibold transition-colors">
+                    <i data-lucide="user" class="w-4 h-4"></i> Meu Perfil
+                </a>
+            </div>
+        </div>
+    @else
+        <!-- Grid Principal: Minhas Turmas + Lateral com Pendencias e Aniversariantes -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+            <!-- Coluna Principal (2/3): Minhas Turmas -->
+            <div class="lg:col-span-2 flex flex-col gap-5">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h2 class="text-xl font-bold text-[#0a241e]">Minhas Turmas</h2>
+                        <p class="text-xs text-[#5c706b]">Selecione uma turma para lançar notas ou emitir mapas</p>
+                    </div>
+                    <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-[#f8faf9] border border-[#e3e8e6] text-[#5c706b]">
+                        {{ $turmas->count() }} {{ $turmas->count() === 1 ? 'turma ativa' : 'turmas ativas' }}
+                    </span>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    @foreach($turmas as $t)
+                        @php
+                            $badgeNivel = match($t->nivel) {
+                                'inf' => ['bg' => 'bg-pink-50', 'text' => 'text-pink-700', 'label' => 'Educação Infantil'],
+                                'fun2' => ['bg' => 'bg-emerald-50', 'text' => 'text-emerald-700', 'label' => 'Fundamental II'],
+                                default => ['bg' => 'bg-sky-50', 'text' => 'text-sky-700', 'label' => 'Fundamental I'],
+                            };
+                        @endphp
+                        <div class="bg-white border border-[#e3e8e6] hover:border-[#008a4b]/40 rounded-2xl p-5 shadow-2xs hover:shadow-xs transition-all flex flex-col justify-between gap-4">
+                            <div class="flex flex-col gap-2">
+                                <div class="flex items-start justify-between gap-2">
+                                    <h3 class="text-base font-bold text-[#0a241e] leading-snug">{{ $t->NomeTurma }}</h3>
+                                    <span class="text-[11px] font-semibold px-2 py-0.5 rounded-md {{ $badgeNivel['bg'] }} {{ $badgeNivel['text'] }} shrink-0">
+                                        {{ $badgeNivel['label'] }}
+                                    </span>
+                                </div>
+                                <div class="flex items-center gap-3 text-xs text-[#5c706b]">
+                                    <span class="flex items-center gap-1">
+                                        <i data-lucide="users" class="w-3.5 h-3.5"></i>
+                                        {{ $t->totalAlunos }} alunos
+                                    </span>
+                                    <span>·</span>
+                                    <span>{{ $t->Turno }}</span>
+                                    <span>·</span>
+                                    <span>Ano {{ $t->AnoLetivo }}</span>
+                                </div>
+
+                                <!-- Disciplinas que o professor leciona nesta turma -->
+                                <div class="mt-2 flex flex-wrap gap-1.5">
+                                    @forelse($t->disciplinas as $d)
+                                        <span class="text-xs bg-[#f8faf9] border border-[#e3e8e6] text-[#0a241e] px-2 py-0.5 rounded-md font-medium">
+                                            {{ $d->NomeDisciplina }}
+                                        </span>
+                                    @empty
+                                        <span class="text-xs text-[#5c706b] italic">Sem disciplinas vinculadas</span>
+                                    @endforelse
+                                </div>
+                            </div>
+
+                            <!-- Acoes Rapidas da Turma -->
+                            <div class="pt-3 border-t border-[#f0f4f2] flex flex-wrap items-center justify-between gap-2">
+                                <a href="{{ url('/docente/notas_filtro?idTurmas=' . $t->idTurmas) }}" class="inline-flex items-center gap-1.5 text-xs font-semibold text-[#008a4b] hover:text-[#00703c] transition-colors">
+                                    <i data-lucide="clipboard-pen" class="w-3.5 h-3.5"></i>
+                                    <span>Lançar Notas</span>
+                                </a>
+                                <div class="flex items-center gap-2">
+                                    <a href="{{ url('/docente/mapa_' . $bimestreAtual . 'bim/' . $t->idTurmas) }}" target="_blank" class="text-xs text-[#5c706b] hover:text-[#0a241e] font-medium flex items-center gap-1 transition-colors" title="Mapa {{ $bimestreAtual }}º Bimestre">
+                                        <i data-lucide="map" class="w-3.5 h-3.5"></i>
+                                        <span>Mapa</span>
+                                    </a>
+                                    <span class="text-[#e3e8e6]">|</span>
+                                    <a href="{{ url('/docente/relatorio_alunos_por_turma/' . $t->idTurmas) }}" class="text-xs text-[#5c706b] hover:text-[#0a241e] font-medium flex items-center gap-1 transition-colors" title="Lista de Alunos">
+                                        <i data-lucide="list" class="w-3.5 h-3.5"></i>
+                                        <span>Alunos</span>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+
+            <!-- Coluna Lateral (1/3): Notas Pendentes e Aniversariantes -->
+            <div class="flex flex-col gap-6">
+
+                <!-- Card: Notas Pendentes -->
+                <div class="bg-white border border-[#e3e8e6] rounded-2xl p-6 shadow-2xs flex flex-col gap-4">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-2">
+                            <div class="w-8 h-8 rounded-lg bg-emerald-50 text-[#008a4b] flex items-center justify-center">
+                                <i data-lucide="clock" class="w-4 h-4"></i>
+                            </div>
+                            <h3 class="text-base font-bold text-[#0a241e]">Notas Pendentes</h3>
+                        </div>
+                        <span class="text-xs font-semibold px-2 py-0.5 rounded-full bg-[#f8faf9] text-[#5c706b] border border-[#e3e8e6]">
+                            {{ $bimestreAtual }}º Bimestre
+                        </span>
+                    </div>
+
+                    @if(empty($notasPendentes))
+                        <div class="p-4 rounded-xl bg-emerald-50/60 border border-emerald-100 flex items-start gap-3">
+                            <i data-lucide="check-circle" class="w-5 h-5 text-[#008a4b] shrink-0 mt-0.5"></i>
+                            <div>
+                                <h4 class="text-xs font-bold text-[#087443]">Tudo em dia!</h4>
+                                <p class="text-xs text-[#0a5c3a] mt-0.5">Todas as notas do {{ $bimestreAtual }}º bimestre estão devidamente lançadas em suas turmas.</p>
+                            </div>
+                        </div>
+                    @else
+                        <div class="flex flex-col divide-y divide-[#f0f4f2]">
+                            @foreach($notasPendentes as $pend)
+                                <div class="py-3 first:pt-0 last:pb-0 flex items-center justify-between gap-3">
+                                    <div class="flex flex-col min-w-0">
+                                        <span class="text-xs font-bold text-[#0a241e] truncate">{{ $pend->nomeTurma }}</span>
+                                        <span class="text-[11px] text-[#5c706b] truncate">{{ $pend->nomeDisciplina }}</span>
+                                    </div>
+                                    <div class="flex items-center gap-2 shrink-0">
+                                        <span class="text-xs font-semibold text-amber-700 bg-amber-50 px-2 py-0.5 rounded-md border border-amber-200">
+                                            {{ $pend->pendentes }} {{ $pend->pendentes === 1 ? 'pendente' : 'pendentes' }}
+                                        </span>
+                                        <a href="{{ url('/docente/notas_filtro?idTurmas=' . $pend->idTurma) }}" class="text-[#008a4b] hover:text-[#00703c] p-1" title="Lançar notas agora">
+                                            <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    @endif
+                </div>
+
+                <!-- Card: Aniversariantes do Mes -->
+                <div class="bg-white border border-[#e3e8e6] rounded-2xl p-6 shadow-2xs flex flex-col gap-4">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-2">
+                            <div class="w-8 h-8 rounded-lg bg-pink-50 text-pink-600 flex items-center justify-center">
+                                <i data-lucide="cake" class="w-4 h-4"></i>
+                            </div>
+                            <h3 class="text-base font-bold text-[#0a241e]">Aniversariantes</h3>
+                        </div>
+                        <span class="text-xs font-semibold text-[#5c706b]">Mês atual</span>
+                    </div>
+
+                    @if(empty($aniversariantesDoMes))
+                        <p class="text-xs text-[#5c706b] italic py-2">Nenhum aniversariante registrado neste mês em suas turmas.</p>
+                    @else
+                        <div class="flex flex-col divide-y divide-[#f0f4f2] max-h-72 overflow-y-auto custom-scroll pr-1">
+                            @foreach($aniversariantesDoMes as $aniver)
+                                <div class="py-2.5 first:pt-0 last:pb-0 flex items-center justify-between gap-3">
+                                    <div class="flex items-center gap-2.5 min-w-0">
+                                        <div class="w-7 h-7 rounded-full bg-pink-50 text-pink-700 font-bold text-[11px] flex items-center justify-center shrink-0">
+                                            {{ $aniver->dia }}
+                                        </div>
+                                        <div class="flex flex-col min-w-0">
+                                            <span class="text-xs font-semibold text-[#0a241e] truncate">{{ $aniver->nome }}</span>
+                                            <span class="text-[11px] text-[#5c706b] truncate">{{ $aniver->turma }}</span>
+                                        </div>
+                                    </div>
+                                    <span class="text-[11px] text-[#5c706b] shrink-0 font-medium">Dia {{ sprintf('%02d', $aniver->dia) }}</span>
+                                </div>
+                            @endforeach
+                        </div>
+                    @endif
+                </div>
+
+                <!-- Card: Atalhos Rapidos -->
+                <div class="bg-white border border-[#e3e8e6] rounded-2xl p-6 shadow-2xs flex flex-col gap-3">
+                    <h3 class="text-sm font-bold text-[#0a241e]">Acesso Rápido</h3>
+                    <div class="grid grid-cols-2 gap-2">
+                        <a href="{{ url('/docente/relatorios') }}" class="p-3 rounded-xl border border-[#e3e8e6] hover:border-[#008a4b] hover:bg-[#f8faf9] transition-all flex flex-col items-center text-center gap-1 group">
+                            <i data-lucide="file-text" class="w-5 h-5 text-[#5c706b] group-hover:text-[#008a4b] transition-colors"></i>
+                            <span class="text-xs font-semibold text-[#0a241e]">Relatórios</span>
+                        </a>
+                        <a href="{{ url('/docente/resultados') }}" class="p-3 rounded-xl border border-[#e3e8e6] hover:border-[#008a4b] hover:bg-[#f8faf9] transition-all flex flex-col items-center text-center gap-1 group">
+                            <i data-lucide="award" class="w-5 h-5 text-[#5c706b] group-hover:text-[#008a4b] transition-colors"></i>
+                            <span class="text-xs font-semibold text-[#0a241e]">Resultados</span>
+                        </a>
+                        <a href="{{ url('/docente/declaracoes') }}" class="p-3 rounded-xl border border-[#e3e8e6] hover:border-[#008a4b] hover:bg-[#f8faf9] transition-all flex flex-col items-center text-center gap-1 group">
+                            <i data-lucide="file-check" class="w-5 h-5 text-[#5c706b] group-hover:text-[#008a4b] transition-colors"></i>
+                            <span class="text-xs font-semibold text-[#0a241e]">Declaração</span>
+                        </a>
+                        <a href="{{ url('/docente/funcionario_perfil') }}" class="p-3 rounded-xl border border-[#e3e8e6] hover:border-[#008a4b] hover:bg-[#f8faf9] transition-all flex flex-col items-center text-center gap-1 group">
+                            <i data-lucide="user" class="w-5 h-5 text-[#5c706b] group-hover:text-[#008a4b] transition-colors"></i>
+                            <span class="text-xs font-semibold text-[#0a241e]">Meu Perfil</span>
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    @endif
+
 </div>
 @endsection
