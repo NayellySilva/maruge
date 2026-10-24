@@ -10,8 +10,7 @@ use App\Models\modelDocente\tb_disciplina_docente;
 use App\Models\modelDocente\tb_matricula_docente;
 use App\Models\modelDocente\tb_turmas_disciplinas_docente;
 use App\Models\modelDocente\tb_notas_docente;
-
-
+use App\Support\ProfessorLogado;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -19,7 +18,7 @@ use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 
-//INICIO DA CLASSE CONTROLE DO ALUNO
+// INICIO DA CLASSE CONTROLE DO ALUNO
 class cont_notas_docente extends Controller {
 
     private $request;
@@ -38,55 +37,63 @@ class cont_notas_docente extends Controller {
         $this->tb_notas = $tb_notas;
     }
 
-//Metodo que lista os alunos  
+    // Metodo que lista os alunos
     public function index() {
-        $idFuncionarios = null;
-        if (auth()->guard('guardLogin')->check()) {
-            $CPFfuncionario = auth()->guard('guardLogin')->user()->CPFUsuario;
-            $nomedeusuario = tb_usuario_docente::infUsuario($CPFfuncionario);
-            foreach ($nomedeusuario as $item) {
-                $idFuncionarios = $item->idFuncionarios ?? $item['idFuncionarios'] ?? null;
-            }
-        }
+        $idFuncionarios = ProfessorLogado::id();
         $Alunos = $idFuncionarios ? tb_aluno_docente::AlunosdoProfessor($idFuncionarios) : collect();
-        $turmas = $idFuncionarios ? tb_turma_docente::TurmasdoProfessor($idFuncionarios) : collect();
+        $turmas = ProfessorLogado::turmasAtivas();
         return view('telasDocente.notas.notas', compact('Alunos', 'turmas'));
     }
 
-    //Metodo pesquisar aluno por filtro de turma
+    // Metodo pesquisar aluno por filtro de turma
     public function notas_filtro() {
         $idTurma = $this->request->get('idTurmas');
-        $idFuncionarios = null;
-        if (auth()->guard('guardLogin')->check()) {
-            $CPFfuncionario = auth()->guard('guardLogin')->user()->CPFUsuario;
-            $nomedeusuario = tb_usuario_docente::infUsuario($CPFfuncionario);
-            foreach ($nomedeusuario as $item) {
-                $idFuncionarios = $item->idFuncionarios ?? $item['idFuncionarios'] ?? null;
-            }
-        }
-        $turmas = $idFuncionarios ? tb_turma_docente::TurmasdoProfessor($idFuncionarios) : collect();
+        $idFuncionarios = ProfessorLogado::id();
+        $turmas = ProfessorLogado::turmasAtivas();
         if (empty($idTurma)) {
             $Alunos = $idFuncionarios ? tb_aluno_docente::AlunosdoProfessor($idFuncionarios) : collect();
         } else {
+            abort_unless(ProfessorLogado::podeAcessarTurma($idTurma), 403);
             $Alunos = tb_aluno_docente::filtroporTurma($idTurma);
         }
         return view('telasDocente.notas.notas', compact('Alunos', 'turmas'));
     }
 
-    //Metodo pesquisar aluno por palavra chave
+    // Metodo pesquisar aluno por palavra chave
     public function notas_pesq() {
-        $idFuncionarios = null;
-        if (auth()->guard('guardLogin')->check()) {
-            $CPFfuncionario = auth()->guard('guardLogin')->user()->CPFUsuario;
-            $nomedeusuario = tb_usuario_docente::infUsuario($CPFfuncionario);
-            foreach ($nomedeusuario as $item) {
-                $idFuncionarios = $item->idFuncionarios ?? $item['idFuncionarios'] ?? null;
-            }
-        }
-        $turmas = $idFuncionarios ? tb_turma_docente::TurmasdoProfessor($idFuncionarios) : collect();
+        $idFuncionarios = ProfessorLogado::id();
+        $turmas = ProfessorLogado::turmasAtivas();
         $palavrachave = $this->request->get('pesquisar');
         $Alunos = $idFuncionarios ? tb_aluno_docente::pesquisar($palavrachave, $idFuncionarios) : collect();
         return view('telasDocente.notas.notas_pesq', compact('Alunos', 'turmas'));
+    }
+
+    // Lançamento por aluno e bimestre
+    public function lancamento($bim, $id) {
+        $bimsValidos = ['1bim', '2bim', '3bim', '4bim', 'rec'];
+        abort_if(!in_array($bim, $bimsValidos), 404);
+        abort_unless(ProfessorLogado::podeAcessarAluno($id), 403);
+
+        $aluno = DB::table('tb_aluno')->where('idAluno', $id)->first();
+        abort_if(!$aluno, 404);
+
+        $matricula = DB::table('tb_matriculas')->where('idMatriculas', $aluno->tb_matriculas_idMatriculas ?? 0)->first();
+        $turma = DB::table('tb_turmas')->where('idTurmas', $aluno->tb_turmas_idTurmas ?? 0)->first();
+
+        // Pegar disciplinas vinculadas exclusivamente ao professor para esta turma (sem fallback perigoso)
+        $disciplinas = ProfessorLogado::disciplinasNaTurma($turma->idTurmas ?? 0);
+
+        $titulo = 'Lançamento de Notas — ' . ($aluno->NomeAluno ?? 'Aluno');
+
+        if ($bim === 'rec') {
+            $nivel = 'fund1';
+        } else {
+            $nivelCode = \App\Http\Controllers\controleCoordenacao\cont_relatorios::determinarNivelTurma($turma->NomeTurma ?? '');
+            $nivel = ($nivelCode === 'fun1') ? 'fund1' : (($nivelCode === 'fun2') ? 'fund2' : 'inf');
+        }
+
+        $bimestre = $bim;
+        return view('telasDocente.notas.lancamento', compact('aluno', 'matricula', 'turma', 'disciplinas', 'titulo', 'bimestre', 'nivel'));
     }
 
     public function bimestre_1($idAluno) {
@@ -106,16 +113,44 @@ class cont_notas_docente extends Controller {
     }
 
     /**
+     * Valida se o docente tem permissao para lancar notas para o aluno e disciplinas informadas.
+     */
+    private function validarPermissaoLancamento(array &$dadosForm): void {
+        $alunos = (array) ($dadosForm['tb_aluno_idAluno'] ?? []);
+        $turmas = (array) ($dadosForm['tb_turmas_idTurmas'] ?? []);
+        $disciplinas = (array) ($dadosForm['tb_disciplinas_idDisciplinas'] ?? []);
+
+        abort_if(empty($alunos) || empty($disciplinas), 403);
+
+        foreach ($alunos as $idAluno) {
+            abort_unless(ProfessorLogado::podeAcessarAluno($idAluno), 403);
+        }
+
+        $count = count($disciplinas);
+        for ($i = 0; $i < $count; $i++) {
+            $idTurma = $turmas[$i] ?? reset($turmas);
+            $idDisc = $disciplinas[$i] ?? null;
+            abort_unless($idTurma && $idDisc && ProfessorLogado::podeLancarDisciplina($idTurma, $idDisc), 403);
+        }
+
+        // Forcar ID do usuario logado para evitar adulteracao
+        $userId = auth()->guard('guardLogin')->id() ?? 1;
+        if (isset($dadosForm['tb_usuario_idUsuario']) && is_array($dadosForm['tb_usuario_idUsuario'])) {
+            foreach ($dadosForm['tb_usuario_idUsuario'] as $k => $v) {
+                $dadosForm['tb_usuario_idUsuario'][$k] = $userId;
+            }
+        }
+    }
+
+    /**
      * ********************************************
-     * *******************************************
-      Metodos para uso exclusivo para turma do Infantl
+     * Metodos para uso exclusivo para turma do Infantil
      * ********************************************
-     * *******************************************
-     * */
-//Metodo para salva as notas do primeiro 1bim educação infantil.
+     */
     public function salva_nota_1bim_inf() {
         $dadosForm = $this->request->all();
-        $count = count($dadosForm["AB1"]);
+        $this->validarPermissaoLancamento($dadosForm);
+        $count = count($dadosForm["AB1"] ?? []);
         for ($i = 0; $i < $count; $i++) {
             if (!empty($dadosForm["AB1"][$i])) {
                 $salvandoNotas = tb_notas_docente::salva_nota_1bim_inf($dadosForm);
@@ -125,10 +160,10 @@ class cont_notas_docente extends Controller {
         return "notaNaoInformada";
     }
 
-//Metodo para salva as notas do primeiro 2bim educação infantil.
     public function salva_nota_2bim_inf() {
         $dadosForm = $this->request->all();
-        $count = count($dadosForm["AB2"]);
+        $this->validarPermissaoLancamento($dadosForm);
+        $count = count($dadosForm["AB2"] ?? []);
         for ($i = 0; $i < $count; $i++) {
             if (!empty($dadosForm["AB2"][$i])) {
                 $salvandoNotas = tb_notas_docente::salva_nota_2bim_inf($dadosForm);
@@ -138,10 +173,10 @@ class cont_notas_docente extends Controller {
         return "notaNaoInformada";
     }
 
-//Metodo para salva as notas do primeiro 3bim educação infantil.
     public function salva_nota_3bim_inf() {
         $dadosForm = $this->request->all();
-        $count = count($dadosForm["AB3"]);
+        $this->validarPermissaoLancamento($dadosForm);
+        $count = count($dadosForm["AB3"] ?? []);
         for ($i = 0; $i < $count; $i++) {
             if (!empty($dadosForm["AB3"][$i])) {
                 $salvandoNotas = tb_notas_docente::salva_nota_3bim_inf($dadosForm);
@@ -151,10 +186,10 @@ class cont_notas_docente extends Controller {
         return "notaNaoInformada";
     }
 
-//Metodo para salva as notas do primeiro 3bim educação infantil.
     public function salva_nota_4bim_inf() {
         $dadosForm = $this->request->all();
-        $count = count($dadosForm["AB4"]);
+        $this->validarPermissaoLancamento($dadosForm);
+        $count = count($dadosForm["AB4"] ?? []);
         for ($i = 0; $i < $count; $i++) {
             if (!empty($dadosForm["AB4"][$i])) {
                 $salvandoNotas = tb_notas_docente::salva_nota_4bim_inf($dadosForm);
@@ -166,15 +201,13 @@ class cont_notas_docente extends Controller {
 
     /**
      * ********************************************
-     * *******************************************
-      Metodos para uso exclusivo para turma do Fundamental I
+     * Metodos para uso exclusivo para turma do Fundamental I
      * ********************************************
-     * *******************************************
-     * */
-//Metodo para salva as notas do primeiro 1bimes Fundamente I.
+     */
     public function salva_nota_1bim_fun1() {
         $dadosForm = $this->request->all();
-        $count = count($dadosForm["AB1"]);
+        $this->validarPermissaoLancamento($dadosForm);
+        $count = count($dadosForm["AB1"] ?? []);
         for ($i = 0; $i < $count; $i++) {
             if (!empty($dadosForm["AB1"][$i])) {
                 $salvandoNotas = tb_notas_docente::salva_nota_1bim_fun1($dadosForm);
@@ -184,10 +217,10 @@ class cont_notas_docente extends Controller {
         return "notaNaoInformada";
     }
 
-//Metodo para salva as notas do 2 bim Fundamente I.
     public function salva_nota_2bim_fun1() {
         $dadosForm = $this->request->all();
-        $count = count($dadosForm["AB2"]);
+        $this->validarPermissaoLancamento($dadosForm);
+        $count = count($dadosForm["AB2"] ?? []);
         for ($i = 0; $i < $count; $i++) {
             if (!empty($dadosForm["AB2"][$i])) {
                 $salvandoNotas = tb_notas_docente::salva_nota_2bim_fun1($dadosForm);
@@ -197,10 +230,10 @@ class cont_notas_docente extends Controller {
         return "notaNaoInformada";
     }
 
-//Metodo para salva as notas do 3 bim Fundamente I.
     public function salva_nota_3bim_fun1() {
         $dadosForm = $this->request->all();
-        $count = count($dadosForm["AB3"]);
+        $this->validarPermissaoLancamento($dadosForm);
+        $count = count($dadosForm["AB3"] ?? []);
         for ($i = 0; $i < $count; $i++) {
             if (!empty($dadosForm["AB3"][$i])) {
                 $salvandoNotas = tb_notas_docente::salva_nota_3bim_fun1($dadosForm);
@@ -210,10 +243,10 @@ class cont_notas_docente extends Controller {
         return "notaNaoInformada";
     }
 
-//Metodo para salva as notas do 4 bim Fundamente I.
     public function salva_nota_4bim_fun1() {
         $dadosForm = $this->request->all();
-        $count = count($dadosForm["AB4"]);
+        $this->validarPermissaoLancamento($dadosForm);
+        $count = count($dadosForm["AB4"] ?? []);
         for ($i = 0; $i < $count; $i++) {
             if (!empty($dadosForm["AB4"][$i])) {
                 $salvandoNotas = tb_notas_docente::salva_nota_4bim_fun1($dadosForm);
@@ -223,12 +256,17 @@ class cont_notas_docente extends Controller {
         return "notaNaoInformada";
     }
 
-    // Salvar nota do primeiro bimestres fundamental II  
+    /**
+     * ********************************************
+     * Metodos para uso exclusivo para turma do Fundamental II
+     * ********************************************
+     */
     public function salva_nota_1bim_fun2() {
         $dadosForm = $this->request->all();
-        $count = count($dadosForm["RA"]);
+        $this->validarPermissaoLancamento($dadosForm);
+        $count = count($dadosForm["RA"] ?? []);
         for ($i = 0; $i < $count; $i++) {
-            if (!empty($dadosForm["AM1"][$i]) or ( $dadosForm["AB1"][$i])) {
+            if (!empty($dadosForm["AM1"][$i]) || !empty($dadosForm["AB1"][$i])) {
                 $salvandoNotas = tb_notas_docente::salva_nota_1bim_fun2($dadosForm);
                 return $salvandoNotas;
             }
@@ -236,12 +274,12 @@ class cont_notas_docente extends Controller {
         return "notaNaoInformada";
     }
 
-    // Salvar nota do segundo bimestres fundamental II  
     public function salva_nota_2bim_fun2() {
         $dadosForm = $this->request->all();
-        $count = count($dadosForm["RA"]);
+        $this->validarPermissaoLancamento($dadosForm);
+        $count = count($dadosForm["RA"] ?? []);
         for ($i = 0; $i < $count; $i++) {
-            if (!empty($dadosForm["AM2"][$i]) or ( $dadosForm["AB2"][$i])) {
+            if (!empty($dadosForm["AM2"][$i]) || !empty($dadosForm["AB2"][$i])) {
                 $salvandoNotas = tb_notas_docente::salva_nota_2bim_fun2($dadosForm);
                 return $salvandoNotas;
             }
@@ -249,12 +287,12 @@ class cont_notas_docente extends Controller {
         return "notaNaoInformada";
     }
 
-    // Salvar nota do segundo bimestres fundamental II  
     public function salva_nota_3bim_fun2() {
         $dadosForm = $this->request->all();
-        $count = count($dadosForm["RA"]);
+        $this->validarPermissaoLancamento($dadosForm);
+        $count = count($dadosForm["RA"] ?? []);
         for ($i = 0; $i < $count; $i++) {
-            if (!empty($dadosForm["AM3"][$i]) or ( $dadosForm["AB3"][$i])) {
+            if (!empty($dadosForm["AM3"][$i]) || !empty($dadosForm["AB3"][$i])) {
                 $salvandoNotas = tb_notas_docente::salva_nota_3bim_fun2($dadosForm);
                 return $salvandoNotas;
             }
@@ -262,12 +300,12 @@ class cont_notas_docente extends Controller {
         return "notaNaoInformada";
     }
 
-    // Salvar nota do segundo bimestres fundamental II  
     public function salva_nota_4bim_fun2() {
         $dadosForm = $this->request->all();
-        $count = count($dadosForm["RA"]);
+        $this->validarPermissaoLancamento($dadosForm);
+        $count = count($dadosForm["RA"] ?? []);
         for ($i = 0; $i < $count; $i++) {
-            if (!empty($dadosForm["AM4"][$i]) or ( $dadosForm["AB4"][$i])) {
+            if (!empty($dadosForm["AM4"][$i]) || !empty($dadosForm["AB4"][$i])) {
                 $salvandoNotas = tb_notas_docente::salva_nota_4bim_fun2($dadosForm);
                 return $salvandoNotas;
             }
@@ -275,30 +313,19 @@ class cont_notas_docente extends Controller {
         return "notaNaoInformada";
     }
 
-    //Metodo recuperações do aluno para a view apropriada 
+    // Metodo recuperacoes do aluno para a view apropriada
     public function rp_rf($idAluno) {
-        $aluno = $this->tb_aluno->find($idAluno);
-        $matricula = $aluno->matriculaAluno;
-        $turma = $aluno->turmaAluno;
-        $idTurmas = $turma['idTurmas'];
-        // Pegando o CPF do usuario e buscando seus dados
-        $CPFfuncionario = auth()->guard('guardLogin')->user()->CPFUsuario;
-// Criando um array de dados com Nome e id do funcionario
-        $nomedeusuario = tb_usuario_docente::infUsuario($CPFfuncionario);
-// Atribuindo o id do funcionario na vareavel idFuncionario para assim buscar suas turmas        
-        foreach ($nomedeusuario as $idFuncionarios) {
-            $idFuncionarios = $idFuncionarios['idFuncionarios'];
-        }
+        abort_unless(ProfessorLogado::podeAcessarAluno($idAluno), 403);
         return redirect("/docente/lancamentos_notas_rec/{$idAluno}");
     }
 
-    // Salvar nota DE RECUPERAÇÃO PARCIAL E FINAL 
+    // Salvar nota DE RECUPERACAO PARCIAL E FINAL
     public function salva_nota_rp_rf() {
         $dadosForm = $this->request->all();
-
-        $count = count($dadosForm["RA"]);
+        $this->validarPermissaoLancamento($dadosForm);
+        $count = count($dadosForm["RA"] ?? []);
         for ($i = 0; $i < $count; $i++) {
-            if (!empty($dadosForm["RP"][$i]) or ( $dadosForm["RF"][$i])) {
+            if (!empty($dadosForm["RP"][$i]) || !empty($dadosForm["RF"][$i])) {
                 $salvandoNotas = tb_notas_docente::salva_nota_rp_rf($dadosForm);
                 return $salvandoNotas;
             }
@@ -306,24 +333,21 @@ class cont_notas_docente extends Controller {
         return "notaNaoInformada";
     }
 
-    //Edita Nota
+    // Edita Nota
     public function editarNota() {
         $dadosForm = $this->request->all();
-        $idAluno = $dadosForm["tb_aluno_idAluno"];
+        $idAluno = $dadosForm["tb_aluno_idAluno"] ?? null;
+        abort_unless($idAluno && ProfessorLogado::podeAcessarAluno($idAluno), 403);
+
         $aluno = $this->tb_aluno->find($idAluno);
-        $matricula = $aluno->matriculaAluno;
-        $turma = $aluno->turmaAluno;
-        $idTurmas = $turma['idTurmas'];
-// Pegando o CPF do usuario e buscando seus dados
-        $CPFfuncionario = auth()->guard('guardLogin')->user()->CPFUsuario;
-// Criando um array de dados com Nome e id do funcionario
-        $nomedeusuario = tb_usuario_docente::infUsuario($CPFfuncionario);
-// Atribuindo o id do funcionario na vareavel idFuncionario para assim buscar suas turmas        
-        foreach ($nomedeusuario as $idFuncionarios) {
-            $idFuncionarios = $idFuncionarios['idFuncionarios'];
-        }
-        $disciplinas = tb_disciplina_docente::disciplinaTurmadoProfessor($idTurmas, $idFuncionarios);
-        $quantidade_disciplinas = tb_disciplina_docente::QuantidadeDisciplinasNaTurma($idTurmas);
+        $turma = $aluno->turmaAluno ?? null;
+        $idTurmas = $turma['idTurmas'] ?? ($turma->idTurmas ?? null);
+
+        $idDisciplina = $dadosForm["tb_disciplinas_idDisciplinas"] ?? null;
+        abort_unless($idTurmas && $idDisciplina && ProfessorLogado::podeLancarDisciplina($idTurmas, $idDisciplina), 403);
+
+        $dadosForm['tb_usuario_idUsuario'] = auth()->guard('guardLogin')->id() ?? 1;
+
         $updateNota = tb_notas_docente::editandoNotas($dadosForm);
         if ($updateNota) {
             return 'notaAtualizada';
@@ -331,6 +355,4 @@ class cont_notas_docente extends Controller {
             return 'erroAoAtualizarNota';
         }
     }
-
-// Fechando a Classe principal.
 }

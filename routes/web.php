@@ -580,58 +580,8 @@ Route::prefix('docente')->middleware(['auth:guardLogin', 'docente', 'semCache'])
     Route::match(['get', 'post'], '/notas_filtro', [cont_notas_docente::class, 'notas_filtro']);
 
     // Lançamento por aluno e bimestre (1bim, 2bim, 3bim, 4bim, rec)
-    Route::get('/lancamentos_notas_{bim}/{id}', function ($bim, $id) {
-        $bimsValidos = ['1bim', '2bim', '3bim', '4bim', 'rec'];
-        abort_if(!in_array($bim, $bimsValidos), 404);
-
-        try {
-            $aluno = \DB::table('tb_aluno')->where('idAluno', $id)->first();
-        } catch (\Exception $e) { $aluno = null; }
-        abort_if(!$aluno, 404);
-
-        try {
-            $matricula = \DB::table('tb_matriculas')->where('idMatriculas', $aluno->tb_matriculas_idMatriculas ?? 0)->first();
-        } catch (\Exception $e) { $matricula = null; }
-
-        try {
-            $turma = \DB::table('tb_turmas')->where('idTurmas', $aluno->tb_turmas_idTurmas ?? 0)->first();
-        } catch (\Exception $e) { $turma = null; }
-
-        // Pegar disciplinas vinculadas ao professor para esta turma
-        $disciplinas = collect();
-        try {
-            if (auth()->guard('guardLogin')->check()) {
-                $cpf = auth()->guard('guardLogin')->user()->CPFUsuario;
-                $userDoc = \App\Models\modelDocente\tb_usuario_docente::infUsuario($cpf)->first();
-                $idFunc = $userDoc->idFuncionarios ?? null;
-                if ($idFunc && $turma) {
-                    $disciplinas = \App\Models\modelDocente\tb_disciplina_docente::disciplinaTurmadoProfessor($turma->idTurmas, $idFunc);
-                }
-            }
-        } catch (\Exception $e) {}
-
-        if ($disciplinas->isEmpty() && $turma) {
-            try {
-                $disciplinas = \DB::table('tb_turmas_disciplinas')
-                    ->leftJoin('tb_disciplinas', 'tb_turmas_disciplinas.tb_disciplinas_idDisciplinas', '=', 'tb_disciplinas.idDisciplinas')
-                    ->where('tb_turmas_disciplinas.tb_turmas_idTurmas', $turma->idTurmas)
-                    ->select('tb_turmas_disciplinas.*', 'tb_disciplinas.NomeDisciplina')
-                    ->get();
-            } catch (\Exception $e) { $disciplinas = collect(); }
-        }
-
-        $titulo = 'Lançamento de Notas — ' . ($aluno->NomeAluno ?? 'Aluno');
-
-        if ($bim === 'rec') {
-            $nivel = 'fund1';
-        } else {
-            $nivelCode = \App\Http\Controllers\controleCoordenacao\cont_relatorios::determinarNivelTurma($turma->NomeTurma ?? '');
-            $nivel = ($nivelCode === 'fun1') ? 'fund1' : (($nivelCode === 'fun2') ? 'fund2' : 'inf');
-        }
-
-        $bimestre = $bim;
-        return view('telasDocente.notas.lancamento', compact('aluno', 'matricula', 'turma', 'disciplinas', 'titulo', 'bimestre', 'nivel'));
-    })->where(['id' => '[0-9]+', 'bim' => '1bim|2bim|3bim|4bim|rec']);
+    Route::get('/lancamentos_notas_{bim}/{id}', [cont_notas_docente::class, 'lancamento'])
+        ->where(['id' => '[0-9]+', 'bim' => '1bim|2bim|3bim|4bim|rec']);
 
     Route::get('/notas_rp_rf/{id}', function($id) {
         return redirect("/docente/lancamentos_notas_rec/{$id}");

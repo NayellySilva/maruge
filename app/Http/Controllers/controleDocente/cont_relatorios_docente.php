@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers\controleDocente;
+
 use App\Models\modelDocente\tb_funcionario_docente;
 use App\Models\modelDocente\tb_usuario_docente;
 use App\Models\modelDocente\tb_turma_docente;
@@ -10,13 +11,15 @@ use App\Models\modelDocente\tb_matricula_docente;
 use App\Models\modelDocente\tb_turmas_disciplinas_docente;
 use App\Models\modelDocente\tb_notas_docente;
 use App\Models\modelDocente\tb_escola_docente;
+use App\Support\ProfessorLogado;
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 
-//INICIO DA CLASSE CONTROLE DO ALUNO
+// INICIO DA CLASSE CONTROLE DO ALUNO
 class cont_relatorios_docente extends Controller {
 
     private $request;
@@ -37,27 +40,19 @@ class cont_relatorios_docente extends Controller {
         $this->tb_escola = $tb_escola;
     }
 
- // Metodo que lista as turmas ativas para solicitação de relatórios de alunos matriculados    
+    // Metodo que lista as turmas ativas para solicitacao de relatorios de alunos matriculados
     public function listagem_turmas() {
-        // Pegando o CPF do usuario e buscando seus dados
-        $CPFfuncionario = auth()->guard('guardLogin')->user()->CPFUsuario;
-// Criando um array de dados com Nome e id do funcionario
-        $nomedeusuario = tb_usuario_docente::infUsuario($CPFfuncionario);
-// Atribuindo o id do funcionario na vareavel idFuncionario para assim buscar suas turmas        
-        foreach ($nomedeusuario as $idFuncionarios) {
-            $idFuncionarios = $idFuncionarios['idFuncionarios'];
-        }
-        $turmas = tb_turma_docente::ListaTuramsdoProfessor($idFuncionarios); // Buscando as turmas do professor     
+        $turmas = ProfessorLogado::turmasAtivas();
         return view('telasDocente.relatorios.relatorio_alunos_turmas', compact('turmas'));
     }
-//Metodo que gerar um relatório em pdf cos alunos transferidos ou desistente (INATIVOS)
+
+    // Metodo que gera o relatorio dos alunos da turma
     public function alunosPorTurma($idturmas) {
-        // Dados para forma o timbre (cabeçario)  
+        abort_unless(ProfessorLogado::podeAcessarTurma($idturmas), 403);
         $escolas = tb_escola_docente::informacaoEscolar();
         $alunos = tb_aluno_docente::alunosPorTurma($idturmas);
         $turma = $this->tb_turma->find($idturmas);
         $titulo = 'Alunos Por Turma';
         return view('telasDocente.relatorios.relatorio_alunos_por_turma', compact('titulo', 'escolas', 'turma', 'alunos'));
     }
-// Chava da class principal  
 }
