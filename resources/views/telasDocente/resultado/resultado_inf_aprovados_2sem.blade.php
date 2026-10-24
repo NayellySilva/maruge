@@ -22,8 +22,6 @@
         <link rel="stylesheet" href="{{asset('css/reset.css')}}">       
         <!-- favicon-->
         <link rel="stylesheet" href="{{asset('imgs/favicon.png')}}">     
-        <!-- Jquery Local-->
-        <script src="{{asset('css/jquery-3.0.0.js')}}" ></script> 
         <button type="button"  value="Imprimir" id="imprimir_conteudo"  onclick="window.print()" class="botao btn-imprimir"> Imprimir</button>
         <div class="imprimir_conteudo">
         <table class="timbre">

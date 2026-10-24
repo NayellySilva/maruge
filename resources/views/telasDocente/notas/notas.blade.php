@@ -20,7 +20,7 @@
 
     <!-- Localização (Breadcrumb) -->
     <div class="text-sm text-[#5c706b]">
-        <a href="{{ url('/coordenacao') }}" class="hover:text-[#008a4b] transition-colors">Secretaria</a>
+        <a href="{{ url('/docente/secretaria') }}" class="hover:text-[#008a4b] transition-colors">Secretaria</a>
         <span class="mx-2">/</span>
         <span class="font-semibold text-[#0a241e]">Lançar Notas</span>
     </div>

@@ -35,7 +35,7 @@
 
     <!-- Localização (Breadcrumb) -->
     <div class="text-sm text-[#5c706b]">
-        <a href="{{ url('/coordenacao') }}" class="hover:text-[#008a4b] transition-colors">Relatórios</a>
+        <a href="{{ url('/docente/relatorios') }}" class="hover:text-[#008a4b] transition-colors">Relatórios</a>
         <span class="mx-2">/</span>
         <a href="{{ url('/docente/relatorios/relatorio_alunos_turmas') }}" class="hover:text-[#008a4b] transition-colors">Alunos Por Turma</a>
         <span class="mx-2">/</span>

@@ -68,7 +68,7 @@ class cont_notas_docente extends Controller {
         $turmas = ProfessorLogado::turmasAtivas();
         $palavrachave = $this->request->get('pesquisar');
         $Alunos = $idFuncionarios ? tb_aluno_docente::pesquisar($palavrachave, $idFuncionarios) : collect();
-        return view('telasDocente.notas.notas_pesq', compact('Alunos', 'turmas'));
+        return view('telasDocente.notas.notas', compact('Alunos', 'turmas'));
     }
 
     // Lançamento por aluno e bimestre

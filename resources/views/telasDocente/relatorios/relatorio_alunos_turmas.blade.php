@@ -23,7 +23,7 @@
 
     <!-- Localização (Breadcrumb) -->
     <div class="text-sm text-[#5c706b]">
-        <a href="{{ url('/coordenacao') }}" class="hover:text-[#008a4b] transition-colors">Relatórios</a>
+        <a href="{{ url('/docente/relatorios') }}" class="hover:text-[#008a4b] transition-colors">Relatórios</a>
         <span class="mx-2">/</span>
         <span class="font-semibold text-[#0a241e]">Relatórios Alunos por Turmas</span>
     </div>
