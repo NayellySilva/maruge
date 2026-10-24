@@ -69,10 +69,11 @@
                     
         <!-- Fazendo media de cada bimestre -->
         @php 
-        $nota->AB1 = ($nota->AB1+$nota->AM1)/2; 
-        $nota->AB2 = ($nota->AB2+$nota->AM2)/2; 
-        $nota->AB3 = ($nota->AB3+$nota->AM3)/2; 
-        $nota->AB4 = ($nota->AB4+$nota->AM4)/2; 
+        $svc = app(\App\Services\NotaBimestralService::class);
+        $nota->AB1 = $svc->notaDoBimestre($nota, 1, 'fun2') ?? 0;
+        $nota->AB2 = $svc->notaDoBimestre($nota, 2, 'fun2') ?? 0;
+        $nota->AB3 = $svc->notaDoBimestre($nota, 3, 'fun2') ?? 0;
+        $nota->AB4 = $svc->notaDoBimestre($nota, 4, 'fun2') ?? 0;
         @endphp
         <!-- / Fazendo media de cada bimestre -->
         

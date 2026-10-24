@@ -122,24 +122,31 @@
         @endphp
         <!-- INICIO DO FOREACH DA NOTA DA DISCILPLINA QUE TA LISTANDO-->
     @forelse($notasDoAluno as $nota)
+        @php
+            $svc = app(\App\Services\NotaBimestralService::class);
+            $b1 = $svc->notaDoBimestre($nota, 1, 'fun1');
+            $b2 = $svc->notaDoBimestre($nota, 2, 'fun1');
+            $b3 = $svc->notaDoBimestre($nota, 3, 'fun1');
+            $b4 = $svc->notaDoBimestre($nota, 4, 'fun1');
+        @endphp
         <!-- VERIFICA SE EXISTE NOTA NA DISCIPLINA QUE ESTA DENTRO DO LAÇO CORRENTE -->
         @if (isset ($nota->AB1))
                                         <!--CAMPOS DE DA TABELA DA  AB1-->
-                                                    @if (($nota->AB1) == 0)
+                                                    @if ($b1 === null || $b1 == 0)
                                                     <td><center><div>-</div></center></td> 
-                                                    @elseif (($nota->AB1) < 7)
-                                                    <td><center><div class=" notaVermelha" >{{number_format($nota->AB1 ,1)}}</div></center></td> 
+                                                    @elseif ($b1 < 7)
+                                                    <td><center><div class=" notaVermelha" >{{number_format($b1 ,1)}}</div></center></td> 
                                                     @else
-                                                    <td><center><div class="  notaAzul" >{{number_format($nota->AB1 ,1)}}</div></center></td> 
+                                                    <td><center><div class="  notaAzul" >{{number_format($b1 ,1)}}</div></center></td> 
                                                     @endif
                                         <!-- / CAMPOS DE DA TABELA DA  AB1--> 
                                         <!--CAMPOS DE DA TABELA DA  AB2-->
-                                                    @if (($nota->AB2) == 0)
+                                                    @if ($b2 === null || $b2 == 0)
                                                     <td><center><div>-</div></center></td> 
-                                                    @elseif (($nota->AB2) < 7)
-                                                    <td><center><div class=" notaVermelha" >{{number_format($nota->AB2 ,1)}}</div></center></td> 
+                                                    @elseif ($b2 < 7)
+                                                    <td><center><div class=" notaVermelha" >{{number_format($b2 ,1)}}</div></center></td> 
                                                     @else
-                                                    <td><center><div class="  notaAzul" >{{number_format($nota->AB2 ,1)}}</div></center></td> 
+                                                    <td><center><div class="  notaAzul" >{{number_format($b2 ,1)}}</div></center></td> 
                                                     @endif
                                         <!-- / CAMPOS DE DA TABELA DA  AB2--> 
                                         <!--CAMPOS DE DA TABELA DE RECUPERAÇÃO PARCIAL-->
@@ -152,21 +159,21 @@
                                                     @endif
                                         <!-- / CAMPOS DE DA TABELA DE RECUPERAÇÃO PARCIAL-->                                  
                                         <!--CAMPOS DE DA TABELA DA  AB3-->
-                                                    @if (($nota->AB3) == 0)
+                                                    @if ($b3 === null || $b3 == 0)
                                                     <td><center><div>-</div></center></td> 
-                                                    @elseif (($nota->AB3) < 7)
-                                                    <td><center><div class=" notaVermelha" >{{number_format($nota->AB3 ,1)}}</div></center></td> 
+                                                    @elseif ($b3 < 7)
+                                                    <td><center><div class=" notaVermelha" >{{number_format($b3 ,1)}}</div></center></td> 
                                                     @else
-                                                    <td><center><div class="  notaAzul" >{{number_format($nota->AB3 ,1)}}</div></center></td> 
+                                                    <td><center><div class="  notaAzul" >{{number_format($b3 ,1)}}</div></center></td> 
                                                     @endif
                                         <!-- / CAMPOS DE DA TABELA DA  AB4--> 
                                         <!--CAMPOS DE DA TABELA DA  AB4-->
-                                                    @if (($nota->AB4) == 0)
+                                                    @if ($b4 === null || $b4 == 0)
                                                     <td><center><div>-</div></center></td> 
-                                                    @elseif (($nota->AB4) < 7)
-                                                    <td><center><div class=" notaVermelha" >{{number_format($nota->AB4 ,1)}}</div></center></td> 
+                                                    @elseif ($b4 < 7)
+                                                    <td><center><div class=" notaVermelha" >{{number_format($b4 ,1)}}</div></center></td> 
                                                     @else
-                                                    <td><center><div class="  notaAzul" >{{number_format($nota->AB4 ,1)}}</div></center></td> 
+                                                    <td><center><div class="  notaAzul" >{{number_format($b4 ,1)}}</div></center></td> 
                                                     @endif
                                         <!-- / CAMPOS DE DA TABELA DA  AB4-->
                                         <!--CAMPOS DE DA TABELA DE RECUPERAÇÃO FINAL-->
@@ -181,8 +188,8 @@
                                         <!--CAMPOS DE DA TABELA DE MEDIA E RESULTADO -->
                                         <!-- FAZENDO A MEDIAS -->
                                                     @php 
-                                                    $mediaN = ($nota->AB1+$nota->AB2+$nota->AB3+$nota->AB4)/4; 
-                                                    $mediaRP = (($nota->RP * 2)+$nota->AB3+$nota->AB4)/4; 
+                                                    $mediaN = (($b1 ?? 0) + ($b2 ?? 0) + ($b3 ?? 0) + ($b4 ?? 0))/4; 
+                                                    $mediaRP = ((($nota->RP ?? 0) * 2) + ($b3 ?? 0) + ($b4 ?? 0))/4; 
                                                     @endphp
                                         
                                         <!-- FAZENDO A MEDIA NORMAL SEM RECUPERAÇÕES -->

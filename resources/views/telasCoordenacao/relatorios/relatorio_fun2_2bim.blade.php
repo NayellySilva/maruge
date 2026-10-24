@@ -107,8 +107,9 @@
         <!-- VERIFICA SE EXISTE NOTA NA DISCIPLINA QUE ESTA DENTRO DO LAÇO CORRENTE -->
         @if (isset ($nota->AB1))
         @php 
-        $nota->AB1 = ($nota->AB1+$nota->AM1)/2; 
-        $nota->AB2 = ($nota->AB2+$nota->AM2)/2; 
+        $svc = app(\App\Services\NotaBimestralService::class);
+        $nota->AB1 = $svc->notaDoBimestre($nota, 1, 'fun2') ?? 0;
+        $nota->AB2 = $svc->notaDoBimestre($nota, 2, 'fun2') ?? 0;
         @endphp
         
                                         <!--CAMPOS DE DA TABELA DA  AB1-->

@@ -83,7 +83,10 @@
                                 @forelse($notasDoAluno as $nota)
                                 <!--Fazendo Média -->
                                 @php 
-                                $media = ($nota->AB1+$nota->AB2)/2; 
+                                $svc = app(\App\Services\NotaBimestralService::class);
+                                $b1 = $svc->notaDoBimestre($nota, 1, 'fun1') ?? 0;
+                                $b2 = $svc->notaDoBimestre($nota, 2, 'fun1') ?? 0;
+                                $media = ($b1 + $b2) / 2; 
                                 @endphp
                                 <!-- / Fazendo Média -->
                                 <!-- Se a media for menror que 7 ele ta em recuperação -->
@@ -92,21 +95,21 @@
                                 <tr>
                                     <td>{{$Aluno->RA}}</td>
                                     <td>{{$Aluno->NomeAluno}}</td>
-                                    <!-- cor da nota AB1-->
-                                    @if($nota->AB1 < 7)
-                                    <td><center><div class=" notaVermelha" >{{number_format($nota->AB1 ,1)}}</div></center></td> 
-                                @else
-                                <td><center><div class=" notaAzul" >{{number_format($nota->AB1 ,1)}}</div></center></td> 
-                                @endif
-                                <!-- /Cor da nota AB1 -->
-                                <!-- cor da nota AB2-->
-                                @if($nota->AB2 < 7)
-                                <td><center><div class=" notaVermelha" >{{number_format($nota->AB2 ,1)}}</div></center></td> 
-                                @else
-                                <td><center><div class=" notaAzul" >{{number_format($nota->AB2 ,1)}}</div></center></td> 
-                                @endif
-                                <!-- /Cor da nota AB2 -->
-                                <td><center><div class=" notaVermelha" >{{number_format($media ,1)}}</div></center></td> 
+                                    <!-- cor da nota 1º BIM-->
+                                    @if($b1 < 7)
+                                    <td><center><div class=" notaVermelha" >{{number_format($b1 ,1)}}</div></center></td> 
+                                    @else
+                                    <td><center><div class=" notaAzul" >{{number_format($b1 ,1)}}</div></center></td> 
+                                    @endif
+                                    <!-- /Cor da nota 1º BIM -->
+                                    <!-- cor da nota 2º BIM-->
+                                    @if($b2 < 7)
+                                    <td><center><div class=" notaVermelha" >{{number_format($b2 ,1)}}</div></center></td> 
+                                    @else
+                                    <td><center><div class=" notaAzul" >{{number_format($b2 ,1)}}</div></center></td> 
+                                    @endif
+                                    <!-- /Cor da nota 2º BIM -->
+                                    <td><center><div class=" notaVermelha" >{{number_format($media ,1)}}</div></center></td> 
                                 @else
                                 @endif
                                 <!-- /Se a media for menror que 7 ele ta em recuperação -->

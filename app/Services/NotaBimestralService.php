@@ -120,4 +120,70 @@ class NotaBimestralService
 
         return $dados;
     }
+
+    /**
+     * Nível da turma pelo NOME: 'inf', 'fun1' ou 'fun2'.
+     * Única regra de negócio do sistema — nunca usar quantidade de disciplinas.
+     */
+    public function nivelDaTurma(?string $nomeTurma): string
+    {
+        $nome = mb_strtoupper(trim((string) $nomeTurma), 'UTF-8');
+
+        // Infantil: nome contém palavras-chave de educação infantil
+        if (preg_match('/INFANTIL|BEB[ÊE]|BER[ÇC][ÁA]RIO|MATERNAL|TURMINHA/u', $nome)
+            || preg_match('/(^|[^A-Z])INF([^A-Z]|$)/u', $nome)) {
+            return 'inf';
+        }
+
+        // Fundamental II: 6º ao 9º ano ou "FUNDAMENTAL II/2"
+        if (preg_match('/(^|\D)[6-9]\s*(º|°|O)?\s*ANO/u', $nome)
+            || preg_match('/FUNDAMENTAL\s*(II|2)\b/u', $nome)) {
+            return 'fun2';
+        }
+
+        // Qualquer outro: Fundamental I
+        return 'fun1';
+    }
+
+    /**
+     * Converte valor do banco: null, '' ou 0 = não lançado (retorna null).
+     * Valores positivos retornam float.
+     */
+    private function valorLancado($valor): ?float
+    {
+        if ($valor === null || $valor === '') {
+            return null;
+        }
+        $v = (float) str_replace(',', '.', (string) $valor);
+        return $v > 0 ? $v : null;
+    }
+
+    /**
+     * Nota do bimestre já com a recuperação bimestral (RB) aplicada.
+     *
+     * @param  mixed      $nota      Linha de tb_notas (objeto ou array com chaves AB1..AB4, AM1..AM4, RB1..RB4).
+     * @param  int        $bimestre  Número do bimestre: 1..4.
+     * @param  string     $nivel     'fun1' (só AB) ou 'fun2' (média AM+AB).
+     * @return float|null            null se o bimestre não foi lançado.
+     */
+    public function notaDoBimestre($nota, int $bimestre, string $nivel): ?float
+    {
+        if (!$nota) {
+            return null;
+        }
+
+        $ab = $this->valorLancado(data_get($nota, "AB{$bimestre}"));
+        $am = $nivel === 'fun2' ? $this->valorLancado(data_get($nota, "AM{$bimestre}")) : null;
+        $rb = $this->valorLancado(data_get($nota, "RB{$bimestre}"));
+
+        // Monta apenas as avaliações efetivamente lançadas
+        $avaliacoes = array_values(array_filter([$am, $ab], static fn($v) => $v !== null));
+
+        if ($avaliacoes === []) {
+            return null;
+        }
+
+        // Delega para calcularMediaFinalComRecuperacao, que já aplica a regra da RB corretamente
+        return $this->calcularMediaFinalComRecuperacao($avaliacoes, $rb);
+    }
 }

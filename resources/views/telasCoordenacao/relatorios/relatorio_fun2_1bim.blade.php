@@ -100,7 +100,8 @@
         @if (isset ($nota->AB1))
         
         @php 
-        $nota->AB1 = ($nota->AB1+$nota->AM1)/2; 
+        $svc = app(\App\Services\NotaBimestralService::class);
+        $nota->AB1 = $svc->notaDoBimestre($nota, 1, 'fun2') ?? 0;
         @endphp
         
         @if (($nota->AB1) == 0)

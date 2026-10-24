@@ -148,14 +148,8 @@ class cont_relatorios extends Controller {
     }
 
     public static function determinarNivelTurma($nomeTurma) {
-        $nome = mb_strtoupper($nomeTurma ?? '');
-        if (preg_match('/\b(INFANTIL|INF)\b/i', $nome)) {
-            return 'inf';
-        }
-        if (preg_match('/\b(6[ºo]?|7[ºo]?|8[ºo]?|9[ºo]?)\s*(ANO)?\b/i', $nome) || preg_match('/\bFUNDAMENTAL\s*(II|2)\b/i', $nome)) {
-            return 'fun2';
-        }
-        return 'fun1';
+        // Delega ao serviço centralizado — única fonte de verdade do sistema
+        return app(\App\Services\NotaBimestralService::class)->nivelDaTurma($nomeTurma);
     }
 
     private function renderizarRelatorioBimestral($idAluno, $bimestreNum) {

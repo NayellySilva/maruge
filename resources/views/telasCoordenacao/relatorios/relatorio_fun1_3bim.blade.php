@@ -72,24 +72,30 @@
         @endphp
         <!-- INICIO DO FOREACH DA NOTA DA DISCILPLINA QUE TA LISTANDO-->
     @forelse($notasDoAluno as $nota)
+        @php
+            $svc = app(\App\Services\NotaBimestralService::class);
+            $b1 = $svc->notaDoBimestre($nota, 1, 'fun1');
+            $b2 = $svc->notaDoBimestre($nota, 2, 'fun1');
+            $b3 = $svc->notaDoBimestre($nota, 3, 'fun1');
+        @endphp
         <!-- VERIFICA SE EXISTE NOTA NA DISCIPLINA QUE ESTA DENTRO DO LAÇO CORRENTE -->
         @if (isset ($nota->AB1))
                                         <!--CAMPOS DE DA TABELA DA  AB1-->
-                                                    @if (($nota->AB1) == 0)
+                                                    @if ($b1 === null || $b1 == 0)
                                                     <td><center><div>-</div></center></td> 
-                                                    @elseif (($nota->AB1) < 7)
-                                                    <td><center><div class=" notaVermelha" >{{number_format($nota->AB1 ,1)}}</div></center></td> 
+                                                    @elseif ($b1 < 7)
+                                                    <td><center><div class=" notaVermelha" >{{number_format($b1 ,1)}}</div></center></td> 
                                                     @else
-                                                    <td><center><div class="  notaAzul" >{{number_format($nota->AB1 ,1)}}</div></center></td> 
+                                                    <td><center><div class="  notaAzul" >{{number_format($b1 ,1)}}</div></center></td> 
                                                     @endif
                                         <!-- / CAMPOS DE DA TABELA DA  AB1--> 
                                         <!--CAMPOS DE DA TABELA DA  AB2-->
-                                                    @if (($nota->AB2) == 0)
+                                                    @if ($b2 === null || $b2 == 0)
                                                     <td><center><div>-</div></center></td> 
-                                                    @elseif (($nota->AB2) < 7)
-                                                    <td><center><div class=" notaVermelha" >{{number_format($nota->AB2 ,1)}}</div></center></td> 
+                                                    @elseif ($b2 < 7)
+                                                    <td><center><div class=" notaVermelha" >{{number_format($b2 ,1)}}</div></center></td> 
                                                     @else
-                                                    <td><center><div class="  notaAzul" >{{number_format($nota->AB2 ,1)}}</div></center></td> 
+                                                    <td><center><div class="  notaAzul" >{{number_format($b2 ,1)}}</div></center></td> 
                                                     @endif
                                         <!-- / CAMPOS DE DA TABELA DA  AB2--> 
                                         <!--CAMPOS DE DA TABELA DE RECUPERAÇÃO-->
@@ -102,12 +108,12 @@
                                                     @endif
                                         <!-- / CAMPOS DE DA TABELA DE RECUPERAÇÃO-->                                  
                                         <!--CAMPOS DE DA TABELA DA  AB3-->
-                                                    @if (($nota->AB3) == 0)
+                                                    @if ($b3 === null || $b3 == 0)
                                                     <td><center><div>-</div></center></td> 
-                                                    @elseif (($nota->AB3) < 7)
-                                                    <td><center><div class=" notaVermelha" >{{number_format($nota->AB3 ,1)}}</div></center></td> 
+                                                    @elseif ($b3 < 7)
+                                                    <td><center><div class=" notaVermelha" >{{number_format($b3 ,1)}}</div></center></td> 
                                                     @else
-                                                    <td><center><div class="  notaAzul" >{{number_format($nota->AB3 ,1)}}</div></center></td> 
+                                                    <td><center><div class="  notaAzul" >{{number_format($b3 ,1)}}</div></center></td> 
                                                     @endif
                                         <!-- / CAMPOS DE DA TABELA DA  AB3--> 
 

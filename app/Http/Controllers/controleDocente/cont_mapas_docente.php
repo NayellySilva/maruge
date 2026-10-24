@@ -65,9 +65,6 @@ class cont_mapas_docente extends Controller {
         $turmas = tb_turma_docente::ListaTuramsdoProfessor($idFuncionarios); // Buscando as turmas do professor     
         return view('telasDocente.mapa.mapas_notas', compact('turmas'));
     }
- 
-
-
 //Metodo do primeiro bismestre que direciona o aluno para a view apropriada 
     public function bimestre_1($idTurmas) {
        // Dados para forma o timbre (cabeçario)  
@@ -77,17 +74,17 @@ class cont_mapas_docente extends Controller {
        $idTurma = $idTurmas;
        $Alunos = tb_turma_docente::alunosdaturma($idTurma);    
        $disciplinas = tb_turmas_disciplinas_docente::disciplinaTurma($idTurmas);
-       $quantidade_disciplinas = tb_disciplina_docente::QuantidadeDisciplinasNaTurma($idTurmas);
-       if ($quantidade_disciplinas <= 7) {
-        return view('telasDocente.mapa.mapa_inf_1bim', compact('titulo','escolas','turma','Alunos','disciplinas'));
-        } else if ($quantidade_disciplinas <= 14) {
-        return view('telasDocente.mapa.mapa_fund1_1bim', compact('titulo','escolas','turma','Alunos','disciplinas'));
-        } else if ($quantidade_disciplinas > 14) {
-        return view('telasDocente.mapa.mapa_fund2_1bim', compact('titulo','escolas','turma','Alunos','disciplinas'));
-        }   
-       }
-            
-       //Metodo do segunda bismestre que direciona o aluno para a view apropriada 
+       $nivel = app(\App\Services\NotaBimestralService::class)->nivelDaTurma($turma->NomeTurma ?? '');
+       if ($nivel === 'inf') {
+           return view('telasDocente.mapa.mapa_inf_1bim', compact('titulo','escolas','turma','Alunos','disciplinas'));
+       } else if ($nivel === 'fun2') {
+           return view('telasDocente.mapa.mapa_fund2_1bim', compact('titulo','escolas','turma','Alunos','disciplinas'));
+       } else {
+           return view('telasDocente.mapa.mapa_fund1_1bim', compact('titulo','escolas','turma','Alunos','disciplinas'));
+       }   
+    }
+             
+    //Metodo do segunda bismestre que direciona o aluno para a view apropriada 
     public function bimestre_2($idTurmas) {
        // Dados para forma o timbre (cabeçario)  
        $escolas = tb_escola_docente::informacaoEscolar();
@@ -96,15 +93,16 @@ class cont_mapas_docente extends Controller {
        $idTurma = $idTurmas;
        $Alunos = tb_turma_docente::alunosdaturma($idTurma);    
        $disciplinas = tb_turmas_disciplinas_docente::disciplinaTurma($idTurmas);
-       $quantidade_disciplinas = tb_disciplina_docente::QuantidadeDisciplinasNaTurma($idTurmas);
-       if ($quantidade_disciplinas <= 7) {
-        return view('telasDocente.mapa.mapa_inf_2bim', compact('titulo','escolas','turma','Alunos','disciplinas'));
-        } else if ($quantidade_disciplinas <= 14) {
-        return view('telasDocente.mapa.mapa_fund1_2bim', compact('titulo','escolas','turma','Alunos','disciplinas'));
-        } else if ($quantidade_disciplinas > 14) {
-        return view('telasDocente.mapa.mapa_fund2_2bim', compact('titulo','escolas','turma','Alunos','disciplinas'));
-        }   
-       }  
+       $nivel = app(\App\Services\NotaBimestralService::class)->nivelDaTurma($turma->NomeTurma ?? '');
+       if ($nivel === 'inf') {
+           return view('telasDocente.mapa.mapa_inf_2bim', compact('titulo','escolas','turma','Alunos','disciplinas'));
+       } else if ($nivel === 'fun2') {
+           return view('telasDocente.mapa.mapa_fund2_2bim', compact('titulo','escolas','turma','Alunos','disciplinas'));
+       } else {
+           return view('telasDocente.mapa.mapa_fund1_2bim', compact('titulo','escolas','turma','Alunos','disciplinas'));
+       }   
+    }  
+
     //Metodo do terceiro bismestre que direciona o aluno para a view apropriada 
     public function bimestre_3($idTurmas) {
        // Dados para forma o timbre (cabeçario)  
@@ -114,15 +112,16 @@ class cont_mapas_docente extends Controller {
        $idTurma = $idTurmas;
        $Alunos = tb_turma_docente::alunosdaturma($idTurma);    
        $disciplinas = tb_turmas_disciplinas_docente::disciplinaTurma($idTurmas);
-       $quantidade_disciplinas = tb_disciplina_docente::QuantidadeDisciplinasNaTurma($idTurmas);
-       if ($quantidade_disciplinas <= 7) {
-        return view('telasDocente.mapa.mapa_inf_3bim', compact('titulo','escolas','turma','Alunos','disciplinas'));
-        } else if ($quantidade_disciplinas <= 14) {
-        return view('telasDocente.mapa.mapa_fund1_3bim', compact('titulo','escolas','turma','Alunos','disciplinas'));
-        } else if ($quantidade_disciplinas > 14) {
-        return view('telasDocente.mapa.mapa_fund2_3bim', compact('titulo','escolas','turma','Alunos','disciplinas'));
-        }   
-       }  
+       $nivel = app(\App\Services\NotaBimestralService::class)->nivelDaTurma($turma->NomeTurma ?? '');
+       if ($nivel === 'inf') {
+           return view('telasDocente.mapa.mapa_inf_3bim', compact('titulo','escolas','turma','Alunos','disciplinas'));
+       } else if ($nivel === 'fun2') {
+           return view('telasDocente.mapa.mapa_fund2_3bim', compact('titulo','escolas','turma','Alunos','disciplinas'));
+       } else {
+           return view('telasDocente.mapa.mapa_fund1_3bim', compact('titulo','escolas','turma','Alunos','disciplinas'));
+       }   
+    }  
+
     //Metodo do quarto bismestre que direciona o aluno para a view apropriada 
     public function bimestre_4($idTurmas) {
        // Dados para forma o timbre (cabeçario)  
@@ -132,15 +131,16 @@ class cont_mapas_docente extends Controller {
        $idTurma = $idTurmas;
        $Alunos = tb_turma_docente::alunosdaturma($idTurma);    
        $disciplinas = tb_turmas_disciplinas_docente::disciplinaTurma($idTurmas);
-       $quantidade_disciplinas = tb_disciplina_docente::QuantidadeDisciplinasNaTurma($idTurmas);
-        if ($quantidade_disciplinas <= 7) {
-        return view('telasDocente.mapa.mapa_inf_4bim', compact('titulo','escolas','turma','Alunos','disciplinas'));
-        } else if ($quantidade_disciplinas <= 14) {
-        return view('telasDocente.mapa.mapa_fund1_4bim', compact('titulo','escolas','turma','Alunos','disciplinas'));
-        } else if ($quantidade_disciplinas > 14) {
-        return view('telasDocente.mapa.mapa_fund2_4bim', compact('titulo','escolas','turma','Alunos','disciplinas'));
-        }   
-       }  
+       $nivel = app(\App\Services\NotaBimestralService::class)->nivelDaTurma($turma->NomeTurma ?? '');
+       if ($nivel === 'inf') {
+           return view('telasDocente.mapa.mapa_inf_4bim', compact('titulo','escolas','turma','Alunos','disciplinas'));
+       } else if ($nivel === 'fun2') {
+           return view('telasDocente.mapa.mapa_fund2_4bim', compact('titulo','escolas','turma','Alunos','disciplinas'));
+       } else {
+           return view('telasDocente.mapa.mapa_fund1_4bim', compact('titulo','escolas','turma','Alunos','disciplinas'));
+       }   
+    }  
+
     //Metodo do mapa global que direciona o aluno para a view apropriada 
     public function mapa_global($idTurmas) {
        // Dados para forma o timbre (cabeçario)  
@@ -148,18 +148,15 @@ class cont_mapas_docente extends Controller {
        $titulo = 'Mapa de Nota Global';
        $turma = $this->tb_turma->find($idTurmas);
        $idTurma = $idTurmas;
-      $Alunos = tb_turma_docente::alunosdaturma($idTurma);    
+       $Alunos = tb_turma_docente::alunosdaturma($idTurma);    
        $disciplinas = tb_turmas_disciplinas_docente::disciplinaTurma($idTurmas);
-       $quantidade_disciplinas = tb_disciplina_docente::QuantidadeDisciplinasNaTurma($idTurmas);
-        if ($quantidade_disciplinas <= 7) {
-        return view('telasDocente.mapa.mapa_inf_global', compact('titulo','escolas','turma','Alunos','disciplinas'));
-        } else if ($quantidade_disciplinas <= 14) {
-        return view('telasDocente.mapa.mapa_fund1_global', compact('titulo','escolas','turma','Alunos','disciplinas'));
-        } else if ($quantidade_disciplinas > 14) {
-        return view('telasDocente.mapa.mapa_fund2_global', compact('titulo','escolas','turma','Alunos','disciplinas'));
-        }   
-       } 
-       
-       
- // Fecha a classe principal      
+       $nivel = app(\App\Services\NotaBimestralService::class)->nivelDaTurma($turma->NomeTurma ?? '');
+       if ($nivel === 'inf') {
+           return view('telasDocente.mapa.mapa_inf_global', compact('titulo','escolas','turma','Alunos','disciplinas'));
+       } else if ($nivel === 'fun2') {
+           return view('telasDocente.mapa.mapa_fund2_global', compact('titulo','escolas','turma','Alunos','disciplinas'));
+       } else {
+           return view('telasDocente.mapa.mapa_fund1_global', compact('titulo','escolas','turma','Alunos','disciplinas'));
+       }   
+        }
 }

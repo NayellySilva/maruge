@@ -83,26 +83,28 @@
                     @forelse($notasDoAluno as $nota)
                         @if(isset($nota->AB1))
                             @php
+                                $svc = app(\App\Services\NotaBimestralService::class);
+                                $b1 = $svc->notaDoBimestre($nota, 1, 'fun2') ?? 0;
+                                $b2 = $svc->notaDoBimestre($nota, 2, 'fun2') ?? 0;
+                                $b3 = $svc->notaDoBimestre($nota, 3, 'fun2') ?? 0;
+                                $b4 = $svc->notaDoBimestre($nota, 4, 'fun2') ?? 0;
+
                                 $base1 = (($nota->AB1 ?? 0) + ($nota->AM1 ?? 0)) / 2; 
                                 $rb1_orig = $nota->RB1 ?? 0;
-                                $nb1 = ($rb1_orig > 0 && $rb1_orig > $base1) ? $rb1_orig : $base1;
 
                                 $base2 = (($nota->AB2 ?? 0) + ($nota->AM2 ?? 0)) / 2; 
                                 $rb2_orig = $nota->RB2 ?? 0;
-                                $nb2 = ($rb2_orig > 0 && $rb2_orig > $base2) ? $rb2_orig : $base2;
 
                                 $base3 = (($nota->AB3 ?? 0) + ($nota->AM3 ?? 0)) / 2; 
                                 $rb3_orig = $nota->RB3 ?? 0;
-                                $nb3 = ($rb3_orig > 0 && $rb3_orig > $base3) ? $rb3_orig : $base3;
 
                                 $base4 = (($nota->AB4 ?? 0) + ($nota->AM4 ?? 0)) / 2; 
                                 $rb4_orig = $nota->RB4 ?? 0;
-                                $nb4 = ($rb4_orig > 0 && $rb4_orig > $base4) ? $rb4_orig : $base4;
 
-                                $mediaN = ($nb1 + $nb2 + $nb3 + $nb4) / 4; 
-                                $media1e2B = ($nb1 + $nb2) / 2; 
+                                $mediaN = ($b1 + $b2 + $b3 + $b4) / 4; 
+                                $media1e2B = ($b1 + $b2) / 2; 
                                 $mediaRP1e2B = ($nota->RP * 2) / 4; 
-                                $mediaRP = (($nota->RP * 2) + $nb3 + $nb4) / 4; 
+                                $mediaRP = (($nota->RP * 2) + $b3 + $b4) / 4; 
                             @endphp
                             <tr>
                                 <td>{{ $disciplina->tb_disciplinas_idDisciplinas }}</td>

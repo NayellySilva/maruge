@@ -82,20 +82,16 @@ class cont_historico extends Controller {
 
           
         
-        $quantidade_disciplinas = tb_turmas_disciplinas::QuantidadeDisciplinasNaTurma($idTurmas);
         $titulo = 'Histórico Escolar:';
+        $nomeTurma = is_array($turma) ? ($turma['NomeTurma'] ?? '') : ($turma->NomeTurma ?? '');
+        $nivel = app(\App\Services\NotaBimestralService::class)->nivelDaTurma($nomeTurma);
         
-        
-        
-        
-        
-        
-        if ($quantidade_disciplinas <= 7) {
+        if ($nivel === 'inf') {
             return view('telasCoordenacao.historico.historico_inf', compact('turma', 'aluno', 'Pais','Ano2016', 'Ano2017','disciplinas2016','disciplinas2017', 'disciplinas','CidadeCartorio', 'titulo', 'escolas', 'DataNascimento',  'anoletivo'));
-        } else if ($quantidade_disciplinas <= 14) {
-            return view('telasCoordenacao.historico.historico_fun1', compact('turma', 'aluno', 'Pais','Ano2016', 'Ano2017','disciplinas2016','disciplinas2017', 'disciplinas','CidadeCartorio', 'titulo', 'escolas', 'DataNascimento',  'anoletivo'));
-        } else if ($quantidade_disciplinas > 14) {
+        } else if ($nivel === 'fun2') {
             return view('telasCoordenacao.historico.historico_fun2', compact('turma', 'aluno', 'Pais','Ano2016', 'Ano2017','disciplinas2016','disciplinas2017', 'disciplinas','CidadeCartorio', 'titulo', 'escolas', 'DataNascimento',  'anoletivo'));
+        } else {
+            return view('telasCoordenacao.historico.historico_fun1', compact('turma', 'aluno', 'Pais','Ano2016', 'Ano2017','disciplinas2016','disciplinas2017', 'disciplinas','CidadeCartorio', 'titulo', 'escolas', 'DataNascimento',  'anoletivo'));
         }
     }
 // Chava da class principal  

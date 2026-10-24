@@ -83,6 +83,12 @@
                     @forelse($notasDoAluno as $nota)
                         @if(isset($nota->AB1))
                             @php
+                                $svc = app(\App\Services\NotaBimestralService::class);
+                                $b1 = $svc->notaDoBimestre($nota, 1, 'fun1') ?? 0;
+                                $b2 = $svc->notaDoBimestre($nota, 2, 'fun1') ?? 0;
+                                $b3 = $svc->notaDoBimestre($nota, 3, 'fun1') ?? 0;
+                                $b4 = $svc->notaDoBimestre($nota, 4, 'fun1') ?? 0;
+
                                 $rb1_orig = $nota->RB1 ?? 0;
                                 $rb2_orig = $nota->RB2 ?? 0;
                                 $rb3_orig = $nota->RB3 ?? 0;
@@ -93,13 +99,8 @@
                                 $ab3_orig = $nota->AB3 ?? 0;
                                 $ab4_orig = $nota->AB4 ?? 0;
 
-                                $eff1 = ($rb1_orig > 0 && $rb1_orig > $ab1_orig) ? $rb1_orig : $ab1_orig;
-                                $eff2 = ($rb2_orig > 0 && $rb2_orig > $ab2_orig) ? $rb2_orig : $ab2_orig;
-                                $eff3 = ($rb3_orig > 0 && $rb3_orig > $ab3_orig) ? $rb3_orig : $ab3_orig;
-                                $eff4 = ($rb4_orig > 0 && $rb4_orig > $ab4_orig) ? $rb4_orig : $ab4_orig;
-
-                                $mediaN = ($eff1 + $eff2 + $eff3 + $eff4) / 4; 
-                                $mediaRP = (($nota->RP * 2) + $eff3 + $eff4) / 4; 
+                                $mediaN = ($b1 + $b2 + $b3 + $b4) / 4; 
+                                $mediaRP = (($nota->RP * 2) + $b3 + $b4) / 4; 
                             @endphp
                             <tr>
                                 <td>{{ $disciplina->tb_disciplinas_idDisciplinas }}</td>

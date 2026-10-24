@@ -108,29 +108,30 @@
         @endphp
         <!-- INICIO DO FOREACH DA NOTA DA DISCILPLINA QUE TA LISTANDO-->
         @forelse($notasDoAluno as $nota)
-        @if (isset ($nota->AB1))
-        @if (($nota->AB1) == 0)
-        <td><center><div>-</div>  
-    </center>
-    </td> 
-    </tr> 
-    </td>
-    @elseif (($nota->AB1) < 7)
-    <td><center><div class="notaVermelha" >                  
-            {{number_format($nota->AB1 ,1)}}  
-        </div>  
-    </center>
-    </td> 
-    </tr> 
-    @else
-    <td><center><div class="notaAzul" >                  
-            {{number_format($nota->AB1 ,1)}} 
-        </div>  
-    </center> </td>
-    </td> 
-    </tr> 
-    @endif
-    @endif
+        @php
+            $svc = app(\App\Services\NotaBimestralService::class);
+            $b1 = $svc->notaDoBimestre($nota, 1, 'fun1');
+        @endphp
+        @if ($b1 === null || $b1 == 0)
+        <td><center><div>-</div></center></td> 
+        </tr> 
+        </td>
+        @elseif ($b1 < 7)
+        <td><center><div class="notaVermelha" >                  
+                {{number_format($b1 ,1)}}  
+            </div>  
+        </center>
+        </td> 
+        </tr> 
+        </td>
+        @else
+        <td><center><div class="notaAzul" >                  
+                {{number_format($b1 ,1)}} 
+            </div>  
+        </center> </td>
+        </td> 
+        </tr> 
+        @endif
     @empty
     <td><center><div>-</div>  
     </center>

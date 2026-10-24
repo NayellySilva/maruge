@@ -223,9 +223,14 @@
                     @if (isset ($nota->AB4))
                                <!-- FAZENDO A MEDIAS -->
                                                     @php 
-                                                    $mediaN = ($nota->AB1+$nota->AB2+$nota->AB3+$nota->AB4)/4; 
-                                                    $mediaRP = (($nota->RP * 2)+$nota->AB3+$nota->AB4)/4; 
-                                                    @endphp
+        $svc = app(\App\Services\NotaBimestralService::class);
+        $b1 = $svc->notaDoBimestre($nota, 1, 'fun1') ?? 0;
+        $b2 = $svc->notaDoBimestre($nota, 2, 'fun1') ?? 0;
+        $b3 = $svc->notaDoBimestre($nota, 3, 'fun1') ?? 0;
+        $b4 = $svc->notaDoBimestre($nota, 4, 'fun1') ?? 0;
+        $mediaN = ($b1 + $b2 + $b3 + $b4) / 4; 
+        $mediaRP = ((($nota->RP ?? 0) * 2) + $b3 + $b4) / 4; 
+        @endphp
                                 <!-- FAZENDO A MEDIA NORMAL SEM RECUPERAÇÕES -->
                                                     @if(($nota->RP)== 0 && ($nota->RF)== 0) 
                                                             @if(($mediaN) < 7)

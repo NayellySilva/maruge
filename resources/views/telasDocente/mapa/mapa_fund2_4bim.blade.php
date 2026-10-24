@@ -61,28 +61,20 @@
                     @endphp
         <!-- Declarando as notas e criando um laço pra elas -->            
         @forelse($notasDoAluno as $nota)
-                    <!-- Verifiva se existe noda de AB4 da X disciplina -->
-                    @if (isset ($nota->AB4))
-            <!-- Fazendo media bimestral -->
             @php 
-            $nota->AB4 = ($nota->AB4+$nota->AM4)/2; 
+            $svc = app(\App\Services\NotaBimestralService::class);
+            $b4 = $svc->notaDoBimestre($nota, 4, 'fun2');
             @endphp
-            <!-- / Fazendo media bimestral -->
-                                <!-- imprimindo a nota -->
-                                @if (($nota->AB4) == 0)
-                                    <td class="Mapa_valorX"><center>X</center></td>
-                                @elseif (($nota->AB4) < 7)
-                                <td><center><div class="Mapa_notaVermelha">{{number_format($nota->AB4 ,1)}}</div></center></td> 
-                                @else
-                                <td><center><div class="Mapa_notaAzul">{{number_format($nota->AB4 ,1)}}</div></center></td> 
-                                <!-- / imprimindo a nota -->
-                                @endif    
-                    <!-- / Verifiva se existe noda de AB4 da X disciplina -->
-                    @endif
-                    <!-- / Declarando as notas e criando um laço pra elas (quando não existir nota)-->    
-                    @empty
-                    <td class="Mapa_valorX"><center>X</center></td>
-                    @endforelse
+            @if ($b4 === null || $b4 == 0)
+                <td class="Mapa_valorX"><center>X</center></td>
+            @elseif ($b4 < 7)
+                <td><center><div class="Mapa_notaVermelha">{{number_format($b4 ,1)}}</div></center></td> 
+            @else
+                <td><center><div class="Mapa_notaAzul">{{number_format($b4 ,1)}}</div></center></td> 
+            @endif    
+        @empty
+            <td class="Mapa_valorX"><center>X</center></td>
+        @endforelse
     <!-- / pecorrendo a lista da disciplinas existente da turma e para consulta se existe nota-->
         @endforeach
     </tr>

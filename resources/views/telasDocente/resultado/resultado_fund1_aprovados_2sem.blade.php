@@ -88,7 +88,12 @@
 
                                 <!--Fazendo Média COMUM-->
                                 @php 
-                                $media = ($nota->AB1+$nota->AB2+$nota->AB3+$nota->AB4)/4; 
+                                $svc = app(\App\Services\NotaBimestralService::class);
+                                $b1 = $svc->notaDoBimestre($nota, 1, 'fun1') ?? 0;
+                                $b2 = $svc->notaDoBimestre($nota, 2, 'fun1') ?? 0;
+                                $b3 = $svc->notaDoBimestre($nota, 3, 'fun1') ?? 0;
+                                $b4 = $svc->notaDoBimestre($nota, 4, 'fun1') ?? 0;
+                                $media = ($b1 + $b2 + $b3 + $b4) / 4; 
                                 @endphp
                                 <!-- / Fazendo Média COMUM -->
 
@@ -99,35 +104,35 @@
                                     <td>{{$Aluno->RA}}</td>
                                     <td>{{$Aluno->NomeAluno}}</td>
                                        
-                                <!-- cor da nota AB1-->
-                                @if($nota->AB1 < 7)
-                                <td><center><div class=" notaVermelha" >{{number_format($nota->AB1 ,1)}}</div></center></td> 
+                                <!-- cor da nota 1º BIM-->
+                                @if($b1 < 7)
+                                <td><center><div class=" notaVermelha" >{{number_format($b1 ,1)}}</div></center></td> 
                                 @else
-                                <td><center><div class=" notaAzul" >{{number_format($nota->AB1 ,1)}}</div></center></td> 
+                                <td><center><div class=" notaAzul" >{{number_format($b1 ,1)}}</div></center></td> 
                                 @endif
-                                <!-- /Cor da nota AB1 -->
-                                <!-- cor da nota AB2-->
-                                @if($nota->AB2 < 7)
-                                <td><center><div class=" notaVermelha" >{{number_format($nota->AB2 ,1)}}</div></center></td> 
+                                <!-- /Cor da nota 1º BIM -->
+                                <!-- cor da nota 2º BIM-->
+                                @if($b2 < 7)
+                                <td><center><div class=" notaVermelha" >{{number_format($b2 ,1)}}</div></center></td> 
                                 @else
-                                <td><center><div class=" notaAzul" >{{number_format($nota->AB2 ,1)}}</div></center></td> 
+                                <td><center><div class=" notaAzul" >{{number_format($b2 ,1)}}</div></center></td> 
                                 @endif
-                                <!-- /Cor da nota AB2 -->
+                                <!-- /Cor da nota 2º BIM -->
                                 <td><center>-</center></td>
-                                <!-- cor da nota AB3-->
-                                @if($nota->AB3 < 7)
-                                <td><center><div class=" notaVermelha" >{{number_format($nota->AB3 ,1)}}</div></center></td> 
+                                <!-- cor da nota 3º BIM-->
+                                @if($b3 < 7)
+                                <td><center><div class=" notaVermelha" >{{number_format($b3 ,1)}}</div></center></td> 
                                 @else
-                                <td><center><div class=" notaAzul" >{{number_format($nota->AB3 ,1)}}</div></center></td> 
+                                <td><center><div class=" notaAzul" >{{number_format($b3 ,1)}}</div></center></td> 
                                 @endif
-                                <!-- /Cor da nota AB3 -->
-                                <!-- cor da nota AB4-->
-                                @if($nota->AB4 < 7)
-                                <td><center><div class=" notaVermelha" >{{number_format($nota->AB4 ,1)}}</div></center></td> 
+                                <!-- /Cor da nota 3º BIM -->
+                                <!-- cor da nota 4º BIM-->
+                                @if($b4 < 7)
+                                <td><center><div class=" notaVermelha" >{{number_format($b4 ,1)}}</div></center></td> 
                                 @else
-                                <td><center><div class=" notaAzul" >{{number_format($nota->AB4 ,1)}}</div></center></td> 
+                                <td><center><div class=" notaAzul" >{{number_format($b4 ,1)}}</div></center></td> 
                                 @endif
-                                <!-- /Cor da nota AB4 -->
+                                <!-- /Cor da nota 4º BIM -->
                                 <td><center><div class=" notaAzul" >{{number_format($media ,1)}}</div></center></td> 
                                 @else
                                 @endif
@@ -136,7 +141,7 @@
                                 <!-- Se a media de recuperação  maior ou igual a 7 -->
                                 <!--Fazendo Média de recuperação-->
                                 @php 
-                                $mediaRP = (($nota->RP * 2)+$nota->AB3+$nota->AB4)/4; 
+                                $mediaRP = (($nota->RP * 2) + $b3 + $b4) / 4; 
                                 @endphp
                                 <!-- / Fazendo Média recuperação -->
                                 @if($mediaRP>=7)
@@ -144,20 +149,20 @@
                                     <td>{{$Aluno->RA}}</td>
                                     <td>{{$Aluno->NomeAluno}}</td>
        
-                                <!-- cor da nota AB1-->
-                                @if($nota->AB1 < 7)
-                                <td><center><div class=" notaVermelha" >{{number_format($nota->AB1 ,1)}}</div></center></td> 
+                                <!-- cor da nota 1º BIM-->
+                                @if($b1 < 7)
+                                <td><center><div class=" notaVermelha" >{{number_format($b1 ,1)}}</div></center></td> 
                                 @else
-                                <td><center><div class=" notaAzul" >{{number_format($nota->AB1 ,1)}}</div></center></td> 
+                                <td><center><div class=" notaAzul" >{{number_format($b1 ,1)}}</div></center></td> 
                                 @endif
-                                <!-- /Cor da nota AB1 -->
-                                <!-- cor da nota AB2-->
-                                @if($nota->AB2 < 7)
-                                <td><center><div class=" notaVermelha" >{{number_format($nota->AB2 ,1)}}</div></center></td> 
+                                <!-- /Cor da nota 1º BIM -->
+                                <!-- cor da nota 2º BIM-->
+                                @if($b2 < 7)
+                                <td><center><div class=" notaVermelha" >{{number_format($b2 ,1)}}</div></center></td> 
                                 @else
-                                <td><center><div class=" notaAzul" >{{number_format($nota->AB2 ,1)}}</div></center></td> 
+                                <td><center><div class=" notaAzul" >{{number_format($b2 ,1)}}</div></center></td> 
                                 @endif
-                                <!-- /Cor da nota AB2 -->
+                                <!-- /Cor da nota 2º BIM -->
                                 <!-- cor da nota RP-->
                                 @if($nota->RP < 7)
                                     <td><center><div class=" notaVermelha" >{{number_format($nota->RP ,1)}}</div></center></td> 
@@ -165,20 +170,20 @@
                                 <td><center><div class=" notaAzul" >{{number_format($nota->RP ,1)}}</div></center></td> 
                                 @endif
                                 <!-- /Cor da nota RP -->
-                                <!-- cor da nota AB3-->
-                                @if($nota->AB3 < 7)
-                                <td><center><div class=" notaVermelha" >{{number_format($nota->AB3 ,1)}}</div></center></td> 
+                                <!-- cor da nota 3º BIM-->
+                                @if($b3 < 7)
+                                <td><center><div class=" notaVermelha" >{{number_format($b3 ,1)}}</div></center></td> 
                                 @else
-                                <td><center><div class=" notaAzul" >{{number_format($nota->AB3 ,1)}}</div></center></td> 
+                                <td><center><div class=" notaAzul" >{{number_format($b3 ,1)}}</div></center></td> 
                                 @endif
-                                <!-- /Cor da nota AB3 -->
-                                <!-- cor da nota AB4-->
-                                @if($nota->AB4 < 7)
-                                <td><center><div class=" notaVermelha" >{{number_format($nota->AB4 ,1)}}</div></center></td> 
+                                <!-- /Cor da nota 3º BIM -->
+                                <!-- cor da nota 4º BIM-->
+                                @if($b4 < 7)
+                                <td><center><div class=" notaVermelha" >{{number_format($b4 ,1)}}</div></center></td> 
                                 @else
-                                <td><center><div class=" notaAzul" >{{number_format($nota->AB4 ,1)}}</div></center></td> 
+                                <td><center><div class=" notaAzul" >{{number_format($b4 ,1)}}</div></center></td> 
                                 @endif
-                                <!-- /Cor da nota AB4 -->
+                                <!-- /Cor da nota 4º BIM -->
                                 <td><center><div class=" notaAzul" >{{number_format($mediaRP ,1)}}</div></center></td> 
                                 @else
                                 @endif

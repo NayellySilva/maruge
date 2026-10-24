@@ -56,14 +56,16 @@
                                 $notasDoAluno = \App\Models\modelCoordenacao\tb_notas::busca_notas_do_aluno($Aluno->idAluno, $disciplina->tb_disciplinas_idDisciplinas);
                             @endphp
                             @forelse($notasDoAluno as $nota)
-                                @if(isset($nota->AB4))
-                                    @if($nota->AB4 == 0)
-                                        <td><span class="valor-x">X</span></td>
-                                    @elseif($nota->AB4 < 7)
-                                        <td><span class="nota-vermelha">{{ number_format($nota->AB4, 1) }}</span></td>
-                                    @else
-                                        <td><span class="nota-azul">{{ number_format($nota->AB4, 1) }}</span></td>
-                                    @endif
+                                @php
+                                    $svc = app(\App\Services\NotaBimestralService::class);
+                                    $b4 = $svc->notaDoBimestre($nota, 4, 'fun1');
+                                @endphp
+                                @if($b4 === null || $b4 == 0)
+                                    <td><span class="valor-x">X</span></td>
+                                @elseif($b4 < 7)
+                                    <td><span class="nota-vermelha">{{ number_format($b4, 1) }}</span></td>
+                                @else
+                                    <td><span class="nota-azul">{{ number_format($b4, 1) }}</span></td>
                                 @endif
                             @empty
                                 <td><span class="valor-x">X</span></td>

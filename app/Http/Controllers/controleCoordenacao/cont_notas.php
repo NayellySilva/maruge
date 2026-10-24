@@ -81,13 +81,14 @@ class cont_notas extends Controller {
         $turma = $aluno->turmaAluno;
         $idTurmas = $turma['idTurmas'];
         $disciplinas = tb_turmas_disciplinas::disciplinaTurma($idTurmas);
-        $quantidade_disciplinas = tb_turmas_disciplinas::QuantidadeDisciplinasNaTurma($idTurmas);
-        if ($quantidade_disciplinas <= 7) {
+        $nomeTurma = is_array($turma) ? ($turma['NomeTurma'] ?? '') : ($turma->NomeTurma ?? '');
+        $nivel = app(\App\Services\NotaBimestralService::class)->nivelDaTurma($nomeTurma);
+        if ($nivel === 'inf') {
             return view('telasCoordenacao.notas.notas_inf_1bim', compact('turma', 'aluno', 'matricula', 'disciplinas'));
-        } else if ($quantidade_disciplinas <= 17) {
-            return view('telasCoordenacao.notas.notas_fund1_1bim', compact('turma', 'aluno', 'matricula', 'disciplinas'));
-        } else if ($quantidade_disciplinas > 17) {
+        } else if ($nivel === 'fun2') {
             return view('telasCoordenacao.notas.notas_fund2_1bim', compact('turma', 'aluno', 'matricula', 'disciplinas'));
+        } else {
+            return view('telasCoordenacao.notas.notas_fund1_1bim', compact('turma', 'aluno', 'matricula', 'disciplinas'));
         }
     }
 
@@ -98,13 +99,14 @@ class cont_notas extends Controller {
         $turma = $aluno->turmaAluno;
         $idTurmas = $turma['idTurmas'];
         $disciplinas = tb_turmas_disciplinas::disciplinaTurma($idTurmas);
-        $quantidade_disciplinas = tb_turmas_disciplinas::QuantidadeDisciplinasNaTurma($idTurmas);
-        if ($quantidade_disciplinas <= 7) {
+        $nomeTurma = is_array($turma) ? ($turma['NomeTurma'] ?? '') : ($turma->NomeTurma ?? '');
+        $nivel = app(\App\Services\NotaBimestralService::class)->nivelDaTurma($nomeTurma);
+        if ($nivel === 'inf') {
             return view('telasCoordenacao.notas.notas_inf_2bim', compact('turma', 'aluno', 'matricula', 'disciplinas'));
-        } else if ($quantidade_disciplinas <= 17) {
-            return view('telasCoordenacao.notas.notas_fund1_2bim', compact('turma', 'aluno', 'matricula', 'disciplinas'));
-        } else if ($quantidade_disciplinas > 17) {
+        } else if ($nivel === 'fun2') {
             return view('telasCoordenacao.notas.notas_fund2_2bim', compact('turma', 'aluno', 'matricula', 'disciplinas'));
+        } else {
+            return view('telasCoordenacao.notas.notas_fund1_2bim', compact('turma', 'aluno', 'matricula', 'disciplinas'));
         }
     }
 
@@ -115,13 +117,14 @@ class cont_notas extends Controller {
         $turma = $aluno->turmaAluno;
         $idTurmas = $turma['idTurmas'];
         $disciplinas = tb_turmas_disciplinas::disciplinaTurma($idTurmas);
-        $quantidade_disciplinas = tb_turmas_disciplinas::QuantidadeDisciplinasNaTurma($idTurmas);
-        if ($quantidade_disciplinas <= 7) {
+        $nomeTurma = is_array($turma) ? ($turma['NomeTurma'] ?? '') : ($turma->NomeTurma ?? '');
+        $nivel = app(\App\Services\NotaBimestralService::class)->nivelDaTurma($nomeTurma);
+        if ($nivel === 'inf') {
             return view('telasCoordenacao.notas.notas_inf_3bim', compact('turma', 'aluno', 'matricula', 'disciplinas'));
-        } else if ($quantidade_disciplinas <= 17) {
-            return view('telasCoordenacao.notas.notas_fund1_3bim', compact('turma', 'aluno', 'matricula', 'disciplinas'));
-        } else if ($quantidade_disciplinas > 17) {
+        } else if ($nivel === 'fun2') {
             return view('telasCoordenacao.notas.notas_fund2_3bim', compact('turma', 'aluno', 'matricula', 'disciplinas'));
+        } else {
+            return view('telasCoordenacao.notas.notas_fund1_3bim', compact('turma', 'aluno', 'matricula', 'disciplinas'));
         }
     }
 
@@ -132,13 +135,14 @@ class cont_notas extends Controller {
         $turma = $aluno->turmaAluno;
         $idTurmas = $turma['idTurmas'];
         $disciplinas = tb_turmas_disciplinas::disciplinaTurma($idTurmas);
-        $quantidade_disciplinas = tb_turmas_disciplinas::QuantidadeDisciplinasNaTurma($idTurmas);
-        if ($quantidade_disciplinas <= 7) {
+        $nomeTurma = is_array($turma) ? ($turma['NomeTurma'] ?? '') : ($turma->NomeTurma ?? '');
+        $nivel = app(\App\Services\NotaBimestralService::class)->nivelDaTurma($nomeTurma);
+        if ($nivel === 'inf') {
             return view('telasCoordenacao.notas.notas_inf_4bim', compact('turma', 'aluno', 'matricula', 'disciplinas'));
-        } else if ($quantidade_disciplinas <= 17) {
-            return view('telasCoordenacao.notas.notas_fund1_4bim', compact('turma', 'aluno', 'matricula', 'disciplinas'));
-        } else if ($quantidade_disciplinas > 17) {
+        } else if ($nivel === 'fun2') {
             return view('telasCoordenacao.notas.notas_fund2_4bim', compact('turma', 'aluno', 'matricula', 'disciplinas'));
+        } else {
+            return view('telasCoordenacao.notas.notas_fund1_4bim', compact('turma', 'aluno', 'matricula', 'disciplinas'));
         }
     }
 
