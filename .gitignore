@@ -28,3 +28,6 @@ Thumbs.db
 desktop.ini
 _desktop.ini
 /scratch
+
+# Diretorio de scripts temporarios de teste
+scratch/

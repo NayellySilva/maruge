@@ -49,6 +49,14 @@ class loginPrincipal extends Controller {
 
     // Metodo que direciona para tela de login
     public function login() {
+        if (Auth::guard('guardLogin')->check()) {
+            $nivelNormalizado = \App\Support\NivelUsuario::normalizar(Auth::guard('guardLogin')->user()->Nivel);
+            if ($nivelNormalizado === 'docente') {
+                return redirect('/docente');
+            }
+            return redirect('/');
+        }
+
         return view('telasLogin.loginPrincipal');
     }
 
@@ -58,38 +66,56 @@ class loginPrincipal extends Controller {
 
     public function postlogin(loginPrincipalRequest $inf_valores) {
         // atribuindo valores digitados para uma validação
-        $validacao = ['CPFUsuario' => $inf_valores->get('CPF'), 'password' => $inf_valores->get('password'),];
-//dd($validacao);
-//dd($inf_valores->all());
-        if (Auth::guard('guardLogin')->attempt($validacao)) {  // Validando as informações.
-            $Situacao = auth()->guard('guardLogin')->user()->Situacao; // Atribuindo o valor do campo situação para uma vareavel
+        $validacao = ['CPFUsuario' => $inf_valores->get('CPF'), 'password' => $inf_valores->get('password')];
 
-            if ($Situacao == "ATIVO") { // validando se o aluno esta ativo
-                $Nivel = auth()->guard('guardLogin')->user()->Nivel; // Atribuindo o valor do campo Nivel para uma vareavel     
-                if ($Nivel == "COORDENACÃO") {
-                    return redirect('/coordenacao'); // SE O USUARIO FOR DA COORDENACAO SERÁ DIRECIONARO PARA ROTAS DA COORDENACAO
-                } else if ($Nivel == "DOCENTE") {
-                    return redirect('/docente'); // SE O USUARIO FOR um docente SERÁ DIRECIONARO PARA ROTAS de docencia
+        if (Auth::guard('guardLogin')->attempt($validacao)) {  // Validando as informações.
+            $Situacao = auth()->guard('guardLogin')->user()->Situacao; // Atribuindo o valor do campo situação para uma variavel
+
+            if ($Situacao == "ATIVO") {
+                request()->session()->regenerate();
+                $nivelNormalizado = \App\Support\NivelUsuario::normalizar(auth()->guard('guardLogin')->user()->Nivel);
+
+                if ($nivelNormalizado === 'coordenacao') {
+                    // Só respeita a URL pretendida se for da área de coordenação
+                    $intended = session()->pull('url.intended', '/');
+                    $segura   = !str_starts_with($intended, '/docente')
+                             && !str_starts_with($intended, '/aluno')
+                             && !str_starts_with($intended, '/login');
+                    return redirect($segura ? $intended : '/');
+                } else if ($nivelNormalizado === 'docente') {
+                    // Só respeita a URL pretendida se for da área do docente
+                    $intended = session()->pull('url.intended', '/docente');
+                    $segura   = str_starts_with($intended, '/docente');
+                    return redirect($segura ? $intended : '/docente');
                 } else {
-                    return redirect('/login') // direcionando para pagina de login 
-                                    ->withErrors(['SEMPERMISSOES' => 'Usuário sem Permissão!']) // messagem de erros aluno inativo
-                                    ->withInput(); // levando as informações de digitada de volta para o form login
+                    auth()->guard('guardLogin')->logout();
+                    request()->session()->invalidate();
+                    request()->session()->regenerateToken();
+
+                    return redirect('/login')
+                                    ->withErrors(['SEMPERMISSOES' => 'Usuário sem Permissão!'])
+                                    ->withInput();
                 }
-            } else { // condição caso o aluno esteje inativo
-                return redirect('/login') // direcionando para pagina de login 
-                                ->withErrors(['Inativo' => 'Usuário Inativo!']) // messagem de erros aluno inativo
-                                ->withInput(); // levando as informações de digitada de volta para o form login
+            } else {
+                auth()->guard('guardLogin')->logout();
+                request()->session()->invalidate();
+                request()->session()->regenerateToken();
+
+                return redirect('/login')
+                                ->withErrors(['Inativo' => 'Usuário Inativo!'])
+                                ->withInput();
             }
         } else {
-            return redirect('/login') // caso a senha ou ra esteja incorretos
-                            ->withErrors(['ERRO-LOGIN' => 'CPF ou Senha Inválidos!']) // messagem de dados invalidos
-                            ->withInput(); // levando as informações de digitada de volta para o form login
+            return redirect('/login')
+                            ->withErrors(['ERRO-LOGIN' => 'CPF ou Senha Inválidos!'])
+                            ->withInput();
         }
     }
 
     public function logout() {
         auth()->guard('guardLogin')->logout();
+        request()->session()->invalidate();
+        request()->session()->regenerateToken();
         return redirect('/login');
     }
-
 }

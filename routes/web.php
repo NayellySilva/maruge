@@ -35,35 +35,38 @@ use App\Http\Controllers\controleDocente\cont_resultados_docente;
 use App\Http\Controllers\controleDocente\cont_turma_docente;
 
 // =============================================================================
-// 1. PAINEL E APIs DO PAINEL
+// 1. PAINEL E APIs DO PAINEL (protegidas para coordenação)
 // =============================================================================
-Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
-Route::get('/api/aniversariantes', [DashboardController::class, 'aniversariantes'])->name('api.aniversariantes');
+Route::middleware(['auth:guardLogin', 'coordenacao', 'semCache'])->group(function () {
+    Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/api/aniversariantes', [DashboardController::class, 'aniversariantes'])->name('api.aniversariantes');
 
-// Calendário (feriados + eventos da escola salvos em storage/app/eventos.json)
-Route::get('/api/feriados', [CalendarioController::class, 'feriados'])->name('api.feriados');
-Route::post('/api/eventos', [CalendarioController::class, 'salvarEvento'])->name('api.eventos.salvar');
-Route::delete('/api/eventos', [CalendarioController::class, 'excluirEvento'])->name('api.eventos.excluir');
+    // Calendário (feriados + eventos da escola salvos em storage/app/eventos.json)
+    Route::get('/api/feriados', [CalendarioController::class, 'feriados'])->name('api.feriados');
+    Route::post('/api/eventos', [CalendarioController::class, 'salvarEvento'])->name('api.eventos.salvar');
+    Route::delete('/api/eventos', [CalendarioController::class, 'excluirEvento'])->name('api.eventos.excluir');
+});
 
 // =============================================================================
 // 2. LOGIN / LOGOUT
 // =============================================================================
-Route::get('/login', [loginPrincipal::class, 'login'])->name('login');
+Route::get('/login', [loginPrincipal::class, 'login'])->middleware('guest:guardLogin')->name('login');
 Route::post('/login', [loginPrincipal::class, 'postlogin']);
 Route::get('/logout', [loginPrincipal::class, 'logout']);
-Route::get('/docente', [loginPrincipal::class, 'docenteIndex']);
 
+Route::get('/loginaluno', [loginAluno::class, 'login']);
+Route::post('/loginaluno', [loginAluno::class, 'postlogin']);
 Route::get('/aluno/login', [loginAluno::class, 'login']);
 Route::post('/aluno/login', [loginAluno::class, 'postlogin']);
-// PENDENTE (fase de login): loginAluno@postlogin redireciona para '/aluno' (sucesso)
-// e '/loginaluno' (falha), rotas que não existem.
 
 // =============================================================================
 // 3. COORDENAÇÃO  (todas as URIs abaixo começam com /coordenacao)
 // =============================================================================
-Route::prefix('coordenacao')->group(function () {
+Route::prefix('coordenacao')->middleware(['auth:guardLogin', 'coordenacao', 'semCache'])->group(function () {
 
-    Route::get('/', [loginPrincipal::class, 'coordenacaoIndex']);
+    // LEGADO: /coordenacao redireciona para o novo painel da coordenação (/)
+    // coordenacaoIndex() e telasCoordenacao/index.blade.php permanecem como referência histórica
+    Route::get('/', fn () => redirect('/'));
 
     // Central de ajuda
     Route::get('/ajuda', fn () => view('telasCoordenacao.ajuda', ['titulo' => 'Central de Ajuda']));
@@ -554,7 +557,7 @@ Route::prefix('coordenacao')->group(function () {
 // =============================================================================
 // 4. DOCENTE (todas as URIs começam com /docente)
 // =============================================================================
-Route::prefix('docente')->group(function () {
+Route::prefix('docente')->middleware(['auth:guardLogin', 'docente', 'semCache'])->group(function () {
 
     Route::get('/', [loginPrincipal::class, 'docenteIndex'])->name('docente.index');
 

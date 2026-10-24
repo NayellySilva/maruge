@@ -12,7 +12,16 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        //
+        $middleware->redirectGuestsTo('/login');
+        $middleware->redirectUsersTo(function () {
+            $u = auth()->guard('guardLogin')->user();
+            return \App\Support\NivelUsuario::normalizar($u?->Nivel) === 'docente' ? '/docente' : '/';
+        });
+        $middleware->alias([
+            'coordenacao' => \App\Http\Middleware\coordenacao::class,
+            'docente'     => \App\Http\Middleware\docente::class,
+            'semCache'    => \App\Http\Middleware\semCache::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(

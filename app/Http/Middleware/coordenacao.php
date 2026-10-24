@@ -1,20 +1,35 @@
 <?php
 
-//Middleware propria para os docentes, esse filtro tem que acompanha em todas as rotas que o docente tive direito
+//Middleware propria para a coordenação, acompanha todas as rotas que exigem nível coordenação
 
 namespace App\Http\Middleware;
 
 use Closure;
+use App\Support\NivelUsuario;
 
 class coordenacao {
 
     public function handle($request, Closure $next) {
-        $Nivel = auth()->guard('guardLogin')->user()->Nivel; // Recuperando informaçao de nivel de acesso
-        //dd($Nivel);
-        if ($Nivel == "COORDENACÃO") { // Condição para continuar com a solicitação da rota
-            return $next($request); // Direcionando para a rota solicitada
+        if (!auth()->guard('guardLogin')->check()) {
+            return redirect('/login');
         }
-        return redirect('/login'); // Caso o nivel de acesso seja diferente , será direcionado para a tela de login
+
+        $nivel = NivelUsuario::normalizar(auth()->guard('guardLogin')->user()->Nivel);
+
+        if ($nivel === 'coordenacao') {
+            return $next($request);
+        }
+
+        // Usuário logado mas com nível errado → manda para a área correta (sem loop)
+        if ($nivel === 'docente') {
+            return redirect('/docente');
+        }
+
+        // Nível desconhecido → desloga e notifica
+        auth()->guard('guardLogin')->logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+        return redirect('/login')->withErrors(['SEMPERMISSOES' => 'Usuário sem Permissão!']);
     }
 
 }
