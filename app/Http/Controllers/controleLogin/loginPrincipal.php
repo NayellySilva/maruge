@@ -78,14 +78,12 @@ class loginPrincipal extends Controller {
                 if ($nivelNormalizado === 'coordenacao') {
                     // Só respeita a URL pretendida se for da área de coordenação
                     $intended = session()->pull('url.intended', '/');
-                    $segura   = !str_starts_with($intended, '/docente')
-                             && !str_starts_with($intended, '/aluno')
-                             && !str_starts_with($intended, '/login');
+                    $segura = $this->intendedPertenceAArea($intended, 'coordenacao');
                     return redirect($segura ? $intended : '/');
                 } else if ($nivelNormalizado === 'docente') {
                     // Só respeita a URL pretendida se for da área do docente
                     $intended = session()->pull('url.intended', '/docente');
-                    $segura   = str_starts_with($intended, '/docente');
+                    $segura = $this->intendedPertenceAArea($intended, 'docente');
                     return redirect($segura ? $intended : '/docente');
                 } else {
                     auth()->guard('guardLogin')->logout();
@@ -110,6 +108,44 @@ class loginPrincipal extends Controller {
                             ->withErrors(['ERRO-LOGIN' => 'CPF ou Senha Inválidos!'])
                             ->withInput();
         }
+    }
+
+    private function intendedPertenceAArea(?string $url, string $area): bool
+    {
+        if (!$url || str_starts_with($url, '//') || preg_match('/[\x00-\x1F\x7F]/', $url)) {
+            return false;
+        }
+
+        $partes = parse_url($url);
+        if ($partes === false || isset($partes['user']) || isset($partes['pass'])) {
+            return false;
+        }
+
+        if (isset($partes['scheme']) || isset($partes['host'])) {
+            if (!isset($partes['host']) || strcasecmp($partes['host'], request()->getHost()) !== 0) {
+                return false;
+            }
+            if (isset($partes['scheme']) && strtolower($partes['scheme']) !== strtolower(request()->getScheme())) {
+                return false;
+            }
+            if (isset($partes['port']) && $partes['port'] !== request()->getPort()) {
+                return false;
+            }
+        }
+
+        $path = $partes['path'] ?? '';
+        if (preg_match('/%(?:2f|5c)/i', $path)) {
+            return false;
+        }
+
+        $path = rawurldecode($path);
+        if (str_contains($path, '\\') || preg_match('/(^|\/)\.\.?($|\/)/', $path)) {
+            return false;
+        }
+
+        return ($area === 'coordenacao' && $path === '/')
+            || $path === "/{$area}"
+            || str_starts_with($path, "/{$area}/");
     }
 
     public function logout() {
