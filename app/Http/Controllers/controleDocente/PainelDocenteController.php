@@ -132,31 +132,7 @@ class PainelDocenteController extends Controller
             }
         }
 
-        // Aniversariantes do mês atual pertencentes às turmas do professor
-        $aniversariantesDoMes = [];
-        if (!empty($idsTurmas)) {
-            $alunosAniver = DB::table('tb_aluno')
-                ->join('tb_turmas', 'tb_turmas.idTurmas', '=', 'tb_aluno.tb_turmas_idTurmas')
-                ->whereIn('tb_aluno.tb_turmas_idTurmas', $idsTurmas)
-                ->whereIn('tb_aluno.SituacaoAluno', ['ATIVO', 'ATIVA'])
-                ->whereNotNull('tb_aluno.DataNascimento')
-                ->where('tb_aluno.DataNascimento', '!=', '')
-                ->select('tb_aluno.NomeAluno', 'tb_aluno.DataNascimento', 'tb_turmas.NomeTurma')
-                ->get();
-
-            foreach ($alunosAniver as $aluno) {
-                $parsed = $this->parseNascimento($aluno->DataNascimento);
-                if ($parsed && $parsed['mes'] === $mesAtual) {
-                    $aniversariantesDoMes[] = (object) [
-                        'nome' => $aluno->NomeAluno,
-                        'turma' => $aluno->NomeTurma,
-                        'dia' => $parsed['dia'],
-                    ];
-                }
-            }
-
-            usort($aniversariantesDoMes, fn ($a, $b) => $a->dia <=> $b->dia);
-        }
+        $aniversariantesDoMes = $this->buscarAniversariantesDoMes($idsTurmas, $mesAtual);
 
         return view('telasDocente.index', compact(
             'saudacao',
@@ -169,6 +145,55 @@ class PainelDocenteController extends Controller
             'notasPendentes',
             'aniversariantesDoMes'
         ));
+    }
+
+    public function imprimirAniversariantes()
+    {
+        $mesAtual = (int) date('n');
+        $meses = [
+            1 => 'janeiro', 2 => 'fevereiro', 3 => 'março', 4 => 'abril',
+            5 => 'maio', 6 => 'junho', 7 => 'julho', 8 => 'agosto',
+            9 => 'setembro', 10 => 'outubro', 11 => 'novembro', 12 => 'dezembro',
+        ];
+
+        return view('telasDocente.aniversariantes', [
+            'aniversariantes' => $this->buscarAniversariantesDoMes(ProfessorLogado::idsTurmas(), $mesAtual),
+            'nomeProfessor' => ProfessorLogado::nome() ?? 'Professor(a)',
+            'nomeMes' => $meses[$mesAtual],
+            'ano' => (int) date('Y'),
+        ]);
+    }
+
+    private function buscarAniversariantesDoMes(array $idsTurmas, int $mesAtual): array
+    {
+        $aniversariantes = [];
+        if ($idsTurmas === []) {
+            return $aniversariantes;
+        }
+
+        $alunos = DB::table('tb_aluno')
+            ->join('tb_turmas', 'tb_turmas.idTurmas', '=', 'tb_aluno.tb_turmas_idTurmas')
+            ->whereIn('tb_aluno.tb_turmas_idTurmas', $idsTurmas)
+            ->whereIn('tb_aluno.SituacaoAluno', ['ATIVO', 'ATIVA'])
+            ->whereNotNull('tb_aluno.DataNascimento')
+            ->where('tb_aluno.DataNascimento', '!=', '')
+            ->select('tb_aluno.NomeAluno', 'tb_aluno.DataNascimento', 'tb_turmas.NomeTurma')
+            ->get();
+
+        foreach ($alunos as $aluno) {
+            $nascimento = $this->parseNascimento($aluno->DataNascimento);
+            if ($nascimento && $nascimento['mes'] === $mesAtual) {
+                $aniversariantes[] = (object) [
+                    'nome' => $aluno->NomeAluno,
+                    'turma' => $aluno->NomeTurma,
+                    'dia' => $nascimento['dia'],
+                ];
+            }
+        }
+
+        usort($aniversariantes, fn ($a, $b) => $a->dia <=> $b->dia);
+
+        return $aniversariantes;
     }
 
     /**

@@ -561,6 +561,8 @@ Route::prefix('coordenacao')->middleware(['auth:guardLogin', 'coordenacao', 'sem
 Route::prefix('docente')->middleware(['auth:guardLogin', 'docente', 'semCache'])->group(function () {
 
     Route::get('/', [PainelDocenteController::class, 'index'])->name('docente.index');
+    Route::get('/aniversariantes', [PainelDocenteController::class, 'imprimirAniversariantes'])
+        ->name('docente.aniversariantes');
 
     // Central de ajuda
     Route::get('/ajuda', [navegacaoDocente::class, 'ajuda']);
@@ -644,4 +646,3 @@ Route::prefix('docente')->middleware(['auth:guardLogin', 'docente', 'semCache'])
     })->where(['pasta' => '[A-Za-z0-9_]+', 'pagina' => '[A-Za-z0-9_]+'])
       ->name('docente.pagina');
 });
-

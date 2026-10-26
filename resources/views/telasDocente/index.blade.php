@@ -225,7 +225,10 @@
                             </div>
                             <h3 class="text-base font-bold text-[#0a241e]">Aniversariantes</h3>
                         </div>
-                        <span class="text-xs font-semibold text-[#5c706b]">Mês atual</span>
+                        <a href="{{ route('docente.aniversariantes') }}" class="inline-flex items-center gap-1.5 text-xs font-semibold text-[#008a4b] hover:text-[#00703c]">
+                            <i data-lucide="printer" class="w-3.5 h-3.5"></i>
+                            Imprimir
+                        </a>
                     </div>
 
                     @if(empty($aniversariantesDoMes))
