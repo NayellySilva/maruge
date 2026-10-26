@@ -1,52 +1,39 @@
-@extends('telasLogin.index')                            
-@section('form')  
+@extends('telasLogin.index')
 
-<div class="alert-danger error error-danger" style="display: none;"></div>
+@section('titulo', 'Entrar')
+@section('descricao', 'Portal da coordenação e dos professores: notas, turmas, relatórios e documentos em um só lugar.')
 
-<form class="form-login" method="POST" action="{{ url('/login') }}"  >
-    {!!csrf_field()!!}
+@section('form')
+    <div class="flex flex-col gap-2">
+        <h1 class="text-2xl font-bold tracking-tight lg:text-[30px]">Entrar</h1>
+        <p class="text-[15px] text-[#5c706b]">Use o CPF e a senha cadastrados pela coordenação.</p>
+    </div>
 
-    
-    
-    
-    <div class="login-form">
-        <h1>Login</h1>
+    @include('telasLogin.partials.alertas')
 
-        <!-- Erro de login, Senha ou RA digitados errados -->
-        <div>
-            @if ($errors->has('ERRO-LOGIN'))<div class="alert-danger error error-danger"><strong>{{ $errors->first('ERRO-LOGIN') }}</strong> </div> @endif
+    <form method="POST" action="{{ url('/login') }}" class="flex flex-col gap-5" data-login-form>
+        @csrf
+
+        <div class="flex flex-col gap-2">
+            <label for="CPF" class="text-sm font-semibold">CPF</label>
+            <div class="flex h-12 items-center gap-2.5 rounded-xl border bg-white px-3.5 focus-within:border-[#008a4b] focus-within:ring-2 focus-within:ring-[#008a4b]/15 {{ $errors->has('CPF') ? 'border-red-400' : 'border-[#d8e2de]' }}">
+                <svg class="h-[18px] w-[18px] flex-none text-[#5c706b]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                <input id="CPF" name="CPF" type="text" inputmode="numeric" maxlength="14" autocomplete="username" required autofocus
+                       value="{{ old('CPF') }}" placeholder="000.000.000-00" data-mascara="cpf"
+                       class="min-w-0 flex-1 border-0 bg-transparent text-base text-[#0a241e] outline-none placeholder:text-[#95aba5]">
+            </div>
+            @error('CPF')<p class="text-sm text-red-700">{{ $message }}</p>@enderror
         </div>
-        <!-- Messagem de Inativo, quando o aluno estive inativo -->
-        <div>
-            @if ($errors->has('Inativo'))<div class="alert-danger error error-danger"><strong>{{ $errors->first('Inativo') }}</strong> </div> @endif
-        </div>
-        <div>
-            @if ($errors->has('SEMPERMISSOES'))<div class="alert-danger error error-danger"><strong>{{ $errors->first('SEMPERMISSOES') }}</strong> </div> @endif
-        </div>
 
-        <!--Conjunto de Formulario do campo CPF -->
-        <div class="form-group{{ $errors->has('CPF') ? ' has-error' : '' }}">
-            <div class="form-group">
-                <div class="input-group">
-                    <div class="input-group-addon">
-                        <i class="fa fa-user" aria-hidden="true"></i>
-                    </div>
-                    <input type="text" name="CPF" class="form-control" id="CPF" placeholder="CPF" value="{{old('CPF')}}">
-                </div>
-                @if ($errors->has('CPF'))<div class="alert-danger error error-danger"><strong>{{ $errors->first('CPF') }}</strong> </div> @endif
-            </div>         
-            <!--Conjunto de Formulario do campo Senha -->
-            <div class="form-group{{ $errors->has('password') ? ' has-error' : '' }}">
-                <div class="form-group">
-                    <div class="input-group">
-                        <div class="input-group-addon">
-                            <i class="fa fa-expeditedssl" aria-hidden="true"></i>
-                        </div>
-                        <input type="password" name="password" class="form-control" id="SENHA" placeholder="SENHA">
-                    </div>
-                    @if ($errors->has('password'))<div class="alert-danger error error-danger"><strong>{{ $errors->first('password') }}</strong> </div> @endif
-                </div>
-                <!--Botão Entrar -->
-                <input type="submit" name="btn-entrar" value="Entrar"  class="btn-padrao"> 
-            </form>
-@endsection  
+        @include('telasLogin.partials.campo_senha')
+
+        <button type="submit" data-texto-enviando="Entrando..."
+                class="h-[50px] rounded-full bg-[#008a4b] text-base font-semibold text-white shadow-[0_6px_16px_rgba(0,138,75,0.25)] transition-colors hover:bg-[#00703c] disabled:cursor-wait disabled:opacity-70">
+            Entrar
+        </button>
+    </form>
+@endsection
+
+@section('link_alternativo')
+    <a href="{{ url('/loginaluno') }}" class="p-2 text-sm font-semibold text-[#008a4b] hover:text-[#00703c]">Sou aluno — entrar com RA</a>
+@endsection
