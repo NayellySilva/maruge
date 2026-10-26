@@ -48,6 +48,40 @@ class cont_notas_docente extends Controller {
         return view('telasDocente.notas.notas', compact('Alunos', 'turmas'));
     }
 
+    public function turmasParaLancamento()
+    {
+        $bimestresConfig = config('escola.bimestres', [
+            1 => [2, 3, 4],
+            2 => [5, 6, 7],
+            3 => [8, 9],
+            4 => [10, 11, 12, 1],
+        ]);
+        $mesAtual = (int) date('n');
+        $bimestreAtual = 1;
+        foreach ($bimestresConfig as $bimestre => $meses) {
+            if (in_array($mesAtual, $meses, true)) {
+                $bimestreAtual = (int) $bimestre;
+                break;
+            }
+        }
+
+        $bimestreSolicitado = $this->request->integer('bim');
+        $bimestre = in_array($bimestreSolicitado, [1, 2, 3, 4], true)
+            ? $bimestreSolicitado
+            : $bimestreAtual;
+
+        $turmas = ProfessorLogado::turmasAtivas()->map(function ($turma) {
+            return (object) [
+                'idTurmas' => $turma->idTurmas,
+                'NomeTurma' => $turma->NomeTurma,
+                'AnoLetivo' => $turma->AnoLetivo ?? date('Y'),
+                'disciplinas' => ProfessorLogado::disciplinasNaTurma($turma->idTurmas),
+            ];
+        });
+
+        return view('telasDocente.notas.turmas', compact('turmas', 'bimestre', 'bimestreAtual'));
+    }
+
     // Metodo pesquisar aluno por filtro de turma
     public function notas_filtro() {
         $idTurma = $this->request->get('idTurmas');

@@ -577,6 +577,8 @@ Route::prefix('docente')->middleware(['auth:guardLogin', 'docente', 'semCache'])
     // Lançamento de Notas
     Route::get('/notas', [cont_notas_docente::class, 'index']);
     Route::get('/notas/notas', [cont_notas_docente::class, 'index']);
+    Route::get('/notas/turma', [cont_notas_docente::class, 'turmasParaLancamento'])
+        ->name('docente.notas.turma');
     Route::match(['get', 'post'], '/notas_pesq', [cont_notas_docente::class, 'notas_pesq']);
     Route::match(['get', 'post'], '/notas_filtro', [cont_notas_docente::class, 'notas_filtro']);
 

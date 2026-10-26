@@ -61,7 +61,8 @@
                     <div class="submenu-list">
                         <a href="{{ url('/docente/funcionario_perfil') }}" class="submenu-link">Perfil</a>
                         <a href="{{ url('/docente/declaracoes') }}" class="submenu-link" target="_blank" rel="noopener">Declarações</a>
-                        <a href="{{ url('/docente/notas') }}" class="submenu-link">Lançar Notas</a>
+                        <a href="{{ url('/docente/notas') }}" class="submenu-link">Lançar notas por Alunos</a>
+                        <a href="{{ route('docente.notas.turma') }}" class="submenu-link">Lançar notas por turma</a>
                     </div>
                 </div>
             </div>
