@@ -186,4 +186,49 @@ class NotaBimestralService
         // Delega para calcularMediaFinalComRecuperacao, que já aplica a regra da RB corretamente
         return $this->calcularMediaFinalComRecuperacao($avaliacoes, $rb);
     }
+
+    /**
+     * Calcula o resultado anual do Fundamental I ou II considerando RP e RF.
+     *
+     * @return array{media: float, situacao: string}
+     */
+    public function situacaoAnual($nota, string $nivel): array
+    {
+        if (!in_array($nivel, ['fun1', 'fun2'], true)) {
+            throw new InvalidArgumentException('A situação anual está disponível apenas para o Ensino Fundamental.');
+        }
+
+        $bimestres = [];
+        foreach ([1, 2, 3, 4] as $bimestre) {
+            $bimestres[] = $this->notaDoBimestre($nota, $bimestre, $nivel) ?? 0.0;
+        }
+
+        $mediaRegular = array_sum($bimestres) / 4;
+        $rp = $this->valorLancado(data_get($nota, 'RP'));
+        $rf = $this->valorLancado(data_get($nota, 'RF'));
+
+        if ($rf !== null) {
+            return [
+                'media' => $rf,
+                'situacao' => $rf >= self::MEDIA_MINIMA ? 'aprovado_rec' : 'reprovado',
+            ];
+        }
+
+        if ($rp !== null) {
+            $mediaRecuperacao = (($rp * 2) + $bimestres[2] + $bimestres[3]) / 4;
+            if ($nivel === 'fun2' && (($bimestres[0] + $bimestres[1]) / 2) > (($rp * 2) / 4)) {
+                $mediaRecuperacao = $mediaRegular;
+            }
+
+            return [
+                'media' => $mediaRecuperacao,
+                'situacao' => $mediaRecuperacao >= self::MEDIA_MINIMA ? 'aprovado_rec' : 'recuperacao_final',
+            ];
+        }
+
+        return [
+            'media' => $mediaRegular,
+            'situacao' => $mediaRegular >= self::MEDIA_MINIMA ? 'aprovado' : 'recuperacao',
+        ];
+    }
 }

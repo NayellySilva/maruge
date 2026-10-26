@@ -98,38 +98,5 @@ class cont_boletins extends Controller {
         }
     }
 
-    
-    
-    /*coloquei aqui
-    //Metodo RELATÓIO BIMESTRAL 1º BIMESTRE
-    public function bimestre_1($idAluno) {
-        // Dados para forma o timbre (cabeçario)  
-        $escolas = tb_escola::informacaoEscolar();
-        // Buscando o dia mes e ano 
-        setlocale(LC_ALL, 'pt_BR', 'pt_BR.utf-8', 'pt_BR.utf-8', 'portuguese');
-        date_default_timezone_set('America/Sao_Paulo');
-        $dia = strftime('%Y', strtotime('today'));
-        // Informações sobre o aluno 
-        $aluno = $this->tb_aluno->find($idAluno);
-        $matricula = $aluno->matriculaAluno;
-        $turma = $aluno->turmaAluno;
-        $idTurmas = $turma['idTurmas'];
-        $anoletivo = tb_turma::infTurma($idTurmas);
-        //dd($anoletivo);
-        $disciplinas = tb_turmas_disciplinas::disciplinaTurma($idTurmas);
-        $quantidade_disciplinas = tb_turmas_disciplinas::QuantidadeDisciplinasNaTurma($idTurmas);
-        $titulo = 'Boletim de Acompanhamento 1º Bimestre';
-        $pdf = \App::make('dompdf.wrapper');
-        if ($quantidade_disciplinas <= 7) {
-            //return view('telasCoordenacao.relatorios.relatorio_inf_1bim', compact('turma', 'aluno', 'matricula', 'disciplinas', 'titulo','escolas','dia','anoletivo' ));
-            $pdf->loadHTML(view('telasCoordenacao.relatorios.relatorio_inf_1bim', compact('turma', 'aluno', 'matricula', 'disciplinas', 'titulo', 'escolas', 'dia', 'anoletivo')));
-            return $pdf->stream();
-        } else if ($quantidade_disciplinas <= 17) {
-            return view('telasCoordenacao.relatorios.relatorio_fun1_1bim', compact('turma', 'aluno', 'matricula', 'disciplinas', 'titulo', 'escolas', 'dia', 'anoletivo'));
-        } else if ($quantidade_disciplinas > 17) {
-            return view('telasCoordenacao.relatorios.relatorio_fun2_1bim', compact('turma', 'aluno', 'matricula', 'disciplinas', 'titulo', 'escolas', 'dia', 'anoletivo'));
-        }
-    }
-*/
 // Chava da class principal  
 }

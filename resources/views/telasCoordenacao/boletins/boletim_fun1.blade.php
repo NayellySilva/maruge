@@ -88,6 +88,7 @@
                                 $b2 = $svc->notaDoBimestre($nota, 2, 'fun1') ?? 0;
                                 $b3 = $svc->notaDoBimestre($nota, 3, 'fun1') ?? 0;
                                 $b4 = $svc->notaDoBimestre($nota, 4, 'fun1') ?? 0;
+                                $resultadoAnual = $svc->situacaoAnual($nota, 'fun1');
 
                                 $rb1_orig = $nota->RB1 ?? 0;
                                 $rb2_orig = $nota->RB2 ?? 0;
@@ -99,8 +100,6 @@
                                 $ab3_orig = $nota->AB3 ?? 0;
                                 $ab4_orig = $nota->AB4 ?? 0;
 
-                                $mediaN = ($b1 + $b2 + $b3 + $b4) / 4; 
-                                $mediaRP = (($nota->RP * 2) + $b3 + $b4) / 4; 
                             @endphp
                             <tr>
                                 <td>{{ $disciplina->tb_disciplinas_idDisciplinas }}</td>
@@ -177,30 +176,21 @@
                                 </td>
 
                                 <!-- MEDIA E RESULTADO -->
-                                @if(($nota->RP) == 0 && ($nota->RF) == 0)
-                                    @if($mediaN < 7)
-                                        <td><span class="nota-vermelha">{{ number_format($mediaN, 1) }}</span></td>
-                                        <td><span class="resultado-recuperacao">RECUPERAÇÃO</span></td>
-                                    @else
-                                        <td><span class="nota-azul">{{ number_format($mediaN, 1) }}</span></td>
-                                        <td><span class="resultado-aprovado">APROVADO</span></td>
-                                    @endif
-                                @elseif(($nota->RP) != 0 && ($nota->RF) == 0)
-                                    @if($mediaRP < 7)
-                                        <td><span class="nota-vermelha">{{ number_format($mediaRP, 1) }}</span></td>
-                                        <td><span class="resultado-recuperacao">RECUPERAÇÃO FINAL</span></td>
-                                    @else
-                                        <td><span class="nota-azul">{{ number_format($mediaRP, 1) }}</span></td>
-                                        <td><span class="resultado-aprovado">APROVADO (REC)</span></td>
-                                    @endif
-                                @elseif(($nota->RF) != 0)
-                                    @if(($nota->RF) < 7)
-                                        <td><span class="nota-vermelha">{{ number_format($nota->RF, 1) }}</span></td>
-                                        <td><span class="resultado-recuperacao">REPROVADO</span></td>
-                                    @else
-                                        <td><span class="nota-azul">{{ number_format($nota->RF, 1) }}</span></td>
-                                        <td><span class="resultado-aprovado">APROVADO (REC)</span></td>
-                                    @endif
+                                @if($resultadoAnual['situacao'] === 'recuperacao')
+                                    <td><span class="nota-vermelha">{{ number_format($resultadoAnual['media'], 1) }}</span></td>
+                                    <td><span class="resultado-recuperacao">RECUPERAÇÃO</span></td>
+                                @elseif($resultadoAnual['situacao'] === 'recuperacao_final')
+                                    <td><span class="nota-vermelha">{{ number_format($resultadoAnual['media'], 1) }}</span></td>
+                                    <td><span class="resultado-recuperacao">RECUPERAÇÃO FINAL</span></td>
+                                @elseif($resultadoAnual['situacao'] === 'reprovado')
+                                    <td><span class="nota-vermelha">{{ number_format($resultadoAnual['media'], 1) }}</span></td>
+                                    <td><span class="resultado-recuperacao">REPROVADO</span></td>
+                                @elseif($resultadoAnual['situacao'] === 'aprovado_rec')
+                                    <td><span class="nota-azul">{{ number_format($resultadoAnual['media'], 1) }}</span></td>
+                                    <td><span class="resultado-aprovado">APROVADO (REC)</span></td>
+                                @else
+                                    <td><span class="nota-azul">{{ number_format($resultadoAnual['media'], 1) }}</span></td>
+                                    <td><span class="resultado-aprovado">APROVADO</span></td>
                                 @endif
                             </tr>
                         @endif

@@ -61,4 +61,32 @@ class NotaBimestralServiceTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->service->normalizarNota(11);
     }
+
+    public function test_annual_situation_applies_partial_and_final_recovery_for_fundamental_one(): void
+    {
+        $semRecuperacao = $this->service->situacaoAnual([
+            'AB1' => 6, 'AB2' => 6, 'AB3' => 8, 'AB4' => 8, 'RP' => 0, 'RF' => 0,
+        ], 'fun1');
+        $comRecuperacaoParcial = $this->service->situacaoAnual([
+            'AB1' => 6, 'AB2' => 6, 'AB3' => 8, 'AB4' => 8, 'RP' => 7, 'RF' => 0,
+        ], 'fun1');
+        $comRecuperacaoFinal = $this->service->situacaoAnual([
+            'AB1' => 6, 'AB2' => 6, 'AB3' => 8, 'AB4' => 8, 'RP' => 7, 'RF' => 6,
+        ], 'fun1');
+
+        $this->assertSame(['media' => 7.0, 'situacao' => 'aprovado'], $semRecuperacao);
+        $this->assertSame(['media' => 7.5, 'situacao' => 'aprovado_rec'], $comRecuperacaoParcial);
+        $this->assertSame(['media' => 6.0, 'situacao' => 'reprovado'], $comRecuperacaoFinal);
+    }
+
+    public function test_annual_situation_preserves_fundamental_two_partial_recovery_rule(): void
+    {
+        $situacao = $this->service->situacaoAnual([
+            'AM1' => 8, 'AB1' => 8, 'AM2' => 8, 'AB2' => 8,
+            'AM3' => 5, 'AB3' => 5, 'AM4' => 5, 'AB4' => 5,
+            'RP' => 6, 'RF' => 0,
+        ], 'fun2');
+
+        $this->assertSame(['media' => 6.5, 'situacao' => 'recuperacao_final'], $situacao);
+    }
 }

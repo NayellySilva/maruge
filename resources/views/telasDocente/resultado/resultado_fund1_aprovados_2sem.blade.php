@@ -91,11 +91,12 @@
                                 $b2 = $svc->notaDoBimestre($nota, 2, 'fun1') ?? 0;
                                 $b3 = $svc->notaDoBimestre($nota, 3, 'fun1') ?? 0;
                                 $b4 = $svc->notaDoBimestre($nota, 4, 'fun1') ?? 0;
-                                $media = ($b1 + $b2 + $b3 + $b4) / 4; 
+                                $resultadoAnual = $svc->situacaoAnual($nota, 'fun1');
+                                $media = $resultadoAnual['media'];
                                 @endphp
                                 <!-- / Fazendo Média COMUM -->
 
-                                @if(($nota->RP)== 0 ) 
+                                @if($resultadoAnual['situacao'] === 'aprovado')
                                 <!-- Se a media maior ou igual a 7 -->
                                 @if($media>=7)
                                 <tr>
@@ -139,10 +140,10 @@
                                 <!-- Se a media de recuperação  maior ou igual a 7 -->
                                 <!--Fazendo Média de recuperação-->
                                 @php 
-                                $mediaRP = (($nota->RP * 2) + $b3 + $b4) / 4; 
+                                $mediaRP = $resultadoAnual['media'];
                                 @endphp
                                 <!-- / Fazendo Média recuperação -->
-                                @if($mediaRP>=7)
+                                @if($resultadoAnual['situacao'] === 'aprovado_rec')
                                 <tr>
                                     <td>{{$Aluno->RA}}</td>
                                     <td>{{$Aluno->NomeAluno}}</td>
@@ -162,7 +163,9 @@
                                 @endif
                                 <!-- /Cor da nota 2º BIM -->
                                 <!-- cor da nota RP-->
-                                @if($nota->RP < 7)
+                                @if(($nota->RP ?? 0) == 0)
+                                    <td><center>-</center></td>
+                                @elseif($nota->RP < 7)
                                     <td><center><div class=" notaVermelha" >{{number_format($nota->RP ,1)}}</div></center></td> 
                                 @else
                                 <td><center><div class=" notaAzul" >{{number_format($nota->RP ,1)}}</div></center></td> 
