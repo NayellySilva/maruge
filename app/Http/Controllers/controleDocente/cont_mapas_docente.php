@@ -42,14 +42,41 @@ class cont_mapas_docente extends Controller {
 
     // Metodo faz solicitacao dos relatorios bimestrais dos alunos
     public function index() {
-        $turmas = ProfessorLogado::turmasAtivas();
+        $turmas = $this->turmasFiltradas();
         return view('telasDocente.mapa.mapas_notas', compact('turmas'));
     }
 
     // Metodo faz solicitacao dos relatorios bimestrais dos alunos
     public function index_por_docente() {
-        $turmas = ProfessorLogado::turmasAtivas();
+        $turmas = $this->turmasFiltradas();
         return view('telasDocente.mapa.mapas_notas', compact('turmas'));
+    }
+
+    private function turmasFiltradas()
+    {
+        $situacao = strtoupper((string) $this->request->input('SituacaoTurma', 'ATIVO'));
+        if (!in_array($situacao, ['ATIVO', 'INATIVO', 'TODOS'], true)) {
+            $situacao = 'ATIVO';
+        }
+
+        $query = DB::table('tb_turmas')
+            ->whereIn('idTurmas', ProfessorLogado::idsTurmas() ?: [0]);
+
+        if ($situacao === 'ATIVO') {
+            $query->whereIn('SituacaoTurma', ['ATIVO', 'ATIVA']);
+        } elseif ($situacao === 'INATIVO') {
+            $query->whereIn('SituacaoTurma', ['INATIVO', 'INATIVA']);
+        }
+
+        $pesquisar = trim((string) $this->request->input('pesquisar', ''));
+        if ($pesquisar !== '') {
+            $query->where(function ($filtro) use ($pesquisar) {
+                $filtro->where('NomeTurma', 'like', "%{$pesquisar}%")
+                    ->orWhere('AnoLetivo', 'like', "%{$pesquisar}%");
+            });
+        }
+
+        return $query->orderBy('NomeTurma')->paginate(15)->withQueryString();
     }
 
     // Metodo do primeiro bimestre que direciona o aluno para a view apropriada

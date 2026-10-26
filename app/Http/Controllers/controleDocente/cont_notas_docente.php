@@ -330,7 +330,7 @@ class cont_notas_docente extends Controller {
         $alunos = DB::table('tb_aluno')
             ->join('tb_matriculas', 'tb_matriculas.idMatriculas', '=', 'tb_aluno.tb_matriculas_idMatriculas')
             ->where('tb_aluno.tb_turmas_idTurmas', $idTurma)
-            ->whereIn('tb_aluno.SituacaoAluno', ['ATIVO', 'ATIVA'])
+            ->whereIn('tb_matriculas.SituacaoAluno', ['ATIVO', 'ATIVA'])
             ->select('tb_aluno.idAluno', 'tb_aluno.NomeAluno', 'tb_matriculas.RA')
             ->orderBy('tb_aluno.NomeAluno')
             ->get();

@@ -75,7 +75,7 @@
                                 @if($nivel === 'fun2')
                                     <th class="px-4 py-3.5 text-center w-32">Aval. Mensal</th>
                                 @endif
-                                <th class="px-4 py-3.5 text-center w-32">{{ $bimestreNumero }}º Bimestre</th>
+                                <th class="px-4 py-3.5 text-center w-32">Avaliação Bimestral</th>
                                 @if($nivel !== 'inf')
                                     <th class="px-4 py-3.5 text-center w-32">Recuperação</th>
                                     <th class="px-4 py-3.5 text-center w-28">Média Final</th>

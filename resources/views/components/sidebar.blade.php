@@ -60,7 +60,7 @@
                 <div class="submenu">
                     <div class="submenu-list">
                         <a href="{{ url('/docente/funcionario_perfil') }}" class="submenu-link">Perfil</a>
-                        <a href="{{ url('/docente/declaracoes') }}" class="submenu-link">Declarações</a>
+                        <a href="{{ url('/docente/declaracoes') }}" class="submenu-link" target="_blank" rel="noopener">Declarações</a>
                         <a href="{{ url('/docente/notas') }}" class="submenu-link">Lançar Notas</a>
                     </div>
                 </div>

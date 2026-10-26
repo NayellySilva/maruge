@@ -42,7 +42,29 @@ class cont_resultados_docente extends Controller {
 
     // Metodo para busca as turmas ativas cadastradas
     public function index() {
-        $turmas = ProfessorLogado::turmasAtivas();
+        $situacao = strtoupper((string) $this->request->input('SituacaoTurma', 'ATIVO'));
+        if (!in_array($situacao, ['ATIVO', 'INATIVO', 'TODOS'], true)) {
+            $situacao = 'ATIVO';
+        }
+
+        $query = DB::table('tb_turmas')
+            ->whereIn('idTurmas', ProfessorLogado::idsTurmas() ?: [0]);
+
+        if ($situacao === 'ATIVO') {
+            $query->whereIn('SituacaoTurma', ['ATIVO', 'ATIVA']);
+        } elseif ($situacao === 'INATIVO') {
+            $query->whereIn('SituacaoTurma', ['INATIVO', 'INATIVA']);
+        }
+
+        $pesquisar = trim((string) $this->request->input('pesquisar', ''));
+        if ($pesquisar !== '') {
+            $query->where(function ($filtro) use ($pesquisar) {
+                $filtro->where('NomeTurma', 'like', "%{$pesquisar}%")
+                    ->orWhere('AnoLetivo', 'like', "%{$pesquisar}%");
+            });
+        }
+
+        $turmas = $query->orderBy('NomeTurma')->paginate(15)->withQueryString();
         return view('telasDocente.resultado.resultados', compact('turmas'));
     }
 

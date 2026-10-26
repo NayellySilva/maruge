@@ -31,7 +31,7 @@
     <div class="flex flex-col sm:flex-row gap-4 items-center">
         <!-- Localizar Turma -->
         <div class="w-full sm:w-80">
-            <form method="GET" action="{{ url('/docente/resultado/resultados') }}" class="w-full">
+            <form method="GET" action="{{ url('/docente/resultados') }}" class="w-full">
                 @if(request()->input('SituacaoTurma'))
                     <input type="hidden" name="SituacaoTurma" value="{{ request()->input('SituacaoTurma') }}">
                 @endif
@@ -46,7 +46,7 @@
 
         <!-- Menu Dropdown de Filtro Customizado -->
         <div class="w-full sm:w-56">
-            <form method="GET" action="{{ url('/docente/resultado/resultados') }}" class="w-full">
+            <form method="GET" action="{{ url('/docente/resultados') }}" class="w-full">
                 @if(request()->input('pesquisar'))
                     <input type="hidden" name="pesquisar" value="{{ request()->input('pesquisar') }}">
                 @endif
@@ -93,7 +93,7 @@
         </div>
 
         @if(request()->input('pesquisar') || (request()->input('SituacaoTurma') && request()->input('SituacaoTurma') !== 'ATIVO'))
-            <a href="{{ url('/docente/resultado/resultados') }}" class="text-sm font-medium text-[#008a4b] hover:text-[#00703c] transition-colors whitespace-nowrap">
+            <a href="{{ url('/docente/resultados') }}" class="text-sm font-medium text-[#008a4b] hover:text-[#00703c] transition-colors whitespace-nowrap">
                 Limpar filtros
             </a>
         @endif
