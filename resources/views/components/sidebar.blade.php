@@ -197,8 +197,9 @@
                 <span class="sidebar-user-role" title="{{ $roleUsuario }}">{{ $roleUsuario }}</span>
             </div>
         </div>
-        <a href="{{ url('/logout') }}" class="sidebar-logout flex items-center justify-center text-[#5c706b] hover:text-red-600 transition-colors" title="Sair">
+        <a href="{{ url('/logout') }}" class="sidebar-logout flex items-center justify-center gap-2 text-[#5c706b] hover:text-red-600 transition-colors" title="Sair">
             <i data-lucide="log-out" style="width: 20px; height: 20px;"></i>
+            <span>Sair</span>
         </a>
     </div>
 </aside>
